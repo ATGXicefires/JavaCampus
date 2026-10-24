@@ -5,6 +5,7 @@ import campus.engine.RunResult.Problem;
 import campus.engine.RunResult.Severity;
 import campus.fx.Motion;
 import campus.fx.Sfx;
+import campus.lesson.SetupVar;
 import campus.lesson.SourceFile;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -34,6 +35,7 @@ import java.util.function.Predicate;
 final class EditorTabs extends VBox {
 
     private final Game game;
+    private final List<SetupVar> vars;
     private final Runnable onEdited;
     private final Runnable onFilesChanged;
     private final HBox bar = new HBox();
@@ -42,13 +44,16 @@ final class EditorTabs extends VBox {
     private final List<FileTab> tabs = new ArrayList<>();
     private FileTab selected;
     private Predicate<String> removable = name -> false;
+    private boolean program;
 
     /**
+     * @param vars           題目預先放好的變數，自動完成會列出來
      * @param onEdited       任何一個檔案的內容被改了
      * @param onFilesChanged 新增或刪除了檔案，檔案清單要馬上存起來
      */
-    EditorTabs(Game game, Runnable onEdited, Runnable onFilesChanged) {
+    EditorTabs(Game game, List<SetupVar> vars, Runnable onEdited, Runnable onFilesChanged) {
         this.game = game;
+        this.vars = vars;
         this.onEdited = onEdited;
         this.onFilesChanged = onFilesChanged;
         getStyleClass().add("editor-tabs");
@@ -70,6 +75,7 @@ final class EditorTabs extends VBox {
      */
     void open(List<SourceFile> files, boolean canAdd, Predicate<String> removable) {
         this.removable = removable;
+        program = canAdd;
         tabs.clear();
         pages.getChildren().clear();
         bar.getChildren().setAll(addButton);
@@ -100,6 +106,11 @@ final class EditorTabs extends VBox {
             select(tabs.getFirst());
         }
         onFilesChanged.run();
+    }
+
+    /** 每個分頁的程式碼接在一起，別的檔案宣告的類別和方法也要能補。 */
+    private String allCode() {
+        return String.join("\n", tabs.stream().map(t -> t.area.getText()).toList());
     }
 
     List<SourceFile> files() {
@@ -269,6 +280,8 @@ final class EditorTabs extends VBox {
             highlight();
             // 載入時的內容不算玩家改的，listener 要等放好文字之後才掛上
             area.textProperty().addListener((obs, old, now) -> edited());
+            // 自動完成要先掛，清單開著時 Enter、Tab 是填入，不是換行和縮排
+            CodeCompletion.attach(game, area, EditorTabs.this::allCode, vars, program);
             area.addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
             area.addEventHandler(KeyEvent.KEY_TYPED, e -> {
                 String ch = e.getCharacter();
@@ -331,6 +344,9 @@ final class EditorTabs extends VBox {
         }
 
         private void onKey(KeyEvent e) {
+            if (e.isConsumed()) {
+                return;
+            }
             if (e.getCode() == KeyCode.ENTER && !e.isShortcutDown() && !e.isShiftDown() && !e.isAltDown()) {
                 e.consume();
                 newlineWithIndent();

@@ -91,7 +91,7 @@ final class LessonView extends StackPane {
         this.lesson = lesson;
         this.onContinue = onContinue;
         hints = new HintDrawer(game, this::refreshSteps);
-        editors = new EditorTabs(game, this::onEdited, () -> {
+        editors = new EditorTabs(game, lesson.vars(), this::onEdited, () -> {
             autosave.stop();
             saveCode();
         });
@@ -124,6 +124,7 @@ final class LessonView extends StackPane {
         Button hintButton = new Button("提示");
         hintButton.getStyleClass().add("btn-ghost");
         hintButton.setOnAction(e -> hints.toggle());
+        hintButton.setFocusTraversable(false);
         HBox bar = new HBox(16, title, gap, hintButton, game.settingsButton());
         bar.setAlignment(Pos.CENTER_LEFT);
         bar.getStyleClass().add("topbar");
@@ -169,6 +170,10 @@ final class LessonView extends StackPane {
         continueButton.setOnAction(e -> leave());
         continueButton.managedProperty().bind(continueButton.visibleProperty());
         continueButton.setVisible(false);
+        // 跟一般 IDE 一樣，按了執行還能直接繼續打字，焦點不要被按鈕拿走
+        for (Button b : List.of(runButton, verifyButton, stopButton, resetButton)) {
+            b.setFocusTraversable(false);
+        }
         Region gap = new Region();
         HBox.setHgrow(gap, Priority.ALWAYS);
         HBox toolbar = new HBox(10, runButton, verifyButton, resetButton, stopButton, gap, continueButton);
