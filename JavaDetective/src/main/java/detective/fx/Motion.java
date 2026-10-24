@@ -155,6 +155,20 @@ public final class Motion {
         seq.play();
     }
 
+    /** 疊加面板出現：背景淡入，面板從小彈到原尺寸。 */
+    public static void popIn(Node backdrop, Node panel) {
+        backdrop.setOpacity(0);
+        FadeTransition fade = new FadeTransition(Duration.millis(160), backdrop);
+        fade.setToValue(1);
+        panel.setScaleX(0.9);
+        panel.setScaleY(0.9);
+        ScaleTransition grow = new ScaleTransition(Duration.millis(220), panel);
+        grow.setToX(1);
+        grow.setToY(1);
+        grow.setInterpolator(Interpolator.EASE_OUT);
+        new ParallelTransition(fade, grow).play();
+    }
+
     /** 延遲 {@code delay} 後淡入並從下方滑上來，最後回到呼叫前的透明度。 */
     public static void rise(Node node, Duration delay) {
         double target = node.getOpacity();

@@ -21,9 +21,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -31,7 +29,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -135,16 +132,15 @@ final class WorkspaceView extends StackPane {
     private Node centerPanel() {
         VirtualizedScrollPane<CodeArea> editorScroll = new VirtualizedScrollPane<>(editor);
         runButton.getStyleClass().add("btn-primary");
-        runButton.setTooltip(new Tooltip("Ctrl + Enter"));
+        runButton.setTooltip(game.tooltip("Ctrl + Enter"));
         runButton.setOnAction(e -> run());
         verifyButton.getStyleClass().add("btn-verify");
-        verifyButton.setTooltip(new Tooltip("Ctrl + Shift + Enter"));
+        verifyButton.setTooltip(game.tooltip("Ctrl + Shift + Enter"));
         verifyButton.setOnAction(e -> verify());
         stopButton.getStyleClass().add("btn-ghost");
         stopButton.setDisable(true);
         stopButton.setOnAction(e -> game.sandbox.stop());
         resetButton.getStyleClass().add("btn-ghost");
-        resetButton.setTooltip(new Tooltip("把程式碼改回這一步一開始的樣子"));
         resetButton.setOnAction(e -> reset());
         status.getStyleClass().add("status");
         Region gap = new Region();
@@ -334,10 +330,7 @@ final class WorkspaceView extends StackPane {
     }
 
     private void reset() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "要把程式碼改回這一步一開始的樣子嗎？目前寫的內容會被取代。", ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText("重設程式碼");
-        confirm.showAndWait().filter(b -> b == ButtonType.OK).ifPresent(b -> {
+        game.confirm("要把程式碼改回這一步一開始的樣子嗎？目前寫的內容會被取代。", "重設", () -> {
             editor.replaceText(startingCode(current));
             editor.moveTo(editor.getLength());
         });

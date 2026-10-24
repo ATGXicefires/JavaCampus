@@ -6,13 +6,25 @@ import detective.engine.Sandbox;
 import detective.engine.Verifier;
 import detective.fx.Motion;
 import detective.fx.Sfx;
+import detective.fx.Viewport;
 import detective.progress.Progress;
 import detective.progress.SaveStore;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -29,9 +41,12 @@ public final class Game {
     private final SaveStore store;
     private final ExecutorService runner;
     private final StackPane root;
+    private final Stage stage;
+    private final Viewport viewport;
+    private Overlay overlay;
 
     public Game(List<Chapter> chapters, Progress progress, SaveStore store, Sfx sfx, Sandbox sandbox,
-                ExecutorService runner, StackPane root) {
+                ExecutorService runner, StackPane root, Stage stage, Viewport viewport) {
         this.chapters = chapters;
         this.progress = progress;
         this.store = store;
@@ -40,22 +55,81 @@ public final class Game {
         this.verifier = new Verifier(sandbox);
         this.runner = runner;
         this.root = root;
+        this.stage = stage;
+        this.viewport = viewport;
+    }
+
+    public void toggleFullScreen() {
+        stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    /** Tooltip 是獨立的小視窗，不會被 {@link Viewport} 縮放，字級要自己跟著倍率走。 */
+    Tooltip tooltip(String text) {
+        Tooltip tip = new Tooltip(text);
+        tip.styleProperty().bind(Bindings.format(Locale.ROOT, "-fx-font-size: %.1fpx;",
+                viewport.factorProperty().multiply(13)));
+        return tip;
     }
 
     public void showCases() {
-        Motion.swap(root, new CaseSelectView(this));
+        swapTo(new CaseSelectView(this));
     }
 
     void showBriefing(CaseDef c) {
-        Motion.swap(root, new BriefingView(this, c));
+        swapTo(new BriefingView(this, c));
     }
 
     void showWorkspace(CaseDef c) {
-        Motion.swap(root, new WorkspaceView(this, c));
+        swapTo(new WorkspaceView(this, c));
     }
 
     void showVerdict(CaseDef c) {
-        Motion.swap(root, new VerdictView(this, c));
+        swapTo(new VerdictView(this, c));
+    }
+
+    private void swapTo(Node view) {
+        // swap 會把最上層當成舊畫面淡出，疊在上面的面板要先收掉
+        closeOverlay();
+        Motion.swap(root, view);
+    }
+
+    public void onEscape() {
+        closeOverlay();
+    }
+
+    void openOverlay(Node panel) {
+        closeOverlay();
+        overlay = Overlay.show(root, panel, () -> overlay = null);
+    }
+
+    boolean closeOverlay() {
+        if (overlay == null) {
+            return false;
+        }
+        overlay.close();
+        return true;
+    }
+
+    void confirm(String question, String action, Runnable onConfirm) {
+        Label text = new Label(question);
+        text.setWrapText(true);
+        Button cancel = new Button("取消");
+        cancel.getStyleClass().add("btn-ghost");
+        cancel.setOnAction(e -> closeOverlay());
+        Button ok = new Button(action);
+        ok.getStyleClass().add("btn-primary");
+        ok.setOnAction(e -> {
+            closeOverlay();
+            onConfirm.run();
+        });
+        HBox buttons = new HBox(10, cancel, ok);
+        buttons.setAlignment(Pos.CENTER_RIGHT);
+        VBox panel = new VBox(22, text, buttons);
+        panel.getStyleClass().add("overlay-panel");
+        panel.setPrefWidth(440);
+        panel.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        openOverlay(panel);
+        cancel.requestFocus();
     }
 
     void save() {

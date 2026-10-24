@@ -4,11 +4,15 @@ import detective.content.CaseLibrary;
 import detective.content.Chapter;
 import detective.engine.Sandbox;
 import detective.fx.Sfx;
+import detective.fx.Viewport;
 import detective.progress.Progress;
 import detective.progress.SaveStore;
 import detective.ui.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -51,13 +55,27 @@ public class App extends Application {
 
         StackPane root = new StackPane();
         root.getStyleClass().add("app-root");
-        Game game = new Game(chapters, progress, store, sfx, sandbox, runner, root);
-        Scene scene = new Scene(root, 1280, 800);
+        Viewport viewport = new Viewport(root);
+        Game game = new Game(chapters, progress, store, sfx, sandbox, runner, root, stage, viewport);
+        Scene scene = new Scene(viewport, 1600, 900);
         scene.getStylesheets().add(App.class.getResource("/detective/theme.css").toExternalForm());
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.F11) {
+                e.consume();
+                game.toggleFullScreen();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                e.consume();
+                game.onEscape();
+            }
+        });
         stage.setScene(scene);
         stage.setTitle("Java 偵探社");
-        stage.setMinWidth(1100);
-        stage.setMinHeight(700);
+        stage.setMinWidth(960);
+        stage.setMinHeight(540);
+        stage.setMaximized(true);
+        // Esc 留給設定面板，全螢幕改用 F11 切換
+        stage.setFullScreenExitHint("");
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         game.showCases();
         stage.show();
     }
