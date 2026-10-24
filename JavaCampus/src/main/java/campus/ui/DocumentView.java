@@ -81,7 +81,7 @@ final class DocumentView extends VBox {
 
     private void show(int i) {
         index = i;
-        VBox body = MiniMarkdown.render(doc.pages().get(i));
+        VBox body = MiniMarkdown.render(doc.pages().get(i), game.story.docDir());
         body.getStyleClass().add("doc-body");
         ScrollPane scroll = new ScrollPane(body);
         scroll.setFitToWidth(true);

@@ -13,11 +13,21 @@ import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-/** 從 {@code story/scripts/} 讀入章節清單、每章的劇本和 {@code docs/} 裡的文件。 */
-public record StoryLibrary(List<Chapter> chapters, Map<String, Doc> docs) {
+/**
+ * 從 {@code story/scripts/} 讀入章節清單、每章的劇本和 {@code docs/} 裡的文件。
+ *
+ * @param chapters 寫好、可以玩的章節
+ * @param contents 章節選擇的目錄，連還沒寫的章節也列出來
+ * @param docDir   文件裡的圖片從這個資料夾找
+ */
+public record StoryLibrary(List<Chapter> chapters, List<Listing> contents, Map<String, Doc> docs, Path docDir) {
+
+    /** 目錄上的一章；還沒寫的章節 {@code chapter} 是 null。 */
+    public record Listing(int number, String title, Chapter chapter) {}
 
     private record Manifest(List<Entry> chapters) {}
 
+    /** 沒寫 {@code dir} 的是還沒寫的章節，只出現在目錄上。 */
     private record Entry(String id, int number, String title, String dir, int progress) {}
 
     private static final Gson GSON = new Gson();
@@ -26,7 +36,12 @@ public record StoryLibrary(List<Chapter> chapters, Map<String, Doc> docs) {
     public static StoryLibrary load(Path root) throws IOException {
         Manifest manifest = GSON.fromJson(Files.readString(root.resolve("chapters.json"), UTF_8), Manifest.class);
         List<Chapter> chapters = new ArrayList<>();
+        List<Listing> contents = new ArrayList<>();
         for (Entry e : manifest.chapters()) {
+            if (e.dir() == null) {
+                contents.add(new Listing(e.number(), e.title(), null));
+                continue;
+            }
             Path dir = root.resolve(e.dir());
             Chapter ch = new Chapter(e.id(), e.number(), e.title(), e.progress(),
                     read(dir, e.dir() + "-common.md"),
@@ -34,6 +49,7 @@ public record StoryLibrary(List<Chapter> chapters, Map<String, Doc> docs) {
                     read(dir, e.dir() + "-" + Route.KOUHAI.fileSuffix + ".md"));
             validate(ch);
             chapters.add(ch);
+            contents.add(new Listing(e.number(), e.title(), ch));
         }
         Map<String, Doc> docs = new LinkedHashMap<>();
         Path docDir = root.resolve("docs");
@@ -45,7 +61,7 @@ public record StoryLibrary(List<Chapter> chapters, Map<String, Doc> docs) {
                 }
             }
         }
-        return new StoryLibrary(List.copyOf(chapters), Map.copyOf(docs));
+        return new StoryLibrary(List.copyOf(chapters), List.copyOf(contents), Map.copyOf(docs), docDir);
     }
 
     private static ScriptFile read(Path dir, String name) throws IOException {

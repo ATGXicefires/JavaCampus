@@ -5,6 +5,7 @@ import campus.art.Figures;
 import campus.fx.Music;
 import campus.fx.Sfx;
 import campus.lesson.LessonLibrary;
+import campus.ui.SvgLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -16,8 +17,11 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.IntConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,8 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 檢查 {@code story/scripts/} 裡真正的劇本：用到的名稱都存在，而且每一種選法都播得到章末。 */
 class ScriptContentTest {
 
-    /** 每章章末筆記本上該寫的字。 */
-    private static final Map<String, String> NOTES = Map.of("ch01", "Day 1：教會梁同學什麼是變數。");
+    /** 每章每個視角章末筆記本上該寫的字，鍵是視角劇本的檔名。 */
+    private static final Map<String, String> NOTES = Map.of(
+            "ch01-senpai.md", "Day 1：教會梁同學什麼是變數。",
+            "ch01-kouhai.md", "Day 1：變數是盒子。還有，學長的字很醜。");
 
     private static StoryLibrary library;
 
@@ -128,6 +134,35 @@ class ScriptContentTest {
         assertNoProblems(problems);
     }
 
+    @Test
+    void everyDocumentImageLoads() throws IOException {
+        Pattern image = Pattern.compile("(?m)^!\\[[^\\]]*]\\(([^)]+)\\)\\s*$");
+        List<String> problems = new ArrayList<>();
+        for (Doc doc : library.docs().values()) {
+            for (String page : doc.pages()) {
+                Matcher m = image.matcher(page);
+                while (m.find()) {
+                    Path file = library.docDir().resolve(m.group(1).strip());
+                    try {
+                        SvgLoader.load(file);
+                    } catch (IOException | IllegalArgumentException e) {
+                        problems.add("docs/" + doc.id() + ".md 的圖 " + m.group(1) + "：" + e.getMessage());
+                    }
+                }
+            }
+        }
+        assertNoProblems(problems);
+    }
+
+    @Test
+    void contentsListEveryChapterButOnlyWrittenOnesArePlayable() {
+        List<Integer> numbers = library.contents().stream().map(StoryLibrary.Listing::number).toList();
+        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7), numbers);
+        List<Chapter> written = library.contents().stream().map(StoryLibrary.Listing::chapter)
+                .filter(Objects::nonNull).toList();
+        assertEquals(written, library.chapters());
+    }
+
     /** 自動往下播；選項照 {@code picks} 選，選完了又碰到選項就停在那裡，記下有幾個選項可以選。 */
     private static final class Explorer implements StoryRunner.Stage {
         private final Deque<Integer> picks;
@@ -196,8 +231,9 @@ class ScriptContentTest {
                     }
                     String path = ch.id() + " " + route.label + " 選法 " + picks;
                     assertNotNull(stage.chapterEnd, path + " 沒有播到 @章末");
-                    if (NOTES.containsKey(ch.id())) {
-                        assertEquals(NOTES.get(ch.id()), stage.chapterEnd, path);
+                    String pov = ch.pov(route).name();
+                    if (NOTES.containsKey(pov)) {
+                        assertEquals(NOTES.get(pov), stage.chapterEnd, path);
                     }
                     paths++;
                     minAp = Math.min(minAp, state.ap());

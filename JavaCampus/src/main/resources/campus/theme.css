@@ -317,31 +317,100 @@
     -fx-background-color: linear-gradient(to bottom, #f6efe4, #ecdcc6);
 }
 
-.chapter-row {
-    -fx-background-color: c-panel;
-    -fx-border-color: c-line;
-    -fx-padding: 16 24;
+.toc-sheet {
+    -fx-effect: dropshadow(gaussian, rgba(70, 45, 20, 0.28), 30, 0.15, 0, 12);
+}
+
+/* 橫線間距 64px 要等於 ChapterSelectView.ROW，頁首空一列才開始寫 */
+.toc-page {
+    -fx-background-color:
+        linear-gradient(to bottom, #fffdf7, #faf3e4),
+        linear-gradient(from 0px 0px to 0px 64px, repeat, transparent 97%, #d6dfea 97%);
+}
+
+.toc-under {
+    -fx-background-color: #efe4d0;
+    -fx-border-color: #e0d3bf;
+}
+
+.toc-margin {
+    -fx-background-color: #e7a19c;
+}
+
+.toc-tab {
+    -fx-background-color: #eadfcb;
+    -fx-text-fill: c-muted;
+    -fx-font-size: 16px;
+    -fx-padding: 8 24 8 24;
+    -fx-border-color: transparent;
+    -fx-border-width: 3 0 0 0;
+}
+
+.toc-tab:hover {
+    -fx-background-color: #f3eadb;
+}
+
+/* 選中的標籤和紙同色，看起來像跟頁面連在一起 */
+.toc-tab:selected {
+    -fx-background-color: #fffdf7;
+    -fx-text-fill: c-ink;
+    -fx-font-weight: bold;
+}
+
+.toc-tab.senpai:selected {
+    -fx-border-color: #5b7699 transparent transparent transparent;
+}
+
+.toc-tab.kouhai:selected {
+    -fx-border-color: #ec7f74 transparent transparent transparent;
+}
+
+.toc-number {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 22px;
+}
+
+.toc-sheet.senpai .toc-number {
+    -fx-text-fill: #5b7699;
+}
+
+.toc-sheet.kouhai .toc-number {
+    -fx-text-fill: #d0675d;
+}
+
+.toc-title {
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-font-size: 30px;
+    -fx-text-fill: #2e3a59;
+}
+
+.toc-row.open {
     -fx-cursor: hand;
 }
 
-.chapter-row:hover {
-    -fx-border-color: c-accent;
+/* 螢光筆只畫在字的下半截 */
+.toc-sheet.senpai .toc-row.open:hover .toc-title {
+    -fx-background-color: rgba(91, 118, 153, 0.22);
+    -fx-background-insets: 18 -8 4 -8;
 }
 
-.chapter-row.locked {
-    -fx-opacity: 0.45;
-    -fx-cursor: default;
+.toc-sheet.kouhai .toc-row.open:hover .toc-title {
+    -fx-background-color: rgba(236, 127, 116, 0.28);
+    -fx-background-insets: 18 -8 4 -8;
 }
 
-.chapter-number {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 26px;
-    -fx-text-fill: c-accent-dark;
+.toc-row.locked .toc-number, .toc-row.locked .toc-title {
+    -fx-text-fill: #c9bfb1;
 }
 
-.chapter-name {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
+.toc-lock-body {
+    -fx-fill: #c9bfb1;
+}
+
+.toc-lock-shackle {
+    -fx-fill: transparent;
+    -fx-stroke: #c9bfb1;
+    -fx-stroke-width: 2;
 }
 
 /* 章末 */
@@ -350,17 +419,53 @@
 }
 
 .notebook {
-    -fx-background-color: linear-gradient(to bottom, #fdf8ec, #f3ead6);
-    -fx-padding: 44 48;
-    -fx-border-color: transparent transparent transparent #e58d8d;
-    -fx-border-width: 0 0 0 3;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 30, 0.2, 0, 10);
+}
+
+.notebook.senpai {
+    -fx-background-color: linear-gradient(to bottom, #fdf8ec, #f3ead6);
+}
+
+.notebook.kouhai {
+    -fx-background-color: linear-gradient(to bottom, #fff6f3, #fbe6e1);
 }
 
 .notebook-text {
     -fx-font-family: "LXGW WenKai TC";
     -fx-font-size: 32px;
+    -fx-line-spacing: 12px;
     -fx-text-fill: #2e3a59;
+}
+
+.notebook.kouhai .notebook-text {
+    -fx-text-fill: #b84f5f;
+}
+
+.notebook-rule {
+    -fx-stroke: #c9d5e4;
+    -fx-stroke-width: 1;
+}
+
+/* 她的本子是方點的點線 */
+.notebook.kouhai .notebook-rule {
+    -fx-stroke: #e9bdb6;
+    -fx-stroke-width: 1.6;
+    -fx-stroke-dash-array: 0.1 6;
+}
+
+.notebook-margin {
+    -fx-stroke: #e58d8d;
+    -fx-stroke-width: 1.5;
+}
+
+.notebook.kouhai .notebook-margin {
+    -fx-stroke: #ec7f74;
+}
+
+.notebook-doodle {
+    -fx-fill: transparent;
+    -fx-stroke: #ec7f74;
+    -fx-stroke-width: 1.8;
 }
 
 .progress-track {
@@ -608,6 +713,14 @@
 .doc-counter {
     -fx-font-family: "Maple Mono NF CN";
     -fx-text-fill: c-muted;
+}
+
+.md-img {
+    -fx-padding: 6 0 6 0;
+}
+
+.md-img-missing .md-text {
+    -fx-fill: c-muted;
 }
 
 /* 程式基礎教學筆記 */
