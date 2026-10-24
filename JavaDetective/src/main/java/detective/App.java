@@ -10,13 +10,17 @@ import detective.ui.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 public class App extends Application {
 
@@ -26,6 +30,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        loadFonts(Path.of("fonts"));
         List<Chapter> chapters = CaseLibrary.load(Path.of("cases"));
         SaveStore store = new SaveStore(Path.of("save", "progress.json"));
         Progress progress = store.load();
@@ -70,6 +75,17 @@ public class App extends Application {
         }
         if (sfx != null) {
             sfx.close();
+        }
+    }
+
+    /** 字型隨遊戲附帶，玩家的電腦上沒裝也能顯示；載入失敗時 CSS 會退回系統字型。 */
+    private static void loadFonts(Path dir) throws IOException {
+        try (Stream<Path> files = Files.walk(dir)) {
+            for (Path f : files.filter(p -> p.toString().matches(".*\\.(ttf|otf)")).toList()) {
+                if (Font.loadFont(f.toUri().toString(), 14) == null) {
+                    System.err.println("字型載入失敗：" + f);
+                }
+            }
         }
     }
 

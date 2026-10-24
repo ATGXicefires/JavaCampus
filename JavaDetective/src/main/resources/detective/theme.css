@@ -11,7 +11,7 @@
     c-green: #6fbf73;
     c-paper: #efe6d2;
     c-ink: #2b2a28;
-    -fx-font-family: "Microsoft JhengHei UI";
+    -fx-font-family: "Source Han Sans TC";
     -fx-font-size: 14px;
     -fx-base: #232731;
     -fx-accent: #e0a84a;
@@ -150,7 +150,7 @@
     -fx-background-color: #2a2f3a;
     -fx-background-radius: 10;
     -fx-padding: 2 9;
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 12px;
     -fx-text-fill: #f0c070;
 }
@@ -336,7 +336,7 @@
 
 .md-code {
     -fx-fill: #f0c070;
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14.5px;
 }
 
@@ -345,7 +345,7 @@
 }
 
 .md-pre {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 13.5px;
     -fx-background-color: #101217;
     -fx-background-radius: 6;
@@ -354,7 +354,7 @@
 }
 
 .shape-box {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
     -fx-text-fill: #cfd6e0;
     -fx-background-color: #101217;
@@ -376,7 +376,7 @@
 
 .code-area {
     -fx-background-color: #101217;
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 17px;
 }
 
@@ -408,7 +408,6 @@
 
 .code-area .cmt {
     -fx-fill: #6b7482;
-    -fx-font-style: italic;
 }
 
 .code-area .type {
@@ -433,7 +432,7 @@
 }
 
 .lineno {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
     -fx-text-fill: #555d6b;
     -fx-padding: 0 10 0 8;
@@ -460,7 +459,7 @@
 }
 
 .console-out {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
     -fx-text-fill: #e8ecf1;
 }
@@ -471,7 +470,7 @@
 }
 
 .probe-line {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14px;
     -fx-text-fill: #7fb7f0;
 }
@@ -517,7 +516,7 @@
 }
 
 .raw {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 12px;
     -fx-text-fill: c-muted;
 }
@@ -574,18 +573,18 @@
 }
 
 .var-name {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
     -fx-text-fill: #f0c070;
 }
 
 .var-type {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-text-fill: #6fd0c5;
 }
 
 .var-value {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
     -fx-text-fill: #9ccc7a;
 }
@@ -619,7 +618,7 @@
 }
 
 .hint-code {
-    -fx-font-family: "Consolas";
+    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14px;
     -fx-text-fill: #f0c070;
     -fx-background-color: #101217;
