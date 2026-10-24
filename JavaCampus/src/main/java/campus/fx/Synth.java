@@ -77,15 +77,16 @@ final class Synth {
         return buf;
     }
 
-    /** 環境音的循環：多做 {@code fade} 秒，尾巴和開頭交叉淡化，接縫處才不會爆音。 */
+    /** 環境音的循環：多做 {@code fade} 秒，尾巴和開頭交叉淡化，接縫處才不會爆音。週期性的聲音（嗡嗡聲）要在之後另外疊上。 */
     static float[] loopify(float[] raw, double loopSeconds, double fade) {
         float[] out = buffer(loopSeconds);
         int n = out.length;
         int f = (int) (fade * RATE);
         System.arraycopy(raw, 0, out, 0, n);
         for (int i = 0; i < f && n + i < raw.length; i++) {
-            double w = (double) i / f;
-            out[i] = (float) (raw[n + i] * (1 - w) + raw[i] * w);
+            double w = (double) i / f * Math.PI / 2;
+            // 兩段雜訊彼此無關，用等功率曲線交叉，接縫中間才不會凹下去一截、每圈「喘」一下
+            out[i] = (float) (raw[n + i] * Math.cos(w) + raw[i] * Math.sin(w));
         }
         return out;
     }
