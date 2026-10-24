@@ -22,14 +22,20 @@ import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -40,6 +46,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -47,6 +56,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.IntConsumer;
 
 /**
@@ -66,6 +76,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private static final double[] TILTS = {-1.8, 1.4, -1.2, 1.7};
     /** {@link Motion#hoverLift} 浮起的高度。 */
     private static final double LIFT = 6;
+    /** 便利貼浮起時放大的比例。 */
+    private static final double GROW = 0.08;
     /** 觸控板滑一下會送出一連串小幅度的滾動，要隔一小段時間才再往下一句。 */
     private static final long WHEEL_GAP_MS = 150;
 
@@ -92,6 +104,10 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private final ToggleButton skipButton = new ToggleButton("快進");
     private final List<BacklogView.Entry> backlog = new ArrayList<>();
     private final Map<String, FigureView> figures = new LinkedHashMap<>();
+    /** 對話框大頭照用的剪影，和舞台上的分開，同一個人重複出現時沿用。 */
+    private final Map<String, FigureView> faces = new HashMap<>();
+    /** 撕下來的便利貼在這層飛走，不擋滑鼠，也不擋下一句。 */
+    private final Pane scraps = new Pane();
     private final List<Node> hideable;
 
     private BackdropView backdrop;
@@ -134,8 +150,9 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         Node notes = choicesLayer();
         Node quick = quickMenu();
         hideable = List.of(page, notes, quick);
-        getChildren().addAll(world, vignette, flash, page, notes, phone, callLayer(), floaters, quick, black);
+        getChildren().addAll(world, vignette, flash, page, notes, scraps, phone, callLayer(), floaters, quick, black);
         floaters.setMouseTransparent(true);
+        scraps.setMouseTransparent(true);
         phone.setVisible(false);
         choices.setVisible(false);
         dialog.setVisible(false);
@@ -355,6 +372,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         dialog.getStyleClass().removeAll("os", "narration", "direction");
         boolean speaking = l.kind() == Op.Kind.SAY;
         dialog.speaker(speaking ? l.who() : null);
+        dialog.face(speaking && personId != null && !figures.containsKey(personId) ? face(personId) : null);
         dialog.action.setVisible(l.action() != null);
         dialog.action.setText(l.action() == null ? "" : "（" + l.action() + "）");
         String shown = l.text();
@@ -387,6 +405,14 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             typing = null;
             lineShown();
         });
+    }
+
+    /** 不在台上的人說話時貼在對話框上的大頭照。視角角色永遠不上台，表情照劇本記下的；其他人一律一般。 */
+    private FigureView face(String personId) {
+        String expression = personId.equals(route.self) ? state.staging().selfExpression() : "一般";
+        FigureView f = faces.computeIfAbsent(personId, p -> new FigureView(game.art, p, expression));
+        f.setExpression(expression);
+        return f;
     }
 
     private boolean instant() {
@@ -573,6 +599,11 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             double tilt = TILTS[i % TILTS.length];
             // 角度跟著 hoverLift 的高度走：浮起來時剛好轉正，進場從下方彈上來時歪得更多，像被拍上去
             b.rotateProperty().bind(b.translateYProperty().multiply(tilt / LIFT).add(tilt));
+            // 放大也跟著同一個高度走；scaleX/Y 留給按下去壓扁的動畫，所以另外掛一個 Scale
+            Scale grow = new Scale(1, 1, NOTE / 2, NOTE / 2);
+            grow.xProperty().bind(b.translateYProperty().multiply(-GROW / LIFT).add(1));
+            grow.yProperty().bind(grow.xProperty());
+            b.getTransforms().add(grow);
             b.setOnAction(e -> choose(index));
             Motion.hoverLift(b);
             choices.getChildren().add(b);
@@ -588,10 +619,106 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         }
         IntConsumer p = pick;
         pick = null;
-        game.sfx.play(Sfx.Sound.CHOICE_OK);
+        tearOff(index);
         choices.setVisible(false);
         choices.getChildren().clear();
         p.accept(index);
+    }
+
+    /**
+     * 選中的便利貼從中間撕成兩半飛走，其他的往下掉。拍下每張的樣子在另一層演，
+     * 便利貼本身馬上收掉，劇情不用等動畫。一般動效短一點、不晃；關閉時直接消失。
+     */
+    private void tearOff(int chosen) {
+        Motion.Level level = game.progress.settings().motion();
+        if (level == Motion.Level.OFF || getScene() == null) {
+            game.sfx.play(Sfx.Sound.CHOICE_OK);
+            return;
+        }
+        game.sfx.play(Sfx.Sound.TEAR);
+        boolean bouncy = level == Motion.Level.BOUNCY;
+        // 照畫面實際的像素拍，飛出去時才不會糊
+        double k = getLocalToSceneTransform().getMxx() * getScene().getWindow().getOutputScaleX();
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        params.setTransform(new Scale(k, k));
+        List<Node> notes = choices.getChildren();
+        for (int i = 0; i < notes.size(); i++) {
+            Node note = notes.get(i);
+            Bounds b = note.getBoundsInParent();
+            Point2D at = scraps.sceneToLocal(choices.localToScene(b.getMinX(), b.getMinY()));
+            Image shot = note.snapshot(params, null);
+            if (i == chosen) {
+                rip(shot, at, b.getWidth(), b.getHeight(), bouncy);
+            } else {
+                ImageView rest = scrap(shot, b.getWidth(), b.getHeight());
+                rest.setLayoutX(at.getX());
+                rest.setLayoutY(at.getY());
+                scraps.getChildren().add(rest);
+                Timeline fall = new Timeline(new KeyFrame(Duration.millis(bouncy ? 220 : 160),
+                        new KeyValue(rest.translateYProperty(), bouncy ? 60 : 30, Interpolator.EASE_IN),
+                        new KeyValue(rest.opacityProperty(), 0, Interpolator.EASE_IN)));
+                fall.setOnFinished(e -> scraps.getChildren().remove(rest));
+                fall.play();
+            }
+        }
+    }
+
+    private static ImageView scrap(Image shot, double w, double h) {
+        ImageView v = new ImageView(shot);
+        v.setFitWidth(w);
+        v.setFitHeight(h);
+        v.setSmooth(true);
+        return v;
+    }
+
+    /** 沿一條鋸齒撕口切成兩半：兩塊用同一串點，拼回去剛好是一整張。 */
+    private void rip(Image shot, Point2D at, double w, double h, boolean bouncy) {
+        Random rnd = new Random();
+        int steps = 14;
+        List<Double> tear = new ArrayList<>();
+        for (int i = 0; i <= steps; i++) {
+            double drift = (i - steps / 2.0) * 0.9;
+            double jag = (i % 2 == 0 ? -1 : 1) * (2 + rnd.nextDouble() * 5);
+            tear.add(w / 2 + drift + jag);
+            tear.add(h * i / steps);
+        }
+        Polygon left = new Polygon(0, 0);
+        left.getPoints().addAll(tear);
+        left.getPoints().addAll(0.0, h);
+        Polygon right = new Polygon(w, 0, w, h);
+        for (int i = tear.size() - 2; i >= 0; i -= 2) {
+            right.getPoints().addAll(tear.get(i), tear.get(i + 1));
+        }
+        for (int side = -1; side <= 1; side += 2) {
+            ImageView v = scrap(shot, w, h);
+            v.setClip(side < 0 ? left : right);
+            // 包一層 Group，旋轉中心才會是這半張自己的中心，而不是整張的中心
+            Group piece = new Group(v);
+            piece.setLayoutX(at.getX());
+            piece.setLayoutY(at.getY());
+            scraps.getChildren().add(piece);
+            double spin = side * (bouncy ? 24 + rnd.nextDouble() * 14 : 10);
+            double away = side * (bouncy ? 70 + rnd.nextDouble() * 40 : 36);
+            Timeline fly = new Timeline();
+            if (bouncy) {
+                // 先猛地往兩邊扯開、往上一頓，再帶著旋轉往下掉
+                fly.getKeyFrames().add(new KeyFrame(Duration.millis(90),
+                        new KeyValue(piece.translateXProperty(), side * 10, Interpolator.EASE_OUT),
+                        new KeyValue(piece.translateYProperty(), -10, Interpolator.EASE_OUT),
+                        new KeyValue(piece.rotateProperty(), side * 6, Interpolator.EASE_OUT)));
+            }
+            Duration end = Duration.millis(bouncy ? 720 : 380);
+            fly.getKeyFrames().addAll(
+                    new KeyFrame(end.multiply(0.55), new KeyValue(piece.opacityProperty(), 1)),
+                    new KeyFrame(end,
+                            new KeyValue(piece.translateXProperty(), away, Interpolator.EASE_OUT),
+                            new KeyValue(piece.translateYProperty(), bouncy ? 280 : 110, Interpolator.EASE_IN),
+                            new KeyValue(piece.rotateProperty(), spin, Interpolator.EASE_IN),
+                            new KeyValue(piece.opacityProperty(), 0, Interpolator.EASE_IN)));
+            fly.setOnFinished(e -> scraps.getChildren().remove(piece));
+            fly.play();
+        }
     }
 
     @Override

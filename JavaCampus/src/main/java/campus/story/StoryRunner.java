@@ -121,6 +121,7 @@ public final class StoryRunner {
     /** @return true 表示要等畫面處理完 */
     private boolean command(Op.Cmd raw) {
         if (Staging.concernsSelf(raw, route)) {
+            state.staging().applySelf(raw);
             advance();
             return false;
         }

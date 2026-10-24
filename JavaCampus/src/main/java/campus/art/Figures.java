@@ -351,6 +351,18 @@ public final class Figures {
         head(g, DEFAULT_HEAD, true);
     }
 
+    /**
+     * 對話框大頭照要裁的正方形，在單位框裡的 {左, 上, 邊長}：頭擺在偏上方，下面留到肩膀。
+     * 邊長依頭的大小算，每個角色的臉在照片裡才差不多大，頭頂的表情符號也大多框得進去。
+     */
+    public static double[] bust(String person) {
+        Head h = HEADS.getOrDefault(person, DEFAULT_HEAD);
+        double size = h.ry() * 4.8;
+        double cx = h.cx() + MARGIN;
+        double cy = h.cy() + h.ry() * 0.45;
+        return new double[] {cx - size / 2, cy - size / 2, size};
+    }
+
     /** 「一般」以外的表情都有頭頂符號。 */
     public static boolean hasSymbol(String expr) {
         return EXPRESSIONS.contains(expr) && !expr.equals("一般");

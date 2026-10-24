@@ -18,6 +18,22 @@ class SfxTest {
     }
 
     @Test
+    void tearIsAShortCrackleThatEndsSilently() {
+        float[] s = Sfx.tear(new Random(7));
+        double peak = 0;
+        double energy = 0;
+        for (float v : s) {
+            assertTrue(Float.isFinite(v));
+            peak = Math.max(peak, Math.abs(v));
+            energy += v * v;
+        }
+        assertTrue(peak <= 0.41, "太大聲：" + peak);
+        assertTrue(Math.sqrt(energy / s.length) > 0.03, "幾乎沒有聲音");
+        // 結尾要收到幾乎無聲，播完才不會喀一聲
+        assertTrue(Math.abs(s[s.length - 1]) < 0.01);
+    }
+
+    @Test
     void everyAmbienceLoopIsSeamless() {
         Random rnd = new Random(7);
         for (Sfx.Ambience a : Sfx.Ambience.values()) {

@@ -171,6 +171,40 @@ class StoryRunnerTest {
     }
 
     @Test
+    void theRouteCharactersExpressionIsRememberedWithoutPuttingHimOnStage() {
+        String common = """
+                [抽籤現場]
+                @登場 二弘 右 冒汗
+                二弘：「一。」
+                @表情 吳二弘 害羞
+                二弘：「二。」
+                @退場 二弘
+                二弘：「三。」
+                @登場 二弘 左
+                二弘：「四。」
+                """;
+        Chapter ch = chapter(common, SENPAI, KOUHAI);
+        StoryState s = begin(ch, Route.SENPAI);
+        AutoStage stage = new AutoStage();
+        stage.holdLines = true;
+        new StoryRunner(ch, Route.SENPAI, s, new HashSet<>(), stage).start();
+        assertEquals("冒汗", s.staging().selfExpression());
+        stage.held.run();
+        assertEquals("害羞", s.staging().selfExpression());
+        stage.held.run();
+        assertEquals("害羞", s.staging().selfExpression());
+        stage.held.run();
+        assertEquals("一般", s.staging().selfExpression());
+        assertTrue(s.staging().actors().isEmpty());
+        assertTrue(stage.commands.isEmpty());
+
+        StoryState k = begin(ch, Route.KOUHAI);
+        new StoryRunner(ch, Route.KOUHAI, k, new HashSet<>(), new AutoStage()).start();
+        assertEquals("一般", k.staging().selfExpression());
+        assertEquals("一般", k.staging().actors().get("二弘").expression());
+    }
+
+    @Test
     void commonLinesReadInOneRouteCountAsReadInTheOther() {
         Chapter ch = chapter(COMMON, SENPAI, KOUHAI);
         Set<String> read = new HashSet<>();

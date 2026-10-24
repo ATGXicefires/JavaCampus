@@ -2,6 +2,7 @@ package campus.story;
 
 import campus.progress.Progress;
 import campus.progress.SaveStore;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -64,6 +65,12 @@ class StoryStateTest {
         s.begin(ch, Route.SENPAI, true);
         assertEquals(20, s.ap());
         assertEquals(30, s.tp());
+    }
+
+    @Test
+    void oldSavesWithoutTheSelfExpressionShowANeutralFace() {
+        Staging old = new Gson().fromJson("{\"background\":\"電腦教室\",\"actors\":{}}", Staging.class);
+        assertEquals("一般", old.selfExpression());
     }
 
     @Test

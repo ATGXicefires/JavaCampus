@@ -1,5 +1,7 @@
 package campus.ui;
 
+import campus.art.FigureView;
+import campus.art.Figures;
 import campus.fx.Motion;
 import campus.story.Cast;
 import javafx.animation.Animation;
@@ -12,12 +14,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -44,6 +49,10 @@ final class NotebookPage extends Region {
     private static final double HOLE_TOP = 36;
     private static final double HOLE_STEP = 80;
     private static final int HOLES = 6;
+    /** 大頭照裡剪影那一格的邊長。 */
+    private static final double FACE = 104;
+    /** 大頭照的上緣，讓開跨在紙上緣的名牌膠帶。 */
+    private static final double FACE_TOP = 30;
 
     final Label plate = new Label();
     final Label action = new Label();
@@ -52,11 +61,21 @@ final class NotebookPage extends Region {
     private final Region margin = new Region();
     private final List<Circle> holes = new ArrayList<>();
     private final SVGPath mark = new SVGPath();
+    private final Pane lens = new Pane();
+    private final StackPane photo = new StackPane(lens);
     private Mark shown;
     private Animation blink;
 
     NotebookPage() {
         getStyleClass().add("dialog-box");
+        lens.getStyleClass().add("dialog-face-lens");
+        lens.setPrefSize(FACE, FACE);
+        lens.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        lens.setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        lens.setClip(new Rectangle(FACE, FACE));
+        photo.getStyleClass().add("dialog-face");
+        photo.setManaged(false);
+        photo.setVisible(false);
         rules.getStyleClass().add("dialog-rules");
         margin.getStyleClass().add("dialog-margin");
         mark.getStyleClass().add("dialog-next");
@@ -81,7 +100,7 @@ final class NotebookPage extends Region {
         }
         getChildren().addAll(rules, margin);
         getChildren().addAll(holes);
-        getChildren().addAll(action, text, mark, plate);
+        getChildren().addAll(action, text, mark, photo, plate);
         mark.setVisible(false);
         setMinHeight(USE_PREF_SIZE);
         setMaxHeight(USE_PREF_SIZE);
@@ -105,6 +124,29 @@ final class NotebookPage extends Region {
         String ink = luminance(Color.web(color)) > 0.22 ? "#2b2420" : "white";
         plate.setText(who);
         plate.setStyle("-fx-background-color: " + color + "; -fx-text-fill: " + ink + ";");
+    }
+
+    /**
+     * 說話的人不在台上時，在左邊留白處貼一張他的大頭照；{@code null} 收起。
+     * 照片只蓋住孔和紅線，不佔文字的位置，有沒有照片換行和高度都一樣。
+     */
+    void face(FigureView figure) {
+        boolean was = photo.isVisible();
+        photo.setVisible(figure != null);
+        if (figure == null) {
+            return;
+        }
+        boolean changed = lens.getChildren().isEmpty() || lens.getChildren().getFirst() != figure;
+        if (changed) {
+            double[] crop = Figures.bust(figure.person());
+            double k = FACE / crop[2];
+            figure.setManaged(false);
+            lens.getChildren().setAll(figure);
+            figure.resizeRelocate(-crop[0] * k, -crop[1] * k, Figures.UNIT_W * k, Figures.UNIT_H * k);
+        }
+        if (!was || changed) {
+            Motion.pop(photo);
+        }
     }
 
     /** {@code null} 收起記號；動效關閉時記號不閃。 */
@@ -201,6 +243,9 @@ final class NotebookPage extends Region {
         }
         Bounds m = mark.getLayoutBounds();
         mark.relocate(w - (in.getRight() + m.getWidth()) / 2, h - in.getBottom() - m.getHeight() - 5);
+        // 照片右緣停在文字前面，左邊伸出紙外一點
+        photo.autosize();
+        photo.relocate(in.getLeft() - 10 - photo.getWidth(), FACE_TOP);
         // 名牌壓在紙的上緣，一半在紙外；它不跟著文字排，大小要自己量
         plate.autosize();
         plate.relocate(in.getLeft() - 14, -plate.getHeight() / 2);
