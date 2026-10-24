@@ -1,0 +1,42 @@
+{
+  "id": "ch01-s2",
+  "title": "滷肉飯比喻",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["if-else"],
+  "vars": [
+    { "name": "hasLuRouFan", "type": "boolean", "value": "true" }
+  ],
+  "steps": [
+    {
+      "id": "if",
+      "title": "如果有滷肉飯",
+      "instructions": "「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。題目給了 `boolean hasLuRouFan`。\n\n先只寫 `if`：`hasLuRouFan` 是 `true` 的時候印出 `吃滷肉飯`，`false` 的時候什麼都不印。",
+      "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "hasLuRouFan": "false" } ]
+      },
+      "hints": {
+        "lead": "`if` 敘述對括號內的 boolean 運算式求值，結果為 `true` 才執行後面的區塊⋯⋯",
+        "plain": "⋯⋯她聽不懂。重寫：**如果**有滷肉飯，就吃滷肉飯。括號裡放 `hasLuRouFan`，大括號裡放要做的事。"
+      },
+      "afterText": "二弘（心想）：「舉例用午餐。人類理解食物的速度最快。」"
+    },
+    {
+      "id": "else",
+      "title": "否則吃便當",
+      "instructions": "補上 `else`：沒有滷肉飯的時候印出 `吃便當`。\n\n按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種午餐都要印對。",
+      "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "hasLuRouFan": "false" } ]
+      },
+      "hints": {
+        "lead": "`else` 子句在條件為 `false` 時執行；兩個區塊恰好只會執行其中一個⋯⋯",
+        "plain": "⋯⋯白話：如果有滷肉飯就吃滷肉飯，**否則**吃便當。在 `}` 後面接 `else`，再接一對大括號，裡面印出 `吃便當`。"
+      },
+      "afterText": "二弘（心想）：「⋯⋯她看到這頁，會笑嗎。」"
+    }
+  ]
+}

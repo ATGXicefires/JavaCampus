@@ -1,0 +1,42 @@
+{
+  "id": "ch01-k3",
+  "title": "如果有滷肉飯",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["if-else"],
+  "vars": [
+    { "name": "hasLuRouFan", "type": "boolean", "value": "true" }
+  ],
+  "steps": [
+    {
+      "id": "if",
+      "title": "如果有滷肉飯",
+      "instructions": "PDF 第 3 頁：**if-else 就像選午餐**。題目給了 `hasLuRouFan`，它是 `boolean`，只有 `true`（有）和 `false`（沒有）兩種值。\n\n寫一個 `if`：有滷肉飯的時候印出 `吃滷肉飯`，沒有的時候什麼都不印。\n\n```\nif (條件) {\n    條件成立時做的事\n}\n```",
+      "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "hasLuRouFan": "false" } ]
+      },
+      "hints": {
+        "lead": "括號裡放 hasLuRouFan。",
+        "plain": "`if` 就是「如果」。括號裡放要問的問題：有沒有滷肉飯？答案是 `true` 就做大括號裡的事，是 `false` 就整段跳過。大括號裡寫一行 `println`，印出 `吃滷肉飯`。"
+      },
+      "afterText": "PDF 寫著：「沒有滷肉飯的時候，什麼都不會印。這是正常的。」"
+    },
+    {
+      "id": "else",
+      "title": "否則吃便當",
+      "instructions": "沒有滷肉飯也要吃午餐。在 `if` 的 `}` 後面接上 `else`：否則印出 `吃便當`。\n\n```\nif (條件) {\n    條件成立時做的事\n} else {\n    條件不成立時做的事\n}\n```\n\n按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種情況都要印對。",
+      "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "hasLuRouFan": "false" } ]
+      },
+      "hints": {
+        "lead": "else 接在 } 後面。",
+        "plain": "`else` 就是「否則」：如果有滷肉飯就吃滷肉飯，否則吃便當。`else` 後面不用括號、不用條件，因為它就是「剩下的情況」。接一對大括號，裡面印出 `吃便當`。"
+      },
+      "afterText": "亭瑄（心想）：「⋯⋯噗。這個比喻也太好笑了吧。」"
+    }
+  ]
+}

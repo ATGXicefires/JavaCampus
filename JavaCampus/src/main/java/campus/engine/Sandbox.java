@@ -85,7 +85,7 @@ public final class Sandbox implements AutoCloseable {
         for (String line : preamble) {
             for (SnippetEvent ev : js.eval(line)) {
                 if (ev.causeSnippet() == null && (ev.status() != Status.VALID || ev.exception() != null)) {
-                    throw new IllegalStateException("案件設定無法執行：" + line);
+                    throw new IllegalStateException("題目設定無法執行：" + line);
                 }
                 if (ev.snippet() instanceof VarSnippet v) {
                     given.add(v.name());

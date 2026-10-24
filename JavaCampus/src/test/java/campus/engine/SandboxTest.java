@@ -170,7 +170,7 @@ class SandboxTest {
     void rejectsRedeclaringCaseVariable() {
         RunResult r = sandbox.run(List.of("String witness = \"x\";"), "String witness = \"y\";", List.of());
         assertEquals(Outcome.COMPILE_ERROR, r.outcome());
-        assertMentions(r, "案件提供");
+        assertMentions(r, "題目提供");
     }
 
     @Test

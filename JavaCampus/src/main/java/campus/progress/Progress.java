@@ -1,8 +1,11 @@
 package campus.progress;
 
 import campus.fx.Motion;
+import campus.story.Route;
+import campus.story.StoryState;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,28 +24,51 @@ public final class Progress {
         }
     }
 
+    /** 自動播放時，一句話顯示完之後停多久才換下一句。 */
+    public enum AutoDelay {
+        SHORT(0.9), MEDIUM(1.8), LONG(3.0);
+
+        public final double seconds;
+
+        AutoDelay(double seconds) {
+            this.seconds = seconds;
+        }
+    }
+
     /** 舊存檔沒有的欄位會維持這裡的預設值；列舉值讀不懂時 Gson 給 null，所以列舉一律經過預設。 */
     public static final class Settings {
         private double volume = 0.7;
+        private double music = 0.6;
         private double sfx = 1;
-        private double rain = 1;
+        private double ambient = 0.8;
+        private double voice = 0.6;
         private boolean typing = true;
         private boolean fullscreen;
         private double zoom = 1;
         private double codeFont = 17;
         private TextSpeed textSpeed = TextSpeed.NORMAL;
+        private AutoDelay autoDelay = AutoDelay.MEDIUM;
+        private boolean skipAll;
         private Motion.Level motion = Motion.Level.BOUNCY;
 
         public double volume() {
             return volume;
         }
 
+        public double music() {
+            return music;
+        }
+
         public double sfx() {
             return sfx;
         }
 
-        public double rain() {
-            return rain;
+        public double ambient() {
+            return ambient;
+        }
+
+        public double voice() {
+            return voice;
         }
 
         public boolean typing() {
@@ -65,6 +91,15 @@ public final class Progress {
             return textSpeed == null ? TextSpeed.NORMAL : textSpeed;
         }
 
+        public AutoDelay autoDelay() {
+            return autoDelay == null ? AutoDelay.MEDIUM : autoDelay;
+        }
+
+        /** 快進要不要連沒讀過的台詞也跳過。 */
+        public boolean skipAll() {
+            return skipAll;
+        }
+
         public Motion.Level motion() {
             return motion == null ? Motion.Level.BOUNCY : motion;
         }
@@ -73,12 +108,20 @@ public final class Progress {
             volume = v;
         }
 
+        public void setMusic(double v) {
+            music = v;
+        }
+
         public void setSfx(double v) {
             sfx = v;
         }
 
-        public void setRain(double v) {
-            rain = v;
+        public void setAmbient(double v) {
+            ambient = v;
+        }
+
+        public void setVoice(double v) {
+            voice = v;
         }
 
         public void setTyping(boolean on) {
@@ -101,18 +144,30 @@ public final class Progress {
             textSpeed = s;
         }
 
+        public void setAutoDelay(AutoDelay d) {
+            autoDelay = d;
+        }
+
+        public void setSkipAll(boolean on) {
+            skipAll = on;
+        }
+
         public void setMotion(Motion.Level l) {
             motion = l;
         }
     }
 
-    private static final class CaseProgress {
+    private static final class LessonProgress {
         private Set<String> solved = new LinkedHashSet<>();
         private Map<String, Integer> hints = new HashMap<>();
         private Map<String, String> code = new HashMap<>();
     }
 
-    private Map<String, CaseProgress> cases = new HashMap<>();
+    private Route lastRoute;
+    private Map<Route, StoryState> routes = new HashMap<>();
+    private Set<String> read = new HashSet<>();
+    private Set<String> notes = new LinkedHashSet<>();
+    private Map<String, LessonProgress> lessons = new HashMap<>();
     private Settings settings = new Settings();
 
     public Settings settings() {
@@ -122,44 +177,98 @@ public final class Progress {
         return settings;
     }
 
-    public boolean isSolved(String caseId, String stepId) {
-        CaseProgress p = cases.get(caseId);
+    /** 最後玩的視角，標題畫面的「繼續」從這裡接。 */
+    public Route lastRoute() {
+        return lastRoute != null && route(lastRoute) != null ? lastRoute : null;
+    }
+
+    public void setLastRoute(Route r) {
+        lastRoute = r;
+    }
+
+    /** 這個視角還沒開始玩就是 null。 */
+    public StoryState route(Route r) {
+        return routes().get(r);
+    }
+
+    /** 開新的一輪：那個視角的劇情和它的程式題一起清掉，另一個視角、已讀台詞和筆記保留。 */
+    public StoryState startRoute(Route r, Iterable<String> lessonIds) {
+        StoryState s = new StoryState();
+        routes().put(r, s);
+        for (String id : lessonIds) {
+            lessons().remove(id);
+        }
+        return s;
+    }
+
+    public void resetRoute(Route r, Iterable<String> lessonIds) {
+        routes().remove(r);
+        for (String id : lessonIds) {
+            lessons().remove(id);
+        }
+        if (lastRoute == r) {
+            lastRoute = null;
+        }
+    }
+
+    /** 兩個視角共用：共通場景在一邊讀過，另一邊也能快進。 */
+    public Set<String> read() {
+        if (read == null) {
+            read = new HashSet<>();
+        }
+        return read;
+    }
+
+    /** 已解鎖的筆記條目，兩個視角共用。 */
+    public Set<String> notes() {
+        if (notes == null) {
+            notes = new LinkedHashSet<>();
+        }
+        return notes;
+    }
+
+    public boolean isSolved(String lessonId, String stepId) {
+        LessonProgress p = lessons().get(lessonId);
         return p != null && p.solved.contains(stepId);
     }
 
-    public void markSolved(String caseId, String stepId) {
-        of(caseId).solved.add(stepId);
+    public void markSolved(String lessonId, String stepId) {
+        of(lessonId).solved.add(stepId);
     }
 
-    public int hintsRevealed(String caseId, String stepId) {
-        CaseProgress p = cases.get(caseId);
+    public int hintsRevealed(String lessonId, String stepId) {
+        LessonProgress p = lessons().get(lessonId);
         return p == null ? 0 : p.hints.getOrDefault(stepId, 0);
     }
 
-    public void setHintsRevealed(String caseId, String stepId, int n) {
-        of(caseId).hints.put(stepId, n);
+    public void setHintsRevealed(String lessonId, String stepId, int n) {
+        of(lessonId).hints.put(stepId, n);
     }
 
-    public int totalHints(String caseId) {
-        CaseProgress p = cases.get(caseId);
-        return p == null ? 0 : p.hints.values().stream().mapToInt(Integer::intValue).sum();
-    }
-
-    public String code(String caseId, String stepId) {
-        CaseProgress p = cases.get(caseId);
+    public String code(String lessonId, String stepId) {
+        LessonProgress p = lessons().get(lessonId);
         return p == null ? null : p.code.get(stepId);
     }
 
-    public void setCode(String caseId, String stepId, String source) {
-        of(caseId).code.put(stepId, source);
+    public void setCode(String lessonId, String stepId, String source) {
+        of(lessonId).code.put(stepId, source);
     }
 
-    /** 清掉所有案件進度，設定保留。 */
-    public void resetCases() {
-        cases.clear();
+    private LessonProgress of(String lessonId) {
+        return lessons().computeIfAbsent(lessonId, k -> new LessonProgress());
     }
 
-    private CaseProgress of(String caseId) {
-        return cases.computeIfAbsent(caseId, k -> new CaseProgress());
+    private Map<Route, StoryState> routes() {
+        if (routes == null) {
+            routes = new HashMap<>();
+        }
+        return routes;
+    }
+
+    private Map<String, LessonProgress> lessons() {
+        if (lessons == null) {
+            lessons = new HashMap<>();
+        }
+        return lessons;
     }
 }

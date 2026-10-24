@@ -1,13 +1,15 @@
 package campus;
 
-import campus.content.CaseLibrary;
-import campus.content.Chapter;
+import campus.art.Art;
 import campus.engine.Sandbox;
 import campus.fx.Motion;
+import campus.fx.Music;
 import campus.fx.Sfx;
 import campus.fx.Viewport;
+import campus.lesson.LessonLibrary;
 import campus.progress.Progress;
 import campus.progress.SaveStore;
+import campus.story.StoryLibrary;
 import campus.ui.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -32,14 +34,18 @@ public class App extends Application {
     private Sandbox sandbox;
     private ExecutorService runner;
     private Sfx sfx;
+    private Music music;
 
     @Override
     public void start(Stage stage) throws Exception {
         loadFonts(Path.of("fonts"));
-        List<Chapter> chapters = CaseLibrary.load(Path.of("cases"));
+        // 劇本放在專案外層的 story/，讓寫劇本的人繼續在原本的資料夾裡寫
+        StoryLibrary story = StoryLibrary.load(Path.of("..", "story", "scripts"));
+        LessonLibrary lessons = LessonLibrary.load(Path.of("lessons"));
         SaveStore store = new SaveStore(Path.of("save", "progress.json"));
         Progress progress = store.load();
         sfx = Sfx.create();
+        music = Music.create(sfx);
 
         sandbox = new Sandbox(Duration.ofSeconds(3));
         runner = Executors.newSingleThreadExecutor(r -> {
@@ -53,7 +59,8 @@ public class App extends Application {
         StackPane root = new StackPane();
         root.getStyleClass().add("app-root");
         Viewport viewport = new Viewport(root);
-        Game game = new Game(chapters, progress, store, sfx, sandbox, runner, root, stage, viewport);
+        Game game = new Game(story, lessons, new Art(Path.of("art")), progress, store, sfx, music, sandbox, runner,
+                root, stage, viewport);
         Scene scene = new Scene(viewport, 1600, 900);
         scene.getStylesheets().add(App.class.getResource("/campus/theme.css").toExternalForm());
         Motion.installPress(scene);
@@ -64,10 +71,13 @@ public class App extends Application {
             } else if (e.getCode() == KeyCode.ESCAPE) {
                 e.consume();
                 game.onEscape();
+            } else {
+                game.onKey(e);
             }
         });
+        scene.addEventFilter(KeyEvent.KEY_RELEASED, game::onKey);
         stage.setScene(scene);
-        stage.setTitle("Java 偵探社");
+        stage.setTitle("JavaCampus");
         stage.setMinWidth(960);
         stage.setMinHeight(540);
         stage.setMaximized(true);
@@ -75,7 +85,7 @@ public class App extends Application {
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         game.applySettings();
-        game.showCases();
+        game.showTitle();
         stage.show();
     }
 
@@ -89,6 +99,9 @@ public class App extends Application {
         }
         if (sandbox != null) {
             sandbox.close();
+        }
+        if (music != null) {
+            music.close();
         }
         if (sfx != null) {
             sfx.close();

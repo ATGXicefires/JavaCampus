@@ -1,14 +1,21 @@
 package campus.ui;
 
-import campus.content.CaseDef;
-import campus.content.Chapter;
+import campus.art.Art;
 import campus.engine.Sandbox;
 import campus.engine.Verifier;
 import campus.fx.Motion;
+import campus.fx.Music;
 import campus.fx.Sfx;
 import campus.fx.Viewport;
+import campus.lesson.Lesson;
+import campus.lesson.LessonLibrary;
 import campus.progress.Progress;
 import campus.progress.SaveStore;
+import campus.story.Chapter;
+import campus.story.Op;
+import campus.story.Route;
+import campus.story.StoryLibrary;
+import campus.story.StoryState;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
@@ -17,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -27,7 +35,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -35,9 +42,17 @@ import java.util.function.Consumer;
 /** 各畫面共用的服務與畫面切換。 */
 public final class Game {
 
-    final List<Chapter> chapters;
+    /** 想自己處理按鍵的畫面（劇情、選視角）實作這個介面；Esc 和 F11 由 {@link Game} 統一處理。 */
+    interface KeyAware {
+        void onKey(KeyEvent e);
+    }
+
+    final StoryLibrary story;
+    final LessonLibrary lessons;
+    final Art art;
     final Progress progress;
     final Sfx sfx;
+    final Music music;
     final Sandbox sandbox;
     final Verifier verifier;
     private final SaveStore store;
@@ -45,15 +60,19 @@ public final class Game {
     private final StackPane root;
     private final Stage stage;
     private final Viewport viewport;
+    private Node current;
     private Overlay overlay;
     private String codeFontSheet;
 
-    public Game(List<Chapter> chapters, Progress progress, SaveStore store, Sfx sfx, Sandbox sandbox,
-                ExecutorService runner, StackPane root, Stage stage, Viewport viewport) {
-        this.chapters = chapters;
+    public Game(StoryLibrary story, LessonLibrary lessons, Art art, Progress progress, SaveStore store, Sfx sfx,
+                Music music, Sandbox sandbox, ExecutorService runner, StackPane root, Stage stage, Viewport viewport) {
+        this.story = story;
+        this.lessons = lessons;
+        this.art = art;
         this.progress = progress;
         this.store = store;
         this.sfx = sfx;
+        this.music = music;
         this.sandbox = sandbox;
         this.verifier = new Verifier(sandbox);
         this.runner = runner;
@@ -80,8 +99,9 @@ public final class Game {
         if (stage.isFullScreen() != s.fullscreen()) {
             stage.setFullScreen(s.fullscreen());
         }
-        sfx.setVolumes(s.volume(), s.sfx(), s.rain());
+        sfx.setVolumes(s.volume(), s.sfx(), s.ambient(), s.voice());
         sfx.setTyping(s.typing());
+        music.setVolume(s.volume() * s.music());
         Motion.setLevel(s.motion());
         setCodeFont(s.codeFont());
     }
@@ -99,7 +119,8 @@ public final class Game {
     }
 
     void openSettings() {
-        openOverlay(new SettingsView(this));
+        boolean inGame = current instanceof StoryView || current instanceof LessonView;
+        openOverlay(new SettingsView(this, inGame), null);
     }
 
     Button settingsButton() {
@@ -107,12 +128,6 @@ public final class Game {
         b.getStyleClass().add("btn-ghost");
         b.setOnAction(e -> openSettings());
         return b;
-    }
-
-    void resetProgress() {
-        progress.resetCases();
-        save();
-        showCases();
     }
 
     /** Tooltip 是獨立的小視窗，不會被 {@link Viewport} 縮放，字級要自己跟著倍率走。 */
@@ -123,26 +138,115 @@ public final class Game {
         return tip;
     }
 
-    public void showCases() {
-        swapTo(new CaseSelectView(this));
+    public void showTitle() {
+        sfx.setAmbience(List.of());
+        music.play(Music.Track.TITLE);
+        swapTo(new TitleView(this));
     }
 
-    void showBriefing(CaseDef c) {
-        swapTo(new BriefingView(this, c));
+    void showRouteSelect() {
+        swapTo(new RouteSelectView(this));
     }
 
-    void showWorkspace(CaseDef c) {
-        swapTo(new WorkspaceView(this, c));
+    void showChapterSelect() {
+        swapTo(new ChapterSelectView(this));
     }
 
-    void showVerdict(CaseDef c) {
-        swapTo(new VerdictView(this, c));
+    /** 這個視角的程式題 id，重設或重新開始那個視角時一起清掉。 */
+    List<String> lessonIds(Route r) {
+        return lessons.lessons().values().stream().filter(l -> l.route().equals(r.label)).map(Lesson::id).toList();
+    }
+
+    void newGame(Route r) {
+        StoryState s = progress.startRoute(r, lessonIds(r));
+        s.begin(story.chapters().getFirst(), r, false);
+        progress.setLastRoute(r);
+        save();
+        showStory(r);
+    }
+
+    void continueGame() {
+        Route r = progress.lastRoute();
+        if (r != null) {
+            showStory(r);
+        }
+    }
+
+    void replayChapter(Route r, Chapter ch) {
+        StoryState s = progress.route(r);
+        s.begin(ch, r, true);
+        progress.setLastRoute(r);
+        save();
+        showStory(r);
+    }
+
+    void showStory(Route r) {
+        StoryState s = progress.route(r);
+        Chapter ch = story.chapter(s.chapter());
+        if (s.atChapterEnd()) {
+            showChapterEnd(r);
+            return;
+        }
+        swapTo(new StoryView(this, r, ch, s));
+    }
+
+    /** 從劇情進入程式題；按「繼續」時回到同一個劇情畫面，再接著播下一行。 */
+    void showLesson(String lessonId, StoryView back, Runnable next) {
+        swapTo(new LessonView(this, lessons.lesson(lessonId), () -> {
+            swapTo(back);
+            back.resumeAfterLesson();
+            next.run();
+        }));
+    }
+
+    void showChapterEnd(Route r) {
+        StoryState s = progress.route(r);
+        Chapter ch = story.chapter(s.chapter());
+        sfx.setAmbience(List.of());
+        swapTo(new ChapterEndView(this, ch, chapterNote(s, ch), previousProgress(ch), () -> {
+            Chapter next = story.next(ch);
+            if (next == null) {
+                showTitle();
+                return;
+            }
+            s.begin(next, r, false);
+            save();
+            showStory(r);
+        }));
+    }
+
+    /** 章末畫面的筆記本文字就寫在存檔位置那一行的 {@code @章末} 指令裡。 */
+    private static String chapterNote(StoryState s, Chapter ch) {
+        StoryState.Pos at = s.at();
+        return ch.file(at.file()).scene(at.scene())
+                .map(scene -> at.index() < scene.ops().size() ? scene.ops().get(at.index()) : null)
+                .filter(op -> op instanceof Op.Cmd c && c.name().equals("章末"))
+                .map(op -> ((Op.Cmd) op).arg(0))
+                .orElse("");
+    }
+
+    private int previousProgress(Chapter ch) {
+        int i = story.chapters().indexOf(ch);
+        return i > 0 ? story.chapters().get(i - 1).progress() : 0;
+    }
+
+    void resetRoute(Route r) {
+        progress.resetRoute(r, lessonIds(r));
+        save();
+        showTitle();
     }
 
     private void swapTo(Node view) {
         // swap 會把最上層當成舊畫面淡出，疊在上面的面板要先收掉
         closeOverlay();
+        current = view;
         Motion.swap(root, view);
+    }
+
+    public void onKey(KeyEvent e) {
+        if (overlay == null && current instanceof KeyAware k) {
+            k.onKey(e);
+        }
     }
 
     public void onEscape() {
@@ -151,9 +255,15 @@ public final class Game {
         }
     }
 
-    void openOverlay(Node panel) {
+    /** @param onClosed 面板關掉之後要做的事，例如文件看完才讓劇情往下走；沒有就傳 null */
+    void openOverlay(Node panel, Runnable onClosed) {
         closeOverlay();
-        overlay = Overlay.show(root, panel, () -> overlay = null);
+        overlay = Overlay.show(root, panel, () -> {
+            overlay = null;
+            if (onClosed != null) {
+                onClosed.run();
+            }
+        });
     }
 
     boolean closeOverlay() {
@@ -182,7 +292,7 @@ public final class Game {
         panel.getStyleClass().add("overlay-panel");
         panel.setPrefWidth(440);
         panel.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        openOverlay(panel);
+        openOverlay(panel, null);
         cancel.requestFocus();
     }
 
@@ -192,31 +302,6 @@ public final class Game {
         } catch (RuntimeException e) {
             alert("存檔失敗", e.getMessage());
         }
-    }
-
-    boolean isClosed(CaseDef c) {
-        return c.steps().stream().allMatch(s -> progress.isSolved(c.id(), s.id()));
-    }
-
-    /** 案件依序解鎖：上一案結案後才能打開下一案。 */
-    boolean isUnlocked(CaseDef c) {
-        List<CaseDef> all = allCases();
-        int i = all.indexOf(c);
-        return i <= 0 || isClosed(all.get(i - 1));
-    }
-
-    Optional<CaseDef> nextCase(CaseDef c) {
-        List<CaseDef> all = allCases();
-        int i = all.indexOf(c);
-        return i >= 0 && i + 1 < all.size() ? Optional.of(all.get(i + 1)) : Optional.empty();
-    }
-
-    int caseNumber(CaseDef c) {
-        return chapterOf(c).cases().indexOf(c) + 1;
-    }
-
-    Chapter chapterOf(CaseDef c) {
-        return chapters.stream().filter(ch -> ch.cases().contains(c)).findFirst().orElseThrow();
     }
 
     /** 在沙盒專用的背景執行緒上做事，完成後回到 FX 執行緒。 */
@@ -237,8 +322,8 @@ public final class Game {
         });
     }
 
-    private List<CaseDef> allCases() {
-        return chapters.stream().flatMap(ch -> ch.cases().stream()).toList();
+    void exit() {
+        Platform.exit();
     }
 
     private static void alert(String title, String message) {

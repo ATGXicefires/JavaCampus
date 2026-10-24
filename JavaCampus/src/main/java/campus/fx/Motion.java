@@ -13,12 +13,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
+
+import java.util.function.IntConsumer;
 
 /** 共用的動畫效果。強度由玩家設定：Q 彈、一般、關閉。 */
 public final class Motion {
@@ -111,14 +112,24 @@ public final class Motion {
      * @return 呼叫 {@code jumpTo("end")} 可以直接顯示全文
      */
     public static Animation typewriter(Label target, String text, Duration perChar, Runnable onChar, Runnable onDone) {
+        return typewriter(target, text, perChar, n -> {
+            if (onChar != null && n % 2 == 1) {
+                onChar.run();
+            }
+        }, onDone);
+    }
+
+    /** 同上，{@code onChar} 拿到的是第幾個非空白字元（從 1 起算），讓呼叫的人自己決定隔幾個字出聲。 */
+    public static Animation typewriter(Label target, String text, Duration perChar, IntConsumer onChar, Runnable onDone) {
         target.setText("");
         Timeline tl = new Timeline();
+        int[] visible = {0};
         for (int i = 1; i <= text.length(); i++) {
             int n = i;
             tl.getKeyFrames().add(new KeyFrame(perChar.multiply(i), e -> {
                 target.setText(text.substring(0, n));
-                if (onChar != null && !Character.isWhitespace(text.charAt(n - 1)) && n % 2 == 1) {
-                    onChar.run();
+                if (!Character.isWhitespace(text.charAt(n - 1))) {
+                    onChar.accept(++visible[0]);
                 }
             }));
         }
@@ -132,41 +143,6 @@ public final class Motion {
         return tl;
     }
 
-    /** 印章從畫面外重重落下，落定時呼叫 {@code onImpact}、震動 {@code shakeTarget}，印章本身壓扁再彈回。 */
-    public static void stamp(Node stamp, Node shakeTarget, Runnable onImpact) {
-        if (off()) {
-            stamp.setOpacity(1);
-            stamp.setRotate(-12);
-            if (onImpact != null) {
-                onImpact.run();
-            }
-            return;
-        }
-        stamp.setOpacity(0);
-        stamp.setScaleX(3);
-        stamp.setScaleY(3);
-        stamp.setRotate(-30);
-        Timeline drop = new Timeline(new KeyFrame(Duration.millis(230),
-                new KeyValue(stamp.opacityProperty(), 1, Interpolator.EASE_IN),
-                new KeyValue(stamp.scaleXProperty(), 1, Interpolator.EASE_IN),
-                new KeyValue(stamp.scaleYProperty(), 1, Interpolator.EASE_IN),
-                new KeyValue(stamp.rotateProperty(), -12, Interpolator.EASE_IN)));
-        drop.setOnFinished(e -> {
-            if (onImpact != null) {
-                onImpact.run();
-            }
-            shake(shakeTarget, 9);
-            if (level == Level.BOUNCY) {
-                stamp.setScaleX(1.15);
-                stamp.setScaleY(0.85);
-                new Timeline(new KeyFrame(Duration.millis(520),
-                        new KeyValue(stamp.scaleXProperty(), 1, SPRING),
-                        new KeyValue(stamp.scaleYProperty(), 1, SPRING))).play();
-            }
-        });
-        drop.play();
-    }
-
     public static void shake(Node node, double amplitude) {
         if (off()) {
             return;
@@ -178,23 +154,6 @@ public final class Motion {
                     new KeyValue(node.translateXProperty(), offsets[i] * amplitude)));
         }
         tl.play();
-    }
-
-    /** 新證物翻面進場，翻過頭一點再彈回，並短暫發光。 */
-    public static void flipIn(Node node) {
-        if (off()) {
-            return;
-        }
-        node.setScaleX(0.02);
-        DropShadow glow = new DropShadow(28, Color.web("#e0a84a"));
-        glow.setSpread(0.25);
-        node.setEffect(glow);
-        Timeline flip = new Timeline(new KeyFrame(springTime(620, 380),
-                new KeyValue(node.scaleXProperty(), 1, spring())));
-        Timeline fade = new Timeline(new KeyFrame(Duration.millis(1400), new KeyValue(glow.radiusProperty(), 0)));
-        fade.setOnFinished(e -> node.setEffect(null));
-        flip.play();
-        fade.play();
     }
 
     /** 每隔一下彈一次的提醒效果，停止時呼叫回傳值的 {@code stop()}。 */
@@ -222,26 +181,132 @@ public final class Motion {
         return tl;
     }
 
-    /** 畫面中央衝進一條橫幅，停一下後往右滑走。 */
-    public static void banner(StackPane host, String text, String styleClass) {
-        Label strip = new Label(text);
-        strip.getStyleClass().addAll("banner", styleClass);
-        strip.setMouseTransparent(true);
-        host.getChildren().add(strip);
+    /** 角色登場：從下方彈上來。 */
+    public static void enter(Node node) {
         if (off()) {
-            PauseTransition hold = new PauseTransition(Duration.millis(900));
-            hold.setOnFinished(e -> host.getChildren().remove(strip));
-            hold.play();
+            node.setOpacity(1);
             return;
         }
-        double w = host.getWidth();
-        strip.setTranslateX(-w);
-        Timeline in = new Timeline(new KeyFrame(springTime(440, 260), new KeyValue(strip.translateXProperty(), 0, back())));
-        PauseTransition hold = new PauseTransition(Duration.millis(700));
-        Timeline out = new Timeline(new KeyFrame(Duration.millis(260), new KeyValue(strip.translateXProperty(), w, Interpolator.EASE_IN)));
-        SequentialTransition seq = new SequentialTransition(in, hold, out);
-        seq.setOnFinished(e -> host.getChildren().remove(strip));
-        seq.play();
+        node.setOpacity(0);
+        node.setTranslateY(level == Level.BOUNCY ? 60 : 20);
+        new Timeline(
+                new KeyFrame(Duration.millis(220), new KeyValue(node.opacityProperty(), 1)),
+                new KeyFrame(springTime(620, 280), new KeyValue(node.translateYProperty(), 0, spring()))).play();
+    }
+
+    /** 角色退場：往下沉並淡出，結束時呼叫 {@code onDone}。 */
+    public static void exit(Node node, Runnable onDone) {
+        if (off()) {
+            onDone.run();
+            return;
+        }
+        Timeline tl = new Timeline(new KeyFrame(Duration.millis(240),
+                new KeyValue(node.opacityProperty(), 0, Interpolator.EASE_IN),
+                new KeyValue(node.translateYProperty(), 30, Interpolator.EASE_IN)));
+        tl.setOnFinished(e -> onDone.run());
+        tl.play();
+    }
+
+    /** 換位置：節點已經排到新位置，先往回偏移 {@code fromX}，再彈回 0，看起來就是滑過去的。 */
+    public static void slideFrom(Node node, double fromX) {
+        if (off()) {
+            node.setTranslateX(0);
+            return;
+        }
+        node.setTranslateX(fromX);
+        new Timeline(new KeyFrame(springTime(560, 260), new KeyValue(node.translateXProperty(), 0, spring()))).play();
+    }
+
+    /** 說話時輕輕跳一下。 */
+    public static void bob(Node node) {
+        if (off()) {
+            return;
+        }
+        double h = level == Level.BOUNCY ? -8 : -4;
+        new Timeline(
+                new KeyFrame(Duration.millis(90), new KeyValue(node.translateYProperty(), h, Interpolator.EASE_OUT)),
+                new KeyFrame(springTime(420, 200), new KeyValue(node.translateYProperty(), 0, spring()))).play();
+    }
+
+    /** 畫面白光一閃。一般模式比較暗，關閉時不閃。 */
+    public static void flash(Node white) {
+        if (off()) {
+            return;
+        }
+        white.setOpacity(level == Level.BOUNCY ? 0.85 : 0.45);
+        new Timeline(new KeyFrame(Duration.millis(level == Level.BOUNCY ? 420 : 260),
+                new KeyValue(white.opacityProperty(), 0, Interpolator.EASE_OUT))).play();
+    }
+
+    /** 心跳：畫面邊緣的暈影脈動兩下（一般模式一下）。 */
+    public static void heartbeat(Node vignette) {
+        if (off()) {
+            return;
+        }
+        Timeline tl = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(vignette.opacityProperty(), 0)),
+                new KeyFrame(Duration.millis(120), new KeyValue(vignette.opacityProperty(), 0.9, Interpolator.EASE_OUT)),
+                new KeyFrame(Duration.millis(320), new KeyValue(vignette.opacityProperty(), 0.25, Interpolator.EASE_IN)));
+        if (level == Level.BOUNCY) {
+            tl.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(420), new KeyValue(vignette.opacityProperty(), 0.75, Interpolator.EASE_OUT)),
+                    new KeyFrame(Duration.millis(1100), new KeyValue(vignette.opacityProperty(), 0, Interpolator.EASE_IN)));
+        } else {
+            tl.getKeyFrames().add(new KeyFrame(Duration.millis(700), new KeyValue(vignette.opacityProperty(), 0)));
+        }
+        tl.play();
+    }
+
+    /** 小圖示彈出後往上飄走，結束時呼叫 {@code onDone}（用來移除節點）。 */
+    public static void floatAway(Node node, Runnable onDone) {
+        Duration life = Duration.millis(off() ? 500 : 1300);
+        Timeline tl = new Timeline();
+        if (!off()) {
+            node.setScaleX(0.2);
+            node.setScaleY(0.2);
+            tl.getKeyFrames().addAll(
+                    new KeyFrame(springTime(420, 200),
+                            new KeyValue(node.scaleXProperty(), 1, spring()),
+                            new KeyValue(node.scaleYProperty(), 1, spring())),
+                    new KeyFrame(life, new KeyValue(node.translateYProperty(), -90, Interpolator.EASE_IN)));
+        }
+        tl.getKeyFrames().addAll(
+                new KeyFrame(life.multiply(0.6), new KeyValue(node.opacityProperty(), 1)),
+                new KeyFrame(life, new KeyValue(node.opacityProperty(), 0)));
+        tl.setOnFinished(e -> onDone.run());
+        tl.play();
+    }
+
+    /** 淡入或淡出到 {@code to}；動效關閉時直接設定。 */
+    public static void fade(Node node, double to, double ms, Runnable onDone) {
+        if (off() || ms <= 0) {
+            node.setOpacity(to);
+            if (onDone != null) {
+                onDone.run();
+            }
+            return;
+        }
+        FadeTransition f = new FadeTransition(Duration.millis(ms), node);
+        f.setToValue(to);
+        if (onDone != null) {
+            f.setOnFinished(e -> onDone.run());
+        }
+        f.play();
+    }
+
+    /** 進度條之類的寬度從目前長到 {@code width}。 */
+    public static void grow(Region bar, double width, Duration delay) {
+        if (off()) {
+            bar.setPrefWidth(width);
+            return;
+        }
+        Timeline tl = new Timeline(new KeyFrame(springTime(1200, 700), new KeyValue(bar.prefWidthProperty(), width, spring())));
+        tl.setDelay(delay);
+        tl.play();
+    }
+
+    public static boolean isOff() {
+        return off();
     }
 
     /** 延遲 {@code delay} 後淡入並從下方彈上來，最後回到呼叫前的透明度。 */

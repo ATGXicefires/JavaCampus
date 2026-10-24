@@ -1,8 +1,8 @@
 package campus.engine;
 
-import campus.content.Check;
-import campus.content.SetupVar;
-import campus.content.Step;
+import campus.lesson.Check;
+import campus.lesson.SetupVar;
+import campus.lesson.Step;
 import campus.engine.RunResult.Outcome;
 import campus.engine.RunResult.Probe;
 

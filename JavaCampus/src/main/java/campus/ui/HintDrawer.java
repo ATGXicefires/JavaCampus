@@ -1,7 +1,7 @@
 package campus.ui;
 
-import campus.content.CaseDef;
-import campus.content.Step;
+import campus.lesson.Lesson;
+import campus.lesson.Step;
 import campus.fx.Motion;
 import campus.fx.Sfx;
 import javafx.geometry.Pos;
@@ -14,7 +14,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-/** 四層提示：線索 → 白話 → 骨架 → 答案。前一層看過才能打開下一層。 */
+/** 四層提示：提點 → 白話 → 骨架 → 答案。前一層看過才能打開下一層。 */
 final class HintDrawer extends VBox {
 
     static final int TIERS = 4;
@@ -23,7 +23,7 @@ final class HintDrawer extends VBox {
     private final Game game;
     private final Runnable onReveal;
     private final VBox tiers = new VBox(12);
-    private CaseDef caseDef;
+    private Lesson lesson;
     private Step step;
     private boolean open;
 
@@ -49,8 +49,8 @@ final class HintDrawer extends VBox {
         getChildren().addAll(header, scroll);
     }
 
-    void bind(CaseDef c, Step s) {
-        caseDef = c;
+    void bind(Lesson l, Step s) {
+        lesson = l;
         step = s;
         rebuild(-1);
     }
@@ -67,8 +67,8 @@ final class HintDrawer extends VBox {
         if (step == null) {
             return;
         }
-        int revealed = game.progress.hintsRevealed(caseDef.id(), step.id());
-        String[] names = {"線索", "白話", "骨架", "答案"};
+        int revealed = game.progress.hintsRevealed(lesson.id(), step.id());
+        String[] names = {"提點", "白話", "骨架", "答案"};
         for (int i = 0; i < TIERS; i++) {
             Label chip = new Label(names[i]);
             chip.getStyleClass().add("hint-chip");
@@ -115,7 +115,7 @@ final class HintDrawer extends VBox {
     }
 
     private void reveal(int tier) {
-        game.progress.setHintsRevealed(caseDef.id(), step.id(), tier + 1);
+        game.progress.setHintsRevealed(lesson.id(), step.id(), tier + 1);
         game.save();
         game.sfx.play(Sfx.Sound.PAPER);
         rebuild(tier);

@@ -141,7 +141,7 @@ final class Diagnostics {
 
     static String alreadyDefined(String name, boolean givenByCase) {
         if (givenByCase) {
-            return "`" + name + "` 是案件提供的資料，已經宣告好了。直接使用它就好，前面不用再寫型別。";
+            return "`" + name + "` 是題目提供的資料，已經宣告好了。直接使用它就好，前面不用再寫型別。";
         }
         return "變數 `" + name + "` 已經宣告過了，不能再宣告一次。要改它的值，直接寫 `" + name + " = …;`。";
     }

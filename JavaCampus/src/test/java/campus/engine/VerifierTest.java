@@ -1,7 +1,7 @@
 package campus.engine;
 
-import campus.content.Check;
-import campus.content.SetupVar;
+import campus.lesson.Check;
+import campus.lesson.SetupVar;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-import static campus.content.Step.Form.PROGRAM;
-import static campus.content.Step.Form.SNIPPET;
+import static campus.lesson.Step.Form.PROGRAM;
+import static campus.lesson.Step.Form.SNIPPET;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

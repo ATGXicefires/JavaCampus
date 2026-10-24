@@ -1,0 +1,39 @@
+{
+  "id": "ch01-s3",
+  "title": "她照抄的程式",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["fullwidth", "read-errors"],
+  "vars": [
+    { "name": "hasLuRouFan", "type": "boolean", "value": "true" }
+  ],
+  "steps": [
+    {
+      "id": "lunch",
+      "title": "一直紅字",
+      "instructions": "亭瑄：「我照你的 PDF 打了，可是一直紅字。」\n\n從最上面的紅字開始，照它說的修，修一個就執行一次。修到能跑、印出 `吃滷肉飯`；`hasLuRouFan` 是 `false` 時要印 `吃便當`。",
+      "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"吃滷肉飯\");\n} else {\n    System.out.println(\"吃便當\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "hasLuRouFan": "false" } ]
+      },
+      "hints": {
+        "lead": "`illegal character: '\\uff1b'`、`'\\u300c'`，修完還有 `';' expected` 和 `package system does not exist`⋯⋯",
+        "plain": "⋯⋯白話：中文輸入法打的 `；` 和 `「」` 電腦看不懂，要換成半形的 `;` 和 `\"`。`system` 的 s 要大寫。每一句最後都要有分號。"
+      },
+      "afterText": "亭瑄：「所以它一直紅，是因為我用中文打引號？」"
+    },
+    {
+      "id": "laptop",
+      "title": "小白不見了",
+      "instructions": "亭瑄：「這個也是照抄的，可是小白一直印不出來。」\n\n一樣照紅字修，修到印出 `小白`。",
+      "expectedShape": "String laptop = \"小白\";\nSystem.out.println(laptop);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先是 `';' expected`，再來是 `cannot find symbol: variable Laptop`。識別字區分大小寫⋯⋯",
+        "plain": "⋯⋯白話：第一行最後少了分號。第二行的 `Laptop` 和盒子的名字 `laptop` 差一個大寫，對電腦來說是兩個不同的盒子。"
+      },
+      "afterText": "亭瑄：「小白出來了！⋯⋯原來大小寫也算錯喔。」"
+    }
+  ]
+}

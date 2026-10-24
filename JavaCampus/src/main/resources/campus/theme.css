@@ -1,76 +1,72 @@
 .root {
-    c-bg: #14161b;
-    c-panel: #1b1e25;
-    c-panel-2: #232731;
-    c-line: #2e333e;
-    c-text: #d9dde3;
-    c-muted: #8a93a0;
-    c-amber: #e0a84a;
-    c-amber-dim: #8a6a33;
-    c-red: #d0473a;
-    c-green: #6fbf73;
-    c-paper: #efe6d2;
-    c-ink: #2b2a28;
+    c-bg: #f6efe4;
+    c-panel: #fffaf2;
+    c-panel-2: #f1e7d8;
+    c-line: #e2d6c6;
+    c-ink: #3a3330;
+    c-muted: #8a7f78;
+    c-accent: #f29e4c;
+    c-accent-dark: #c9772f;
+    c-ok: #5aa469;
+    c-error: #d9534f;
+    c-code-bg: #1f2228;
+    c-console: #17191e;
+    c-night: #0c0b10;
     -fx-font-family: "Source Han Sans TC";
     -fx-font-size: 14px;
-    -fx-base: #232731;
-    -fx-accent: #e0a84a;
-    -fx-focus-color: #e0a84a;
+    -fx-base: #f1e7d8;
+    -fx-accent: #f29e4c;
+    -fx-focus-color: #f29e4c;
     -fx-faint-focus-color: transparent;
-    -fx-text-fill: c-text;
+    -fx-text-fill: c-ink;
 }
 
 .app-root {
-    -fx-background-color: radial-gradient(center 50% 25%, radius 85%, #262a33, #111317);
+    -fx-background-color: c-bg;
 }
 
 .label {
-    -fx-text-fill: c-text;
+    -fx-text-fill: c-ink;
 }
 
 .muted {
     -fx-text-fill: c-muted;
 }
 
-.button, .menu-button {
+/* 全部直角：連系統控制項的圓角也一起拿掉 */
+.button, .toggle-button, .text-field, .tooltip, .check-box > .box,
+.slider > .thumb, .slider > .track,
+.scroll-bar > .thumb, .scroll-bar > .track,
+.scroll-bar > .increment-button, .scroll-bar > .decrement-button,
+.tab-pane > .tab-header-area > .headers-region > .tab,
+.context-menu, .menu-item {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.button, .toggle-button {
     -fx-background-color: c-panel-2;
-    -fx-text-fill: c-text;
+    -fx-text-fill: c-ink;
     -fx-padding: 7 14;
     -fx-cursor: hand;
 }
 
-.button:hover, .menu-button:hover {
-    -fx-background-color: #2c313d;
+.button:hover, .toggle-button:hover {
+    -fx-background-color: #eadcc7;
 }
 
-.button:disabled {
-    -fx-opacity: 0.45;
+.button:disabled, .toggle-button:disabled {
+    -fx-opacity: 0.4;
 }
 
 .btn-primary {
-    -fx-background-color: c-amber;
-    -fx-text-fill: #1a1408;
+    -fx-background-color: c-accent;
+    -fx-text-fill: #2b1a08;
     -fx-font-weight: bold;
 }
 
 .btn-primary:hover {
-    -fx-background-color: #ebb85e;
-}
-
-.btn-verify {
-    -fx-background-color: #2f5236;
-    -fx-text-fill: #e6f4e6;
-    -fx-font-weight: bold;
-}
-
-.btn-verify:hover {
-    -fx-background-color: #3a6443;
-}
-
-.btn-verify.ready {
-    -fx-background-color: c-green;
-    -fx-text-fill: #0e1a0f;
-    -fx-effect: dropshadow(gaussian, rgba(111, 191, 115, 0.7), 16, 0.3, 0, 0);
+    -fx-background-color: #f5ae67;
 }
 
 .btn-ghost {
@@ -82,149 +78,535 @@
     -fx-background-color: c-panel-2;
 }
 
-.context-menu, .menu-item {
-    -fx-background-color: c-panel-2;
+.btn-danger {
+    -fx-background-color: transparent;
+    -fx-border-color: c-error;
+    -fx-text-fill: c-error;
 }
 
-.menu-item .label, .check-menu-item .label {
-    -fx-text-fill: c-text;
+.btn-danger:hover {
+    -fx-background-color: #fbe5e2;
 }
 
-.title-big {
-    -fx-font-size: 44px;
-    -fx-font-weight: bold;
-    -fx-text-fill: c-amber;
-}
-
-.chapter-title {
-    -fx-font-size: 22px;
+.btn-verify {
+    -fx-background-color: #d9ead9;
+    -fx-text-fill: #24502c;
     -fx-font-weight: bold;
 }
 
-.case-card {
+.btn-verify:hover {
+    -fx-background-color: #c8e1c8;
+}
+
+.btn-verify.ready {
+    -fx-background-color: c-ok;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(90, 164, 105, 0.7), 16, 0.3, 0, 0);
+}
+
+.btn-continue {
+    -fx-background-color: c-accent;
+    -fx-text-fill: #2b1a08;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-padding: 8 22;
+    -fx-effect: dropshadow(gaussian, rgba(242, 158, 76, 0.7), 18, 0.3, 0, 0);
+}
+
+.scroll-pane, .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.separator .line {
+    -fx-border-color: c-line;
+}
+
+.hyperlink {
+    -fx-text-fill: c-muted;
+    -fx-padding: 0;
+}
+
+.overlay {
+    -fx-background-color: rgba(20, 16, 14, 0.55);
+}
+
+.overlay-panel {
     -fx-background-color: c-panel;
     -fx-border-color: c-line;
-    -fx-padding: 22;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 16, 0.1, 0, 6);
+    -fx-padding: 24 28;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 30, 0.2, 0, 8);
 }
 
-.case-card:hover {
-    -fx-border-color: c-amber;
-}
-
-.case-card.locked {
-    -fx-cursor: default;
-}
-
-.case-card.locked:hover {
-    -fx-border-color: c-line;
-}
-
-.case-num {
-    -fx-text-fill: c-amber;
+/* 設定 */
+.settings-group {
+    -fx-text-fill: c-accent-dark;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
 
-.case-title {
+.segment {
+    -fx-background-color: c-panel-2;
+    -fx-text-fill: c-ink;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+}
+
+.segment:hover {
+    -fx-background-color: #eadcc7;
+}
+
+.segment:selected {
+    -fx-background-color: c-accent;
+    -fx-text-fill: #2b1a08;
+    -fx-font-weight: bold;
+}
+
+.settings-value {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-text-fill: c-muted;
+    -fx-min-width: 30;
+}
+
+.slider .track {
+    -fx-background-color: c-line;
+}
+
+.slider .thumb {
+    -fx-background-color: c-accent;
+}
+
+/* 標題 */
+.title-shade {
+    -fx-background-color: linear-gradient(to right, rgba(20, 14, 18, 0.72) 0%, rgba(20, 14, 18, 0.35) 45%, transparent 75%);
+}
+
+.title-big {
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff3e3;
+    -fx-effect: dropshadow(gaussian, rgba(242, 158, 76, 0.9), 26, 0.35, 0, 0);
+}
+
+.title-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #fff3e3;
+    -fx-font-size: 22px;
+    -fx-padding: 6 0;
+    -fx-border-color: transparent transparent transparent transparent;
+}
+
+.title-item:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffd2a1;
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 6 0 6 14;
+}
+
+/* 選視角 */
+.route-half {
+    -fx-cursor: hand;
+}
+
+.route-senpai {
+    -fx-background-color: linear-gradient(to bottom, #1b2333, #2c3a55);
+}
+
+.route-kouhai {
+    -fx-background-color: linear-gradient(to bottom, #3a1f2a, #5a2f3c);
+}
+
+.route-name {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 12, 0.2, 0, 2);
+}
+
+/* 章節選擇 */
+.chapter-select {
+    -fx-background-color: linear-gradient(to bottom, #f6efe4, #ecdcc6);
+}
+
+.chapter-row {
+    -fx-background-color: c-panel;
+    -fx-border-color: c-line;
+    -fx-padding: 16 24;
+    -fx-cursor: hand;
+}
+
+.chapter-row:hover {
+    -fx-border-color: c-accent;
+}
+
+.chapter-row.locked {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}
+
+.chapter-number {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 26px;
+    -fx-text-fill: c-accent-dark;
+}
+
+.chapter-name {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
 
-.case-summary {
+/* 章末 */
+.chapter-end {
+    -fx-background-color: radial-gradient(center 50% 40%, radius 80%, #3b3046, #1a161f);
+}
+
+.notebook {
+    -fx-background-color: linear-gradient(to bottom, #fdf8ec, #f3ead6);
+    -fx-padding: 44 48;
+    -fx-border-color: transparent transparent transparent #e58d8d;
+    -fx-border-width: 0 0 0 3;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 30, 0.2, 0, 10);
+}
+
+.notebook-text {
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-font-size: 32px;
+    -fx-text-fill: #2e3a59;
+}
+
+.progress-track {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+.progress-fill {
+    -fx-background-color: c-accent;
+    -fx-effect: dropshadow(gaussian, rgba(242, 158, 76, 0.8), 14, 0.3, 0, 0);
+}
+
+.progress-label {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 18px;
+    -fx-text-fill: #ffd2a1;
+}
+
+/* 劇情 */
+.story {
+    -fx-background-color: c-night;
+}
+
+.dialog-box {
+    -fx-background-color: rgba(255, 250, 242, 0.94);
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 30 36 26 36;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 24, 0.15, 0, 6);
+}
+
+.name-plate {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 18;
+}
+
+.dialog-action {
     -fx-text-fill: c-muted;
+    -fx-font-size: 15px;
+}
+
+.dialog-text {
+    -fx-font-size: 23px;
+    -fx-line-spacing: 6;
+}
+
+.dialog-box.os .dialog-text {
+    -fx-font-style: italic;
+    -fx-text-fill: #6f6560;
+}
+
+.dialog-box.narration .dialog-text {
+    -fx-text-fill: #4d4541;
+}
+
+.dialog-box.direction .dialog-text {
+    -fx-text-fill: c-muted;
+    -fx-font-size: 20px;
+}
+
+.choice {
+    -fx-background-color: rgba(255, 250, 242, 0.96);
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 5;
+    -fx-font-size: 21px;
+    -fx-padding: 16 26;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 18, 0.15, 0, 4);
+}
+
+.choice:hover {
+    -fx-background-color: #fff1e0;
+    -fx-border-color: transparent transparent transparent #ff8e5a;
+}
+
+.quick {
+    -fx-background-color: rgba(12, 11, 16, 0.55);
+    -fx-text-fill: #f6efe4;
+    -fx-padding: 6 14;
+}
+
+.quick:hover {
+    -fx-background-color: rgba(12, 11, 16, 0.75);
+}
+
+.quick:selected {
+    -fx-background-color: c-accent;
+    -fx-text-fill: #2b1a08;
+}
+
+.call-bar {
+    -fx-background-color: rgba(12, 11, 16, 0.75);
+    -fx-padding: 10 22;
+    -fx-border-color: transparent transparent #7be88a transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.call-name {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.call-time {
+    -fx-text-fill: #7be88a;
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 16px;
+}
+
+.sunset-filter {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 170, 90, 0.10), rgba(255, 120, 70, 0.22));
+}
+
+.vignette {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 72%, transparent 50%, rgba(255, 110, 145, 0.62) 100%);
+}
+
+.flash {
+    -fx-background-color: white;
+}
+
+.blackout {
+    -fx-background-color: black;
+}
+
+.title-card {
+    -fx-background-color: c-night;
+}
+
+.title-card-error {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 30px;
+    -fx-text-fill: #ff6b6b;
+}
+
+.title-card-number {
+    -fx-font-size: 26px;
+    -fx-text-fill: #ffd2a1;
+}
+
+.title-card-name {
+    -fx-font-size: 68px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff3e3;
+    -fx-effect: dropshadow(gaussian, rgba(242, 158, 76, 0.95), 30, 0.4, 0, 0);
+}
+
+/* 手機 */
+.phone {
+    -fx-background-color: #f4f1f6;
+    -fx-border-color: #1b1a20;
+    -fx-border-width: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 30, 0.2, 0, 10);
+}
+
+.phone-header {
+    -fx-background-color: #1b1a20;
+    -fx-padding: 8 16 12 16;
+}
+
+.phone-contact {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.bubble {
+    -fx-font-size: 17px;
+    -fx-padding: 9 13;
     -fx-line-spacing: 3;
 }
 
-.chip {
-    -fx-background-color: #2a2f3a;
-    -fx-padding: 2 9;
-    -fx-font-size: 12px;
+.bubble.theirs {
+    -fx-background-color: white;
+    -fx-text-fill: c-ink;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 4, 0, 0, 1);
+}
+
+.bubble.mine {
+    -fx-text-fill: white;
+}
+
+.bubble.typing {
+    -fx-text-fill: c-muted;
+}
+
+.attachment {
+    -fx-background-color: white;
+    -fx-border-color: c-accent;
+    -fx-font-size: 16px;
+    -fx-padding: 10 14;
+}
+
+/* 文件 */
+.document {
+    -fx-padding: 18 24 22 24;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 30, 0.2, 0, 10);
+}
+
+.doc-pdf {
+    -fx-background-color: white;
+}
+
+.doc-jargon {
+    -fx-background-color: #f7f7f5;
+}
+
+.doc-jargon .md-text, .doc-jargon .md-bold, .doc-jargon .md-code {
+    -fx-font-size: 12.5px;
+}
+
+.doc-code {
+    -fx-background-color: c-code-bg;
+}
+
+.doc-code .md-text, .doc-code .md-bold {
+    -fx-fill: #e8ecf1;
+    -fx-font-family: "Maple Mono NF CN";
+}
+
+.doc-code .label {
+    -fx-text-fill: #e8ecf1;
+}
+
+.doc-handwritten {
+    -fx-background-color: linear-gradient(to bottom, #fdf8ec, #f3ead6);
+}
+
+.doc-handwritten .md-text, .doc-handwritten .md-bold {
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-font-size: 22px;
+    -fx-fill: #2e3a59;
+}
+
+.doc-body {
+    -fx-padding: 8 18 18 18;
+}
+
+.doc-body .md-text, .doc-body .md-bold, .doc-body .md-code {
+    -fx-font-size: 17px;
+}
+
+.doc-counter {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-text-fill: c-muted;
+}
+
+/* 程式基礎教學筆記 */
+.handbook-chapter {
+    -fx-text-fill: c-accent-dark;
+    -fx-font-weight: bold;
+}
+
+.handbook-item {
+    -fx-padding: 7 12;
+    -fx-cursor: hand;
+}
+
+.handbook-item:hover {
+    -fx-background-color: c-panel-2;
+}
+
+.handbook-item.current {
+    -fx-background-color: #ffe7cf;
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 3;
+}
+
+.handbook-item.locked {
+    -fx-text-fill: c-line;
+    -fx-cursor: default;
+}
+
+.handbook-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.handbook-detail .md-text, .handbook-detail .md-bold, .handbook-detail .md-code {
+    -fx-font-size: 17px;
+}
+
+/* 對話紀錄 */
+.backlog-who {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.backlog-text {
+    -fx-font-size: 17px;
+}
+
+.backlog-text.os {
+    -fx-font-style: italic;
+    -fx-text-fill: #6f6560;
+}
+
+.backlog-text.choice-made {
+    -fx-text-fill: c-accent-dark;
+    -fx-font-weight: bold;
+}
+
+/* Markdown */
+.md-text {
+    -fx-fill: c-ink;
+    -fx-font-size: 14.5px;
+}
+
+.md-bold {
+    -fx-fill: #1f1a18;
+    -fx-font-weight: bold;
+    -fx-font-size: 14.5px;
+}
+
+.md-code {
+    -fx-fill: #b4531d;
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 14.5px;
+}
+
+.md-p {
+    -fx-line-spacing: 3;
+}
+
+.md-pre {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 13.5px;
+    -fx-background-color: c-code-bg;
+    -fx-padding: 10 12;
     -fx-text-fill: #f0c070;
 }
 
-.mini-stamp {
-    -fx-border-color: c-red;
-    -fx-border-width: 3;
-    -fx-border-radius: 4;
-    -fx-padding: 2 10;
-    -fx-text-fill: c-red;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-rotate: -12;
-}
-
-.paper {
-    -fx-background-color: linear-gradient(to bottom, #f3ebd9, #e5dac1);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 22, 0.15, 0, 8);
-}
-
-.paper .label {
-    -fx-text-fill: c-ink;
-}
-
-.paper .md-text {
-    -fx-fill: c-ink;
-}
-
-.paper .md-bold {
-    -fx-fill: #111;
-}
-
-.paper .md-code {
-    -fx-fill: #9a2f1f;
-}
-
-.newspaper {
-    -fx-padding: 28 36 32 36;
-}
-
-.np-masthead {
-    -fx-font-family: "DFKai-SB";
-    -fx-font-size: 40px;
-    -fx-font-weight: bold;
-}
-
-.np-rule {
-    -fx-background-color: c-ink;
-    -fx-min-height: 3;
-    -fx-max-height: 3;
-}
-
-.np-date {
-    -fx-font-size: 13px;
-}
-
-.np-headline {
-    -fx-font-family: "DFKai-SB";
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-}
-
-.np-sub {
-    -fx-font-size: 17px;
-    -fx-font-weight: bold;
-}
-
-.np-body {
-    -fx-font-size: 15px;
-    -fx-line-spacing: 4;
-}
-
-.dialog-line {
-    -fx-background-color: rgba(27, 30, 37, 0.92);
-    -fx-padding: 12 16;
-}
-
-.dialog-who {
-    -fx-text-fill: c-amber;
-    -fx-font-weight: bold;
-    -fx-min-width: 64;
-}
-
-.dialog-say {
-    -fx-font-size: 16px;
+/* 程式題 */
+.lesson {
+    -fx-background-color: c-bg;
 }
 
 .topbar {
@@ -236,10 +618,6 @@
 .topbar-title {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-}
-
-.open-question {
-    -fx-text-fill: c-amber;
 }
 
 .side-panel {
@@ -256,8 +634,8 @@
 }
 
 .step-row.current {
-    -fx-background-color: #2c2a22;
-    -fx-border-color: c-amber-dim;
+    -fx-background-color: #ffeedd;
+    -fx-border-color: c-accent;
 }
 
 .step-row.locked {
@@ -276,13 +654,13 @@
 }
 
 .step-row.solved .step-num {
-    -fx-background-color: #2f5236;
-    -fx-text-fill: #cfeccf;
+    -fx-background-color: #d9ead9;
+    -fx-text-fill: #24502c;
 }
 
 .step-row.current .step-num {
-    -fx-background-color: c-amber;
-    -fx-text-fill: #1a1408;
+    -fx-background-color: c-accent;
+    -fx-text-fill: #2b1a08;
 }
 
 .step-title {
@@ -292,60 +670,120 @@
 .detail-title {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: c-amber;
-}
-
-.md-text {
-    -fx-fill: c-text;
-    -fx-font-size: 14.5px;
-}
-
-.md-bold {
-    -fx-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 14.5px;
-}
-
-.md-code {
-    -fx-fill: #f0c070;
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 14.5px;
-}
-
-.md-p {
-    -fx-line-spacing: 3;
-}
-
-.md-pre {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 13.5px;
-    -fx-background-color: #101217;
-    -fx-padding: 10 12;
-    -fx-text-fill: #f0c070;
+    -fx-text-fill: c-accent-dark;
 }
 
 .shape-box {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: #cfd6e0;
-    -fx-background-color: #101217;
-    -fx-border-color: c-line;
+    -fx-text-fill: #d9dde3;
+    -fx-background-color: c-code-bg;
+    -fx-border-color: #4a4f5a;
     -fx-border-style: segments(5, 4);
     -fx-padding: 10 12;
 }
 
 .after-text {
-    -fx-background-color: #1f2e22;
+    -fx-background-color: #e5f2e5;
     -fx-padding: 10 12;
 }
 
 .after-text .md-text {
-    -fx-fill: #cfeccf;
+    -fx-fill: #24502c;
+}
+
+.note-card {
+    -fx-background-color: white;
+    -fx-border-color: c-line;
+    -fx-padding: 12 14;
+}
+
+.note-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-text-fill: c-accent-dark;
+}
+
+.reaction {
+    -fx-background-color: white;
+    -fx-border-color: c-accent;
+    -fx-border-width: 2;
+    -fx-padding: 12 14;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0.1, 0, 3);
+}
+
+.reaction-who {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.reaction-text {
+    -fx-font-size: 16px;
+}
+
+.reaction-text.os {
+    -fx-font-style: italic;
+    -fx-text-fill: #6f6560;
+}
+
+.var-name {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 15px;
+    -fx-text-fill: #b4531d;
+}
+
+.var-type {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-text-fill: #2f7f78;
+}
+
+.var-value {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 15px;
+    -fx-text-fill: #3f7d2e;
+}
+
+.hint-drawer {
+    -fx-background-color: c-panel;
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 3;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 24, 0.2, -6, 0);
+}
+
+.hint-tier {
+    -fx-background-color: c-panel-2;
+    -fx-padding: 12;
+}
+
+.hint-tier.locked {
+    -fx-opacity: 0.4;
+}
+
+.hint-chip {
+    -fx-background-color: c-accent;
+    -fx-text-fill: #2b1a08;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 1 8;
+}
+
+.hint-chip.answer {
+    -fx-background-color: c-error;
+    -fx-text-fill: white;
+}
+
+.hint-code {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 14px;
+    -fx-text-fill: #f0c070;
+    -fx-background-color: c-code-bg;
+    -fx-padding: 8 10;
 }
 
 /* CodeArea 自己掛了一份指定 monospace 的樣式表，比 Scene 的優先，選擇器要更具體才蓋得過 */
 .app-root .code-area {
-    -fx-background-color: #101217;
+    -fx-background-color: c-code-bg;
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 17px;
 }
@@ -355,7 +793,7 @@
 }
 
 .code-area .caret {
-    -fx-stroke: c-amber;
+    -fx-stroke: c-accent;
     -fx-stroke-width: 2;
 }
 
@@ -364,7 +802,7 @@
 }
 
 .code-area .kw {
-    -fx-fill: #e0a84a;
+    -fx-fill: #f29e4c;
     -fx-font-weight: bold;
 }
 
@@ -396,7 +834,7 @@
 }
 
 .code-area .warn {
-    -rtfx-underline-color: #e0a84a;
+    -rtfx-underline-color: #f29e4c;
     -rtfx-underline-width: 2;
     -rtfx-underline-dash-array: 3 2;
 }
@@ -406,7 +844,7 @@
     -fx-font-size: 15px;
     -fx-text-fill: #555d6b;
     -fx-padding: 0 10 0 8;
-    -fx-background-color: #101217;
+    -fx-background-color: c-code-bg;
 }
 
 .lineno-error {
@@ -420,22 +858,45 @@
 }
 
 .console {
-    -fx-background-color: #0d0f13;
+    -fx-background-color: c-console;
     -fx-padding: 12 14;
+}
+
+.console.ran-ok {
+    -fx-background-color: #183022;
+}
+
+.scroll-pane.console-scroll, .scroll-pane.console-scroll > .viewport {
+    -fx-background-color: c-console;
+}
+
+.console .label {
+    -fx-text-fill: #e8ecf1;
+}
+
+.console .md-text {
+    -fx-fill: #e8ecf1;
+}
+
+.console .md-bold {
+    -fx-fill: white;
+}
+
+.console .md-code {
+    -fx-fill: #f0c070;
 }
 
 .console-out {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: #e8ecf1;
 }
 
-.console-empty {
-    -fx-text-fill: c-muted;
+.console .console-empty {
+    -fx-text-fill: #8a93a0;
     -fx-font-style: italic;
 }
 
-.probe-line {
+.console .probe-line {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14px;
     -fx-text-fill: #7fb7f0;
@@ -454,13 +915,13 @@
 
 .card.warning {
     -fx-background-color: #2c2516;
-    -fx-border-color: transparent transparent transparent c-amber;
+    -fx-border-color: transparent transparent transparent c-accent;
     -fx-border-width: 0 0 0 4;
 }
 
 .card.success {
     -fx-background-color: #1f2e22;
-    -fx-border-color: transparent transparent transparent c-green;
+    -fx-border-color: transparent transparent transparent c-ok;
     -fx-border-width: 0 0 0 4;
 }
 
@@ -468,27 +929,22 @@
     -fx-font-weight: bold;
 }
 
-.card.error .card-title {
+.console .card.error .card-title {
     -fx-text-fill: #ff8a80;
 }
 
-.card.warning .card-title {
-    -fx-text-fill: c-amber;
+.console .card.warning .card-title {
+    -fx-text-fill: c-accent;
 }
 
-.card.success .card-title {
-    -fx-text-fill: c-green;
+.console .card.success .md-text {
+    -fx-fill: #cfeccf;
 }
 
-.raw {
+.console .raw {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 12px;
-    -fx-text-fill: c-muted;
-}
-
-.hyperlink {
-    -fx-text-fill: c-muted;
-    -fx-padding: 0;
+    -fx-text-fill: #8a93a0;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab {
@@ -497,7 +953,7 @@
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: #2c2a22;
+    -fx-background-color: #ffe7cf;
 }
 
 .tab-pane > .tab-header-area > .tab-header-background {
@@ -505,168 +961,7 @@
 }
 
 .tab .tab-label {
-    -fx-text-fill: c-text;
-}
-
-.scroll-pane, .scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
-.evidence-card {
-    -fx-padding: 14 16;
-}
-
-.evidence-card.note {
-    -fx-background-color: linear-gradient(to bottom, #f6e79c, #ead879);
-}
-
-.ev-title {
-    -fx-font-weight: bold;
-    -fx-font-size: 15px;
-}
-
-.ev-new {
-    -fx-background-color: c-red;
-    -fx-text-fill: white;
-    -fx-font-size: 11px;
-    -fx-padding: 1 7;
-}
-
-.paper .ev-new {
-    -fx-text-fill: white;
-}
-
-.var-name {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 15px;
-    -fx-text-fill: #f0c070;
-}
-
-.var-type {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-text-fill: #6fd0c5;
-}
-
-.var-value {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 15px;
-    -fx-text-fill: #9ccc7a;
-}
-
-.hint-drawer {
-    -fx-background-color: #1b1e25;
-    -fx-border-color: transparent transparent transparent c-amber;
-    -fx-border-width: 0 0 0 3;
-    -fx-padding: 18;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 24, 0.2, -6, 0);
-}
-
-.hint-tier {
-    -fx-background-color: c-panel-2;
-    -fx-padding: 12;
-}
-
-.hint-chip {
-    -fx-background-color: c-amber;
-    -fx-text-fill: #1a1408;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 1 8;
-}
-
-.hint-chip.answer {
-    -fx-background-color: c-red;
-    -fx-text-fill: white;
-}
-
-.hint-code {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 14px;
-    -fx-text-fill: #f0c070;
-    -fx-background-color: #101217;
-    -fx-padding: 8 10;
-}
-
-.banner {
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-    -fx-padding: 14 60;
-    -fx-background-color: rgba(224, 168, 74, 0.95);
-    -fx-text-fill: #1a1408;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.2, 0, 4);
-}
-
-.banner-ok {
-    -fx-background-color: rgba(111, 191, 115, 0.95);
-    -fx-text-fill: #0e1a0f;
-}
-
-.verdict-paper {
-    -fx-padding: 34 44;
-}
-
-.vp-kicker {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.vp-title {
-    -fx-font-family: "DFKai-SB";
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
-.vp-question {
-    -fx-font-size: 15px;
-}
-
-.vp-answer {
-    -fx-font-family: "DFKai-SB";
-    -fx-font-size: 46px;
-    -fx-font-weight: bold;
-}
-
-.vp-detail {
-    -fx-font-size: 16px;
-}
-
-.stamp {
-    -fx-border-color: #b8322a;
-    -fx-border-width: 5;
-    -fx-border-radius: 6;
-    -fx-padding: 4 18;
-    -fx-text-fill: #b8322a;
-    -fx-font-family: "DFKai-SB";
-    -fx-font-size: 44px;
-    -fx-font-weight: bold;
-    -fx-opacity: 0.88;
-}
-
-.paper .stamp {
-    -fx-text-fill: #b8322a;
-}
-
-.explain-num {
-    -fx-min-width: 24;
-    -fx-min-height: 24;
-    -fx-alignment: center;
-    -fx-background-color: c-ink;
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
-}
-
-.paper .explain-num {
-    -fx-text-fill: c-paper;
-}
-
-.chapter-end {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: c-amber;
-}
-
-.slider .track {
-    -fx-background-color: c-line;
+    -fx-text-fill: c-ink;
 }
 
 .split-pane {
@@ -677,79 +972,4 @@
 .split-pane > .split-pane-divider {
     -fx-background-color: c-line;
     -fx-padding: 0 0 3 0;
-}
-
-.separator .line {
-    -fx-border-color: c-line;
-}
-
-.overlay {
-    -fx-background-color: rgba(8, 9, 12, 0.62);
-}
-
-.overlay-panel {
-    -fx-background-color: c-panel;
-    -fx-border-color: c-line;
-    -fx-padding: 24 28;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 30, 0.2, 0, 8);
-}
-
-.button, .toggle-button, .text-field, .tooltip, .check-box > .box,
-.slider > .thumb, .slider > .track,
-.scroll-bar > .thumb, .scroll-bar > .track,
-.scroll-bar > .increment-button, .scroll-bar > .decrement-button,
-.tab-pane > .tab-header-area > .headers-region > .tab {
-    -fx-background-radius: 0;
-    -fx-border-radius: 0;
-}
-
-.hint-tier.locked {
-    -fx-opacity: 0.4;
-}
-
-.scroll-pane.console-scroll, .scroll-pane.console-scroll > .viewport {
-    -fx-background-color: #0d0f13;
-}
-
-.settings-group {
-    -fx-text-fill: c-amber;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.segment {
-    -fx-background-color: c-panel-2;
-    -fx-text-fill: c-text;
-    -fx-padding: 6 14;
-    -fx-cursor: hand;
-}
-
-.segment:hover {
-    -fx-background-color: #2c313d;
-}
-
-.segment:selected {
-    -fx-background-color: c-amber;
-    -fx-text-fill: #1a1408;
-    -fx-font-weight: bold;
-}
-
-.settings-value {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-text-fill: c-muted;
-    -fx-min-width: 30;
-}
-
-.slider .thumb {
-    -fx-background-color: c-amber;
-}
-
-.btn-danger {
-    -fx-background-color: transparent;
-    -fx-border-color: c-red;
-    -fx-text-fill: #ff8a80;
-}
-
-.btn-danger:hover {
-    -fx-background-color: #2e1719;
 }

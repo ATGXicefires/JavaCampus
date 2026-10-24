@@ -1,0 +1,46 @@
+{
+  "id": "ch01-s1",
+  "title": "改寫術語文件",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["println", "quotes", "semicolon", "box", "int-string", "assign"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "rewrite",
+      "title": "改成白話",
+      "instructions": "這是原本那份術語版的範例。她看了三秒就走了。\n\n把引號裡的字改成白話版，讓它印出 `電腦會把引號裡的字，原封不動印出來`。",
+      "expectedShape": "System.out.println(\"…\");",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`System.out` 是一個 `PrintStream`，`println(String)` 把引數寫進標準輸出串流，再補一個行分隔字元⋯⋯",
+        "plain": "⋯⋯換句話說：引號裡寫什麼，電腦就印什麼。只要換掉引號裡的那句話，兩邊的 `\"` 和最後的 `;` 都不用動。"
+      },
+      "afterText": "二弘（心想）：「⋯⋯這樣她應該看得懂。應該。」"
+    },
+    {
+      "id": "box",
+      "title": "盒子",
+      "instructions": "範例 2 要講變數。把「宣告區域變數」那段刪掉，改成盒子：做一個 `String` 盒子叫 `box`，放進 `\"扭蛋\"`，再把 `box` 印出來。",
+      "expectedShape": "String box = \"扭蛋\";\nSystem.out.println(box);",
+      "check": { "type": "values", "exprs": ["box"] },
+      "hints": {
+        "lead": "區域變數宣告：型別、識別字、指定運算子、初始值，以分號結束⋯⋯",
+        "plain": "⋯⋯白話：盒子的種類、盒子的名字、`=`、要放進去的東西、分號。印的時候括號裡放盒子的名字 `box`，不加引號。"
+      },
+      "afterText": "二弘（心想）：「扭蛋只是剛好想到的例子。跟她的書包沒有關係。」"
+    },
+    {
+      "id": "gacha",
+      "title": "七個，然後八個",
+      "instructions": "範例 3 示範換掉盒子裡的東西。做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再寫 `gacha = 8;`，再印一次。\n\n輸出要是 `7` 和 `8` 兩行。第二次不用再寫 `int`。",
+      "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);\ngacha = 8;\nSystem.out.println(gacha);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "指定運算式 `gacha = 8` 覆寫既有變數的值；同一個範圍內重複宣告同名區域變數是編譯錯誤⋯⋯",
+        "plain": "⋯⋯白話：盒子只要做一次。第二次直接寫名字、`=`、新的值，盒子裡的 7 就換成 8 了。"
+      },
+      "afterText": "二弘（心想）：「她書包上是七個。⋯⋯這件事不需要寫進文件。」"
+    }
+  ]
+}

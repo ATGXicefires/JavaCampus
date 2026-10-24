@@ -1,0 +1,46 @@
+{
+  "id": "ch01-k2",
+  "title": "有名字的盒子",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["box", "int-string", "assign"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "laptop",
+      "title": "小白",
+      "instructions": "PDF 第 2 頁：**變數就像一個有名字的盒子**。做一個 `String` 盒子，名字叫 `laptop`，裡面放 `\"小白\"`。\n\n寫法是：盒子的種類、名字、`=`、內容，最後加分號。",
+      "expectedShape": "String laptop = \"…\";",
+      "check": { "type": "values", "exprs": ["laptop"] },
+      "hints": {
+        "lead": "種類、名字、等號、內容。",
+        "plain": "`String` 是盒子的種類（裝文字的），`laptop` 是貼在盒子外面的名字，`=` 右邊是要放進去的東西。文字記得用半形雙引號包起來。"
+      },
+      "afterText": "亭瑄（心想）：「小白，你現在是一個盒子了。」"
+    },
+    {
+      "id": "gacha",
+      "title": "扭蛋有幾個",
+      "instructions": "PDF 的下一個例子是扭蛋。做一個 `int` 盒子叫 `gacha`，放進 `7`，再用 `System.out.println(gacha);` 把它印出來。\n\n`int` 是裝整數的盒子，數字不用加引號。",
+      "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);",
+      "check": { "type": "values", "exprs": ["gacha"] },
+      "hints": {
+        "lead": "數字不用引號。",
+        "plain": "`int` 盒子只裝整數。`7` 是數字，`\"7\"` 是一個長得像 7 的字，兩個不一樣。印的時候括號裡寫盒子的名字 `gacha`，不要加引號。"
+      },
+      "afterText": "亭瑄（心想）：「7 個⋯⋯我書包上剛好也是 7 個耶。」"
+    },
+    {
+      "id": "again",
+      "title": "又抽到一個",
+      "instructions": "又抽到一個了。在最後面寫 `gacha = 8;`，把盒子裡的 7 換成 8，再印一次 `gacha`。\n\n盒子已經做好了，這次前面**不用再寫 `int`**。輸出會是 `7` 和 `8` 兩行。",
+      "expectedShape": "gacha = 8;\nSystem.out.println(gacha);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "盒子已經有了。不用再寫 int。",
+        "plain": "再寫一次 `int gacha` 等於再做一個同名的盒子，電腦會說名字重複了。要換掉盒子裡的東西，只要寫名字、`=`、新的值。"
+      },
+      "afterText": "PDF 的頁尾寫著：「很好。翻下一頁。」"
+    }
+  ]
+}

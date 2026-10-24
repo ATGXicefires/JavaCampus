@@ -2,7 +2,9 @@ package campus.ui;
 
 import campus.fx.Motion;
 import campus.progress.Progress;
+import campus.progress.Progress.AutoDelay;
 import campus.progress.Progress.TextSpeed;
+import campus.story.Route;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -29,12 +31,13 @@ final class SettingsView extends VBox {
     private final Game game;
     private final Progress.Settings s;
 
-    SettingsView(Game game) {
+    /** @param inGame 從劇情或程式題打開時，多一個「回到標題」 */
+    SettingsView(Game game, boolean inGame) {
         this.game = game;
         this.s = game.progress.settings();
         getStyleClass().add("overlay-panel");
         setSpacing(14);
-        setPrefWidth(760);
+        setPrefWidth(820);
         setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
         Button close = new Button("✕");
@@ -51,21 +54,39 @@ final class SettingsView extends VBox {
                 group("文字",
                         row("程式字體", slider(12, 26, 1, s.codeFont(), s::setCodeFont, v -> String.valueOf(Math.round(v)))),
                         row("劇情速度", segmented(List.of("慢", "中", "快", "立即"), s.textSpeed().ordinal(),
-                                i -> s.setTextSpeed(TextSpeed.values()[i])))),
+                                i -> s.setTextSpeed(TextSpeed.values()[i]))),
+                        row("自動播放", segmented(List.of("短", "中", "長"), s.autoDelay().ordinal(),
+                                i -> s.setAutoDelay(AutoDelay.values()[i]))),
+                        row("快進", segmented(List.of("已讀", "全部"), s.skipAll() ? 1 : 0, i -> s.setSkipAll(i == 1)))),
                 group("動效",
                         segmented(List.of("Q 彈", "一般", "關閉"), s.motion().ordinal(),
                                 i -> s.setMotion(Motion.Level.values()[i]))));
 
-        Button reset = new Button("重設進度");
-        reset.getStyleClass().add("btn-danger");
-        reset.setOnAction(e -> game.confirm("要清除所有案件的進度嗎？設定會保留。", "重設進度", game::resetProgress));
+        HBox resets = new HBox(10);
+        for (Route r : Route.values()) {
+            Button reset = new Button("重設" + r.label + "視角");
+            reset.getStyleClass().add("btn-danger");
+            reset.setDisable(game.progress.route(r) == null);
+            reset.setOnAction(e -> game.confirm("要清除" + r.label + "視角的劇情和程式題進度嗎？另一個視角和設定會保留。",
+                    "重設", () -> game.resetRoute(r)));
+            resets.getChildren().add(reset);
+        }
+        VBox progressGroup = group("進度", resets);
+        if (inGame) {
+            Button title = new Button("回到標題");
+            title.getStyleClass().add("btn-ghost");
+            title.setOnAction(e -> game.showTitle());
+            progressGroup.getChildren().add(title);
+        }
         VBox right = new VBox(22,
                 group("聲音",
                         row("主音量", percent(s.volume(), s::setVolume)),
+                        row("音樂", percent(s.music(), s::setMusic)),
                         row("音效", percent(s.sfx(), s::setSfx)),
-                        row("雨聲", percent(s.rain(), s::setRain)),
+                        row("環境音", percent(s.ambient(), s::setAmbient)),
+                        row("角色嗶聲", percent(s.voice(), s::setVoice)),
                         row("打字音效", onOff(s.typing(), on -> s.setTyping(on)))),
-                group("進度", reset));
+                progressGroup);
 
         HBox.setHgrow(left, Priority.ALWAYS);
         HBox.setHgrow(right, Priority.ALWAYS);

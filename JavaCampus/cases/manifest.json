@@ -1,9 +1,0 @@
-{
-  "chapters": [
-    {
-      "id": "ch1",
-      "title": "第一章　雨夜鐘錶行",
-      "cases": ["ch1-01-report", "ch1-02-clocks", "ch1-03-alibi"]
-    }
-  ]
-}
