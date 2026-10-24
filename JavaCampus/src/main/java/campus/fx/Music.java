@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import static campus.fx.Synth.decay;
 import static campus.fx.Synth.envelope;
@@ -17,6 +19,7 @@ import static campus.fx.Synth.sine;
 /**
  * 用程式合成的背景音樂。每首曲子是一段 30～60 秒的循環，啟動後在背景執行緒依序合成，
  * 標題曲最先做好；還沒合成完就被要求播放的曲子，做好時會自動淡入。
+ * 一次只聽得到一首：換曲時前一首完全淡出才開始下一首。
  */
 public final class Music implements AutoCloseable {
 
@@ -40,25 +43,29 @@ public final class Music implements AutoCloseable {
     }
 
     private static final double LEVEL = 0.45;
-    private static final double SWITCH_FADE = 1.2;
+    private static final double SWITCH_OUT = 0.7;
+    private static final double SWITCH_IN = 0.5;
 
     private final Fader fader;
+    private final Consumer<Boolean> musicOn;
     private final Map<Track, Clip> clips = new EnumMap<>(Track.class);
     private final Thread renderer;
     private Track wanted;
     private double volume = 0.2;
     private volatile boolean closed;
 
-    private Music(Fader fader) {
+    /** {@code musicOn} 在「真的有曲子在播」變化時收到通知；背景合成要等 {@link #create} 才開始。 */
+    Music(Fader fader, Consumer<Boolean> musicOn) {
         this.fader = fader;
+        this.musicOn = musicOn;
         renderer = new Thread(this::renderAll, "music-renderer");
         renderer.setDaemon(true);
         renderer.setPriority(Thread.MIN_PRIORITY);
     }
 
-    /** 和音效共用淡入淡出的執行緒；音效停用時音樂也不會有聲音，但不影響遊戲。 */
+    /** 和音效共用淡入淡出的執行緒，有曲子在播時環境音會讓位；音效停用時音樂也不會有聲音，但不影響遊戲。 */
     public static Music create(Sfx sfx) {
-        Music m = new Music(sfx.fader());
+        Music m = new Music(sfx.fader(), sfx::setMusicOn);
         m.renderer.start();
         return m;
     }
@@ -68,32 +75,56 @@ public final class Music implements AutoCloseable {
             return;
         }
         wanted = t;
-        apply(SWITCH_FADE, true);
+        apply(SWITCH_IN, SWITCH_OUT, true);
     }
 
     public synchronized void stop() {
         wanted = null;
-        apply(1.5, false);
+        apply(SWITCH_IN, 1.5, false);
     }
 
     /** 主音量乘上音樂音量，0 到 1。 */
     public synchronized void setVolume(double v) {
         volume = v * LEVEL;
-        apply(0.05, false);
+        apply(0.05, 0.05, false);
     }
 
-    private synchronized void apply(double seconds, boolean restartWanted) {
-        for (Map.Entry<Track, Clip> e : clips.entrySet()) {
-            Clip c = e.getValue();
-            boolean on = e.getKey() == wanted && volume > 0;
-            if (on && !fader.isPlaying(c) && restartWanted) {
-                c.stop();
-                c.setFramePosition(0);
-            }
-            if (on || fader.isPlaying(c)) {
-                fader.fadeTo(c, on ? volume : 0, seconds);
+    /** 其他曲子全部淡出；要播的那首等它們都停掉才從 Fader 開始，所以快速連續換曲也只會留下最後一首。 */
+    private synchronized void apply(double in, double out, boolean restart) {
+        Track on = audible(wanted, volume, clips.keySet());
+        Clip next = on == null ? null : clips.get(on);
+        List<Clip> others = new ArrayList<>();
+        for (Clip c : clips.values()) {
+            if (c != next) {
+                others.add(c);
+                fader.fadeTo(c, 0, out);
             }
         }
+        if (next != null) {
+            if (restart && !fader.isAudible(next)) {
+                next.setFramePosition(0);
+            }
+            fader.fadeTo(next, volume, in, others);
+        }
+        musicOn.accept(next != null);
+    }
+
+    /** 真的會出聲的曲子：有人要、音量大於 0、而且已經合成好；都不是就回傳 null。 */
+    static Track audible(Track wanted, double volume, Set<Track> rendered) {
+        return wanted != null && volume > 0 && rendered.contains(wanted) ? wanted : null;
+    }
+
+    /** 背景合成好一首；只有仍然被要求的曲子會淡入，而且照樣等前一首停掉。關閉後回傳 false。 */
+    synchronized boolean rendered(Track t, Clip c) {
+        if (closed) {
+            c.close();
+            return false;
+        }
+        clips.put(t, c);
+        if (t == wanted) {
+            apply(1.0, SWITCH_OUT, true);
+        }
+        return true;
     }
 
     private void renderAll() {
@@ -105,16 +136,8 @@ public final class Music implements AutoCloseable {
             }
             todo.remove(next);
             try {
-                Clip c = Synth.open(render(next));
-                synchronized (this) {
-                    if (closed) {
-                        c.close();
-                        return;
-                    }
-                    clips.put(next, c);
-                    if (next == wanted) {
-                        apply(1.0, true);
-                    }
+                if (!rendered(next, Synth.open(render(next)))) {
+                    return;
                 }
             } catch (Exception | LinkageError e) {
                 System.err.println("背景音樂停用：" + e.getMessage());

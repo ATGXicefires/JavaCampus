@@ -92,7 +92,8 @@ public final class Sfx implements AutoCloseable {
         }
     }
 
-    private static final double AMBIENT_LEVEL = 0.35;
+    /** 大約比預設音量下的背景音樂小 10 dB，只當底噪，不搶戲。 */
+    private static final double AMBIENT_LEVEL = 0.12;
     private static final double AMBIENT_FADE = 1.2;
 
     private final Map<Sound, Clip[]> clips = new EnumMap<>(Sound.class);
@@ -102,6 +103,7 @@ public final class Sfx implements AutoCloseable {
     private final Fader fader;
     private final Random pick = new Random();
     private Collection<Ambience> ambientOn = List.of();
+    private boolean musicOn;
     private double effects = 0.7;
     private double voice = 0.4;
     private double ambient = 0.2;
@@ -178,22 +180,36 @@ public final class Sfx implements AutoCloseable {
     }
 
     /** 換成這一組環境音：不在裡面的淡出，新加的淡入。 */
-    public void setAmbience(Collection<Ambience> on) {
+    public synchronized void setAmbience(Collection<Ambience> on) {
         ambientOn = List.copyOf(on);
+        applyAmbience(AMBIENT_FADE);
+    }
+
+    /** 背景音樂在播時環境音全部淡出，停了再淡入；場景要的環境音照樣記著。音樂合成執行緒也會呼叫，所以要同步。 */
+    synchronized void setMusicOn(boolean on) {
+        if (on == musicOn) {
+            return;
+        }
+        musicOn = on;
         applyAmbience(AMBIENT_FADE);
     }
 
     private void applyAmbience(double seconds) {
         for (Map.Entry<Ambience, Clip> e : ambience.entrySet()) {
-            double target = ambientOn.contains(e.getKey()) ? ambient : 0;
+            double target = ambienceTarget(ambientOn.contains(e.getKey()), musicOn, ambient);
             if (target > 0 || fader.isPlaying(e.getValue())) {
                 fader.fadeTo(e.getValue(), target, seconds);
             }
         }
     }
 
+    /** 有 BGM 時不再疊上雨聲、人聲這類雜音，只留音樂。 */
+    static double ambienceTarget(boolean inScene, boolean musicOn, double level) {
+        return inScene && !musicOn ? level : 0;
+    }
+
     /** 參數都是 0 到 1。 */
-    public void setVolumes(double master, double sfx, double ambientVolume, double voiceVolume) {
+    public synchronized void setVolumes(double master, double sfx, double ambientVolume, double voiceVolume) {
         effects = master * sfx;
         voice = master * voiceVolume;
         ambient = master * ambientVolume * AMBIENT_LEVEL;
@@ -586,7 +602,7 @@ public final class Sfx implements AutoCloseable {
         return 4 * Math.abs(x - 0.5) - 1;
     }
 
-    private static float[] loop(Ambience a, Random rnd) {
+    static float[] loop(Ambience a, Random rnd) {
         return switch (a) {
             case RAIN -> rain(rnd);
             case ROOM -> room(rnd);
@@ -595,65 +611,67 @@ public final class Sfx implements AutoCloseable {
         };
     }
 
-    /** 8 秒的雨聲循環：低通雜訊加隨機水滴。 */
+    /** 8 秒的雨聲循環：帶通雜訊加隨機水滴；用帶通把低頻壓掉，聽起來才不像遠處的車流。 */
     private static float[] rain(Random rnd) {
         double loop = 8.0;
         double fade = 0.5;
         float[] raw = buffer(loop + fade);
-        double[] lp = {0};
-        add(raw, 0, loop + fade, t -> {
-            lp[0] += 0.08 * (noise(rnd) - lp[0]);
-            return lp[0] * 0.9;
-        });
+        Synth.BandPass body = new Synth.BandPass(420, 0.7);
+        add(raw, 0, loop + fade, t -> body.next(noise(rnd)));
         for (int i = 0; i < 90; i++) {
             double at = rnd.nextDouble() * (loop + fade - 0.05);
-            double hz = 2000 + rnd.nextDouble() * 2500;
-            double amp = 0.02 + rnd.nextDouble() * 0.05;
+            double hz = 1800 + rnd.nextDouble() * 2000;
+            double amp = 0.016 + rnd.nextDouble() * 0.04;
             add(raw, at, 0.05, t -> sine(t, hz) * amp * decay(t, 0.006));
         }
-        return Synth.loopify(raw, loop, fade);
+        return Synth.normalize(Synth.loopify(raw, loop, fade), 0.42);
     }
 
-    /** 電腦教室：冷氣的低頻嗡嗡聲加一排電腦風扇。 */
+    /** 電腦教室：一排電腦風扇的柔和氣流，加一點冷氣的 120 Hz 嗡嗡聲；不放 60 Hz 和更低的頻率，免得聽起來像車聲。 */
     private static float[] room(Random rnd) {
         double loop = 6.0;
         double fade = 0.5;
         float[] raw = buffer(loop + fade);
-        Synth.LowPass fan = new Synth.LowPass(450);
-        add(raw, 0, loop + fade, t -> sine(t, 60) * 0.12 + sine(t, 120) * 0.06 + fan.next(noise(rnd)) * 0.9);
-        return Synth.normalize(Synth.loopify(raw, loop, fade), 0.5);
+        Synth.BandPass fan = new Synth.BandPass(350, 0.7);
+        add(raw, 0, loop + fade, t -> fan.next(noise(rnd)));
+        float[] out = Synth.normalize(Synth.loopify(raw, loop, fade), 0.35);
+        // 6 秒剛好是 120 Hz 的整數個週期，直接疊在循環上就接得起來
+        add(out, 0, loop, t -> sine(t, 120) * 0.02 + sine(t, 240) * 0.008);
+        return out;
     }
 
-    /** 九月的蟬：高頻帶通雜訊，用快速的脈衝調變出「唧唧」，幾隻蟬此起彼落。 */
+    /** 九月的蟬：高頻帶通雜訊，用快速的振幅起伏做出顫動的嗡嗡聲，幾隻蟬此起彼落。 */
     private static float[] cicada(Random rnd) {
         double loop = 10.0;
         double fade = 1.0;
         float[] raw = buffer(loop + fade);
         for (int c = 0; c < 4; c++) {
-            Synth.BandPass bp = new Synth.BandPass(4200 + rnd.nextDouble() * 1800, 6);
+            Synth.BandPass bp = new Synth.BandPass(3600 + rnd.nextDouble() * 1200, 6);
             double pulse = 55 + rnd.nextDouble() * 30;
             double cycle = 2.5 + rnd.nextDouble() * 2;
             double offset = rnd.nextDouble() * cycle;
             double amp = 0.5 + rnd.nextDouble() * 0.5;
             add(raw, 0, loop + fade, t -> {
                 double swell = Math.pow(Math.max(0, Math.sin(Math.PI * ((t + offset) % cycle) / cycle)), 1.5);
-                double buzz = 0.5 + 0.5 * Math.signum(Math.sin(2 * Math.PI * pulse * t));
+                // 用正弦調變而不是方波一開一關，才不會切出一串刺耳的高頻
+                double buzz = 0.7 + 0.3 * Math.sin(2 * Math.PI * pulse * t);
                 return bp.next(noise(rnd)) * buzz * swell * amp;
             });
         }
-        return Synth.normalize(Synth.loopify(raw, loop, fade), 0.5);
+        return Synth.normalize(Synth.loopify(raw, loop, fade), 0.35);
     }
 
-    /** 下課的走廊：聽不出字的嘈雜人聲，用雜訊經過母音共振峰，再以說話的節奏起伏。 */
+    /** 下課的走廊：聽不出字的嘈雜人聲，用雜訊經過母音共振峰，再以說話的節奏起伏；隔著牆，高頻再壓掉一些。 */
     private static float[] hallway(Random rnd) {
         double loop = 10.0;
         double fade = 1.0;
         float[] raw = buffer(loop + fade);
         double[][] vowels = {{700, 1200}, {400, 2000}, {500, 900}, {300, 2300}};
-        for (int v = 0; v < 6; v++) {
+        for (int v = 0; v < 8; v++) {
             double[] formant = vowels[rnd.nextInt(vowels.length)];
             Synth.BandPass f1 = new Synth.BandPass(formant[0] * (0.9 + rnd.nextDouble() * 0.2), 5);
             Synth.BandPass f2 = new Synth.BandPass(formant[1] * (0.9 + rnd.nextDouble() * 0.2), 6);
+            Synth.LowPass wall = new Synth.LowPass(1500);
             double syllable = 3.5 + rnd.nextDouble() * 2.5;
             double phrase = 1.5 + rnd.nextDouble() * 2;
             double offset = rnd.nextDouble() * 5;
@@ -661,9 +679,9 @@ public final class Sfx implements AutoCloseable {
                 double talking = Math.max(0, Math.sin(2 * Math.PI * (t + offset) / (phrase * 2)));
                 double syl = 0.5 + 0.5 * Math.sin(2 * Math.PI * syllable * t);
                 double n = noise(rnd);
-                return (f1.next(n) + 0.6 * f2.next(n)) * talking * syl;
+                return wall.next(f1.next(n) + 0.4 * f2.next(n)) * talking * syl;
             });
         }
-        return Synth.normalize(Synth.loopify(raw, loop, fade), 0.5);
+        return Synth.normalize(Synth.loopify(raw, loop, fade), 0.55);
     }
 }
