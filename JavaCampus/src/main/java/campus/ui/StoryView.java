@@ -16,9 +16,12 @@ import campus.story.Staging;
 import campus.story.StoryRunner;
 import campus.story.StoryState;
 import javafx.animation.Animation;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -31,6 +34,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -46,7 +50,7 @@ import java.util.Map;
 import java.util.function.IntConsumer;
 
 /**
- * 劇情畫面。由下往上疊：背景、角色、濾鏡與特效、對話框和選項、手機、快捷列。
+ * 劇情畫面。由下往上疊：背景、角色、濾鏡與特效、筆記本對話框和便利貼選項、手機、快捷選單。
  * 播放邏輯在 {@link StoryRunner}，這裡只負責把每一行演出來，玩家看完再交回去。
  */
 final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.Stage {
@@ -54,6 +58,16 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private static final Map<String, Double> SLOTS = Map.of("左", 0.24, "中", 0.5, "右", 0.76);
     private static final double CHAR_MS = 34;
     private static final String[] NUMERALS = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
+    /** 筆記本和快捷選單分在兩層，用同樣的寬度和邊距，選單才會剛好貼在筆記本右下角。 */
+    private static final double PAGE_W = 1180;
+    private static final Insets PAGE_MARGIN = new Insets(0, 48, 34, 48);
+    private static final double NOTE = 220;
+    /** 便利貼輪流往左右歪一點。 */
+    private static final double[] TILTS = {-1.8, 1.4, -1.2, 1.7};
+    /** {@link Motion#hoverLift} 浮起的高度。 */
+    private static final double LIFT = 6;
+    /** 觸控板滑一下會送出一連串小幅度的滾動，要隔一小段時間才再往下一句。 */
+    private static final long WHEEL_GAP_MS = 150;
 
     private final Game game;
     private final Route route;
@@ -68,19 +82,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private final Region flash = new Region();
     private final Region black = new Region();
 
-    /** 名牌不參與排版、壓在框的上緣，沒人管它的大小，所以每次排版自己量一次。 */
-    private final VBox dialog = new VBox(6) {
-        @Override
-        protected void layoutChildren() {
-            super.layoutChildren();
-            plate.autosize();
-            plate.relocate(28, -plate.getHeight() + 6);
-        }
-    };
-    private final Label plate = new Label();
-    private final Label action = new Label();
-    private final Label text = new Label();
-    private final VBox choices = new VBox(14);
+    private final NotebookPage dialog = new NotebookPage();
+    private final HBox choices = new HBox(36);
     private final PhonePanel phone;
     private final HBox callBar = new HBox(14);
     private final Label callTime = new Label();
@@ -89,6 +92,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private final ToggleButton skipButton = new ToggleButton("快進");
     private final List<BacklogView.Entry> backlog = new ArrayList<>();
     private final Map<String, FigureView> figures = new LinkedHashMap<>();
+    private final List<Node> hideable;
 
     private BackdropView backdrop;
     private StoryRunner runner;
@@ -100,6 +104,10 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private boolean ctrlHeld;
     private boolean blackout;
     private boolean lineRead;
+    private boolean uiHidden;
+    private boolean swallowClick;
+    private Timeline uiFade;
+    private long lastWheel;
 
     StoryView(Game game, Route route, Chapter chapter, StoryState state) {
         this.game = game;
@@ -122,19 +130,37 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             r.setMouseTransparent(true);
         }
 
-        getChildren().addAll(world, vignette, flash, dialogLayer(), choicesLayer(), phone, callLayer(), floaters,
-                quickBar(), black);
+        Node page = dialogLayer();
+        Node notes = choicesLayer();
+        Node quick = quickMenu();
+        hideable = List.of(page, notes, quick);
+        getChildren().addAll(world, vignette, flash, page, notes, phone, callLayer(), floaters, quick, black);
         floaters.setMouseTransparent(true);
         phone.setVisible(false);
         choices.setVisible(false);
         dialog.setVisible(false);
 
-        setOnMouseClicked(this::onClick);
-        setOnScroll(e -> {
-            if (e.getDeltaY() > 0) {
-                openBacklog();
+        // 介面收起時，按下去那一下只負責叫回介面；放開後的點擊也要吃掉，不然會順便往下一句
+        addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+            swallowClick = uiHidden;
+            if (uiHidden) {
+                e.consume();
+                hideUi(false);
             }
         });
+        addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (swallowClick) {
+                e.consume();
+            }
+        });
+        addEventFilter(ScrollEvent.SCROLL, e -> {
+            if (uiHidden) {
+                e.consume();
+                hideUi(false);
+            }
+        });
+        setOnMouseClicked(this::onClick);
+        setOnScroll(this::onScroll);
         rebuildStage();
         sceneProperty().addListener((obs, was, now) -> {
             if (now == null) {
@@ -144,7 +170,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         if (state.atStart(chapter, route)) {
             showTitleCard(this::start);
         } else {
-            start();
+            // 建構時還沒換上畫面；讀檔停在程式題或文件時，馬上開始會被外層的換畫面蓋掉
+            Platform.runLater(this::start);
         }
     }
 
@@ -156,29 +183,21 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     }
 
     private Node dialogLayer() {
-        plate.getStyleClass().add("name-plate");
-        action.getStyleClass().add("dialog-action");
-        action.managedProperty().bind(action.visibleProperty());
-        text.getStyleClass().add("dialog-text");
-        text.setWrapText(true);
-        dialog.getChildren().addAll(action, text);
-        dialog.getStyleClass().add("dialog-box");
-        dialog.setMaxHeight(Region.USE_PREF_SIZE);
-        plate.setManaged(false);
-        dialog.getChildren().add(plate);
         StackPane layer = new StackPane(dialog);
         StackPane.setAlignment(dialog, Pos.BOTTOM_CENTER);
-        layer.setPadding(new Insets(0, 48, 34, 48));
+        layer.setPadding(PAGE_MARGIN);
         layer.setPickOnBounds(false);
-        dialog.setMinHeight(190);
-        dialog.setMaxWidth(1180);
+        dialog.setMaxWidth(PAGE_W);
         return layer;
     }
 
     private Node choicesLayer() {
         choices.setAlignment(Pos.CENTER);
-        choices.setMaxWidth(720);
+        choices.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        choices.setPickOnBounds(false);
         StackPane layer = new StackPane(choices);
+        // 擺在筆記本上方那塊空間的正中間，不蓋住玩家正在回答的那句台詞
+        layer.setPadding(new Insets(0, 0, 250, 0));
         layer.setPickOnBounds(false);
         return layer;
     }
@@ -199,9 +218,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         return layer;
     }
 
-    private Node quickBar() {
-        autoButton.getStyleClass().add("quick");
-        skipButton.getStyleClass().add("quick");
+    /** 快捷選單有自己一層，手機聊天把筆記本收起來時也還按得到。 */
+    private Node quickMenu() {
         autoButton.setOnAction(e -> {
             if (autoButton.isSelected()) {
                 skipButton.setSelected(false);
@@ -218,17 +236,68 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
                 skipNow();
             }
         });
-        Button log = new Button("紀錄");
-        log.getStyleClass().add("quick");
-        log.setOnAction(e -> openBacklog());
-        Button notes = new Button("筆記");
-        notes.getStyleClass().add("quick");
-        notes.setOnAction(e -> openHandbook());
-        HBox bar = new HBox(6, autoButton, skipButton, log, notes);
-        bar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        StackPane.setAlignment(bar, Pos.TOP_RIGHT);
-        StackPane.setMargin(bar, new Insets(22, 26, 0, 0));
-        return bar;
+        autoButton.selectedProperty().addListener((obs, was, on) -> refreshMark());
+        skipButton.selectedProperty().addListener((obs, was, on) -> refreshMark());
+        HBox menu = new HBox(autoButton, skipButton, quick("紀錄", this::openBacklog), quick("隱藏", () -> hideUi(true)),
+                quick("筆記", this::openHandbook), quick("設定", game::openSettings));
+        for (Node n : menu.getChildren()) {
+            n.getStyleClass().add("quick");
+            n.setFocusTraversable(false);
+        }
+        menu.getStyleClass().addAll("quick-menu", "no-advance");
+        menu.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        // 跨在筆記本下緣，一半壓在紙上、一半露在外面
+        menu.translateYProperty().bind(menu.heightProperty().divide(2));
+        StackPane frame = new StackPane(menu);
+        frame.setMaxWidth(PAGE_W);
+        frame.setPickOnBounds(false);
+        StackPane.setAlignment(menu, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(menu, new Insets(0, 26, 0, 0));
+        StackPane layer = new StackPane(frame);
+        layer.setPadding(PAGE_MARGIN);
+        layer.setPickOnBounds(false);
+        return layer;
+    }
+
+    private static Button quick(String label, Runnable action) {
+        Button b = new Button(label);
+        b.setOnAction(e -> action.run());
+        return b;
+    }
+
+    /** 收起筆記本、選單和選項，讓玩家看整個畫面；之後隨便按一下就叫回來，不會順便往下走。 */
+    private void hideUi(boolean hide) {
+        if (hide == uiHidden) {
+            return;
+        }
+        uiHidden = hide;
+        if (hide) {
+            skipButton.setSelected(false);
+            cancelAuto();
+            if (typing != null) {
+                typing.jumpTo("end");
+            }
+        } else if (pending != null && typing == null) {
+            lineShown();
+        }
+        if (uiFade != null) {
+            uiFade.stop();
+        }
+        if (Motion.isOff()) {
+            for (Node n : hideable) {
+                n.setOpacity(1);
+                n.setVisible(!hide);
+            }
+            return;
+        }
+        List<KeyValue> values = new ArrayList<>();
+        for (Node n : hideable) {
+            n.setVisible(true);
+            values.add(new KeyValue(n.opacityProperty(), hide ? 0 : 1, Interpolator.EASE_OUT));
+        }
+        uiFade = new Timeline(new KeyFrame(Duration.millis(hide ? 150 : 220), values.toArray(KeyValue[]::new)));
+        uiFade.setOnFinished(e -> hideable.forEach(n -> n.setVisible(!hide)));
+        uiFade.play();
     }
 
     /** 讀檔或從程式題回來時，照存檔裡的舞台狀態直接擺好，不播進場動畫。 */
@@ -261,6 +330,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     @Override
     public void line(Op.Line l, boolean read, Runnable next) {
         cancelAuto();
+        hideUi(false);
         lineRead = read;
         pending = next;
         backlog.add(new BacklogView.Entry(l.kind(), l.who(), l.text()));
@@ -277,20 +347,16 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             return;
         }
         showDialog(l, personId);
+        refreshMark();
     }
 
     private void showDialog(Op.Line l, String personId) {
         dialog.setVisible(true);
         dialog.getStyleClass().removeAll("os", "narration", "direction");
         boolean speaking = l.kind() == Op.Kind.SAY;
-        plate.setVisible(speaking);
-        if (speaking) {
-            plate.setText(l.who());
-            plate.setStyle("-fx-background-color: " + Cast.colorOf(l.who()) + ";");
-            dialog.requestLayout();
-        }
-        action.setVisible(l.action() != null);
-        action.setText(l.action() == null ? "" : "（" + l.action() + "）");
+        dialog.speaker(speaking ? l.who() : null);
+        dialog.action.setVisible(l.action() != null);
+        dialog.action.setText(l.action() == null ? "" : "（" + l.action() + "）");
         String shown = l.text();
         switch (l.kind()) {
             case OS -> {
@@ -303,17 +369,17 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             }
         }
         if (speaking && shown.isEmpty() && l.action() != null) {
-            action.setVisible(false);
+            dialog.action.setVisible(false);
             shown = "（" + l.action() + "）";
         }
         if (skipping() || instant()) {
-            text.setText(shown);
+            dialog.text.setText(shown);
             lineShown();
             return;
         }
         Sfx.Voice voice = speaking ? Sfx.Voice.of(personId) : null;
         double factor = game.progress.settings().textSpeed().factor;
-        typing = Motion.typewriter(text, shown, Duration.millis(CHAR_MS * factor), n -> {
+        typing = Motion.typewriter(dialog.text, shown, Duration.millis(CHAR_MS * factor), n -> {
             if (voice != null && n % voice.every == 1) {
                 game.sfx.blip(voice);
             }
@@ -327,12 +393,16 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         return game.progress.settings().textSpeed() == Progress.TextSpeed.INSTANT;
     }
 
-    /** 一行顯示完了：快進時馬上往下，自動播放時等一下再往下。 */
+    /** 一行顯示完了：快進時馬上往下，自動播放時等一下再往下；介面收起時先停著，叫回來再接著走。 */
     private void lineShown() {
+        refreshMark();
+        if (uiHidden) {
+            return;
+        }
         if (skipping() && (lineRead || game.progress.settings().skipAll())) {
             PauseTransition p = new PauseTransition(Duration.millis(45));
             p.setOnFinished(e -> {
-                if (skipping()) {
+                if (skipping() && !uiHidden) {
                     advance();
                 }
             });
@@ -346,7 +416,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
 
     private void scheduleAuto() {
         cancelAuto();
-        double seconds = game.progress.settings().autoDelay().seconds + text.getText().length() * 0.03;
+        double seconds = game.progress.settings().autoDelay().seconds + dialog.text.getText().length() * 0.03;
         autoTimer = new PauseTransition(Duration.seconds(seconds));
         autoTimer.setOnFinished(e -> {
             if (autoButton.isSelected()) {
@@ -365,6 +435,16 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
 
     private boolean skipping() {
         return skipButton.isSelected() || ctrlHeld;
+    }
+
+    /** 整句出現、等玩家往下時，筆記本右下角才出現記號；自動和快進各換一種。 */
+    private void refreshMark() {
+        if (pending == null || typing != null) {
+            dialog.showMark(null);
+        } else {
+            dialog.showMark(skipping() ? NotebookPage.Mark.SKIP
+                    : autoButton.isSelected() ? NotebookPage.Mark.AUTO : NotebookPage.Mark.NEXT);
+        }
     }
 
     private void skipNow() {
@@ -386,14 +466,32 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             Runnable p = pending;
             pending = null;
             p.run();
+            refreshMark();
         }
     }
 
     private void onClick(MouseEvent e) {
-        if (e.getButton() != MouseButton.PRIMARY || fromControl(e)) {
+        if (fromControl(e)) {
             return;
         }
-        advance();
+        if (e.getButton() == MouseButton.PRIMARY) {
+            advance();
+        } else if (e.getButton() == MouseButton.SECONDARY) {
+            hideUi(true);
+        }
+    }
+
+    /** 滾輪往上看紀錄，往下前進一句。 */
+    private void onScroll(ScrollEvent e) {
+        if (e.getDeltaY() > 0) {
+            openBacklog();
+        } else if (e.getDeltaY() < 0 && pick == null && !e.isInertia()) {
+            long now = System.currentTimeMillis();
+            if (now - lastWheel >= WHEEL_GAP_MS) {
+                lastWheel = now;
+                advance();
+            }
+        }
     }
 
     private static boolean fromControl(MouseEvent e) {
@@ -411,7 +509,13 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         if (e.getEventType() == KeyEvent.KEY_RELEASED) {
             if (code == KeyCode.CONTROL) {
                 ctrlHeld = false;
+                refreshMark();
             }
+            return;
+        }
+        if (uiHidden) {
+            hideUi(false);
+            e.consume();
             return;
         }
         switch (code) {
@@ -428,7 +532,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             }
             case A -> autoButton.fire();
             case L -> openBacklog();
-            case H -> openHandbook();
+            case H -> hideUi(true);
+            case N -> openHandbook();
             case DIGIT1, DIGIT2, DIGIT3, DIGIT4, NUMPAD1, NUMPAD2, NUMPAD3, NUMPAD4 -> {
                 int i = code.getName().charAt(code.getName().length() - 1) - '1';
                 if (pick != null && i < choices.getChildren().size()) {
@@ -445,6 +550,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     @Override
     public void menu(Op.Menu menu, IntConsumer onPick) {
         cancelAuto();
+        hideUi(false);
         skipButton.setSelected(false);
         if (blackout) {
             blackout = false;
@@ -455,9 +561,14 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         for (int i = 0; i < menu.options().size(); i++) {
             int index = i;
             Button b = new Button(menu.options().get(i).text());
-            b.getStyleClass().add("choice");
-            b.setMaxWidth(Double.MAX_VALUE);
+            b.getStyleClass().addAll("choice", "note-" + i % TILTS.length);
+            b.setPrefSize(NOTE, NOTE);
+            b.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+            b.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
             b.setWrapText(true);
+            double tilt = TILTS[i % TILTS.length];
+            // 角度跟著 hoverLift 的高度走：浮起來時剛好轉正，進場從下方彈上來時歪得更多，像被拍上去
+            b.rotateProperty().bind(b.translateYProperty().multiply(tilt / LIFT).add(tilt));
             b.setOnAction(e -> choose(index));
             Motion.hoverLift(b);
             choices.getChildren().add(b);

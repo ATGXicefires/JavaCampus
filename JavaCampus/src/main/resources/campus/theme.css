@@ -307,19 +307,35 @@
     -fx-background-color: c-night;
 }
 
+/* 橫線、紅色邊線和孔由 NotebookPage 依行距畫上去；左邊留給孔和邊線 */
 .dialog-box {
-    -fx-background-color: rgba(255, 250, 242, 0.94);
-    -fx-border-color: transparent transparent transparent c-accent;
-    -fx-border-width: 0 0 0 4;
-    -fx-padding: 30 36 26 36;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 24, 0.15, 0, 6);
+    -fx-background-color: linear-gradient(to bottom, #fffdf5, #f9f2e2);
+    -fx-padding: 22 48 30 96;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.42), 22, 0.12, 0, 8);
 }
 
+.dialog-rules {
+    -fx-stroke: rgba(96, 140, 204, 0.4);
+    -fx-stroke-width: 1;
+}
+
+.dialog-margin {
+    -fx-background-color: rgba(229, 108, 122, 0.75);
+}
+
+.dialog-hole {
+    -fx-fill: rgba(30, 26, 34, 0.72);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.7), 4, 0, 1, 1);
+}
+
+/* 紙膠帶：兩端剪成鋸齒，底色和字色由程式依角色設定 */
 .name-plate {
-    -fx-text-fill: white;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-padding: 6 18;
+    -fx-padding: 6 22;
+    -fx-shape: "M0 0 H100 L98 3.3 L100 6.7 L98 10 L100 13.3 L98 16.7 L100 20 H0 L2 16.7 L0 13.3 L2 10 L0 6.7 L2 3.3 Z";
+    -fx-rotate: -2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 6, 0, 0, 2);
 }
 
 .dialog-action {
@@ -327,18 +343,21 @@
     -fx-font-size: 15px;
 }
 
+/* 行距由程式補成剛好一格橫線，這裡不要設 -fx-line-spacing，樣式表會蓋過程式設的值 */
 .dialog-text {
     -fx-font-size: 23px;
-    -fx-line-spacing: 6;
+    -fx-text-fill: #2c2733;
 }
 
+/* 中文斜體只是硬把字型歪過去，內心話改用手寫字和藍筆色 */
 .dialog-box.os .dialog-text {
-    -fx-font-style: italic;
-    -fx-text-fill: #6f6560;
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-font-size: 25px;
+    -fx-text-fill: #34528c;
 }
 
 .dialog-box.narration .dialog-text {
-    -fx-text-fill: #4d4541;
+    -fx-text-fill: #62574f;
 }
 
 .dialog-box.direction .dialog-text {
@@ -346,34 +365,75 @@
     -fx-font-size: 20px;
 }
 
+.dialog-next {
+    -fx-fill: #d0675f;
+}
+
+/* 便利貼：正方形，上緣貼一段半透明膠帶；膠帶的內距是照 220 的邊長算的 */
 .choice {
-    -fx-background-color: rgba(255, 250, 242, 0.96);
-    -fx-border-color: transparent transparent transparent c-accent;
-    -fx-border-width: 0 0 0 5;
-    -fx-font-size: 21px;
-    -fx-padding: 16 26;
-    -fx-alignment: center-left;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 18, 0.15, 0, 4);
+    note: #fff1a6;
+    -fx-background-color: note, rgba(255, 255, 255, 0.55);
+    -fx-background-insets: 0, -9 76 210 76;
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-font-size: 24px;
+    -fx-text-fill: #3a3330;
+    -fx-padding: 24 22;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 14, 0.1, 2, 6);
+}
+
+.choice.note-1 {
+    note: #ffd2dc;
+}
+
+.choice.note-2 {
+    note: #c9efd9;
+}
+
+.choice.note-3 {
+    note: #d2e5ff;
 }
 
 .choice:hover {
-    -fx-background-color: #fff1e0;
-    -fx-border-color: transparent transparent transparent #ff8e5a;
+    -fx-background-color: derive(note, 18%), rgba(255, 255, 255, 0.55);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 24, 0.1, 3, 14);
 }
 
+.choice:pressed {
+    -fx-background-color: derive(note, -6%), rgba(255, 255, 255, 0.55);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 6, 0.1, 1, 2);
+}
+
+/* 快捷選單：貼在筆記本右下角的深色標籤條，字平常淡淡的，滑過才亮 */
+.quick-menu {
+    -fx-background-color: rgba(34, 37, 54, 0.88);
+    -fx-padding: 0 6;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
+}
+
+/* 每顆都留底線的位置，切換開關時按鈕才不會跟著變高 */
 .quick {
-    -fx-background-color: rgba(12, 11, 16, 0.55);
-    -fx-text-fill: #f6efe4;
-    -fx-padding: 6 14;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-text-fill: rgba(246, 239, 228, 0.55);
+    -fx-font-size: 13px;
+    -fx-padding: 5 10 3 10;
 }
 
 .quick:hover {
-    -fx-background-color: rgba(12, 11, 16, 0.75);
+    -fx-background-color: transparent;
+    -fx-text-fill: #fff8ee;
 }
 
 .quick:selected {
-    -fx-background-color: c-accent;
-    -fx-text-fill: #2b1a08;
+    -fx-border-color: transparent transparent #ffb36b transparent;
+    -fx-text-fill: #ffb36b;
+}
+
+.quick:selected:hover {
+    -fx-text-fill: #ffd2a1;
 }
 
 .call-bar {
