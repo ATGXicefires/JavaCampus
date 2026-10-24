@@ -17,8 +17,16 @@ public record RunResult(Outcome outcome, String output, boolean truncated, List<
 
     public enum Severity { ERROR, WARNING }
 
-    /** @param raw 編譯器或例外的原始訊息，玩家可以展開查看 */
-    public record Problem(Severity severity, int start, int end, String message, String raw) {}
+    /**
+     * @param raw  編譯器或例外的原始訊息，玩家可以展開查看
+     * @param file 出問題的檔案，例如 {@code Student.java}，{@code start} 和 {@code end} 都相對於它；片段只有一個檔案，所以是 null
+     */
+    public record Problem(Severity severity, int start, int end, String message, String raw, String file) {
+
+        public Problem(Severity severity, int start, int end, String message, String raw) {
+            this(severity, start, end, message, raw, null);
+        }
+    }
 
     /** {@code error} 不為 null 時代表這個運算式沒辦法求值，{@code type} 與 {@code value} 為 null。 */
     public record Probe(String expr, String type, String value, String error) {}

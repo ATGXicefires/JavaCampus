@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +19,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 從 {@code lessons/} 讀入所有程式題、筆記條目和搭檔反應。每題一個資料夾，內含 {@code lesson.json}
- * 與每個步驟的 {@code <stepId>.solution.jsh}、{@code <stepId>.skeleton.jsh}，以及選填的 {@code <stepId>.starter.jsh}。
+ * 與每個步驟的程式碼檔：參考解答 {@code solution}、骨架 {@code skeleton}，以及選填的起始碼 {@code starter}。
+ * <ul>
+ *   <li>只有一個檔案時寫成 {@code <stepId>.<種類>.jsh}，例如 {@code say.starter.jsh}。片段題的分頁叫
+ *       「片段.jsh」，完整程式則當成 {@code Main.java}。</li>
+ *   <li>完整程式有好幾個檔案時，每個檔案寫成 {@code <stepId>.<種類>.<檔名>.java}，例如 {@code roster.starter.Main.java}
+ *       和 {@code roster.starter.Student.java}。分頁的順序是 {@code Main.java} 在最前面，其他照檔名排。</li>
+ * </ul>
+ * 同一個步驟的同一個種類只能用其中一種寫法。
  */
 public record LessonLibrary(Map<String, Lesson> lessons, Handbook handbook, Reactions reactions) {
 
@@ -54,20 +62,40 @@ public record LessonLibrary(Map<String, Lesson> lessons, Handbook handbook, Reac
         if (!dir.getFileName().toString().equals(raw.id())) {
             throw new IllegalStateException(dir + "：資料夾名稱要和 id 相同");
         }
+        List<String> names;
+        try (Stream<Path> files = Files.list(dir)) {
+            names = files.map(p -> p.getFileName().toString()).toList();
+        }
         List<Step> steps = new ArrayList<>();
         for (Step s : raw.steps()) {
-            String starter = readOptional(dir.resolve(s.id() + ".starter.jsh"));
-            String skeleton = Files.readString(dir.resolve(s.id() + ".skeleton.jsh"), UTF_8);
-            String solution = Files.readString(dir.resolve(s.id() + ".solution.jsh"), UTF_8);
-            steps.add(s.withCode(starter, skeleton, solution));
+            steps.add(s.withCode(readFiles(dir, names, s, "starter"), readFiles(dir, names, s, "skeleton"),
+                    readFiles(dir, names, s, "solution")));
         }
         Lesson l = raw.withSteps(steps);
         validate(l);
         return l;
     }
 
-    private static String readOptional(Path p) throws IOException {
-        return Files.exists(p) ? Files.readString(p, UTF_8) : "";
+    /** 讀出一個步驟某個種類的所有檔案；沒有就是空的。 */
+    private static List<SourceFile> readFiles(Path dir, List<String> names, Step s, String kind) throws IOException {
+        String prefix = s.id() + "." + kind + ".";
+        List<String> java = names.stream().filter(n -> n.startsWith(prefix) && n.endsWith(".java")).sorted().toList();
+        String where = dir.getFileName() + "/" + s.id() + "：" + kind;
+        if (names.contains(prefix + "jsh")) {
+            if (!java.isEmpty()) {
+                throw new IllegalStateException(where + " 同時有 .jsh 和 .java，只能用其中一種");
+            }
+            return List.of(new SourceFile(s.form().fileName, Files.readString(dir.resolve(prefix + "jsh"), UTF_8)));
+        }
+        if (!java.isEmpty() && s.form() != Step.Form.PROGRAM) {
+            throw new IllegalStateException(where + " 是片段題，只能用一個 .jsh 檔");
+        }
+        List<SourceFile> out = new ArrayList<>();
+        for (String n : java) {
+            out.add(new SourceFile(n.substring(prefix.length()), Files.readString(dir.resolve(n), UTF_8)));
+        }
+        out.sort(Comparator.comparing((SourceFile f) -> !f.name().equals(Step.Form.PROGRAM.fileName)));
+        return out;
     }
 
     private static void validate(Lesson l) {
@@ -84,6 +112,12 @@ public record LessonLibrary(Map<String, Lesson> lessons, Handbook handbook, Reac
             }
             if (s.check() == null) {
                 throw new IllegalStateException(l.id() + "/" + s.id() + "：缺少 check");
+            }
+            if (s.goal().isBlank()) {
+                throw new IllegalStateException(l.id() + "/" + s.id() + "：缺少 goal");
+            }
+            if (s.skeleton().isEmpty() || s.solution().isEmpty()) {
+                throw new IllegalStateException(l.id() + "/" + s.id() + "：缺少 skeleton 或 solution 檔");
             }
             if (s.check().type() == Check.Mode.VALUES && s.check().exprs().isEmpty()) {
                 throw new IllegalStateException(l.id() + "/" + s.id() + "：values 檢查沒有指定 exprs");

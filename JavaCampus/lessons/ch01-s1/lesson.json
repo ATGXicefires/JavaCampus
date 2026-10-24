@@ -9,7 +9,8 @@
     {
       "id": "rewrite",
       "title": "改成白話",
-      "instructions": "這是原本那份術語版的範例。她看了三秒就走了。\n\n把引號裡的字改成白話版，讓它印出 `電腦會把引號裡的字，原封不動印出來`。",
+      "goal": "改成白話版，印出 `電腦會把引號裡的字，原封不動印出來`。",
+      "instructions": "這是原本那份術語版的範例。她看了三秒就走了。\n\n只改引號裡的字，括號、引號和最後的 `;` 都留著。",
       "expectedShape": "System.out.println(\"…\");",
       "check": { "type": "output" },
       "hints": {
@@ -21,7 +22,8 @@
     {
       "id": "box",
       "title": "盒子",
-      "instructions": "範例 2 要講變數。把「宣告區域變數」那段刪掉，改成盒子：做一個 `String` 盒子叫 `box`，放進 `\"扭蛋\"`，再把 `box` 印出來。",
+      "goal": "做一個 `String` 盒子叫 `box`，放進 `\"扭蛋\"`，再印出來。",
+      "instructions": "範例 2 要講變數。把「宣告區域變數」那段刪掉，改成盒子。\n\n寫法是：盒子的種類、名字、`=`、內容，最後加分號。印的時候括號裡寫 `box`，不加引號。",
       "expectedShape": "String box = \"扭蛋\";\nSystem.out.println(box);",
       "check": { "type": "values", "exprs": ["box"] },
       "hints": {
@@ -33,7 +35,8 @@
     {
       "id": "gacha",
       "title": "七個，然後八個",
-      "instructions": "範例 3 示範換掉盒子裡的東西。做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再寫 `gacha = 8;`，再印一次。\n\n輸出要是 `7` 和 `8` 兩行。第二次不用再寫 `int`。",
+      "goal": "`gacha` 放進 `7` 印出來，再換成 `8` 印一次。",
+      "instructions": "範例 3 示範換掉盒子裡的東西。先做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再寫 `gacha = 8;`，再印一次。\n\n輸出要是 `7` 和 `8` 兩行。第二次不用再寫 `int`。",
       "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);\ngacha = 8;\nSystem.out.println(gacha);",
       "check": { "type": "output" },
       "hints": {

@@ -14,6 +14,7 @@ import campus.lesson.Handbook;
 import campus.lesson.Lesson;
 import campus.lesson.Reactions;
 import campus.lesson.SetupVar;
+import campus.lesson.SourceFile;
 import campus.lesson.Step;
 import campus.story.Cast;
 import javafx.animation.Animation;
@@ -35,27 +36,32 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.TwoDimensional.Bias;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-/** 程式題：左邊是步驟和說明，中間寫程式和看結果，右邊是筆記、可用資料和搭檔的反應。 */
+/** 程式題：左邊是步驟和題目，中間寫程式和看結果，右邊是筆記、可用資料和搭檔的反應。三區各自是一張卡片。 */
 final class LessonView extends StackPane {
+
+    // 完整程式的檔案清單另外存一份，玩家新增的檔案下次才找得回來；檔名裡不會有「#」，不會跟檔案的鍵撞在一起
+    private static final String FILE_LIST = "#files";
 
     private final Game game;
     private final Lesson lesson;
     private final Runnable onContinue;
-    private final CodeArea editor = new CodeArea();
+    private final EditorTabs editors;
     private final VBox stepList = new VBox(4);
     private final VBox detail = new VBox(12);
     private final VBox console = new VBox(10);
@@ -68,6 +74,7 @@ final class LessonView extends StackPane {
     private final Label reactionWho = new Label();
     private final Label reactionText = new Label();
     private final VBox reaction = new VBox(6, reactionWho, reactionText);
+    private final Pane peekLayer = new Pane();
     private final HintDrawer hints;
     private final Random rnd = new Random();
     private final PauseTransition autosave = new PauseTransition(Duration.seconds(1));
@@ -75,8 +82,7 @@ final class LessonView extends StackPane {
     private final PauseTransition stopReveal = new PauseTransition(Duration.millis(400));
     private Step current;
     private Step justSolved;
-    private List<JavaHighlighter.Mark> marks = List.of();
-    private int errorLine = -1;
+    private boolean moreOpen;
     private Animation nudge;
     private boolean busy;
 
@@ -85,15 +91,23 @@ final class LessonView extends StackPane {
         this.lesson = lesson;
         this.onContinue = onContinue;
         hints = new HintDrawer(game, this::refreshSteps);
+        editors = new EditorTabs(game, this::onEdited, () -> {
+            autosave.stop();
+            saveCode();
+        });
+        Node center = centerPanel();
+        HBox.setHgrow(center, Priority.ALWAYS);
+        HBox zones = new HBox(12, leftPanel(), center, rightPanel());
+        zones.setPadding(new Insets(12));
         BorderPane layout = new BorderPane();
         layout.setTop(topBar());
-        layout.setLeft(leftPanel());
-        layout.setCenter(centerPanel());
-        layout.setRight(rightPanel());
+        layout.setCenter(zones);
+        peekLayer.setMouseTransparent(true);
+        peekLayer.setPickOnBounds(false);
         StackPane.setAlignment(hints, Pos.CENTER_RIGHT);
-        getChildren().addAll(layout, hints);
+        getChildren().addAll(layout, peekLayer, hints);
         getStyleClass().add("lesson");
-        setupEditor();
+        editors.addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
         autosave.setOnFinished(e -> saveCode());
         stopReveal.setOnFinished(e -> stopButton.setVisible(busy));
         open(firstOpenStep());
@@ -116,20 +130,29 @@ final class LessonView extends StackPane {
         return bar;
     }
 
+    private static Label zoneHead(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("zone-head");
+        l.setMaxWidth(Double.MAX_VALUE);
+        return l;
+    }
+
     private Node leftPanel() {
         ScrollPane detailScroll = new ScrollPane(detail);
         detailScroll.setFitToWidth(true);
         VBox.setVgrow(detailScroll, Priority.ALWAYS);
         detail.setPadding(new Insets(4, 6, 12, 2));
-        VBox box = new VBox(10, stepList, new Separator(), detailScroll);
-        box.setPadding(new Insets(14));
-        box.setPrefWidth(330);
-        box.getStyleClass().add("side-panel");
+        VBox body = new VBox(10, stepList, new Separator(), detailScroll);
+        body.setPadding(new Insets(12, 14, 14, 14));
+        VBox.setVgrow(body, Priority.ALWAYS);
+        VBox box = new VBox(zoneHead("題目"), body);
+        box.setPrefWidth(320);
+        box.setMinWidth(320);
+        box.getStyleClass().add("zone");
         return box;
     }
 
     private Node centerPanel() {
-        VirtualizedScrollPane<CodeArea> editorScroll = new VirtualizedScrollPane<>(editor);
         runButton.getStyleClass().add("btn-primary");
         runButton.setTooltip(game.tooltip("Ctrl + Enter"));
         runButton.setOnAction(e -> run());
@@ -152,30 +175,40 @@ final class LessonView extends StackPane {
         toolbar.setAlignment(Pos.CENTER_LEFT);
         toolbar.getStyleClass().add("toolbar-row");
 
-        VBox top = new VBox(editorScroll, toolbar);
-        VBox.setVgrow(editorScroll, Priority.ALWAYS);
+        VBox editorZone = new VBox(editors, toolbar);
+        VBox.setVgrow(editors, Priority.ALWAYS);
+        editorZone.getStyleClass().addAll("zone", "editor-zone");
         console.getStyleClass().add("console");
         consoleScroll.setFitToWidth(true);
         consoleScroll.setFitToHeight(true);
         consoleScroll.getStyleClass().add("console-scroll");
-        SplitPane split = new SplitPane(top, consoleScroll);
+        VBox.setVgrow(consoleScroll, Priority.ALWAYS);
+        VBox consoleZone = new VBox(zoneHead("執行結果"), consoleScroll);
+        consoleZone.getStyleClass().addAll("zone", "console-zone");
+        SplitPane split = new SplitPane(editorZone, consoleZone);
         split.setOrientation(Orientation.VERTICAL);
         split.setDividerPositions(0.6);
+        split.getStyleClass().add("zone-split");
         return split;
     }
 
     private Node rightPanel() {
-        TabPane tabs = new TabPane(new Tab("筆記", notesPane()));
+        // 這一題相關的筆記條目，寫題目的時候就看得到，過關才會收進「程式基礎教學筆記」
+        List<Handbook.Entry> notes = lesson.notes().stream()
+                .map(id -> game.lessons.handbook().entry(id).orElseThrow()).toList();
+        TabPane tabs = new TabPane(new Tab("筆記", new NoteList(notes, peekLayer)));
         if (!lesson.vars().isEmpty()) {
             tabs.getTabs().add(new Tab("可用資料", dataPane()));
         }
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        tabs.getStyleClass().add("zone");
         VBox.setVgrow(tabs, Priority.ALWAYS);
 
         boolean inner = lesson.partner().endsWith("OS");
         String who = inner ? lesson.partner().substring(0, lesson.partner().length() - 2) : lesson.partner();
         reactionWho.setText(inner ? "" : who);
-        reactionWho.setStyle("-fx-text-fill: " + Cast.colorOf(who) + ";");
+        // 角色色寫成具名顏色而不是直接設文字色，暗色配色才能在樣式表裡把它調亮
+        reactionWho.setStyle("who-color: " + Cast.colorOf(who) + ";");
         reactionWho.getStyleClass().add("reaction-who");
         reactionWho.managedProperty().bind(reactionWho.visibleProperty());
         reactionWho.setVisible(!inner);
@@ -185,31 +218,14 @@ final class LessonView extends StackPane {
         }
         reactionText.setWrapText(true);
         reaction.getStyleClass().add("reaction");
+        reaction.managedProperty().bind(reaction.visibleProperty());
         reaction.setVisible(false);
         reaction.setMinHeight(Region.USE_PREF_SIZE);
 
         VBox box = new VBox(12, tabs, reaction);
-        box.setPadding(new Insets(0, 0, 14, 0));
-        box.setPrefWidth(340);
-        box.getStyleClass().add("side-panel");
+        box.setPrefWidth(330);
+        box.setMinWidth(330);
         return box;
-    }
-
-    /** 這一題相關的筆記條目。寫題目的時候就看得到，過關才會收進「程式基礎教學筆記」。 */
-    private Node notesPane() {
-        VBox box = new VBox(18);
-        box.setPadding(new Insets(16));
-        for (String id : lesson.notes()) {
-            Handbook.Entry e = game.lessons.handbook().entry(id).orElseThrow();
-            Label title = new Label(e.title());
-            title.getStyleClass().add("note-title");
-            VBox entry = new VBox(8, title, MiniMarkdown.render(e.body()));
-            entry.getStyleClass().add("note-card");
-            box.getChildren().add(entry);
-        }
-        ScrollPane scroll = new ScrollPane(box);
-        scroll.setFitToWidth(true);
-        return scroll;
     }
 
     private Node dataPane() {
@@ -241,18 +257,6 @@ final class LessonView extends StackPane {
         Motion.pop(reaction);
     }
 
-    private void setupEditor() {
-        editor.setParagraphGraphicFactory(this::lineNumber);
-        editor.textProperty().addListener((obs, old, text) -> onEdited());
-        editor.addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
-        editor.addEventHandler(KeyEvent.KEY_TYPED, e -> {
-            String ch = e.getCharacter();
-            if (!ch.isEmpty() && !Character.isISOControl(ch.charAt(0)) && !e.isShortcutDown()) {
-                game.sfx.play(Sfx.Sound.KEY);
-            }
-        });
-    }
-
     private void onKey(KeyEvent e) {
         if (e.getCode() == KeyCode.ENTER && e.isShortcutDown()) {
             e.consume();
@@ -261,62 +265,48 @@ final class LessonView extends StackPane {
             } else {
                 run();
             }
-        } else if (e.getCode() == KeyCode.ENTER && !e.isShiftDown() && !e.isAltDown()) {
-            e.consume();
-            newlineWithIndent();
-            game.sfx.play(Sfx.Sound.KEY);
-        } else if (e.getCode() == KeyCode.TAB && !e.isShiftDown() && !e.isShortcutDown()) {
-            e.consume();
-            editor.replaceSelection("    ");
         }
-    }
-
-    private void newlineWithIndent() {
-        String line = editor.getParagraph(editor.getCurrentParagraph()).getText();
-        String before = line.substring(0, Math.min(editor.getCaretColumn(), line.length()));
-        String indent = before.substring(0, before.length() - before.stripLeading().length());
-        if (before.stripTrailing().endsWith("{")) {
-            indent += "    ";
-        }
-        editor.replaceSelection("\n" + indent);
-        editor.requestFollowCaret();
-    }
-
-    private Node lineNumber(int index) {
-        Label l = new Label(String.format("%2d", index + 1));
-        l.getStyleClass().add("lineno");
-        if (index == errorLine) {
-            l.getStyleClass().add("lineno-error");
-        }
-        return l;
-    }
-
-    private void setErrorLine(int line) {
-        errorLine = line;
-        // 換一個新的 factory 才會讓 RichTextFX 重畫行號
-        editor.setParagraphGraphicFactory(null);
-        editor.setParagraphGraphicFactory(this::lineNumber);
     }
 
     private void onEdited() {
-        if (!marks.isEmpty() || errorLine >= 0) {
-            marks = List.of();
-            setErrorLine(-1);
-        }
-        highlight();
         stopNudge();
         autosave.playFromStart();
     }
 
-    private void highlight() {
-        editor.setStyleSpans(0, JavaHighlighter.spans(editor.getText(), marks));
-    }
-
     private void saveCode() {
         if (current != null) {
-            game.progress.setCode(lesson.id(), current.id(), editor.getText());
+            saveFiles(current, editors.files());
             game.save();
         }
+    }
+
+    /** 片段只有一個檔案，存在步驟 id 底下，跟舊存檔一樣；完整程式每個檔案各存在「步驟 id/檔名」。 */
+    private void saveFiles(Step s, List<SourceFile> files) {
+        if (s.form() == Step.Form.SNIPPET) {
+            game.progress.setCode(lesson.id(), s.id(), files.getFirst().text());
+            return;
+        }
+        for (SourceFile f : files) {
+            game.progress.setCode(lesson.id(), s.id() + "/" + f.name(), f.text());
+        }
+        game.progress.setCode(lesson.id(), s.id() + FILE_LIST,
+                files.stream().map(SourceFile::name).collect(Collectors.joining("\n")));
+    }
+
+    /** 還沒存過就是 null。 */
+    private List<SourceFile> savedFiles(Step s) {
+        if (s.form() == Step.Form.SNIPPET) {
+            String code = game.progress.code(lesson.id(), s.id());
+            return code == null ? null : List.of(new SourceFile(s.form().fileName, code));
+        }
+        String names = game.progress.code(lesson.id(), s.id() + FILE_LIST);
+        if (names == null) {
+            return null;
+        }
+        return Arrays.stream(names.split("\n")).map(name -> {
+            String code = game.progress.code(lesson.id(), s.id() + "/" + name);
+            return new SourceFile(name, code == null ? "" : code);
+        }).toList();
     }
 
     private void leave() {
@@ -340,45 +330,56 @@ final class LessonView extends StackPane {
             saveCode();
         }
         current = s;
-        marks = List.of();
-        editor.replaceText(initialCode(s));
-        editor.getUndoManager().forgetHistory();
-        editor.moveTo(editor.getLength());
-        setErrorLine(-1);
-        highlight();
+        moreOpen = false;
+        Set<String> given = givenFiles(s);
+        editors.open(initialFiles(s), s.form() == Step.Form.PROGRAM, name -> !given.contains(name));
         refreshSteps();
         refreshDetail();
         hints.bind(lesson, s);
         console.getChildren().clear();
         // 畫面剛建立時編輯器還不在 scene 裡，要等加進去之後才拿得到焦點
-        Platform.runLater(editor::requestFocus);
+        Platform.runLater(editors::focusEditor);
     }
 
-    private String initialCode(Step s) {
-        String saved = game.progress.code(lesson.id(), s.id());
-        return saved != null ? saved : startingCode(s);
+    private List<SourceFile> initialFiles(Step s) {
+        List<SourceFile> saved = savedFiles(s);
+        return saved != null ? saved : startingFiles(s);
     }
 
     /** 沒有 starter 的步驟沿用上一步過關的程式，讓同一題的程式一路長大。 */
-    private String startingCode(Step s) {
-        if (!s.starter().isBlank()) {
+    private List<SourceFile> startingFiles(Step s) {
+        if (!s.starter().isEmpty()) {
             return s.starter();
         }
         int i = lesson.steps().indexOf(s);
         if (i > 0) {
-            String previous = game.progress.code(lesson.id(), lesson.steps().get(i - 1).id());
+            List<SourceFile> previous = savedFiles(lesson.steps().get(i - 1));
             if (previous != null) {
                 return previous;
             }
         }
-        return "";
+        return List.of(new SourceFile(s.form().fileName, ""));
+    }
+
+    /** 題目本來就給的檔案不能刪；沒有 starter 的步驟沿用前面最近一個有 starter 的步驟。 */
+    private Set<String> givenFiles(Step s) {
+        for (int i = lesson.steps().indexOf(s); i >= 0; i--) {
+            List<SourceFile> starter = lesson.steps().get(i).starter();
+            if (!starter.isEmpty()) {
+                return starter.stream().map(SourceFile::name).collect(Collectors.toSet());
+            }
+        }
+        return Set.of(s.form().fileName);
     }
 
     private void reset() {
-        game.confirm("要把程式碼改回這一步一開始的樣子嗎？目前寫的內容會被取代。", "重設", () -> {
-            editor.replaceText(startingCode(current));
-            editor.moveTo(editor.getLength());
-        });
+        List<SourceFile> start = startingFiles(current);
+        Set<String> kept = start.stream().map(SourceFile::name).collect(Collectors.toSet());
+        boolean dropsFiles = editors.files().stream().anyMatch(f -> !kept.contains(f.name()));
+        String question = dropsFiles
+                ? "要把程式碼改回這一步一開始的樣子嗎？目前寫的內容會被取代，新增的檔案也會刪掉。"
+                : "要把程式碼改回這一步一開始的樣子嗎？目前寫的內容會被取代。";
+        game.confirm(question, "重設", () -> editors.revert(start));
     }
 
     private void refreshSteps() {
@@ -423,15 +424,21 @@ final class LessonView extends StackPane {
         }
     }
 
+    /** 先給這一步要做的事和預期的樣子，背景和完整寫法收在「完整說明」裡。 */
     private void refreshDetail() {
         Label title = new Label(current.title());
         title.getStyleClass().add("detail-title");
         title.setWrapText(true);
+        TextFlow goal = MiniMarkdown.inline(current.goal());
+        goal.getStyleClass().add("step-goal");
         Label shape = new Label(current.expectedShape());
         shape.getStyleClass().add("shape-box");
         shape.setMaxWidth(Double.MAX_VALUE);
         shape.setWrapText(true);
-        detail.getChildren().setAll(title, MiniMarkdown.render(current.instructions()), shape);
+        detail.getChildren().setAll(title, goal, shape);
+        if (!current.instructions().isBlank()) {
+            detail.getChildren().add(moreDetail(current.instructions()));
+        }
         if (game.progress.isSolved(lesson.id(), current.id())) {
             VBox after = MiniMarkdown.render(current.afterText());
             after.getStyleClass().add("after-text");
@@ -439,22 +446,45 @@ final class LessonView extends StackPane {
         }
     }
 
+    private Node moreDetail(String markdown) {
+        Label chevron = new Label(moreOpen ? "▾" : "▸");
+        chevron.getStyleClass().add("more-chevron");
+        Label label = new Label("完整說明");
+        label.getStyleClass().add("more-label");
+        HBox toggle = new HBox(8, chevron, label);
+        toggle.setAlignment(Pos.CENTER_LEFT);
+        toggle.getStyleClass().addAll("more-toggle", "pressable");
+        VBox body = MiniMarkdown.render(markdown);
+        body.getStyleClass().add("more-body");
+        body.managedProperty().bind(body.visibleProperty());
+        body.setVisible(moreOpen);
+        toggle.setOnMouseClicked(e -> {
+            moreOpen = !moreOpen;
+            body.setVisible(moreOpen);
+            chevron.setText(moreOpen ? "▾" : "▸");
+            if (moreOpen) {
+                Motion.rise(body, Duration.ZERO);
+            }
+        });
+        return new VBox(8, toggle, body);
+    }
+
     private void run() {
         if (busy) {
             return;
         }
-        String code = editor.getText();
+        List<SourceFile> files = editors.files();
         Step step = current;
         List<String> probes = step.check().type() == Check.Mode.VALUES ? step.check().exprs() : List.of();
         setBusy(true);
         game.sfx.play(Sfx.Sound.RUN);
         game.background(() -> step.form() == Step.Form.PROGRAM
-                ? game.sandbox.runProgram(code, true, probes)
-                : game.sandbox.run(Verifier.preamble(lesson.vars(), Map.of()), code, probes), r -> {
+                ? game.sandbox.runProgram(files, true, probes)
+                : game.sandbox.run(Verifier.preamble(lesson.vars(), Map.of()), files.getFirst().text(), probes), r -> {
             showRun(r);
             if (r.outcome() == Outcome.OK) {
                 game.sfx.play(Sfx.Sound.DING);
-                precheck(step, code);
+                precheck(step, files);
             } else {
                 failed(r.outcome());
                 Motion.shake(consoleScroll, 6);
@@ -474,9 +504,9 @@ final class LessonView extends StackPane {
     }
 
     /** 執行成功後在背景先驗證一次，對了就讓「完成」閃動提醒。 */
-    private void precheck(Step step, String code) {
-        game.background(() -> game.verifier.verify(lesson.key(step), step.form(), lesson.vars(), step.check(), step.solution(), code), v -> {
-            if (v.passed() && step == current && code.equals(editor.getText())
+    private void precheck(Step step, List<SourceFile> files) {
+        game.background(() -> game.verifier.verify(lesson.key(step), step.form(), lesson.vars(), step.check(), step.solution(), files), v -> {
+            if (v.passed() && step == current && files.equals(editors.files())
                     && !game.progress.isSolved(lesson.id(), step.id())) {
                 startNudge();
             }
@@ -488,14 +518,14 @@ final class LessonView extends StackPane {
             return;
         }
         stopNudge();
-        String code = editor.getText();
+        List<SourceFile> files = editors.files();
         Step step = current;
         setBusy(true);
         game.sfx.play(Sfx.Sound.RUN);
-        game.background(() -> game.verifier.verify(lesson.key(step), step.form(), lesson.vars(), step.check(), step.solution(), code), v -> {
+        game.background(() -> game.verifier.verify(lesson.key(step), step.form(), lesson.vars(), step.check(), step.solution(), files), v -> {
             showRun(v.run());
             if (v.passed()) {
-                solved(step, code);
+                solved(step, files);
             } else {
                 Node card = verdictCard(v);
                 console.getChildren().addFirst(card);
@@ -511,10 +541,10 @@ final class LessonView extends StackPane {
         }, () -> setBusy(false));
     }
 
-    private void solved(Step step, String code) {
+    private void solved(Step step, List<SourceFile> files) {
         boolean firstTime = !game.progress.isSolved(lesson.id(), step.id());
         game.progress.markSolved(lesson.id(), step.id());
-        game.progress.setCode(lesson.id(), step.id(), code);
+        saveFiles(step, files);
 
         VBox card = new VBox(8, MiniMarkdown.inline(step.afterText()));
         card.getStyleClass().addAll("card", "success");
@@ -598,12 +628,7 @@ final class LessonView extends StackPane {
             clear.setOnFinished(e -> console.getStyleClass().remove("ran-ok"));
             clear.play();
         }
-
-        marks = r.problems().stream()
-                .map(p -> new JavaHighlighter.Mark(p.start(), p.end(), p.severity() == Severity.ERROR ? "err" : "warn"))
-                .toList();
-        setErrorLine(r.firstError().map(p -> lineOf(p.start())).orElse(-1));
-        highlight();
+        editors.showProblems(r.problems());
     }
 
     private Node problemCard(Problem p, Outcome outcome) {
@@ -616,7 +641,8 @@ final class LessonView extends StackPane {
             case EXITED -> "執行環境重新啟動";
             case OK -> "錯誤";
         };
-        Label head = new Label(title + "　第 " + (lineOf(p.start()) + 1) + " 行");
+        String where = (p.file() == null ? "" : p.file() + " ") + "第 " + (editors.lineOf(p.file(), p.start()) + 1) + " 行";
+        Label head = new Label(title + "　" + where);
         head.getStyleClass().add("card-title");
         Label raw = new Label(p.raw());
         raw.getStyleClass().add("raw");
@@ -632,11 +658,7 @@ final class LessonView extends StackPane {
         });
         VBox card = new VBox(6, head, MiniMarkdown.inline(p.message()), toggle, raw);
         card.getStyleClass().addAll("card", warning ? "warning" : "error");
-        card.setOnMouseClicked(e -> {
-            editor.moveTo(Math.min(p.start(), editor.getLength()));
-            editor.requestFollowCaret();
-            editor.requestFocus();
-        });
+        card.setOnMouseClicked(e -> editors.jumpTo(p.file(), p.start()));
         return card;
     }
 
@@ -646,10 +668,6 @@ final class LessonView extends StackPane {
         VBox card = new VBox(6, head, MiniMarkdown.inline(v.message()));
         card.getStyleClass().addAll("card", "error");
         return card;
-    }
-
-    private int lineOf(int offset) {
-        return editor.offsetToPosition(Math.min(offset, editor.getLength()), Bias.Forward).getMajor();
     }
 
     private void setBusy(boolean b) {
