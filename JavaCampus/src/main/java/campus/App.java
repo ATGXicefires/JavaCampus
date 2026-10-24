@@ -35,6 +35,7 @@ public class App extends Application {
     private ExecutorService runner;
     private Sfx sfx;
     private Music music;
+    private Game game;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -59,7 +60,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         root.getStyleClass().add("app-root");
         Viewport viewport = new Viewport(root);
-        Game game = new Game(story, lessons, new Art(Path.of("art")), progress, store, sfx, music, sandbox, runner,
+        game = new Game(story, lessons, new Art(Path.of("art")), progress, store, sfx, music, sandbox, runner,
                 root, stage, viewport);
         Scene scene = new Scene(viewport, 1600, 900);
         scene.getStylesheets().add(App.class.getResource("/campus/theme.css").toExternalForm());
@@ -91,6 +92,10 @@ public class App extends Application {
 
     @Override
     public void stop() {
+        // 自動存檔只在場景開頭和選擇時寫入；關視窗時再存一次，下次才會回到正在看的那一句
+        if (game != null) {
+            game.save();
+        }
         if (sandbox != null) {
             sandbox.stop();
         }

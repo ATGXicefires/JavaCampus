@@ -68,7 +68,15 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private final Region flash = new Region();
     private final Region black = new Region();
 
-    private final VBox dialog = new VBox(6);
+    /** 名牌不參與排版、壓在框的上緣，沒人管它的大小，所以每次排版自己量一次。 */
+    private final VBox dialog = new VBox(6) {
+        @Override
+        protected void layoutChildren() {
+            super.layoutChildren();
+            plate.autosize();
+            plate.relocate(28, -plate.getHeight() + 6);
+        }
+    };
     private final Label plate = new Label();
     private final Label action = new Label();
     private final Label text = new Label();
@@ -104,7 +112,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         sunset.getStyleClass().add("sunset-filter");
         sunset.setMouseTransparent(true);
         sunset.setOpacity(0);
-        world.getChildren().addAll(backdrops, actors, sunset);
+        world.getChildren().addAll(backdrops, sunset, actors);
 
         vignette.getStyleClass().add("vignette");
         flash.getStyleClass().add("flash");
@@ -164,8 +172,6 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         layer.setPickOnBounds(false);
         dialog.setMinHeight(190);
         dialog.setMaxWidth(1180);
-        dialog.layoutBoundsProperty().addListener((obs, old, b) -> plate.relocate(28, -plate.getHeight() + 6));
-        plate.heightProperty().addListener((obs, old, h) -> plate.relocate(28, -h.doubleValue() + 6));
         return layer;
     }
 
@@ -281,6 +287,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         if (speaking) {
             plate.setText(l.who());
             plate.setStyle("-fx-background-color: " + Cast.colorOf(l.who()) + ";");
+            dialog.requestLayout();
         }
         action.setVisible(l.action() != null);
         action.setText(l.action() == null ? "" : "（" + l.action() + "）");
@@ -443,7 +450,6 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             blackout = false;
             Motion.fade(black, 0, 350, null);
         }
-        dialog.setVisible(false);
         choices.getChildren().clear();
         pick = onPick;
         for (int i = 0; i < menu.options().size(); i++) {
@@ -650,7 +656,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     private void highlight(String speaker) {
         for (FigureView f : figures.values()) {
             boolean talking = f.person().equals(speaker);
-            f.setOpacity(speaker == null || talking ? 1 : 0.72);
+            // 剪影調透明度會透出背後的螢幕和桌子，所以改成壓暗：黑色不變，只有描邊和眼鏡變暗
+            f.setEffect(speaker == null || talking ? null : new ColorAdjust(0, -0.2, -0.45, 0));
             if (talking) {
                 Motion.bob(f);
             }
@@ -787,7 +794,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             Motion.fade(card, 0, 400, () -> getChildren().remove(card));
             then.run();
         };
-        card.setOnMouseClicked(e -> finish.run());
+        // 用按下而不是點擊：按「重玩」那一下放開時產生的點擊事件，會落到剛蓋上來的標題卡上，一出現就被跳過
+        card.setOnMousePressed(e -> finish.run());
         String line = "error: 第" + numeral(chapter.number()) + "章「" + chapter.title() + "」";
         if (Motion.isOff()) {
             real.setOpacity(1);
@@ -802,7 +810,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             glitch.setOnFinished(e -> {
                 Motion.shake(error, 10);
                 Motion.fade(error, 0, 260, null);
-                Motion.fade(real, 1, 500, null);
+                // rise 會淡入到呼叫當下的透明度，所以先設成 1 再交給它
+                real.setOpacity(1);
                 Motion.rise(real, Duration.ZERO);
                 PauseTransition hold = new PauseTransition(Duration.seconds(1.6));
                 hold.setOnFinished(x -> finish.run());

@@ -18,6 +18,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /** 劇情裡的手機聊天。原創的介面，不模仿任何通訊軟體；視角角色自己的訊息靠右。 */
 final class PhonePanel extends StackPane {
 
@@ -26,6 +31,7 @@ final class PhonePanel extends StackPane {
     private final Label contact = new Label();
     private final VBox messages = new VBox(10);
     private final ScrollPane scroll = new ScrollPane(messages);
+    private final Map<String, List<Node>> threads = new HashMap<>();
     private String current;
     private HBox unsent;
 
@@ -51,11 +57,15 @@ final class PhonePanel extends StackPane {
         setPickOnBounds(false);
     }
 
+    /** 每個聯絡人各留一串對話，切去跟別人聊再切回來，之前的訊息和附件都還在。 */
     void open(String who) {
         if (!who.equals(current)) {
+            if (current != null) {
+                threads.put(current, new ArrayList<>(messages.getChildren()));
+            }
             current = who;
             contact.setText(who);
-            messages.getChildren().clear();
+            messages.getChildren().setAll(threads.getOrDefault(who, List.of()));
             unsent = null;
         }
     }

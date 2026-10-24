@@ -296,7 +296,7 @@ public final class Game {
         cancel.requestFocus();
     }
 
-    void save() {
+    public void save() {
         try {
             store.save(progress);
         } catch (RuntimeException e) {

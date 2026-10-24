@@ -204,6 +204,20 @@
 }
 
 /* 選視角 */
+/* 沒滑到的那一半靠降低不透明度變暗，底下要是黑的，不然會透出淺色底變灰 */
+.route-select {
+    -fx-background-color: #000;
+}
+
+.route-select .btn-ghost {
+    -fx-text-fill: #e8eefc;
+    -fx-border-color: rgba(255, 255, 255, 0.35);
+}
+
+.route-select .btn-ghost:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
 .route-half {
     -fx-cursor: hand;
 }
@@ -471,6 +485,11 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 30, 0.2, 0, 10);
 }
 
+/* 要寫在各外觀前面，外觀自己的字體大小才蓋得過去 */
+.doc-body .md-text, .doc-body .md-bold, .doc-body .md-code {
+    -fx-font-size: 17px;
+}
+
 .doc-pdf {
     -fx-background-color: white;
 }
@@ -508,10 +527,6 @@
 
 .doc-body {
     -fx-padding: 8 18 18 18;
-}
-
-.doc-body .md-text, .doc-body .md-bold, .doc-body .md-code {
-    -fx-font-size: 17px;
 }
 
 .doc-counter {
@@ -594,6 +609,15 @@
 
 .md-p {
     -fx-line-spacing: 3;
+}
+
+.md .md-h .md-text, .md .md-h .md-bold, .md .md-h .md-code {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.md .md-h {
+    -fx-padding: 0 0 4 0;
 }
 
 .md-pre {
@@ -696,6 +720,12 @@
     -fx-background-color: white;
     -fx-border-color: c-line;
     -fx-padding: 12 14;
+}
+
+/* 筆記欄很窄，程式碼寧可換行也不要被截成「⋯」 */
+.note-card .md-pre {
+    -fx-font-size: 12.5px;
+    -fx-wrap-text: true;
 }
 
 .note-title {

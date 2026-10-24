@@ -33,7 +33,7 @@
     {
       "id": "again",
       "title": "又抽到一個",
-      "instructions": "又抽到一個了。在最後面寫 `gacha = 8;`，把盒子裡的 7 換成 8，再印一次 `gacha`。\n\n盒子已經做好了，這次前面**不用再寫 `int`**。輸出會是 `7` 和 `8` 兩行。",
+      "instructions": "又抽到一個了。在最後面寫 `gacha = 8;`，把盒子裡的 7 換成 8，再印一次 `gacha`。\n\n盒子已經做好了，這次前面**不用再寫** `int`。輸出會是 `7` 和 `8` 兩行。",
       "expectedShape": "gacha = 8;\nSystem.out.println(gacha);",
       "check": { "type": "output" },
       "hints": {
