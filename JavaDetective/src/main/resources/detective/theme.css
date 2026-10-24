@@ -34,7 +34,6 @@
 
 .button, .menu-button {
     -fx-background-color: c-panel-2;
-    -fx-background-radius: 6;
     -fx-text-fill: c-text;
     -fx-padding: 7 14;
     -fx-cursor: hand;
@@ -77,7 +76,6 @@
 .btn-ghost {
     -fx-background-color: transparent;
     -fx-border-color: c-line;
-    -fx-border-radius: 6;
 }
 
 .btn-ghost:hover {
@@ -98,11 +96,6 @@
     -fx-text-fill: c-amber;
 }
 
-.subtitle {
-    -fx-font-size: 16px;
-    -fx-text-fill: c-muted;
-}
-
 .chapter-title {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
@@ -110,9 +103,7 @@
 
 .case-card {
     -fx-background-color: c-panel;
-    -fx-background-radius: 10;
     -fx-border-color: c-line;
-    -fx-border-radius: 10;
     -fx-padding: 22;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 16, 0.1, 0, 6);
@@ -148,9 +139,7 @@
 
 .chip {
     -fx-background-color: #2a2f3a;
-    -fx-background-radius: 10;
     -fx-padding: 2 9;
-    -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 12px;
     -fx-text-fill: #f0c070;
 }
@@ -168,7 +157,6 @@
 
 .paper {
     -fx-background-color: linear-gradient(to bottom, #f3ebd9, #e5dac1);
-    -fx-background-radius: 3;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 22, 0.15, 0, 8);
 }
 
@@ -226,7 +214,6 @@
 
 .dialog-line {
     -fx-background-color: rgba(27, 30, 37, 0.92);
-    -fx-background-radius: 8;
     -fx-padding: 12 16;
 }
 
@@ -259,14 +246,7 @@
     -fx-background-color: c-panel;
 }
 
-.section-label {
-    -fx-text-fill: c-muted;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
-
 .step-row {
-    -fx-background-radius: 8;
     -fx-padding: 8 10;
     -fx-cursor: hand;
 }
@@ -278,8 +258,6 @@
 .step-row.current {
     -fx-background-color: #2c2a22;
     -fx-border-color: c-amber-dim;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
 }
 
 .step-row.locked {
@@ -293,7 +271,6 @@
     -fx-max-width: 28;
     -fx-max-height: 28;
     -fx-alignment: center;
-    -fx-background-radius: 14;
     -fx-background-color: c-panel-2;
     -fx-font-weight: bold;
 }
@@ -310,11 +287,6 @@
 
 .step-title {
     -fx-font-weight: bold;
-}
-
-.step-meta {
-    -fx-text-fill: c-muted;
-    -fx-font-size: 12px;
 }
 
 .detail-title {
@@ -348,7 +320,6 @@
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 13.5px;
     -fx-background-color: #101217;
-    -fx-background-radius: 6;
     -fx-padding: 10 12;
     -fx-text-fill: #f0c070;
 }
@@ -360,13 +331,11 @@
     -fx-background-color: #101217;
     -fx-border-color: c-line;
     -fx-border-style: segments(5, 4);
-    -fx-border-radius: 6;
     -fx-padding: 10 12;
 }
 
 .after-text {
     -fx-background-color: #1f2e22;
-    -fx-background-radius: 8;
     -fx-padding: 10 12;
 }
 
@@ -374,7 +343,8 @@
     -fx-fill: #cfeccf;
 }
 
-.code-area {
+/* CodeArea 自己掛了一份指定 monospace 的樣式表，比 Scene 的優先，選擇器要更具體才蓋得過 */
+.app-root .code-area {
     -fx-background-color: #101217;
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 17px;
@@ -449,10 +419,6 @@
     -fx-padding: 8 12;
 }
 
-.status {
-    -fx-text-fill: c-muted;
-}
-
 .console {
     -fx-background-color: #0d0f13;
     -fx-padding: 12 14;
@@ -476,7 +442,6 @@
 }
 
 .card {
-    -fx-background-radius: 8;
     -fx-padding: 10 12;
     -fx-cursor: hand;
 }
@@ -562,7 +527,6 @@
 
 .ev-new {
     -fx-background-color: c-red;
-    -fx-background-radius: 8;
     -fx-text-fill: white;
     -fx-font-size: 11px;
     -fx-padding: 1 7;
@@ -599,13 +563,11 @@
 
 .hint-tier {
     -fx-background-color: c-panel-2;
-    -fx-background-radius: 8;
     -fx-padding: 12;
 }
 
 .hint-chip {
     -fx-background-color: c-amber;
-    -fx-background-radius: 9;
     -fx-text-fill: #1a1408;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
@@ -622,7 +584,6 @@
     -fx-font-size: 14px;
     -fx-text-fill: #f0c070;
     -fx-background-color: #101217;
-    -fx-background-radius: 6;
     -fx-padding: 8 10;
 }
 
@@ -690,7 +651,6 @@
     -fx-min-height: 24;
     -fx-alignment: center;
     -fx-background-color: c-ink;
-    -fx-background-radius: 12;
     -fx-font-weight: bold;
     -fx-font-size: 12px;
 }
@@ -732,4 +692,21 @@
     -fx-border-color: c-line;
     -fx-padding: 24 28;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 30, 0.2, 0, 8);
+}
+
+.button, .toggle-button, .text-field, .tooltip, .check-box > .box,
+.slider > .thumb, .slider > .track,
+.scroll-bar > .thumb, .scroll-bar > .track,
+.scroll-bar > .increment-button, .scroll-bar > .decrement-button,
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.hint-tier.locked {
+    -fx-opacity: 0.4;
+}
+
+.scroll-pane.console-scroll, .scroll-pane.console-scroll > .viewport {
+    -fx-background-color: #0d0f13;
 }

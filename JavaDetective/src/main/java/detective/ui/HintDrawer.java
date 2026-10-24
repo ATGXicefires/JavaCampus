@@ -13,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -40,24 +39,16 @@ final class HintDrawer extends VBox {
         setTranslateX(WIDTH + 40);
         setVisible(false);
 
-        Label title = new Label("提示");
-        title.getStyleClass().add("detail-title");
-        Button close = new Button("關閉");
+        Button close = new Button("✕");
         close.getStyleClass().add("btn-ghost");
         close.setOnAction(e -> toggle());
-        Region gap = new Region();
-        HBox.setHgrow(gap, Priority.ALWAYS);
-        HBox header = new HBox(title, gap, close);
-        header.setAlignment(Pos.CENTER_LEFT);
-
-        Label note = new Label("看提示不會扣分，但結案報告會記下你用了幾個。卡住的時候，先看「線索」就好。");
-        note.getStyleClass().add("muted");
-        note.setWrapText(true);
+        HBox header = new HBox(close);
+        header.setAlignment(Pos.CENTER_RIGHT);
 
         ScrollPane scroll = new ScrollPane(tiers);
         scroll.setFitToWidth(true);
         VBox.setVgrow(scroll, Priority.ALWAYS);
-        getChildren().addAll(header, note, scroll);
+        getChildren().addAll(header, scroll);
     }
 
     void bind(CaseDef c, Step s) {
@@ -83,18 +74,14 @@ final class HintDrawer extends VBox {
             return;
         }
         int revealed = game.progress.hintsRevealed(caseDef.id(), step.id());
-        String[] chips = {"線索", "提示 1", "提示 2", "答案"};
-        String[] titles = {"往哪裡看", "白話說明", "程式骨架（____ 要填空）", "參考答案"};
+        String[] names = {"線索", "白話", "骨架", "答案"};
         for (int i = 0; i < TIERS; i++) {
-            Label chip = new Label(chips[i]);
+            Label chip = new Label(names[i]);
             chip.getStyleClass().add("hint-chip");
             if (i == TIERS - 1) {
                 chip.getStyleClass().add("answer");
             }
-            Label name = new Label(titles[i]);
-            name.getStyleClass().add("step-title");
-            HBox head = new HBox(8, chip, name);
-            head.setAlignment(Pos.CENTER_LEFT);
+            HBox head = new HBox(chip);
             VBox tier = new VBox(10, head);
             tier.getStyleClass().add("hint-tier");
             if (i < revealed) {
@@ -110,9 +97,7 @@ final class HintDrawer extends VBox {
                 show.setOnAction(e -> reveal(tierIndex));
                 tier.getChildren().add(show);
             } else {
-                Label locked = new Label("先看上一個提示");
-                locked.getStyleClass().add("muted");
-                tier.getChildren().add(locked);
+                tier.getStyleClass().add("locked");
             }
             tiers.getChildren().add(tier);
         }

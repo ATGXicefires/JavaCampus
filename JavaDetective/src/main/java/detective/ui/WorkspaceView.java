@@ -47,7 +47,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /** 調查畫面：左邊是任務，中間寫程式和看結果，右邊是證物與可用資料。 */
 final class WorkspaceView extends StackPane {
@@ -64,9 +63,10 @@ final class WorkspaceView extends StackPane {
     private final Button verifyButton = new Button("提交推理");
     private final Button stopButton = new Button("停止");
     private final Button resetButton = new Button("重設");
-    private final Label status = new Label();
     private final HintDrawer hints;
     private final PauseTransition autosave = new PauseTransition(Duration.seconds(1));
+    // 大部分執行一下子就結束，等一會兒還沒跑完才露出「停止」，免得按鈕一閃而過
+    private final PauseTransition stopReveal = new PauseTransition(Duration.millis(400));
     private final Set<String> shownEvidence = new HashSet<>();
     private Step current;
     private List<JavaHighlighter.Mark> marks = List.of();
@@ -87,6 +87,7 @@ final class WorkspaceView extends StackPane {
         getChildren().addAll(layout, hints);
         setupEditor();
         autosave.setOnFinished(e -> saveCode());
+        stopReveal.setOnFinished(e -> stopButton.setVisible(busy));
         refreshEvidence(false);
         open(firstOpenStep());
     }
@@ -97,7 +98,7 @@ final class WorkspaceView extends StackPane {
         back.setOnAction(e -> leave(game::showCases));
         Label title = new Label("第 " + game.caseNumber(c) + " 案　" + c.title());
         title.getStyleClass().add("topbar-title");
-        Label question = new Label("待解問題：" + c.openQuestion());
+        Label question = new Label(c.openQuestion());
         question.getStyleClass().add("open-question");
         Region gap = new Region();
         HBox.setHgrow(gap, Priority.ALWAYS);
@@ -122,7 +123,7 @@ final class WorkspaceView extends StackPane {
         detailScroll.setFitToWidth(true);
         VBox.setVgrow(detailScroll, Priority.ALWAYS);
         detail.setPadding(new Insets(4, 6, 12, 2));
-        VBox box = new VBox(10, section("任務"), stepList, new Separator(), detailScroll);
+        VBox box = new VBox(10, stepList, new Separator(), detailScroll);
         box.setPadding(new Insets(14));
         box.setPrefWidth(330);
         box.getStyleClass().add("side-panel");
@@ -138,14 +139,12 @@ final class WorkspaceView extends StackPane {
         verifyButton.setTooltip(game.tooltip("Ctrl + Shift + Enter"));
         verifyButton.setOnAction(e -> verify());
         stopButton.getStyleClass().add("btn-ghost");
-        stopButton.setDisable(true);
         stopButton.setOnAction(e -> game.sandbox.stop());
+        stopButton.managedProperty().bind(stopButton.visibleProperty());
+        stopButton.setVisible(false);
         resetButton.getStyleClass().add("btn-ghost");
         resetButton.setOnAction(e -> reset());
-        status.getStyleClass().add("status");
-        Region gap = new Region();
-        HBox.setHgrow(gap, Priority.ALWAYS);
-        HBox toolbar = new HBox(10, runButton, verifyButton, stopButton, resetButton, gap, status);
+        HBox toolbar = new HBox(10, runButton, verifyButton, resetButton, stopButton);
         toolbar.setAlignment(Pos.CENTER_LEFT);
         toolbar.getStyleClass().add("toolbar-row");
 
@@ -153,7 +152,8 @@ final class WorkspaceView extends StackPane {
         VBox.setVgrow(editorScroll, Priority.ALWAYS);
         console.getStyleClass().add("console");
         consoleScroll.setFitToWidth(true);
-        consoleScroll.getStyleClass().add("console");
+        consoleScroll.setFitToHeight(true);
+        consoleScroll.getStyleClass().add("console-scroll");
         SplitPane split = new SplitPane(top, consoleScroll);
         split.setOrientation(Orientation.VERTICAL);
         split.setDividerPositions(0.6);
@@ -165,8 +165,10 @@ final class WorkspaceView extends StackPane {
         ScrollPane evidenceScroll = new ScrollPane(evidenceBox);
         evidenceScroll.setFitToWidth(true);
         Tab evidence = new Tab("證物", evidenceScroll);
-        Tab data = new Tab("可用資料", dataPane());
-        TabPane tabs = new TabPane(evidence, data);
+        TabPane tabs = new TabPane(evidence);
+        if (!c.vars().isEmpty()) {
+            tabs.getTabs().add(new Tab("可用資料", dataPane()));
+        }
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         tabs.setPrefWidth(340);
         tabs.getStyleClass().add("side-panel");
@@ -176,14 +178,6 @@ final class WorkspaceView extends StackPane {
     private Node dataPane() {
         VBox box = new VBox(12);
         box.setPadding(new Insets(16));
-        Label intro = new Label("這些變數已經由案件準備好了，在程式裡直接寫名字就能拿到值。\n\n"
-                + "提交時，終端機還會換一組資料再測一次，所以要用變數名，不要把值直接寫進程式。");
-        intro.getStyleClass().add("muted");
-        intro.setWrapText(true);
-        box.getChildren().add(intro);
-        if (c.vars().isEmpty()) {
-            box.getChildren().add(muted("這個案件沒有預先準備的變數。"));
-        }
         for (SetupVar v : c.vars()) {
             Label type = new Label(v.type());
             type.getStyleClass().add("var-type");
@@ -304,7 +298,7 @@ final class WorkspaceView extends StackPane {
         refreshSteps();
         refreshDetail();
         hints.bind(c, s);
-        console.getChildren().setAll(muted("寫好程式後按「執行」（Ctrl + Enter）看看結果；確定沒問題，再按「提交推理」（Ctrl + Shift + Enter）。"));
+        console.getChildren().clear();
         // 畫面剛建立時編輯器還不在 scene 裡，要等加進去之後才拿得到焦點
         Platform.runLater(editor::requestFocus);
     }
@@ -346,15 +340,11 @@ final class WorkspaceView extends StackPane {
             Step s = c.steps().get(i);
             boolean solved = game.progress.isSolved(c.id(), s.id());
             boolean reachable = solved || i == firstUnsolved;
-            int used = game.progress.hintsRevealed(c.id(), s.id());
-            String hintsText = used > 0 ? "　·　看了 " + used + " 個提示" : "";
             Label num = new Label(solved ? "✓" : String.valueOf(i + 1));
             num.getStyleClass().add("step-num");
             Label title = new Label(s.title());
             title.getStyleClass().add("step-title");
-            Label meta = new Label((solved ? "已完成" : reachable ? "進行中" : "未解鎖") + hintsText);
-            meta.getStyleClass().add("step-meta");
-            HBox row = new HBox(10, num, new VBox(2, title, meta));
+            HBox row = new HBox(10, num, title);
             row.setAlignment(Pos.CENTER_LEFT);
             row.getStyleClass().add("step-row");
             if (s == current) {
@@ -384,17 +374,9 @@ final class WorkspaceView extends StackPane {
         shape.getStyleClass().add("shape-box");
         shape.setMaxWidth(Double.MAX_VALUE);
         shape.setWrapText(true);
-        Check check = current.check();
-        String how = check.type() == Check.Mode.OUTPUT
-                ? "提交時比對程式印出來的內容。"
-                : "提交時比對 " + check.exprs().stream().map(x -> "`" + x + "`").collect(Collectors.joining("、")) + " 的型別和值。";
-        if (!check.variants().isEmpty()) {
-            how += "還會換一組資料再測一次。";
-        }
-        detail.getChildren().setAll(title, MiniMarkdown.render(current.instructions()), section("預期結果"), shape,
-                MiniMarkdown.inline(how));
+        detail.getChildren().setAll(title, MiniMarkdown.render(current.instructions()), shape);
         if (game.progress.isSolved(c.id(), current.id())) {
-            VBox after = MiniMarkdown.render("**推理成立。** " + current.afterText());
+            VBox after = MiniMarkdown.render(current.afterText());
             after.getStyleClass().add("after-text");
             detail.getChildren().add(after);
         }
@@ -445,11 +427,8 @@ final class WorkspaceView extends StackPane {
         Step step = current;
         List<String> probes = step.check().type() == Check.Mode.VALUES ? step.check().exprs() : List.of();
         setBusy(true);
-        status.setText("執行中…");
         game.sfx.play(Sfx.Sound.RUN);
-        long started = System.nanoTime();
         game.background(() -> game.sandbox.run(Verifier.preamble(c.vars(), Map.of()), code, probes), r -> {
-            status.setText(String.format("執行時間 %.2f 秒", (System.nanoTime() - started) / 1e9));
             showRun(r);
             if (r.outcome() == Outcome.OK) {
                 precheck(step, code);
@@ -478,10 +457,8 @@ final class WorkspaceView extends StackPane {
         String code = editor.getText();
         Step step = current;
         setBusy(true);
-        status.setText("比對中…");
         game.sfx.play(Sfx.Sound.RUN);
         game.background(() -> game.verifier.verify(c.key(step), c.vars(), step.check(), step.solution(), code), v -> {
-            status.setText("");
             showRun(v.run());
             if (v.passed()) {
                 solved(step, code);
@@ -503,9 +480,7 @@ final class WorkspaceView extends StackPane {
         game.sfx.play(Sfx.Sound.SUCCESS);
         Motion.banner(this, "推理成立", "banner-ok");
 
-        Label head = new Label("推理成立");
-        head.getStyleClass().add("card-title");
-        VBox card = new VBox(8, head, MiniMarkdown.inline(step.afterText()));
+        VBox card = new VBox(8, MiniMarkdown.inline(step.afterText()));
         card.getStyleClass().addAll("card", "success");
         int i = c.steps().indexOf(step);
         if (game.isClosed(c)) {
@@ -536,12 +511,16 @@ final class WorkspaceView extends StackPane {
         for (Problem p : r.problems()) {
             nodes.add(problemCard(p, r.outcome()));
         }
-        nodes.add(section("輸出"));
         if (r.output().isEmpty()) {
-            Label empty = new Label(r.outcome() == Outcome.COMPILE_ERROR ? "（有編譯錯誤，程式沒有執行）" : "（沒有輸出）");
-            empty.getStyleClass().add("console-empty");
-            nodes.add(empty);
+            if (r.outcome() == Outcome.OK && r.probes().isEmpty()) {
+                Label empty = new Label("（沒有輸出）");
+                empty.getStyleClass().add("console-empty");
+                nodes.add(empty);
+            }
         } else {
+            if (!nodes.isEmpty()) {
+                nodes.add(new Separator());
+            }
             Label out = new Label(r.output().stripTrailing());
             out.getStyleClass().add("console-out");
             out.setWrapText(true);
@@ -551,7 +530,9 @@ final class WorkspaceView extends StackPane {
             }
         }
         if (!r.probes().isEmpty()) {
-            nodes.add(section("變數"));
+            if (!nodes.isEmpty()) {
+                nodes.add(new Separator());
+            }
             for (Probe p : r.probes()) {
                 Label line = new Label(p.error() == null
                         ? p.expr() + " = " + p.value() + "　（" + p.type() + "）"
@@ -573,26 +554,26 @@ final class WorkspaceView extends StackPane {
     private Node problemCard(Problem p, Outcome outcome) {
         boolean warning = p.severity() == Severity.WARNING;
         String title = warning ? "提醒" : switch (outcome) {
-            case COMPILE_ERROR -> "編譯錯誤：程式沒有執行";
-            case RUNTIME_ERROR -> "執行時出錯";
+            case COMPILE_ERROR -> "編譯錯誤";
+            case RUNTIME_ERROR -> "執行錯誤";
             case TIMEOUT -> "執行太久";
             case STOPPED -> "已停止";
             case EXITED -> "執行環境重新啟動";
             case OK -> "錯誤";
         };
-        Label head = new Label(title + "　·　第 " + (lineOf(p.start()) + 1) + " 行");
+        Label head = new Label(title + "　第 " + (lineOf(p.start()) + 1) + " 行");
         head.getStyleClass().add("card-title");
         Label raw = new Label(p.raw());
         raw.getStyleClass().add("raw");
         raw.setWrapText(true);
         raw.setVisible(false);
         raw.setManaged(false);
-        Hyperlink toggle = new Hyperlink("顯示原始訊息");
+        Hyperlink toggle = new Hyperlink("原文");
         toggle.setOnAction(e -> {
             boolean show = !raw.isVisible();
             raw.setVisible(show);
             raw.setManaged(show);
-            toggle.setText(show ? "隱藏原始訊息" : "顯示原始訊息");
+            toggle.setText(show ? "收起" : "原文");
         });
         VBox card = new VBox(6, head, MiniMarkdown.inline(p.message()), toggle, raw);
         card.getStyleClass().addAll("card", warning ? "warning" : "error");
@@ -608,9 +589,6 @@ final class WorkspaceView extends StackPane {
         Label head = new Label("推理不成立");
         head.getStyleClass().add("card-title");
         VBox card = new VBox(6, head, MiniMarkdown.inline(v.message()));
-        if (!v.variant().isEmpty()) {
-            card.getChildren().add(muted("下方顯示的是換一組資料之後的執行結果。"));
-        }
         card.getStyleClass().addAll("card", "error");
         return card;
     }
@@ -624,7 +602,12 @@ final class WorkspaceView extends StackPane {
         runButton.setDisable(b);
         verifyButton.setDisable(b);
         resetButton.setDisable(b);
-        stopButton.setDisable(!b);
+        if (b) {
+            stopReveal.playFromStart();
+        } else {
+            stopReveal.stop();
+            stopButton.setVisible(false);
+        }
     }
 
     private void startNudge() {
@@ -632,7 +615,6 @@ final class WorkspaceView extends StackPane {
             return;
         }
         verifyButton.getStyleClass().add("ready");
-        status.setText("看起來對了，按「提交推理」確認");
         nudge = Motion.pulse(verifyButton);
     }
 
@@ -642,12 +624,6 @@ final class WorkspaceView extends StackPane {
             nudge = null;
         }
         verifyButton.getStyleClass().remove("ready");
-    }
-
-    private static Label section(String text) {
-        Label l = new Label(text);
-        l.getStyleClass().add("section-label");
-        return l;
     }
 
     private static Label muted(String text) {

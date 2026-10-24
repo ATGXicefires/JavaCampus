@@ -22,7 +22,7 @@ import java.util.Optional;
 final class VerdictView extends StackPane {
 
     VerdictView(Game game, CaseDef c) {
-        Label kicker = new Label("結案報告　·　第 " + game.caseNumber(c) + " 案");
+        Label kicker = new Label("第 " + game.caseNumber(c) + " 案");
         kicker.getStyleClass().add("vp-kicker");
         Label title = new Label(c.title());
         title.getStyleClass().add("vp-title");
@@ -41,8 +41,6 @@ final class VerdictView extends StackPane {
         detail.getStyleClass().add("vp-detail");
         detail.setWrapText(true);
 
-        Label chainLabel = new Label("推理鏈");
-        chainLabel.getStyleClass().add("vp-kicker");
         VBox chain = new VBox(10);
         for (int i = 0; i < c.explanation().size(); i++) {
             Label num = new Label(String.valueOf(i + 1));
@@ -55,14 +53,14 @@ final class VerdictView extends StackPane {
         Label stats = new Label(used == 0 ? "沒有使用任何提示。" : "這個案件看了 " + used + " 個提示。");
         stats.getStyleClass().add("vp-question");
 
-        VBox paper = new VBox(14, kicker, title, question, answerRow, detail, new Separator(), chainLabel, chain, stats);
+        VBox paper = new VBox(14, kicker, title, question, answerRow, detail, new Separator(), chain, stats);
         paper.getStyleClass().addAll("paper", "verdict-paper");
         paper.setMaxWidth(720);
 
-        Button back = new Button("回到案件列表");
+        Button back = new Button("案件列表");
         back.getStyleClass().add("btn-ghost");
         back.setOnAction(e -> game.showCases());
-        Button review = new Button("回到調查畫面");
+        Button review = new Button("調查畫面");
         review.getStyleClass().add("btn-ghost");
         review.setOnAction(e -> game.showWorkspace(c));
         HBox buttons = new HBox(12, back, review);

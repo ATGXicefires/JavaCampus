@@ -22,11 +22,9 @@ final class CaseSelectView extends StackPane {
     CaseSelectView(Game game) {
         Label title = new Label("Java 偵探社");
         title.getStyleClass().add("title-big");
-        Label subtitle = new Label("寫真正的 Java，破真正的案");
-        subtitle.getStyleClass().add("subtitle");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox header = new HBox(new VBox(4, title, subtitle), spacer, SoundMenu.create(game));
+        HBox header = new HBox(title, spacer, SoundMenu.create(game));
         header.setAlignment(Pos.TOP_LEFT);
 
         VBox content = new VBox(28, header);
@@ -44,9 +42,6 @@ final class CaseSelectView extends StackPane {
             }
             content.getChildren().addAll(chapterTitle, cards);
         }
-        Label note = new Label("劇情為暫定版，正式劇情與後續章節製作中。");
-        note.getStyleClass().add("muted");
-        content.getChildren().add(note);
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
@@ -69,10 +64,6 @@ final class CaseSelectView extends StackPane {
         Label summary = new Label(c.summary());
         summary.getStyleClass().add("case-summary");
         summary.setWrapText(true);
-        Label status = new Label(closed ? "已結案，點開可以重新檢視" : unlocked ? "點擊開始調查" : "完成上一案後解鎖");
-        status.getStyleClass().add("muted");
-        Region grow = new Region();
-        VBox.setVgrow(grow, Priority.ALWAYS);
 
         Region headerGap = new Region();
         HBox.setHgrow(headerGap, Priority.ALWAYS);
@@ -83,7 +74,7 @@ final class CaseSelectView extends StackPane {
             header.getChildren().add(stamp);
         }
 
-        VBox card = new VBox(10, header, title, chips, summary, grow, status);
+        VBox card = new VBox(10, header, title, chips, summary);
         card.getStyleClass().add("case-card");
         card.setPrefWidth(340);
         card.setMinHeight(250);
