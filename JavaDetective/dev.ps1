@@ -62,7 +62,7 @@ function Invoke-Javac([string]$SourceRoot, [string]$OutDir, [string]$ClassPath) 
     $argFile = Join-Path $OutDir '..\sources.txt'
     # javac 的 @argfile 會把反斜線當跳脫字元，路徑要換成正斜線
     $sources | ForEach-Object { '"' + ($_ -replace '\\', '/') + '"' } | Set-Content -Encoding utf8 $argFile
-    & javac -encoding UTF-8 -Xlint:all -Xlint:-serial -d $OutDir @FxArgs -cp $ClassPath "@$argFile"
+    & javac -encoding UTF-8 -Xlint:all -Xlint:-serial -Xlint:-classfile -d $OutDir @FxArgs -cp $ClassPath "@$argFile"
     if ($LASTEXITCODE -ne 0) { throw 'javac 編譯失敗' }
 }
 

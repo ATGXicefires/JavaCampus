@@ -302,7 +302,10 @@ public final class Sandbox implements AutoCloseable {
         return new Problem(Severity.ERROR, range[0], range[1], Diagnostics.runtimeError(cls, ex.getMessage()), raw);
     }
 
-    /** JShell 堆疊的行號是相對於 snippet 去掉開頭空白之後的內容。 */
+    /**
+     * JShell 堆疊的行號是相對於 snippet 去掉開頭空白之後的內容，註解行也算在內。
+     * 沒有行號時，標出開頭註解之後的程式碼。
+     */
     private static int[] lineRange(Segment seg, int line) {
         String text = seg.text();
         int lead = 0;
@@ -325,7 +328,9 @@ public final class Sandbox implements AutoCloseable {
                 }
             }
         }
-        return new int[] {seg.start() + lead, seg.start() + text.stripTrailing().length()};
+        int codeStart = JavaTokens.tokenize(text).stream().filter(t -> t.kind() != Kind.COMMENT)
+                .mapToInt(Token::start).findFirst().orElse(lead);
+        return new int[] {seg.start() + codeStart, seg.start() + text.stripTrailing().length()};
     }
 
     private List<Probe> evaluate(JShell js, List<String> probes) {

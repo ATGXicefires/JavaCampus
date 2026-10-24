@@ -44,7 +44,7 @@ public final class Verifier {
             if (first == null) {
                 first = actual;
             }
-            String prefix = overrides.isEmpty() ? "" : "換一組資料（" + describe(overrides) + "）就不對了：";
+            String prefix = overrides.isEmpty() ? "" : "換一組資料（" + describe(overrides) + "）就不對了。";
             if (actual.outcome() != Outcome.OK) {
                 return Verdict.fail(prefix + brokenRun(actual.outcome()), actual, overrides);
             }

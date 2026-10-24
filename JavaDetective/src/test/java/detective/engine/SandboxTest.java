@@ -146,6 +146,22 @@ class SandboxTest {
     }
 
     @Test
+    void runtimeErrorAfterCommentPointsAtCode() {
+        String src = "// 註解\n\n// 再一行\nint q = 10 / 0;";
+        RunResult r = run(src);
+        assertEquals(Outcome.RUNTIME_ERROR, r.outcome());
+        assertEquals(src.indexOf("int q"), error(r).start());
+    }
+
+    @Test
+    void timeoutSkipsLeadingComment() {
+        String src = "// 註解\nwhile (true) { }";
+        RunResult r = run(src);
+        assertEquals(Outcome.TIMEOUT, r.outcome());
+        assertEquals(src.indexOf("while"), error(r).start());
+    }
+
+    @Test
     void rejectsDuplicateDeclaration() {
         assertMentions(run("int a = 1;\nint a = 2;"), "已經宣告過");
     }
