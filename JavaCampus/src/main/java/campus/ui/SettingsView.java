@@ -58,10 +58,13 @@ final class SettingsView extends VBox {
         setPrefWidth(820);
         setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
+        Button defaults = new Button("恢復預設");
+        defaults.getStyleClass().add("btn-ghost");
+        defaults.setOnAction(e -> game.resetSettings());
         Button close = new Button("✕");
         close.getStyleClass().add("btn-ghost");
         close.setOnAction(e -> game.closeOverlay());
-        HBox head = new HBox(close);
+        HBox head = new HBox(10, defaults, close);
         head.setAlignment(Pos.CENTER_RIGHT);
 
         VBox left = new VBox(22,

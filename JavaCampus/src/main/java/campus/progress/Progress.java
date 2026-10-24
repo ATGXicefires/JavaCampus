@@ -216,6 +216,11 @@ public final class Progress {
         return settings;
     }
 
+    /** 設定全部回到預設值；劇情和程式題進度不動。 */
+    public void resetSettings() {
+        settings = new Settings();
+    }
+
     /** 最後玩的視角，標題畫面的「繼續」從這裡接。 */
     public Route lastRoute() {
         return lastRoute != null && route(lastRoute) != null ? lastRoute : null;

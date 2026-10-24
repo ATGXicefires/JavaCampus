@@ -206,6 +206,51 @@
     -fx-background-color: c-accent;
 }
 
+/* 自動完成：跳出來的是獨立的小視窗，不在 .app-root 底下，配色用 .dark 自己切 */
+.completion {
+    -fx-background-color: #fffdf8;
+    -fx-border-color: #d9cdbb;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 14, 0.1, 0, 4);
+}
+
+.completion-item {
+    -fx-font-size: 15px;
+    -fx-text-fill: #3a3330;
+    -fx-padding: 4 12;
+    -fx-cursor: hand;
+}
+
+.completion-item.selected {
+    -fx-background-color: #ffe2c2;
+    -fx-text-fill: #2b1a08;
+}
+
+.completion-note {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6f6560;
+    -fx-padding: 6 12 8 12;
+    -fx-border-color: #e2d6c6 transparent transparent transparent;
+}
+
+.completion.dark {
+    -fx-background-color: #23262d;
+    -fx-border-color: #3c414c;
+}
+
+.completion.dark .completion-item {
+    -fx-text-fill: #d9dde3;
+}
+
+.completion.dark .completion-item.selected {
+    -fx-background-color: #3a4a66;
+    -fx-text-fill: white;
+}
+
+.completion.dark .completion-note {
+    -fx-text-fill: #a3abb7;
+    -fx-border-color: #3c414c transparent transparent transparent;
+}
+
 /* 標題 */
 .title-shade {
     -fx-background-color: linear-gradient(to right, rgba(20, 14, 18, 0.72) 0%, rgba(20, 14, 18, 0.35) 45%, transparent 75%);

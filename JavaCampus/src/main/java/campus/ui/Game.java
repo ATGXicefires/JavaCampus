@@ -20,6 +20,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.css.PseudoClass;
+import javafx.event.EventTarget;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -170,6 +171,16 @@ public final class Game {
         openOverlay(new SettingsView(this, inGame), null);
     }
 
+    void resetSettings() {
+        confirm("要把所有設定恢復成預設值嗎？劇情和程式題的進度不受影響。", "恢復預設", () -> {
+            progress.resetSettings();
+            applySettings();
+            applyWindowSize();
+            save();
+            openSettings();
+        }, this::openSettings);
+    }
+
     Button settingsButton() {
         Button b = new Button("設定");
         b.getStyleClass().add("btn-ghost");
@@ -296,7 +307,11 @@ public final class Game {
         }
     }
 
-    public void onEscape() {
+    /** @param target 按下 Esc 時的焦點；編輯器的自動完成開著的話，這一下只收起清單 */
+    public void onEscape(EventTarget target) {
+        if (CodeCompletion.dismiss(target)) {
+            return;
+        }
         if (!closeOverlay()) {
             openSettings();
         }
@@ -322,11 +337,16 @@ public final class Game {
     }
 
     void confirm(String question, String action, Runnable onConfirm) {
+        confirm(question, action, onConfirm, this::closeOverlay);
+    }
+
+    /** @param onCancel 按「取消」要做的事，例如回到原本開著的面板 */
+    void confirm(String question, String action, Runnable onConfirm, Runnable onCancel) {
         Label text = new Label(question);
         text.setWrapText(true);
         Button cancel = new Button("取消");
         cancel.getStyleClass().add("btn-ghost");
-        cancel.setOnAction(e -> closeOverlay());
+        cancel.setOnAction(e -> onCancel.run());
         Button ok = new Button(action);
         ok.getStyleClass().add("btn-primary");
         ok.setOnAction(e -> {

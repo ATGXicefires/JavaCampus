@@ -77,7 +77,7 @@ public class App extends Application {
                 game.toggleFullScreen();
             } else if (e.getCode() == KeyCode.ESCAPE) {
                 e.consume();
-                game.onEscape();
+                game.onEscape(e.getTarget());
             } else {
                 game.onKey(e);
             }
