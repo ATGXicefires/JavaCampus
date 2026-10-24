@@ -203,7 +203,7 @@ public final class Game {
         StoryState s = progress.route(r);
         Chapter ch = story.chapter(s.chapter());
         sfx.setAmbience(List.of());
-        swapTo(new ChapterEndView(this, ch, chapterNote(s, ch), previousProgress(ch), () -> {
+        swapTo(new ChapterEndView(this, r, ch, chapterNote(s, ch), previousProgress(ch), () -> {
             Chapter next = story.next(ch);
             if (next == null) {
                 showTitle();

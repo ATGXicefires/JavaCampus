@@ -1,1 +1,11 @@
-{"chapters":[{"id":"ch01","number":1,"title":"編譯錯誤","dir":"ch01","progress":5}]}
+{
+  "chapters": [
+    {"id": "ch01", "number": 1, "title": "編譯錯誤", "dir": "ch01", "progress": 5},
+    {"id": "ch02", "number": 2, "title": "Hello World"},
+    {"id": "ch03", "number": 3, "title": "例外處理"},
+    {"id": "ch04", "number": 4, "title": "共同開發"},
+    {"id": "ch05", "number": 5, "title": "壓力測試"},
+    {"id": "ch06", "number": 6, "title": "無限迴圈"},
+    {"id": "ch07", "number": 7, "title": "Release"}
+  ]
+}
