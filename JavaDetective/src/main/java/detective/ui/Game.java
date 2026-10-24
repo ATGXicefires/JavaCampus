@@ -23,6 +23,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -44,6 +46,7 @@ public final class Game {
     private final Stage stage;
     private final Viewport viewport;
     private Overlay overlay;
+    private String codeFontSheet;
 
     public Game(List<Chapter> chapters, Progress progress, SaveStore store, Sfx sfx, Sandbox sandbox,
                 ExecutorService runner, StackPane root, Stage stage, Viewport viewport) {
@@ -57,10 +60,59 @@ public final class Game {
         this.root = root;
         this.stage = stage;
         this.viewport = viewport;
+        // 系統也可能自己把視窗切出全螢幕，以視窗實際狀態為準
+        stage.fullScreenProperty().addListener((obs, was, now) -> {
+            if (progress.settings().fullscreen() != now) {
+                progress.settings().setFullscreen(now);
+                save();
+            }
+        });
     }
 
     public void toggleFullScreen() {
         stage.setFullScreen(!stage.isFullScreen());
+    }
+
+    /** 把設定一次套用到視窗、聲音、動效和編輯器字級。 */
+    public void applySettings() {
+        Progress.Settings s = progress.settings();
+        viewport.setZoom(s.zoom());
+        if (stage.isFullScreen() != s.fullscreen()) {
+            stage.setFullScreen(s.fullscreen());
+        }
+        sfx.setVolumes(s.volume(), s.sfx(), s.rain());
+        sfx.setTyping(s.typing());
+        Motion.setLevel(s.motion());
+        setCodeFont(s.codeFont());
+    }
+
+    /** 字級寫成一份小樣式表疊在主題後面，已經開著的編輯器也會馬上跟著變。 */
+    private void setCodeFont(double size) {
+        String css = String.format(Locale.ROOT,
+                ".app-root .code-area { -fx-font-size: %.0fpx; } .lineno, .console-out { -fx-font-size: %.0fpx; }",
+                size, size - 2);
+        String url = "data:text/css;base64," + Base64.getEncoder().encodeToString(css.getBytes(StandardCharsets.UTF_8));
+        List<String> sheets = stage.getScene().getStylesheets();
+        sheets.remove(codeFontSheet);
+        sheets.add(url);
+        codeFontSheet = url;
+    }
+
+    void openSettings() {
+        openOverlay(new SettingsView(this));
+    }
+
+    Button settingsButton() {
+        Button b = new Button("設定");
+        b.getStyleClass().add("btn-ghost");
+        b.setOnAction(e -> openSettings());
+        return b;
+    }
+
+    void resetProgress() {
+        progress.resetCases();
+        save();
+        showCases();
     }
 
     /** Tooltip 是獨立的小視窗，不會被 {@link Viewport} 縮放，字級要自己跟著倍率走。 */
@@ -94,7 +146,9 @@ public final class Game {
     }
 
     public void onEscape() {
-        closeOverlay();
+        if (!closeOverlay()) {
+            openSettings();
+        }
     }
 
     void openOverlay(Node panel) {

@@ -21,9 +21,8 @@ public final class Sfx implements AutoCloseable {
     private final Map<Sound, Clip[]> clips = new EnumMap<>(Sound.class);
     private final Map<Sound, Integer> next = new EnumMap<>(Sound.class);
     private Clip ambient;
-    private double volume = 0.7;
+    private double effects = 0.7;
     private boolean typing = true;
-    private boolean ambientOn;
 
     private Sfx() {}
 
@@ -63,36 +62,29 @@ public final class Sfx implements AutoCloseable {
         Clip c = pool[i];
         c.stop();
         c.setFramePosition(0);
-        gain(c, volume);
+        gain(c, effects);
         c.start();
     }
 
-    public void setVolume(double v) {
-        volume = v;
-        if (ambient != null) {
-            gain(ambient, volume * AMBIENT_LEVEL);
+    /** 三個值都是 0 到 1；雨聲調到 0 就停止循環，不在背景空轉。 */
+    public void setVolumes(double master, double sfx, double rain) {
+        effects = master * sfx;
+        if (ambient == null) {
+            return;
+        }
+        double level = master * rain * AMBIENT_LEVEL;
+        if (level <= 0) {
+            ambient.stop();
+            return;
+        }
+        gain(ambient, level);
+        if (!ambient.isRunning()) {
+            ambient.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
 
     public void setTyping(boolean on) {
         typing = on;
-    }
-
-    public void setAmbient(boolean on) {
-        ambientOn = on;
-        if (ambient == null) {
-            return;
-        }
-        if (on) {
-            gain(ambient, volume * AMBIENT_LEVEL);
-            ambient.loop(Clip.LOOP_CONTINUOUSLY);
-        } else {
-            ambient.stop();
-        }
-    }
-
-    public boolean ambientOn() {
-        return ambientOn;
     }
 
     @Override

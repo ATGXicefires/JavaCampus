@@ -29,11 +29,13 @@ final class BriefingView extends StackPane {
     private final List<Runnable> queue = new ArrayList<>();
     private final List<Runnable> finishers = new ArrayList<>();
     private final Button start = new Button("開始調查　→");
+    private final double speed;
     private Animation playing;
     private boolean done;
 
     BriefingView(Game game, CaseDef c) {
         this.game = game;
+        this.speed = game.progress.settings().textSpeed().factor;
         Newspaper np = c.newspaper();
 
         Label masthead = new Label(np.paper());
@@ -117,7 +119,11 @@ final class BriefingView extends StackPane {
                 playing.jumpTo("end");
             }
         });
-        next(400);
+        if (speed == 0) {
+            revealAll();
+        } else {
+            next(400);
+        }
     }
 
     private void next(double delayMs) {
@@ -135,7 +141,7 @@ final class BriefingView extends StackPane {
     }
 
     private void type(Label target, String text, double msPerChar) {
-        playing = Motion.typewriter(target, text, Duration.millis(msPerChar), () -> game.sfx.play(Sfx.Sound.KEY), () -> {
+        playing = Motion.typewriter(target, text, Duration.millis(msPerChar * speed), () -> game.sfx.play(Sfx.Sound.KEY), () -> {
             playing = null;
             next(350);
         });

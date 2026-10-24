@@ -24,7 +24,7 @@ final class CaseSelectView extends StackPane {
         title.getStyleClass().add("title-big");
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox header = new HBox(title, spacer, SoundMenu.create(game));
+        HBox header = new HBox(title, spacer, game.settingsButton());
         header.setAlignment(Pos.TOP_LEFT);
 
         VBox content = new VBox(28, header);

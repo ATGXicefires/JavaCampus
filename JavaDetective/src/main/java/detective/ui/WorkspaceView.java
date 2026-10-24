@@ -113,7 +113,7 @@ final class WorkspaceView extends StackPane {
             report.setOnAction(e -> leave(() -> game.showVerdict(c)));
             bar.getChildren().add(report);
         }
-        bar.getChildren().addAll(hintButton, SoundMenu.create(game));
+        bar.getChildren().addAll(hintButton, game.settingsButton());
         bar.setAlignment(Pos.CENTER_LEFT);
         bar.getStyleClass().add("topbar");
         return bar;

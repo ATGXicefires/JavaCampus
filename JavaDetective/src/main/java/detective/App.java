@@ -40,10 +40,6 @@ public class App extends Application {
         SaveStore store = new SaveStore(Path.of("save", "progress.json"));
         Progress progress = store.load();
         sfx = Sfx.create();
-        Progress.Settings settings = progress.settings();
-        sfx.setVolume(settings.volume());
-        sfx.setTyping(settings.typing());
-        sfx.setAmbient(settings.ambient());
 
         sandbox = new Sandbox(Duration.ofSeconds(3));
         runner = Executors.newSingleThreadExecutor(r -> {
@@ -78,6 +74,7 @@ public class App extends Application {
         // Esc 留給設定面板，全螢幕改用 F11 切換
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        game.applySettings();
         game.showCases();
         stage.show();
     }

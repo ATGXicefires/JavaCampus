@@ -710,3 +710,46 @@
 .scroll-pane.console-scroll, .scroll-pane.console-scroll > .viewport {
     -fx-background-color: #0d0f13;
 }
+
+.settings-group {
+    -fx-text-fill: c-amber;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.segment {
+    -fx-background-color: c-panel-2;
+    -fx-text-fill: c-text;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+}
+
+.segment:hover {
+    -fx-background-color: #2c313d;
+}
+
+.segment:selected {
+    -fx-background-color: c-amber;
+    -fx-text-fill: #1a1408;
+    -fx-font-weight: bold;
+}
+
+.settings-value {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-text-fill: c-muted;
+    -fx-min-width: 30;
+}
+
+.slider .thumb {
+    -fx-background-color: c-amber;
+}
+
+.btn-danger {
+    -fx-background-color: transparent;
+    -fx-border-color: c-red;
+    -fx-text-fill: #ff8a80;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #2e1719;
+}
