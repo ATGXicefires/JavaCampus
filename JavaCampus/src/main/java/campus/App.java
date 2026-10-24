@@ -18,6 +18,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -62,7 +63,12 @@ public class App extends Application {
         Viewport viewport = new Viewport(root);
         game = new Game(story, lessons, new Art(Path.of("art")), progress, store, sfx, music, sandbox, runner,
                 root, stage, viewport);
-        Scene scene = new Scene(viewport, 1600, 900);
+        Progress.Settings settings = progress.settings();
+        // 選了預設尺寸就直接用那個大小開，不用先開一個視窗再縮放
+        double scale = Screen.getPrimary().getOutputScaleX();
+        Scene scene = settings.windowWidth() > 0
+                ? new Scene(viewport, settings.windowWidth() / scale, settings.windowHeight() / scale)
+                : new Scene(viewport, 1600, 900);
         scene.getStylesheets().add(App.class.getResource("/campus/theme.css").toExternalForm());
         Motion.installPress(scene);
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
@@ -79,9 +85,10 @@ public class App extends Application {
         scene.addEventFilter(KeyEvent.KEY_RELEASED, game::onKey);
         stage.setScene(scene);
         stage.setTitle("JavaCampus");
-        stage.setMinWidth(960);
-        stage.setMinHeight(540);
-        stage.setMaximized(true);
+        // 最小要放得下 1280×720 的預設尺寸；畫面內容由 Viewport 等比例縮放
+        stage.setMinWidth(Math.min(960, 1280 / scale));
+        stage.setMinHeight(Math.min(540, 720 / scale));
+        stage.setMaximized(settings.windowWidth() <= 0);
         // Esc 留給設定面板，全螢幕改用 F11 切換
         stage.setFullScreenExitHint("");
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

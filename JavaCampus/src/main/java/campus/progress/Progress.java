@@ -37,6 +37,9 @@ public final class Progress {
 
     /** 舊存檔沒有的欄位會維持這裡的預設值；列舉值讀不懂時 Gson 給 null，所以列舉一律經過預設。 */
     public static final class Settings {
+        /** 遊戲附帶的程式字型，玩家的電腦上一定有。 */
+        public static final String DEFAULT_CODE_FAMILY = "Maple Mono NF CN";
+
         private double volume = 0.7;
         private double music = 0.6;
         private double sfx = 1;
@@ -46,6 +49,10 @@ public final class Progress {
         private boolean fullscreen;
         private double zoom = 1;
         private double codeFont = 17;
+        private String codeFamily = DEFAULT_CODE_FAMILY;
+        private boolean codeDark;
+        private int windowWidth;
+        private int windowHeight;
         private TextSpeed textSpeed = TextSpeed.NORMAL;
         private AutoDelay autoDelay = AutoDelay.MEDIUM;
         private boolean skipAll;
@@ -85,6 +92,24 @@ public final class Progress {
 
         public double codeFont() {
             return codeFont;
+        }
+
+        public String codeFamily() {
+            return codeFamily == null || codeFamily.isBlank() ? DEFAULT_CODE_FAMILY : codeFamily;
+        }
+
+        /** 程式題畫面整體用暗色；預設是亮色。 */
+        public boolean codeDark() {
+            return codeDark;
+        }
+
+        /** 視窗畫面的實際像素寬度；0 代表最大化。 */
+        public int windowWidth() {
+            return windowWidth;
+        }
+
+        public int windowHeight() {
+            return windowHeight;
         }
 
         public TextSpeed textSpeed() {
@@ -138,6 +163,20 @@ public final class Progress {
 
         public void setCodeFont(double size) {
             codeFont = size;
+        }
+
+        public void setCodeFamily(String family) {
+            codeFamily = family;
+        }
+
+        public void setCodeDark(boolean on) {
+            codeDark = on;
+        }
+
+        /** 傳 0、0 代表最大化。 */
+        public void setWindow(int width, int height) {
+            windowWidth = width;
+            windowHeight = height;
         }
 
         public void setTextSpeed(TextSpeed s) {

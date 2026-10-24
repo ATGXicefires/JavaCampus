@@ -18,6 +18,8 @@ import campus.story.StoryLibrary;
 import campus.story.StoryState;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -29,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.nio.charset.StandardCharsets;
@@ -38,9 +41,17 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** 各畫面共用的服務與畫面切換。 */
 public final class Game {
+
+    /** 程式題的配色掛在最外層，各畫面的樣式用 {@code .app-root:code-dark} 切換，不用各自監聽設定。 */
+    private static final PseudoClass CODE_DARK = PseudoClass.getPseudoClass("code-dark");
+    private static final String CODE_SELECTORS = Stream.of(".code-area", ".code-font", ".md-code", ".md-pre",
+            ".lineno", ".console-out", ".shape-box", ".hint-code", ".probe-line", ".raw", ".var-name", ".var-type",
+            ".var-value").map(c -> ".app-root " + c).collect(Collectors.joining(", "));
 
     /** 想自己處理按鍵的畫面（劇情、選視角）實作這個介面；Esc 和 F11 由 {@link Game} 統一處理。 */
     interface KeyAware {
@@ -88,11 +99,42 @@ public final class Game {
         });
     }
 
+    /** 預設尺寸指的是畫面本身的實際像素，不含標題列和邊框；視窗用的是邏輯像素，要除以螢幕縮放比例。 */
+    public void applyWindowSize() {
+        Progress.Settings s = progress.settings();
+        if (stage.isFullScreen()) {
+            return;
+        }
+        if (s.windowWidth() <= 0) {
+            stage.setMaximized(true);
+            return;
+        }
+        stage.setMaximized(false);
+        double scale = screen().getOutputScaleX();
+        double frameW = stage.getWidth() - stage.getScene().getWidth();
+        double frameH = stage.getHeight() - stage.getScene().getHeight();
+        stage.setWidth(s.windowWidth() / scale + frameW);
+        stage.setHeight(s.windowHeight() / scale + frameH);
+        stage.centerOnScreen();
+    }
+
+    /** 視窗所在的螢幕；多螢幕時預設尺寸要以那一個螢幕的大小和縮放比例為準。 */
+    Screen screen() {
+        List<Screen> on = Screen.getScreensForRectangle(stage.getX(), stage.getY(), Math.max(stage.getWidth(), 1),
+                Math.max(stage.getHeight(), 1));
+        return on.isEmpty() ? Screen.getPrimary() : on.getFirst();
+    }
+
+    /** 設計尺寸換算到螢幕的倍率，給跳出成獨立視窗、不在縮放範圍內的清單調字級用。 */
+    ReadOnlyDoubleProperty uiScale() {
+        return viewport.factorProperty();
+    }
+
     public void toggleFullScreen() {
         stage.setFullScreen(!stage.isFullScreen());
     }
 
-    /** 把設定一次套用到視窗、聲音、動效和編輯器字級。 */
+    /** 把設定一次套用到視窗、聲音、動效、程式字型和配色。視窗大小只在選的時候套用，見 {@link #applyWindowSize()}。 */
     public void applySettings() {
         Progress.Settings s = progress.settings();
         viewport.setZoom(s.zoom());
@@ -103,14 +145,19 @@ public final class Game {
         sfx.setTyping(s.typing());
         music.setVolume(s.volume() * s.music());
         Motion.setLevel(s.motion());
-        setCodeFont(s.codeFont());
+        setCodeFont(s.codeFont(), s.codeFamily());
+        root.pseudoClassStateChanged(CODE_DARK, s.codeDark());
     }
 
-    /** 字級寫成一份小樣式表疊在主題後面，已經開著的編輯器也會馬上跟著變。 */
-    private void setCodeFont(double size) {
+    /**
+     * 字型寫成一份小樣式表疊在主題後面，已經開著的編輯器也會馬上跟著變。
+     * 選擇器都帶 {@code .app-root}，跟主題裡最具體的程式字樣式一樣具體，靠排在後面蓋過去。
+     */
+    private void setCodeFont(double size, String family) {
         String css = String.format(Locale.ROOT,
-                ".app-root .code-area { -fx-font-size: %.0fpx; } .lineno, .console-out { -fx-font-size: %.0fpx; }",
-                size, size - 2);
+                ".app-root .code-area { -fx-font-size: %.0fpx; } .app-root .lineno, .app-root .console-out { -fx-font-size: %.0fpx; } "
+                        + "%s { -fx-font-family: \"%s\"; }",
+                size, size - 2, CODE_SELECTORS, family.replace("\"", ""));
         String url = "data:text/css;base64," + Base64.getEncoder().encodeToString(css.getBytes(StandardCharsets.UTF_8));
         List<String> sheets = stage.getScene().getStylesheets();
         sheets.remove(codeFontSheet);
