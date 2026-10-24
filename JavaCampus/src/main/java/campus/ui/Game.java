@@ -184,6 +184,8 @@ public final class Game {
     Button settingsButton() {
         Button b = new Button("設定");
         b.getStyleClass().add("btn-ghost");
+        // 點了不搶焦點，關掉設定之後才能直接回編輯器繼續打字
+        b.setFocusTraversable(false);
         b.setOnAction(e -> openSettings());
         return b;
     }

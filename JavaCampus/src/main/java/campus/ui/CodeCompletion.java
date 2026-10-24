@@ -161,6 +161,7 @@ final class CodeCompletion {
         rows.getStyleClass().add("completion-rows");
         note.getStyleClass().add("completion-note");
         note.setWrapText(true);
+        note.setMaxWidth(Double.MAX_VALUE);
         box.getStyleClass().add("completion");
         box.setPrefWidth(340);
         box.getTransforms().add(scale);
