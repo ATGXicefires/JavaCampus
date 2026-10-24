@@ -44,7 +44,7 @@
     {
       "id": "hello",
       "title": "向終端機報到",
-      "instructions": "用 `System.out.println(…);` 可以讓終端機印出一行字。印出 `報到` 兩個字。\n\n文字（Java 叫它**字串**）要用雙引號包起來，例如 `\"你好\"`。寫完按「執行」看看結果，確定沒問題再按「提交」。",
+      "instructions": "用 `System.out.println(…);` 可以讓終端機印出一行字。印出 `報到` 兩個字。\n\n文字（Java 叫它**字串**）要用雙引號包起來，例如 `\"你好\"`。寫完按「執行」看看結果，確定沒問題再按「提交推理」。",
       "expectedShape": "報到",
       "check": { "type": "output" },
       "hints": {

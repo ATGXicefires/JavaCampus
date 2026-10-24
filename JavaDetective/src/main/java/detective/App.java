@@ -1,19 +1,76 @@
 package detective;
 
+import detective.content.CaseLibrary;
+import detective.content.Chapter;
+import detective.engine.Sandbox;
+import detective.fx.Sfx;
+import detective.progress.Progress;
+import detective.progress.SaveStore;
+import detective.ui.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
+
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App extends Application {
+
+    private Sandbox sandbox;
+    private ExecutorService runner;
+    private Sfx sfx;
+
     @Override
-    public void start(Stage stage) {
-        CodeArea area = new CodeArea("System.out.println(\"報到\");");
-        area.setParagraphGraphicFactory(LineNumberFactory.get(area));
-        stage.setScene(new Scene(area, 800, 500));
+    public void start(Stage stage) throws Exception {
+        List<Chapter> chapters = CaseLibrary.load(Path.of("cases"));
+        SaveStore store = new SaveStore(Path.of("save", "progress.json"));
+        Progress progress = store.load();
+        sfx = Sfx.create();
+        Progress.Settings settings = progress.settings();
+        sfx.setVolume(settings.volume());
+        sfx.setTyping(settings.typing());
+        sfx.setAmbient(settings.ambient());
+
+        sandbox = new Sandbox(Duration.ofSeconds(3));
+        runner = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "sandbox-runner");
+            t.setDaemon(true);
+            return t;
+        });
+        // 先開好 JShell 的遠端 JVM，玩家第一次按「執行」才不用等
+        runner.submit(() -> sandbox.run(List.of(), "", List.of()));
+
+        StackPane root = new StackPane();
+        root.getStyleClass().add("app-root");
+        Game game = new Game(chapters, progress, store, sfx, sandbox, runner, root);
+        Scene scene = new Scene(root, 1280, 800);
+        scene.getStylesheets().add(App.class.getResource("/detective/theme.css").toExternalForm());
+        stage.setScene(scene);
         stage.setTitle("Java 偵探社");
+        stage.setMinWidth(1100);
+        stage.setMinHeight(700);
+        game.showCases();
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        if (sandbox != null) {
+            sandbox.stop();
+        }
+        if (runner != null) {
+            runner.shutdownNow();
+        }
+        if (sandbox != null) {
+            sandbox.close();
+        }
+        if (sfx != null) {
+            sfx.close();
+        }
     }
 
     public static void main(String[] args) {
