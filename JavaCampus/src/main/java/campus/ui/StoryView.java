@@ -514,6 +514,10 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             return;
         }
         if (uiHidden) {
+            // 按住 Ctrl 時系統會一直重送按下事件，那不算玩家又按了一個鍵
+            if (code == KeyCode.CONTROL && ctrlHeld) {
+                return;
+            }
             hideUi(false);
             e.consume();
             return;

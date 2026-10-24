@@ -828,9 +828,10 @@
     -fx-font-size: 17px;
 }
 
+/* 和對話框的內心 OS 一樣用手寫字；中文的斜體只是假的歪斜 */
 .backlog-text.os {
-    -fx-font-style: italic;
-    -fx-text-fill: #6f6560;
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-text-fill: #34528c;
 }
 
 .backlog-text.choice-made {
