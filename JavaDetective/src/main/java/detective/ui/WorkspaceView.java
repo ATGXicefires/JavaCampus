@@ -434,7 +434,9 @@ final class WorkspaceView extends StackPane {
         List<String> probes = step.check().type() == Check.Mode.VALUES ? step.check().exprs() : List.of();
         setBusy(true);
         game.sfx.play(Sfx.Sound.RUN);
-        game.background(() -> game.sandbox.run(Verifier.preamble(c.vars(), Map.of()), code, probes), r -> {
+        game.background(() -> step.form() == Step.Form.PROGRAM
+                ? game.sandbox.runProgram(code, true, probes)
+                : game.sandbox.run(Verifier.preamble(c.vars(), Map.of()), code, probes), r -> {
             showRun(r);
             if (r.outcome() == Outcome.OK) {
                 precheck(step, code);
@@ -447,7 +449,7 @@ final class WorkspaceView extends StackPane {
 
     /** 執行成功後在背景先驗證一次，對了就讓「提交推理」閃動提醒。 */
     private void precheck(Step step, String code) {
-        game.background(() -> game.verifier.verify(c.key(step), c.vars(), step.check(), step.solution(), code), v -> {
+        game.background(() -> game.verifier.verify(c.key(step), step.form(), c.vars(), step.check(), step.solution(), code), v -> {
             if (v.passed() && step == current && code.equals(editor.getText())
                     && !game.progress.isSolved(c.id(), step.id())) {
                 startNudge();
@@ -464,7 +466,7 @@ final class WorkspaceView extends StackPane {
         Step step = current;
         setBusy(true);
         game.sfx.play(Sfx.Sound.RUN);
-        game.background(() -> game.verifier.verify(c.key(step), c.vars(), step.check(), step.solution(), code), v -> {
+        game.background(() -> game.verifier.verify(c.key(step), step.form(), c.vars(), step.check(), step.solution(), code), v -> {
             showRun(v.run());
             if (v.passed()) {
                 solved(step, code);

@@ -17,6 +17,7 @@ import jdk.jshell.Snippet.Status;
 import jdk.jshell.SnippetEvent;
 import jdk.jshell.SourceCodeAnalysis.CompletionInfo;
 import jdk.jshell.SourceCodeAnalysis.Completeness;
+import jdk.jshell.TypeDeclSnippet;
 import jdk.jshell.VarSnippet;
 
 import java.io.ByteArrayOutputStream;
@@ -27,6 +28,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +49,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public final class Sandbox implements AutoCloseable {
 
     private static final int OUTPUT_LIMIT = 64 * 1024;
+    // 完整程式模式把玩家的檔案當成 Main.java
+    private static final String MAIN_CLASS = "Main";
 
     private record Segment(int start, String text, Completeness completeness) {
         int end() {
@@ -76,8 +80,7 @@ public final class Sandbox implements AutoCloseable {
      * @throws IllegalStateException preamble 本身無法執行，代表案件內容有誤
      */
     public synchronized RunResult run(List<String> preamble, String source, List<String> probes) {
-        JShell js = ensureShell();
-        reset(js);
+        JShell js = cleanShell();
         Set<String> given = new HashSet<>();
         for (String line : preamble) {
             for (SnippetEvent ev : js.eval(line)) {
@@ -155,6 +158,190 @@ public final class Sandbox implements AutoCloseable {
         return new RunResult(Outcome.OK, text, truncated, Lint.check(source, stringVariables(js)), probeResults);
     }
 
+    /**
+     * 把 {@code source} 當成一個完整的 {@code Main.java} 從乾淨的狀態執行：檔案裡只能有 import 和型別宣告，
+     * 不會注入任何案件變數。類別都定義好之後，{@code launch} 為 true 時像 {@code java Main} 一樣呼叫
+     * {@code Main.main}，最後對每個 {@code probes} 求值（例如用 {@code Main.leaveTime(22, 20, 25)} 當隱藏測資）。
+     */
+    public synchronized RunResult runProgram(String source, boolean launch, List<String> probes) {
+        JShell js = cleanShell();
+        String code = blankPackage(source);
+        List<Segment> segments = split(js, code);
+        Optional<Problem> early = missingSemicolon(segments).or(() -> structure(js, segments));
+        if (early.isPresent()) {
+            return compileError(List.of(early.get()));
+        }
+
+        output.reset();
+        interruption = null;
+        exited = false;
+        Map<String, Segment> bySnippetId = new HashMap<>();
+        Map<DeclarationSnippet, Segment> declared = new LinkedHashMap<>();
+        ScheduledFuture<?> dog = arm(js);
+        try {
+            for (Segment seg : segments) {
+                List<SnippetEvent> events;
+                try {
+                    events = js.eval(seg.text());
+                } catch (IllegalStateException closed) {
+                    return finish(Outcome.EXITED, List.of(errorAt(seg, Diagnostics.exited(), "JShell closed")));
+                }
+                for (SnippetEvent ev : events) {
+                    if (ev.causeSnippet() != null) {
+                        continue;
+                    }
+                    bySnippetId.put(ev.snippet().id(), seg);
+                    if (ev.status() == Status.REJECTED) {
+                        return compileError(rejected(js, ev.snippet(), seg, code));
+                    }
+                    if (ev.snippet() instanceof DeclarationSnippet ds) {
+                        declared.put(ds, seg);
+                    }
+                }
+            }
+            // 類別可以用到後面才宣告的類別，所以全部定義完才檢查還有沒有找不到的名字
+            for (Map.Entry<DeclarationSnippet, Segment> d : declared.entrySet()) {
+                if (js.status(d.getKey()) != Status.VALID) {
+                    return compileError(unresolved(js, d.getKey(), d.getValue()));
+                }
+            }
+            if (launch) {
+                Optional<RunResult> failed = launch(js, segments, bySnippetId);
+                if (failed.isPresent()) {
+                    return failed.get();
+                }
+            }
+        } finally {
+            dog.cancel(false);
+        }
+        String text = output.text();
+        boolean truncated = output.truncated();
+        List<Probe> probeResults = evaluate(js, probes);
+        return new RunResult(Outcome.OK, text, truncated, Lint.check(source, Set.of()), probeResults);
+    }
+
+    /** 呼叫 {@code Main.main}；正常結束時回傳空的 Optional。 */
+    private Optional<RunResult> launch(JShell js, List<Segment> segments, Map<String, Segment> bySnippetId) {
+        Segment main = segments.stream().filter(s -> MAIN_CLASS.equals(typeName(js, s))).findFirst().orElse(null);
+        if (main == null) {
+            Segment first = segments.isEmpty() ? new Segment(0, "", Completeness.EMPTY) : segments.getFirst();
+            return Optional.of(compileError(List.of(header(first, Diagnostics.noMainClass(MAIN_CLASS),
+                    "error: could not find or load main class " + MAIN_CLASS))));
+        }
+        List<SnippetEvent> events;
+        try {
+            events = js.eval(MAIN_CLASS + ".main(new String[0]);");
+        } catch (IllegalStateException closed) {
+            return Optional.of(finish(Outcome.EXITED, List.of(header(main, Diagnostics.exited(), "JShell closed"))));
+        }
+        if (exited) {
+            return Optional.of(finish(Outcome.EXITED, List.of(header(main, Diagnostics.exited(), "System.exit"))));
+        }
+        if (interruption != null) {
+            String message = interruption == Outcome.TIMEOUT ? Diagnostics.timeout(timeout) : Diagnostics.stopped();
+            return Optional.of(finish(interruption, List.of(header(main, message, interruption.name()))));
+        }
+        SnippetEvent ev = events.stream().filter(e -> e.causeSnippet() == null).findFirst().orElseThrow();
+        if (ev.status() == Status.REJECTED) {
+            String raw = js.diagnostics(ev.snippet()).filter(Diag::isError).findFirst()
+                    .map(d -> Diagnostics.cleanWrapperNames(d.getMessage(Locale.ENGLISH))).orElse("main not found");
+            return Optional.of(compileError(List.of(header(main, Diagnostics.noMainMethod(MAIN_CLASS), raw))));
+        }
+        if (ev.exception() != null) {
+            return Optional.of(finish(Outcome.RUNTIME_ERROR, List.of(runtimeProblem(ev.exception(), bySnippetId, main))));
+        }
+        return Optional.empty();
+    }
+
+    /** 真正的 Java 檔案裡，class 外面只能有 import；public 類別的名字要跟檔名一樣；類別不能重複宣告。 */
+    private static Optional<Problem> structure(JShell js, List<Segment> segments) {
+        boolean seenType = false;
+        Set<String> names = new HashSet<>();
+        for (Segment seg : segments) {
+            List<Snippet> parsed = js.sourceCodeAnalysis().sourceToSnippets(seg.text());
+            if (parsed.isEmpty()) {
+                continue;
+            }
+            Snippet sn = parsed.getFirst();
+            switch (sn.kind()) {
+                case IMPORT -> {
+                    if (seenType) {
+                        return Optional.of(header(seg, Diagnostics.importAfterType(),
+                                "class, interface, enum, or record expected"));
+                    }
+                }
+                case TYPE_DECL -> {
+                    seenType = true;
+                    String name = ((TypeDeclSnippet) sn).name();
+                    if (!names.add(name)) {
+                        return Optional.of(header(seg, Diagnostics.duplicateType(name), "duplicate class: " + name));
+                    }
+                    if (isPublic(seg) && !name.equals(MAIN_CLASS)) {
+                        return Optional.of(header(seg, Diagnostics.publicClassName(name, MAIN_CLASS),
+                                "class " + name + " is public, should be declared in a file named " + name + ".java"));
+                    }
+                }
+                // 語法本身有錯，交給編譯器回報真正的原因
+                case ERRONEOUS -> { }
+                default -> {
+                    return Optional.of(header(seg, Diagnostics.outsideClass(),
+                            "class, interface, enum, or record expected"));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static String typeName(JShell js, Segment seg) {
+        return js.sourceCodeAnalysis().sourceToSnippets(seg.text()).stream()
+                .filter(s -> s instanceof TypeDeclSnippet).map(s -> ((TypeDeclSnippet) s).name())
+                .findFirst().orElse(null);
+    }
+
+    private static boolean isPublic(Segment seg) {
+        for (Token t : JavaTokens.tokenize(seg.text())) {
+            if (t.kind() == Kind.COMMENT) {
+                continue;
+            }
+            if (Set.of("class", "interface", "enum", "record").contains(t.text())) {
+                return false;
+            }
+            if (t.text().equals("public")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** JShell 不認得 {@code package}，單一檔案的程式有沒有它也沒差別，換成等長的空白讓位置維持不變。 */
+    private static String blankPackage(String source) {
+        List<Token> code = JavaTokens.tokenize(source).stream().filter(t -> t.kind() != Kind.COMMENT).toList();
+        if (code.isEmpty() || !code.getFirst().text().equals("package")) {
+            return source;
+        }
+        int end = code.stream().filter(t -> t.text().equals(";")).mapToInt(Token::end).findFirst().orElse(-1);
+        if (end < 0) {
+            return source;
+        }
+        StringBuilder sb = new StringBuilder(source);
+        for (int i = code.getFirst().start(); i < end; i++) {
+            if (sb.charAt(i) != '\n') {
+                sb.setCharAt(i, ' ');
+            }
+        }
+        return sb.toString();
+    }
+
+    /** 結構上的錯誤只標出那一段的第一行，整個 class 都畫紅線反而看不出重點。 */
+    private static Problem header(Segment seg, String message, String raw) {
+        String text = seg.text();
+        int start = JavaTokens.tokenize(text).stream().filter(t -> t.kind() != Kind.COMMENT)
+                .mapToInt(Token::start).findFirst().orElse(0);
+        int nl = text.indexOf('\n', start);
+        int end = nl < 0 ? text.stripTrailing().length() : nl;
+        return new Problem(Severity.ERROR, seg.start() + start, seg.start() + Math.max(end, start + 1), message, raw);
+    }
+
     /** 可從其他執行緒呼叫，中斷正在執行的程式。 */
     public void stop() {
         interruption = Outcome.STOPPED;
@@ -197,6 +384,22 @@ public final class Sandbox implements AutoCloseable {
         shell = fresh;
         exited = false;
         return fresh;
+    }
+
+    /**
+     * 拿到一個乾淨的 JShell。平常 drop 掉上次的 snippet 就好，但上次若定義過型別就整個重開：
+     * JShell 有個 bug，型別宣告被 drop 之後，參考型別運算式的型別名稱會變成 {@code java.lang.Object}，
+     * 比對變數型別時就會誤判。重開一個只要零點一秒多。
+     */
+    private JShell cleanShell() {
+        JShell js = ensureShell();
+        if (js.types().findAny().isEmpty()) {
+            reset(js);
+            return js;
+        }
+        shell = null;
+        js.close();
+        return ensureShell();
     }
 
     private static void reset(JShell js) {

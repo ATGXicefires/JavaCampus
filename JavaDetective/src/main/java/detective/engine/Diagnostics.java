@@ -3,8 +3,10 @@ package detective.engine;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +21,20 @@ final class Diagnostics {
             "String", "System", "Math", "Integer", "Double", "Boolean", "Character", "Long", "Object",
             "StringBuilder", "Arrays", "List", "ArrayList", "Map", "HashMap", "Set", "HashSet", "Scanner",
             "Random", "IO");
+    // JShell API 沒有預設的 import，真正的 Java 也只自動帶 java.lang，這些類別都要自己 import
+    private static final Map<String, String> IMPORTS = new HashMap<>();
+
+    static {
+        imports("java.util", "Scanner", "List", "ArrayList", "LinkedList", "Map", "HashMap", "TreeMap",
+                "LinkedHashMap", "Set", "HashSet", "TreeSet", "LinkedHashSet", "Arrays", "Collections", "Random",
+                "Optional", "Iterator", "Deque", "ArrayDeque", "Queue", "PriorityQueue", "Objects");
+        imports("java.util.stream", "Collectors", "Stream", "IntStream");
+        imports("java.time", "LocalDate", "LocalTime", "LocalDateTime", "Duration");
+        imports("java.nio.file", "Files", "Path", "Paths");
+        imports("java.math", "BigDecimal", "BigInteger");
+        imports("java.io", "IOException", "BufferedReader", "InputStreamReader", "File");
+    }
+
     private static final List<String> PRINT_METHODS = List.of("println", "print", "printf", "format");
     private static final List<String> STRING_METHODS = List.of(
             "length", "charAt", "substring", "equals", "equalsIgnoreCase", "indexOf", "contains",
@@ -37,12 +53,19 @@ final class Diagnostics {
     private static final Pattern APPLY = Pattern.compile("(?:method|constructor) (\\S+) in|found for (\\w+)\\(");
     private static final Pattern INCOMPARABLE = Pattern.compile("incomparable types: (\\S+) and (\\S+)");
     private static final Pattern UNINITIALIZED = Pattern.compile("variable (\\S+) might not");
+    private static final Pattern NON_STATIC = Pattern.compile("non-static (?:method|variable) (\\S+) cannot");
     private static final Pattern QUALIFIED = Pattern.compile("\\b(?:[a-z]\\w*\\.)+([A-Z]\\w*)");
     private static final Pattern JSHELL_WRAPPER = Pattern.compile("REPL\\.\\$JShell\\$\\d+\\w*\\.");
     private static final Pattern INDEX = Pattern.compile("(?i)index (-?\\d+) out of bounds for length (\\d+)");
     private static final Pattern NUMBER_INPUT = Pattern.compile("For input string: \"(.*)\"");
 
     private Diagnostics() {}
+
+    private static void imports(String pkg, String... classes) {
+        for (String c : classes) {
+            IMPORTS.put(c, pkg);
+        }
+    }
 
     static String compileError(String code, String english, Names names) {
         String msg = simplifyTypes(english);
@@ -69,6 +92,8 @@ final class Diagnostics {
             case "compiler.err.incomparable.types" -> incomparable(msg);
             case "compiler.err.else.without.if" -> "`else` 前面要先有 `if`。檢查 `if` 的 `}` 和 `else` 之間是不是多了分號。";
             case "compiler.err.void.not.allowed.here" -> "這個方法不會回傳值（void），所以不能把它當成一個值來用。";
+            case "compiler.err.non-static.cant.be.ref" -> nonStatic(msg);
+            case "compiler.err.invalid.meth.decl.ret.type.req" -> "方法名稱前面要寫回傳型別；不回傳任何值就寫 `void`。";
             default -> "編譯器回報了錯誤：" + firstLine(msg);
         };
     }
@@ -87,6 +112,31 @@ final class Diagnostics {
 
     static String exited() {
         return "程式呼叫了 `System.exit()`，執行環境已經重新啟動。";
+    }
+
+    static String outsideClass() {
+        return "這裡只能寫 `import` 或 `class`。變數和方法要寫在 class 的大括號裡面，敘述要寫在方法裡面。";
+    }
+
+    static String importAfterType() {
+        return "`import` 要寫在檔案最上面，放在所有 class 之前。";
+    }
+
+    static String publicClassName(String name, String file) {
+        return "`public class " + name + "` 要放在叫 `" + name + ".java` 的檔案裡。這個檔案是 `" + file
+                + ".java`，所以公開的類別要叫 `" + file + "`。";
+    }
+
+    static String duplicateType(String name) {
+        return "已經有一個叫 `" + name + "` 的類別了，同一個名字不能宣告兩次。";
+    }
+
+    static String noMainClass(String main) {
+        return "找不到 `" + main + "` 類別。程式要從 `" + main + "` 類別的 `main` 方法開始執行。";
+    }
+
+    static String noMainMethod(String main) {
+        return "`" + main + "` 裡找不到能執行的 `main` 方法。程式的起點要寫成 `public static void main(String[] args)`。";
     }
 
     static String alreadyDefined(String name, boolean givenByCase) {
@@ -139,6 +189,10 @@ final class Diagnostics {
         }
         String kind = m.group(1);
         String name = m.group(2);
+        // 型別名稱拿來呼叫靜態方法時（例如 Arrays.sort），javac 會把它當成找不到的變數
+        if (!kind.equals("method") && IMPORTS.containsKey(name) && !names.types().contains(name)) {
+            return "要用 `" + name + "`，得先在檔案最上面寫 `import " + IMPORTS.get(name) + "." + name + ";`。";
+        }
         Matcher loc = LOCATION.matcher(msg);
         String location = loc.find() ? loc.group(1) : "";
         Collection<String> candidates;
@@ -247,6 +301,12 @@ final class Diagnostics {
             return "這裡打成了全形的 `" + ch + "`，請換成半形的 `" + half + "`（先切換到英文輸入）。";
         }
         return "這裡有 Java 看不懂的字元 `" + ch + "`。";
+    }
+
+    private static String nonStatic(String msg) {
+        Matcher m = NON_STATIC.matcher(msg);
+        String name = m.find() ? "`" + m.group(1) + "`" : "它";
+        return "static 方法裡不能直接使用非 static 的 " + name + "。在它的宣告前面加上 `static`，或先建立物件再透過物件使用。";
     }
 
     private static String uninitialized(String msg) {

@@ -10,6 +10,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+import static detective.content.Step.Form.PROGRAM;
+import static detective.content.Step.Form.SNIPPET;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,74 +43,74 @@ class VerifierTest {
 
     @Test
     void outputPassesWithDifferentSpacing() {
-        Verdict v = verifier.verify("o1", List.of(), OUTPUT, "System.out.println(\"報到\");", "System.out.println( \"報到\" );   ");
+        Verdict v = verifier.verify("o1", SNIPPET, List.of(), OUTPUT, "System.out.println(\"報到\");", "System.out.println( \"報到\" );   ");
         assertTrue(v.passed(), v.message());
     }
 
     @Test
     void trailingWhitespaceDoesNotCount() {
-        Verdict v = verifier.verify("o2", List.of(), OUTPUT, "System.out.println(\"報到\");", "System.out.println(\"報到  \");");
+        Verdict v = verifier.verify("o2", SNIPPET, List.of(), OUTPUT, "System.out.println(\"報到\");", "System.out.println(\"報到  \");");
         assertTrue(v.passed(), v.message());
     }
 
     @Test
     void reportsLineCount() {
-        Verdict v = verifier.verify("o3", List.of(), OUTPUT, "System.out.println(\"報到\");",
+        Verdict v = verifier.verify("o3", SNIPPET, List.of(), OUTPUT, "System.out.println(\"報到\");",
                 "System.out.println(\"報到\");\nSystem.out.println(\"報到\");");
         assertFails(v, "預期輸出 1 行", "2 行");
     }
 
     @Test
     void reportsNothingPrinted() {
-        Verdict v = verifier.verify("o4", List.of(), OUTPUT, "System.out.println(\"報到\");", "String s = \"報到\";");
+        Verdict v = verifier.verify("o4", SNIPPET, List.of(), OUTPUT, "System.out.println(\"報到\");", "String s = \"報到\";");
         assertFails(v, "沒有印出");
     }
 
     @Test
     void revealsExpectedWhenOneCharacterOff() {
-        Verdict v = verifier.verify("o5", List.of(), OUTPUT, "System.out.println(\"證人：林雅婷\");",
+        Verdict v = verifier.verify("o5", SNIPPET, List.of(), OUTPUT, "System.out.println(\"證人：林雅婷\");",
                 "System.out.println(\"證人:林雅婷\");");
         assertFails(v, "差了 1 個字", "證人：林雅婷");
     }
 
     @Test
     void reportsBrokenProgram() {
-        Verdict v = verifier.verify("o6", List.of(), OUTPUT, "System.out.println(1);", "System.out.println(1)");
+        Verdict v = verifier.verify("o6", SNIPPET, List.of(), OUTPUT, "System.out.println(1);", "System.out.println(1)");
         assertFails(v, "錯誤");
     }
 
     @Test
     void valuesPass() {
         Check check = new Check(Check.Mode.VALUES, List.of("total"), null);
-        Verdict v = verifier.verify("v1", HOUR, check, "int total = callHour * 60;", "int total = 60 * callHour;");
+        Verdict v = verifier.verify("v1", SNIPPET, HOUR, check, "int total = callHour * 60;", "int total = 60 * callHour;");
         assertTrue(v.passed(), v.message());
     }
 
     @Test
     void valuesReportMissingVariable() {
         Check check = new Check(Check.Mode.VALUES, List.of("gap"), null);
-        Verdict v = verifier.verify("v2", List.of(), check, "int gap = 14;", "int gapp = 14;");
+        Verdict v = verifier.verify("v2", SNIPPET, List.of(), check, "int gap = 14;", "int gapp = 14;");
         assertFails(v, "找不到 `gap`");
     }
 
     @Test
     void valuesReportWrongType() {
         Check check = new Check(Check.Mode.VALUES, List.of("gap"), null);
-        Verdict v = verifier.verify("v3", List.of(), check, "int gap = 14;", "String gap = \"14\";");
+        Verdict v = verifier.verify("v3", SNIPPET, List.of(), check, "int gap = 14;", "String gap = \"14\";");
         assertFails(v, "應該是 int", "String");
     }
 
     @Test
     void valuesReportWrongValue() {
         Check check = new Check(Check.Mode.VALUES, List.of("gap"), null);
-        Verdict v = verifier.verify("v4", List.of(), check, "int gap = 14;", "int gap = 15;");
+        Verdict v = verifier.verify("v4", SNIPPET, List.of(), check, "int gap = 14;", "int gap = 15;");
         assertFails(v, "值不對", "15");
     }
 
     @Test
     void variantCatchesHardcodedAnswer() {
         Check check = new Check(Check.Mode.VALUES, List.of("total"), List.of(Map.of("callHour", "9")));
-        Verdict v = verifier.verify("v5", HOUR, check, "int total = callHour * 60;", "int total = 1200;");
+        Verdict v = verifier.verify("v5", SNIPPET, HOUR, check, "int total = callHour * 60;", "int total = 1200;");
         assertFails(v, "換一組資料", "callHour = 9");
         assertTrue(v.variant().containsKey("callHour"));
     }
@@ -117,17 +119,65 @@ class VerifierTest {
     void variantCoversBothBranches() {
         Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("callHour", "9")));
         String solution = "if (callHour > 12) {\n    System.out.println(\"晚上\");\n} else {\n    System.out.println(\"早上\");\n}";
-        Verdict v = verifier.verify("v6", HOUR, check, solution, "System.out.println(\"晚上\");");
+        Verdict v = verifier.verify("v6", SNIPPET, HOUR, check, solution, "System.out.println(\"晚上\");");
         assertFails(v, "換一組資料");
-        assertTrue(verifier.verify("v6", HOUR, check, solution, solution).passed());
+        assertTrue(verifier.verify("v6", SNIPPET, HOUR, check, solution, solution).passed());
     }
 
     @Test
     void methodCallsAsHiddenTests() {
         Check check = new Check(Check.Mode.VALUES, List.of("isLate(2058)", "isLate(2113)"), null);
         String solution = "boolean isLate(int t) {\n    return t > 2112;\n}";
-        assertTrue(verifier.verify("m1", List.of(), check, solution, "boolean isLate(int time) { return time >= 2113; }").passed());
-        assertFails(verifier.verify("m1", List.of(), check, solution, "boolean isLate(int time) { return false; }"),
+        assertTrue(verifier.verify("m1", SNIPPET, List.of(), check, solution, "boolean isLate(int time) { return time >= 2113; }").passed());
+        assertFails(verifier.verify("m1", SNIPPET, List.of(), check, solution, "boolean isLate(int time) { return false; }"),
                 "`isLate(2113)`", "false");
+    }
+
+    private static final String LEAVE_SOLUTION = """
+            public class Main {
+                static int leaveTime(int hour, int minute, int drive) {
+                    return hour * 60 + minute - drive;
+                }
+
+                public static void main(String[] args) {
+                    System.out.println(leaveTime(22, 20, 25));
+                }
+            }
+            """;
+
+    @Test
+    void programPassesHiddenTests() {
+        Check check = new Check(Check.Mode.VALUES, List.of("Main.leaveTime(22, 20, 25)", "Main.leaveTime(21, 10, 40)"), null);
+        String mine = """
+                import java.util.*;
+
+                public class Main {
+                    static int leaveTime(int h, int m, int d) {
+                        int total = h * 60 + m;
+                        return total - d;
+                    }
+
+                    public static void main(String[] args) {
+                    }
+                }
+                """;
+        assertTrue(verifier.verify("p1", PROGRAM, List.of(), check, LEAVE_SOLUTION, mine).passed());
+    }
+
+    @Test
+    void programHardcodedAnswerFailsHiddenTest() {
+        Check check = new Check(Check.Mode.VALUES, List.of("Main.leaveTime(22, 20, 25)", "Main.leaveTime(21, 10, 40)"), null);
+        String hardcoded = """
+                public class Main {
+                    static int leaveTime(int h, int m, int d) {
+                        return 1315;
+                    }
+
+                    public static void main(String[] args) {
+                    }
+                }
+                """;
+        assertFails(verifier.verify("p2", PROGRAM, List.of(), check, LEAVE_SOLUTION, hardcoded),
+                "`Main.leaveTime(21, 10, 40)`", "1315");
     }
 }

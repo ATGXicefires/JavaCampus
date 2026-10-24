@@ -70,6 +70,10 @@ public final class CaseLibrary {
             if (s.check().type() == Check.Mode.VALUES && s.check().exprs().isEmpty()) {
                 throw new IllegalStateException(c.id() + "/" + s.id() + "：values 檢查沒有指定 exprs");
             }
+            if (s.form() == Step.Form.PROGRAM && !s.check().variants().isEmpty()) {
+                throw new IllegalStateException(c.id() + "/" + s.id() + "：完整程式不會注入案件變數，"
+                        + "variants 沒有作用；改用 exprs 呼叫方法當隱藏測資");
+            }
         }
         for (Evidence e : c.evidence()) {
             if (e.unlockOnStep() != null && !ids.contains(e.unlockOnStep())) {

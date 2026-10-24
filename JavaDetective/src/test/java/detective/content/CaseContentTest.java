@@ -54,11 +54,11 @@ class CaseContentTest {
     }
 
     private static void checkStep(CaseDef c, Step step, String before) {
-        Verdict solved = verifier.verify(c.key(step), c.vars(), step.check(), step.solution(), step.solution());
+        Verdict solved = verifier.verify(c.key(step), step.form(), c.vars(), step.check(), step.solution(), step.solution());
         assertTrue(solved.passed(), "解答沒有通過：" + solved.message());
 
         assertTrue(before != null, "第一個步驟必須有 starter");
-        Verdict untouched = verifier.verify(c.key(step), c.vars(), step.check(), step.solution(), before);
+        Verdict untouched = verifier.verify(c.key(step), step.form(), c.vars(), step.check(), step.solution(), before);
         assertFalse(untouched.passed(), "不用改程式就能過關");
 
         assertTrue(step.skeleton().contains("____"), "骨架沒有挖空");

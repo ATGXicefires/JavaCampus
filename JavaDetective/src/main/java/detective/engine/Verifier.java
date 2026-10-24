@@ -2,6 +2,7 @@ package detective.engine;
 
 import detective.content.Check;
 import detective.content.SetupVar;
+import detective.content.Step;
 import detective.engine.RunResult.Outcome;
 import detective.engine.RunResult.Probe;
 
@@ -27,7 +28,7 @@ public final class Verifier {
      * @param key 快取參考解答結果用，同一個步驟要給同一個值
      * @throws IllegalStateException 參考解答本身跑不過，代表案件內容有誤
      */
-    public Verdict verify(String key, List<SetupVar> vars, Check check, String solution, String source) {
+    public Verdict verify(String key, Step.Form form, List<SetupVar> vars, Check check, String solution, String source) {
         List<Map<String, String>> runs = new ArrayList<>();
         runs.add(Map.of());
         runs.addAll(check.variants());
@@ -36,11 +37,12 @@ public final class Verifier {
         for (int i = 0; i < runs.size(); i++) {
             Map<String, String> overrides = runs.get(i);
             List<String> preamble = preamble(vars, overrides);
-            RunResult expected = expectedCache.computeIfAbsent(key + "#" + i, k -> sandbox.run(preamble, solution, probes));
+            RunResult expected = expectedCache.computeIfAbsent(key + "#" + i,
+                    k -> run(form, preamble, solution, check, probes));
             if (expected.outcome() != Outcome.OK || expected.probes().stream().anyMatch(p -> p.error() != null)) {
                 throw new IllegalStateException("參考解答跑不過：" + key + " " + expected);
             }
-            RunResult actual = sandbox.run(preamble, source, probes);
+            RunResult actual = run(form, preamble, source, check, probes);
             if (first == null) {
                 first = actual;
             }
@@ -56,6 +58,13 @@ public final class Verifier {
             }
         }
         return Verdict.pass(first);
+    }
+
+    /** 完整程式不吃案件變數；比對輸出時才需要從 main 跑起，比對值時只要類別定義好就能呼叫。 */
+    private RunResult run(Step.Form form, List<String> preamble, String source, Check check, List<String> probes) {
+        return form == Step.Form.PROGRAM
+                ? sandbox.runProgram(source, check.type() == Check.Mode.OUTPUT, probes)
+                : sandbox.run(preamble, source, probes);
     }
 
     public static List<String> preamble(List<SetupVar> vars, Map<String, String> overrides) {
