@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-/** 「程式基礎教學筆記」：左邊依章列出條目，沒解鎖的只顯示「⋯⋯」；右邊是內容。 */
+/** 「程式基礎教學筆記」：左邊依章列出條目，沒解鎖的只顯示「⋯⋯」；右邊先是一句重點，再接完整內容。 */
 final class HandbookView extends HBox {
 
     private static final String[] NUMERALS = {"零", "一", "二", "三", "四", "五", "六", "七"};
@@ -85,7 +86,9 @@ final class HandbookView extends HBox {
         item.getStyleClass().add("current");
         Label title = new Label(e.title());
         title.getStyleClass().add("handbook-title");
-        detail.getChildren().setAll(title, MiniMarkdown.render(e.body()));
+        TextFlow lead = MiniMarkdown.inline(e.summary());
+        lead.getStyleClass().add("handbook-lead");
+        detail.getChildren().setAll(title, lead, MiniMarkdown.render(e.body()));
         Motion.rise(detail, Duration.ZERO);
     }
 }

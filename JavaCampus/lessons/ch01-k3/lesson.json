@@ -11,7 +11,8 @@
     {
       "id": "if",
       "title": "如果有滷肉飯",
-      "instructions": "PDF 第 3 頁：**if-else 就像選午餐**。題目給了 `hasLuRouFan`，它是 `boolean`，只有 `true`（有）和 `false`（沒有）兩種值。\n\n寫一個 `if`：有滷肉飯的時候印出 `吃滷肉飯`，沒有的時候什麼都不印。\n\n```\nif (條件) {\n    條件成立時做的事\n}\n```",
+      "goal": "寫一個 `if`：有滷肉飯的時候印出 `吃滷肉飯`。",
+      "instructions": "PDF 第 3 頁：**if-else 就像選午餐**。題目給了 `hasLuRouFan`，它是 `boolean`，只有 `true`（有）和 `false`（沒有）兩種值。\n\n沒有滷肉飯的時候什麼都不印。\n\n```\nif (條件) {\n    條件成立時做的事\n}\n```",
       "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
@@ -26,7 +27,8 @@
     {
       "id": "else",
       "title": "否則吃便當",
-      "instructions": "沒有滷肉飯也要吃午餐。在 `if` 的 `}` 後面接上 `else`：否則印出 `吃便當`。\n\n```\nif (條件) {\n    條件成立時做的事\n} else {\n    條件不成立時做的事\n}\n```\n\n按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種情況都要印對。",
+      "goal": "在 `}` 後面接上 `else`：否則印出 `吃便當`。",
+      "instructions": "沒有滷肉飯也要吃午餐。\n\n```\nif (條件) {\n    條件成立時做的事\n} else {\n    條件不成立時做的事\n}\n```\n\n按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種情況都要印對。",
       "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",

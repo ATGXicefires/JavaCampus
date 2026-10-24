@@ -1,6 +1,7 @@
 package campus.ui;
 
 import campus.lesson.Lesson;
+import campus.lesson.SourceFile;
 import campus.lesson.Step;
 import campus.fx.Motion;
 import campus.fx.Sfx;
@@ -13,6 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
+import java.util.List;
 
 /** 四層提示：提點 → 白話 → 骨架 → 答案。前一層看過才能打開下一層。 */
 final class HintDrawer extends VBox {
@@ -106,7 +109,21 @@ final class HintDrawer extends VBox {
         };
     }
 
-    private static Label code(String source) {
+    /** 好幾個檔案時，每段程式碼上面標出檔名。 */
+    private static Node code(List<SourceFile> files) {
+        if (files.size() == 1) {
+            return codeLabel(files.getFirst().text());
+        }
+        VBox box = new VBox(6);
+        for (SourceFile f : files) {
+            Label name = new Label(f.name());
+            name.getStyleClass().add("hint-file");
+            box.getChildren().addAll(name, codeLabel(f.text()));
+        }
+        return box;
+    }
+
+    private static Label codeLabel(String source) {
         Label l = new Label(source.strip());
         l.getStyleClass().add("hint-code");
         l.setMaxWidth(Double.MAX_VALUE);

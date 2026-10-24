@@ -818,6 +818,16 @@
     -fx-font-size: 17px;
 }
 
+.handbook-lead {
+    -fx-padding: 0 0 12 0;
+    -fx-border-color: transparent transparent c-line transparent;
+}
+
+.handbook-detail .handbook-lead .md-text, .handbook-detail .handbook-lead .md-code {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
 /* 對話紀錄 */
 .backlog-who {
     -fx-font-weight: bold;
@@ -879,8 +889,124 @@
 }
 
 /* 程式題 */
+/* 整個程式題用同一套配色：預設全亮，設定切成暗色時連側欄、上方列、分頁和提示抽屜一起變暗。
+   在這裡重新定義共用的 c-* 色名，裡面的按鈕、文字和分隔線就會跟著換，不用一個個覆寫 */
 .lesson {
-    -fx-background-color: c-bg;
+    c-muted: #6f655e;
+    c-accent-dark: #9a5414;
+    c-code-bg: #fffdf9;
+    c-console: #fffdf9;
+    l-gap: #ebe2d4;
+    l-chrome: #f4ecdf;
+    l-gutter: #f7f1e7;
+    l-lineno: #8f8379;
+    l-dash: #c9bba8;
+    l-code-ink: #2f2a27;
+    l-kw: #a8480b;
+    l-str: #2e7031;
+    l-num: #1d5fa8;
+    l-cmt: #6f655e;
+    l-type: #0b6e68;
+    l-bad: #c0271f;
+    l-bad-bg: #fde2df;
+    l-err: #d0312d;
+    l-err-bg: #fde9e6;
+    l-warn: #c26a12;
+    l-sel: #fdecd8;
+    l-caret: #a8480b;
+    l-strong: #1f1a18;
+    l-code-accent: #a8480b;
+    l-current: #ffeedd;
+    l-card: white;
+    l-pre-bg: #f7f0e5;
+    l-pre-ink: #3a3330;
+    l-var-type: #2f7f78;
+    l-var-value: #3f7d2e;
+    l-ok-bg: #e5f2e5;
+    l-ok-ink: #24502c;
+    l-ok-chip: #d9ead9;
+    l-ran-ok: #e3f1e3;
+    l-error-bg: #fdecea;
+    l-error-ink: #b3261e;
+    l-warn-bg: #fdf1e2;
+    l-warn-ink: #9a4f0c;
+    -fx-background-color: l-gap;
+}
+
+.app-root:code-dark .lesson {
+    c-panel: #1b1e24;
+    c-panel-2: #262a32;
+    c-line: #323743;
+    c-ink: #e4e7ec;
+    c-muted: #9aa2ad;
+    c-accent-dark: #f2a65a;
+    c-code-bg: #17191e;
+    c-console: #17191e;
+    -fx-base: #2a2e36;
+    -fx-background: #1b1e24;
+    -fx-control-inner-background: #17191e;
+    l-gap: #0f1115;
+    l-chrome: #20242b;
+    l-gutter: #1a1c21;
+    l-lineno: #6b7381;
+    l-dash: #4a4f5a;
+    l-code-ink: #d9dde3;
+    l-kw: #f29e4c;
+    l-str: #9ccc7a;
+    l-num: #7fb7f0;
+    l-cmt: #8a93a0;
+    l-type: #6fd0c5;
+    l-bad: #ff7b72;
+    l-bad-bg: #4a1f22;
+    l-err: #ff5c5c;
+    l-err-bg: #3a1d1f;
+    l-warn: #f29e4c;
+    l-sel: #283244;
+    l-caret: #f29e4c;
+    l-strong: white;
+    l-code-accent: #f2a65a;
+    l-current: #3a2b1c;
+    l-card: #22262d;
+    l-pre-bg: #17191e;
+    l-pre-ink: #f0c070;
+    l-var-type: #6fd0c5;
+    l-var-value: #9ccc7a;
+    l-ok-bg: #1f2e22;
+    l-ok-ink: #cfeccf;
+    l-ok-chip: #1f3a25;
+    l-ran-ok: #183022;
+    l-error-bg: #2e1719;
+    l-error-ink: #ff8a80;
+    l-warn-bg: #2c2516;
+    l-warn-ink: #f29e4c;
+}
+
+/* 「完成」的顏色寫死在共用按鈕樣式裡，暗色要自己蓋過去；選擇器比 .ready 具體，所以 .ready 也要再寫一次 */
+.app-root:code-dark .lesson .btn-verify {
+    -fx-background-color: #1f3a25;
+    -fx-text-fill: #a8dcb0;
+}
+
+.app-root:code-dark .lesson .btn-verify:hover {
+    -fx-background-color: #26462d;
+}
+
+.app-root:code-dark .lesson .btn-verify.ready {
+    -fx-background-color: c-ok;
+    -fx-text-fill: white;
+}
+
+.lesson .md-bold {
+    -fx-fill: l-strong;
+}
+
+.lesson .md-code {
+    -fx-fill: l-code-accent;
+}
+
+.lesson .md-pre {
+    -fx-background-color: l-pre-bg;
+    -fx-text-fill: l-pre-ink;
 }
 
 .topbar {
@@ -894,8 +1020,21 @@
     -fx-font-weight: bold;
 }
 
-.side-panel {
+.zone {
     -fx-background-color: c-panel;
+    -fx-border-color: c-line;
+}
+
+.zone-head {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: c-muted;
+    -fx-padding: 0 14;
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+    -fx-background-color: l-chrome;
+    -fx-border-color: transparent transparent c-line c-accent;
+    -fx-border-width: 0 0 1 3;
 }
 
 .step-row {
@@ -908,7 +1047,7 @@
 }
 
 .step-row.current {
-    -fx-background-color: #ffeedd;
+    -fx-background-color: l-current;
     -fx-border-color: c-accent;
 }
 
@@ -928,8 +1067,8 @@
 }
 
 .step-row.solved .step-num {
-    -fx-background-color: #d9ead9;
-    -fx-text-fill: #24502c;
+    -fx-background-color: l-ok-chip;
+    -fx-text-fill: l-ok-ink;
 }
 
 .step-row.current .step-num {
@@ -947,29 +1086,76 @@
     -fx-text-fill: c-accent-dark;
 }
 
+.step-goal {
+    -fx-background-color: l-current;
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 3;
+    -fx-padding: 10 12;
+}
+
+.step-goal .md-text, .step-goal .md-bold, .step-goal .md-code {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
 .shape-box {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: #d9dde3;
+    -fx-text-fill: l-code-ink;
     -fx-background-color: c-code-bg;
-    -fx-border-color: #4a4f5a;
+    -fx-border-color: l-dash;
     -fx-border-style: segments(5, 4);
     -fx-padding: 10 12;
 }
 
+.more-toggle {
+    -fx-padding: 6 8;
+    -fx-cursor: hand;
+}
+
+.more-toggle:hover {
+    -fx-background-color: c-panel-2;
+}
+
+.more-chevron {
+    -fx-text-fill: c-accent-dark;
+}
+
+.more-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: c-muted;
+}
+
+.more-body {
+    -fx-padding: 0 2 0 8;
+    -fx-border-color: transparent transparent transparent c-line;
+    -fx-border-width: 0 0 0 2;
+}
+
 .after-text {
-    -fx-background-color: #e5f2e5;
+    -fx-background-color: l-ok-bg;
     -fx-padding: 10 12;
 }
 
 .after-text .md-text {
-    -fx-fill: #24502c;
+    -fx-fill: l-ok-ink;
 }
 
 .note-card {
-    -fx-background-color: white;
+    -fx-background-color: l-card;
     -fx-border-color: c-line;
-    -fx-padding: 12 14;
+    -fx-padding: 10 12;
+    -fx-cursor: hand;
+}
+
+.note-card:hover, .note-card.open {
+    -fx-border-color: c-accent;
+}
+
+.note-peek {
+    -fx-padding: 14 16;
+    -fx-border-color: c-accent;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 20, 0.2, 0, 6);
 }
 
 /* 筆記欄很窄，程式碼寧可換行也不要被截成「⋯」 */
@@ -984,8 +1170,20 @@
     -fx-text-fill: c-accent-dark;
 }
 
+.note-chevron {
+    -fx-text-fill: c-muted;
+}
+
+.note-summary .md-text, .note-summary .md-code {
+    -fx-font-size: 13.5px;
+}
+
+.note-body {
+    -fx-padding: 6 0 0 0;
+}
+
 .reaction {
-    -fx-background-color: white;
+    -fx-background-color: l-card;
     -fx-border-color: c-accent;
     -fx-border-width: 2;
     -fx-padding: 12 14;
@@ -995,6 +1193,11 @@
 .reaction-who {
     -fx-font-weight: bold;
     -fx-font-size: 14px;
+    -fx-text-fill: who-color;
+}
+
+.app-root:code-dark .lesson .reaction-who {
+    -fx-text-fill: derive(who-color, 45%);
 }
 
 .reaction-text {
@@ -1003,24 +1206,24 @@
 
 .reaction-text.os {
     -fx-font-style: italic;
-    -fx-text-fill: #6f6560;
+    -fx-text-fill: c-muted;
 }
 
 .var-name {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: #b4531d;
+    -fx-text-fill: l-code-accent;
 }
 
 .var-type {
     -fx-font-family: "Maple Mono NF CN";
-    -fx-text-fill: #2f7f78;
+    -fx-text-fill: l-var-type;
 }
 
 .var-value {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: #3f7d2e;
+    -fx-text-fill: l-var-value;
 }
 
 .hint-drawer {
@@ -1056,9 +1259,81 @@
 .hint-code {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14px;
-    -fx-text-fill: #f0c070;
+    -fx-text-fill: l-pre-ink;
     -fx-background-color: c-code-bg;
+    -fx-border-color: c-line;
     -fx-padding: 8 10;
+}
+
+.hint-file {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: c-muted;
+    -fx-padding: 4 0 0 0;
+}
+
+.file-tabs {
+    -fx-background-color: l-chrome;
+    -fx-border-color: transparent transparent c-line transparent;
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+    -fx-max-height: 36;
+}
+
+.file-tab {
+    -fx-padding: 0 14;
+    -fx-cursor: hand;
+    -fx-border-color: transparent c-line transparent transparent;
+}
+
+.file-tab:hover {
+    -fx-background-color: c-panel-2;
+}
+
+.file-tab.selected {
+    -fx-background-color: c-accent, c-code-bg;
+    -fx-background-insets: 0, 2 0 0 0;
+}
+
+.file-tab .label {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: c-muted;
+}
+
+.file-tab.selected .label {
+    -fx-text-fill: c-ink;
+}
+
+.file-tab.has-error .label {
+    -fx-text-fill: l-bad;
+}
+
+.file-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: c-muted;
+    -fx-font-size: 11px;
+    -fx-padding: 0 2;
+}
+
+.file-close:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: l-bad;
+}
+
+.file-add {
+    -fx-background-color: transparent;
+    -fx-text-fill: c-muted;
+    -fx-font-size: 15px;
+    -fx-padding: 5 12;
+}
+
+.file-add:hover {
+    -fx-background-color: c-panel-2;
+    -fx-text-fill: c-ink;
+}
+
+.new-file-error {
+    -fx-text-fill: c-error;
 }
 
 /* CodeArea 自己掛了一份指定 monospace 的樣式表，比 Scene 的優先，選擇器要更具體才蓋得過 */
@@ -1069,52 +1344,52 @@
 }
 
 .code-area .text {
-    -fx-fill: #d9dde3;
+    -fx-fill: l-code-ink;
 }
 
 .code-area .caret {
-    -fx-stroke: c-accent;
+    -fx-stroke: l-caret;
     -fx-stroke-width: 2;
 }
 
 .code-area .selection {
-    -fx-fill: #34405a;
+    -fx-fill: l-sel;
 }
 
 .code-area .kw {
-    -fx-fill: #f29e4c;
+    -fx-fill: l-kw;
     -fx-font-weight: bold;
 }
 
 .code-area .str {
-    -fx-fill: #9ccc7a;
+    -fx-fill: l-str;
 }
 
 .code-area .num {
-    -fx-fill: #7fb7f0;
+    -fx-fill: l-num;
 }
 
 .code-area .cmt {
-    -fx-fill: #6b7482;
+    -fx-fill: l-cmt;
 }
 
 .code-area .type {
-    -fx-fill: #6fd0c5;
+    -fx-fill: l-type;
 }
 
 .code-area .bad {
-    -fx-fill: #ff6b6b;
-    -rtfx-background-color: #4a1f22;
+    -fx-fill: l-bad;
+    -rtfx-background-color: l-bad-bg;
 }
 
 .code-area .err {
-    -rtfx-underline-color: #ff5c5c;
+    -rtfx-underline-color: l-err;
     -rtfx-underline-width: 2;
-    -rtfx-background-color: #3a1d1f;
+    -rtfx-background-color: l-err-bg;
 }
 
 .code-area .warn {
-    -rtfx-underline-color: #f29e4c;
+    -rtfx-underline-color: l-warn;
     -rtfx-underline-width: 2;
     -rtfx-underline-dash-array: 3 2;
 }
@@ -1122,18 +1397,19 @@
 .lineno {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: #555d6b;
+    -fx-text-fill: l-lineno;
     -fx-padding: 0 10 0 8;
-    -fx-background-color: c-code-bg;
+    -fx-background-color: l-gutter;
 }
 
 .lineno-error {
-    -fx-text-fill: #ff6b6b;
-    -fx-background-color: #3a1d1f;
+    -fx-text-fill: l-bad;
+    -fx-background-color: l-err-bg;
 }
 
 .toolbar-row {
-    -fx-background-color: c-panel;
+    -fx-background-color: l-chrome;
+    -fx-border-color: c-line transparent transparent transparent;
     -fx-padding: 8 12;
 }
 
@@ -1143,7 +1419,7 @@
 }
 
 .console.ran-ok {
-    -fx-background-color: #183022;
+    -fx-background-color: l-ran-ok;
 }
 
 .scroll-pane.console-scroll, .scroll-pane.console-scroll > .viewport {
@@ -1151,19 +1427,19 @@
 }
 
 .console .label {
-    -fx-text-fill: #e8ecf1;
+    -fx-text-fill: c-ink;
 }
 
 .console .md-text {
-    -fx-fill: #e8ecf1;
+    -fx-fill: c-ink;
 }
 
 .console .md-bold {
-    -fx-fill: white;
+    -fx-fill: l-strong;
 }
 
 .console .md-code {
-    -fx-fill: #f0c070;
+    -fx-fill: l-code-accent;
 }
 
 .console-out {
@@ -1171,15 +1447,19 @@
     -fx-font-size: 15px;
 }
 
+.console .console-out {
+    -fx-text-fill: l-code-ink;
+}
+
 .console .console-empty {
-    -fx-text-fill: #8a93a0;
+    -fx-text-fill: c-muted;
     -fx-font-style: italic;
 }
 
 .console .probe-line {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14px;
-    -fx-text-fill: #7fb7f0;
+    -fx-text-fill: l-num;
 }
 
 .card {
@@ -1188,19 +1468,19 @@
 }
 
 .card.error {
-    -fx-background-color: #2e1719;
-    -fx-border-color: transparent transparent transparent #ff5c5c;
+    -fx-background-color: l-error-bg;
+    -fx-border-color: transparent transparent transparent l-err;
     -fx-border-width: 0 0 0 4;
 }
 
 .card.warning {
-    -fx-background-color: #2c2516;
+    -fx-background-color: l-warn-bg;
     -fx-border-color: transparent transparent transparent c-accent;
     -fx-border-width: 0 0 0 4;
 }
 
 .card.success {
-    -fx-background-color: #1f2e22;
+    -fx-background-color: l-ok-bg;
     -fx-border-color: transparent transparent transparent c-ok;
     -fx-border-width: 0 0 0 4;
 }
@@ -1210,46 +1490,76 @@
 }
 
 .console .card.error .card-title {
-    -fx-text-fill: #ff8a80;
+    -fx-text-fill: l-error-ink;
 }
 
 .console .card.warning .card-title {
-    -fx-text-fill: c-accent;
+    -fx-text-fill: l-warn-ink;
 }
 
 .console .card.success .md-text {
-    -fx-fill: #cfeccf;
+    -fx-fill: l-ok-ink;
 }
 
 .console .raw {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 12px;
-    -fx-text-fill: #8a93a0;
+    -fx-text-fill: c-muted;
 }
 
-.tab-pane > .tab-header-area > .headers-region > .tab {
-    -fx-background-color: c-panel-2;
-    -fx-padding: 4 14;
-}
-
-.tab-pane > .tab-header-area > .headers-region > .tab:selected {
-    -fx-background-color: #ffe7cf;
+.tab-pane > .tab-header-area {
+    -fx-padding: 0;
+    -fx-pref-height: 36;
 }
 
 .tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: c-line, l-chrome;
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0 16;
+    -fx-pref-height: 36;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: c-accent, c-panel;
+    -fx-background-insets: 0, 2 0 0 0;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.tab-pane > .tab-content-area {
     -fx-background-color: c-panel;
+    -fx-padding: 0;
 }
 
 .tab .tab-label {
+    -fx-text-fill: c-muted;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.tab:selected .tab-label {
     -fx-text-fill: c-ink;
 }
 
+/* 編輯器和執行結果是兩張卡片，中間空出來的縫就是可以拖的分隔線 */
 .split-pane {
-    -fx-background-color: c-bg;
+    -fx-background-color: transparent;
     -fx-padding: 0;
 }
 
 .split-pane > .split-pane-divider {
-    -fx-background-color: c-line;
-    -fx-padding: 0 0 3 0;
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 12 0;
+}
+
+.split-pane > .split-pane-divider:hover {
+    -fx-background-color: transparent, c-accent;
+    -fx-background-insets: 0, 5 0 5 0;
 }

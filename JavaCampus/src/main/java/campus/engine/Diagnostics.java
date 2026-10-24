@@ -67,6 +67,11 @@ final class Diagnostics {
         }
     }
 
+    /** 要先 import 才能用的常見類別在哪個套件；不在清單裡就是 null。 */
+    static String packageOf(String type) {
+        return IMPORTS.get(type);
+    }
+
     static String compileError(String code, String english, Names names) {
         String msg = simplifyTypes(english);
         return switch (code) {

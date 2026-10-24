@@ -2,6 +2,7 @@ package campus.engine;
 
 import campus.lesson.Check;
 import campus.lesson.SetupVar;
+import campus.lesson.SourceFile;
 import campus.lesson.Step;
 import campus.engine.RunResult.Outcome;
 import campus.engine.RunResult.Probe;
@@ -24,11 +25,20 @@ public final class Verifier {
         this.sandbox = sandbox;
     }
 
+    /** 只有一個檔案時的簡便寫法。 */
+    public Verdict verify(String key, Step.Form form, List<SetupVar> vars, Check check, String solution, String source) {
+        return verify(key, form, vars, check, List.of(new SourceFile(form.fileName, solution)),
+                List.of(new SourceFile(form.fileName, source)));
+    }
+
     /**
-     * @param key 快取參考解答結果用，同一個步驟要給同一個值
+     * @param key      快取參考解答結果用，同一個步驟要給同一個值
+     * @param solution 參考解答的檔案；片段題只有一個
+     * @param source   玩家的檔案，完整程式會全部一起編譯
      * @throws IllegalStateException 參考解答本身跑不過，代表案件內容有誤
      */
-    public Verdict verify(String key, Step.Form form, List<SetupVar> vars, Check check, String solution, String source) {
+    public Verdict verify(String key, Step.Form form, List<SetupVar> vars, Check check, List<SourceFile> solution,
+                          List<SourceFile> source) {
         List<Map<String, String>> runs = new ArrayList<>();
         runs.add(Map.of());
         runs.addAll(check.variants());
@@ -61,10 +71,10 @@ public final class Verifier {
     }
 
     /** 完整程式不吃案件變數；比對輸出時才需要從 main 跑起，比對值時只要類別定義好就能呼叫。 */
-    private RunResult run(Step.Form form, List<String> preamble, String source, Check check, List<String> probes) {
+    private RunResult run(Step.Form form, List<String> preamble, List<SourceFile> files, Check check, List<String> probes) {
         return form == Step.Form.PROGRAM
-                ? sandbox.runProgram(source, check.type() == Check.Mode.OUTPUT, probes)
-                : sandbox.run(preamble, source, probes);
+                ? sandbox.runProgram(files, check.type() == Check.Mode.OUTPUT, probes)
+                : sandbox.run(preamble, files.getFirst().text(), probes);
     }
 
     public static List<String> preamble(List<SetupVar> vars, Map<String, String> overrides) {

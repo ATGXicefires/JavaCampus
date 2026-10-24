@@ -9,7 +9,8 @@
     {
       "id": "say",
       "title": "讓電腦說話",
-      "instructions": "學長打開的範例會印出 `Hello, World`。把引號裡的字換掉，讓電腦印出 `學長，你在說外星語嗎？`。\n\n只改兩個 `\"` 中間的字，括號、引號和最後的 `;` 都留著。改完按「執行」看看。",
+      "goal": "把引號裡的字換掉，印出 `學長，你在說外星語嗎？`。",
+      "instructions": "學長打開的範例會印出 `Hello, World`。\n\n只改兩個 `\"` 中間的字，括號、引號和最後的 `;` 都留著。改完按「執行」看看。",
       "expectedShape": "System.out.println(\"…\");",
       "check": { "type": "output" },
       "hints": {
@@ -21,7 +22,8 @@
     {
       "id": "two-lines",
       "title": "一行一句",
-      "instructions": "專題報名表要寫名字和班級。程式已經會印出 `梁亭瑄`，在下面**再寫一行**，讓第二行印出 `資訊科一年級`。\n\n一個 `println` 只印一行，想印兩行就要寫兩個。",
+      "goal": "在下面再寫一行，讓第二行印出 `資訊科一年級`。",
+      "instructions": "專題報名表要寫名字和班級。程式已經會印出 `梁亭瑄`。\n\n一個 `println` 只印一行，想印兩行就要寫兩個。",
       "expectedShape": "System.out.println(\"梁亭瑄\");\nSystem.out.println(\"…\");",
       "check": { "type": "output" },
       "hints": {

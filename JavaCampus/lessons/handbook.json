@@ -4,54 +4,63 @@
       "id": "println",
       "chapter": 1,
       "title": "讓電腦說話",
+      "summary": "`println` 會把括號裡的東西印出來。",
       "body": "電腦不會讀心。你要它說什麼，就得一個字一個字告訴它。\n\n`System.out.println(…);` 就是讓電腦說話：括號裡放什麼，畫面上就印出什麼，印完自動換行。\n\n```\nSystem.out.println(\"你好\");\n```\n\n一個 `println` 印一行。想印兩行，就寫兩個。"
     },
     {
       "id": "quotes",
       "chapter": 1,
       "title": "字串要用半形雙引號",
+      "summary": "文字要用半形雙引號 `\"` 包起來。",
       "body": "一段文字，Java 叫它**字串**（String）。字串要用一對半形雙引號 `\"` 包起來，電腦才知道：這是要原封不動印出來的字。\n\n```\nSystem.out.println(\"滷肉飯\");\n```\n\n中文輸入法打出來的 `「」`、`“”` 長得很像引號，但電腦不認得。打引號之前，先切到英文輸入。"
     },
     {
       "id": "semicolon",
       "chapter": 1,
       "title": "每句結尾的分號",
+      "summary": "每寫完一句，就加一個分號 `;`。",
       "body": "分號 `;` 是 Java 的句號。每寫完一句，就加一個分號，電腦才知道這句講完了。\n\n```\nint gacha = 7;\nSystem.out.println(gacha);\n```\n\n忘了分號，電腦會以為你話還沒講完，然後給你紅字。大括號 `}` 後面不用加。"
     },
     {
       "id": "fullwidth",
       "chapter": 1,
       "title": "全形與半形",
+      "summary": "程式碼只認半形，全形符號只能放在引號裡。",
       "body": "同一個符號有兩種寬度。中文輸入法打的是**全形**（`；`、`（）`、`，`），英文輸入法打的是**半形**（`;`、`()`、`,`）。\n\nJava 的程式碼只認半形。全形符號只能待在引號裡面，當成要印出來的字。\n\n```\nSystem.out.println(\"吃飽了嗎？\");\n```\n\n這行的 `？` 是全形，但它在引號裡，所以沒問題。"
     },
     {
       "id": "read-errors",
       "chapter": 1,
       "title": "看懂紅字",
+      "summary": "先看是哪一行，從最上面的紅字開始修。",
       "body": "紅字不是在罵你，是電腦在說：這裡我看不懂。\n\n先看它標在**哪一行**，再看它說**少了什麼**或**多了什麼**。從最上面那個開始修，修一個就執行一次，後面的紅字常常會跟著消失。\n\n```\nSystem.out.println(\"小白\")\n```\n\n這行的紅字會說：最後少了分號。"
     },
     {
       "id": "box",
       "chapter": 1,
       "title": "變數是有名字的盒子",
+      "summary": "變數是貼了名字的盒子，用名字拿出裡面的東西。",
       "body": "變數就像一個有名字的盒子。先準備一個盒子，外面貼上名字，再把東西放進去。\n\n```\nString laptop = \"小白\";\n```\n\n意思是：做一個叫 `laptop` 的盒子，裡面放「小白」。之後只要寫 `laptop`（不加引號），電腦就會打開盒子，拿出裡面的東西。"
     },
     {
       "id": "int-string",
       "chapter": 1,
       "title": "int 與 String",
+      "summary": "`int` 裝整數，`String` 裝文字。",
       "body": "盒子有分種類，裝錯會被退貨。`int` 是裝整數的盒子，`String` 是裝文字的盒子。\n\n```\nint gacha = 7;\nString name = \"梁亭瑄\";\n```\n\n`7` 是數字，可以拿來加減；`\"7\"` 有引號，是一個長得像 7 的字。兩個不一樣。"
     },
     {
       "id": "assign",
       "chapter": 1,
       "title": "改變盒子裡的東西",
+      "summary": "`=` 是「放進去」，可以換掉盒子裡的東西。",
       "body": "盒子做好之後，可以換掉裡面的東西。這次不用再寫 `int`，因為盒子已經在了。\n\n```\nint gacha = 7;\ngacha = 8;\n```\n\n第二行的意思是：把 `gacha` 裡的 7 拿出來，換成 8。`=` 在 Java 不是「等於」，是「放進去」。"
     },
     {
       "id": "if-else",
       "chapter": 1,
       "title": "if-else 就是選午餐",
+      "summary": "條件成立走 `if`，不成立走 `else`。",
       "body": "if-else 就像你選午餐：如果有滷肉飯，就吃滷肉飯；否則吃便當。\n\n```\nif (hasLuRouFan) {\n    System.out.println(\"吃滷肉飯\");\n} else {\n    System.out.println(\"吃便當\");\n}\n```\n\n`if` 的括號裡放一個 `boolean`，它只有 `true`（有）和 `false`（沒有）兩種答案。`true` 就走第一對大括號，`false` 就走 `else` 那一對。兩條路只會走一條。"
     }
   ]

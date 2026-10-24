@@ -6,10 +6,12 @@ import campus.engine.RunResult.Outcome;
 import campus.engine.RunResult.Probe;
 import campus.engine.RunResult.Problem;
 import campus.engine.RunResult.Severity;
+import campus.lesson.SourceFile;
 import jdk.jshell.DeclarationSnippet;
 import jdk.jshell.Diag;
 import jdk.jshell.EvalException;
 import jdk.jshell.ExpressionSnippet;
+import jdk.jshell.ImportSnippet;
 import jdk.jshell.JShell;
 import jdk.jshell.JShellException;
 import jdk.jshell.Snippet;
@@ -49,14 +51,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public final class Sandbox implements AutoCloseable {
 
     private static final int OUTPUT_LIMIT = 64 * 1024;
-    // 完整程式模式把玩家的檔案當成 Main.java
+    // 完整程式從 Main 類別開始執行，只有一個檔案時那個檔案就是 Main.java
     private static final String MAIN_CLASS = "Main";
 
-    private record Segment(int start, String text, Completeness completeness) {
+    /** @param file 所在的檔案；片段沒有檔名，是 null。{@code start} 相對於那個檔案 */
+    private record Segment(String file, int start, String text, Completeness completeness) {
         int end() {
             return start + text.length();
         }
     }
+
+    /** 完整程式裡的一個檔案，連同切好的段落。 */
+    private record Unit(SourceFile file, String code, List<Segment> segments) {}
 
     private final Duration timeout;
     private final CappedOutput output = new CappedOutput(OUTPUT_LIMIT);
@@ -93,7 +99,7 @@ public final class Sandbox implements AutoCloseable {
             }
         }
 
-        List<Segment> segments = split(js, source);
+        List<Segment> segments = split(js, source, null);
         Optional<Problem> semicolon = missingSemicolon(segments);
         if (semicolon.isPresent()) {
             return compileError(List.of(semicolon.get()));
@@ -158,16 +164,26 @@ public final class Sandbox implements AutoCloseable {
         return new RunResult(Outcome.OK, text, truncated, Lint.check(source, stringVariables(js)), probeResults);
     }
 
+    /** 只有一個檔案的完整程式，當成 {@code Main.java}。 */
+    public RunResult runProgram(String source, boolean launch, List<String> probes) {
+        return runProgram(List.of(new SourceFile(MAIN_CLASS + ".java", source)), launch, probes);
+    }
+
     /**
-     * 把 {@code source} 當成一個完整的 {@code Main.java} 從乾淨的狀態執行：檔案裡只能有 import 和型別宣告，
-     * 不會注入任何案件變數。類別都定義好之後，{@code launch} 為 true 時像 {@code java Main} 一樣呼叫
-     * {@code Main.main}，最後對每個 {@code probes} 求值（例如用 {@code Main.leaveTime(22, 20, 25)} 當隱藏測資）。
+     * 把 {@code files} 當成同一個專案裡的幾個 {@code .java} 檔，從乾淨的狀態一起執行：每個檔案只能有 import 和型別宣告，
+     * import 只對自己的檔案有效，類別可以互相使用，不會注入任何案件變數。類別都定義好之後，{@code launch} 為 true 時像
+     * {@code java Main} 一樣呼叫 {@code Main.main}，最後對每個 {@code probes} 求值（例如用 {@code Main.leaveTime(22, 20, 25)}
+     * 當隱藏測資）。每個問題都會標出在哪個檔案，位置相對於那個檔案。
      */
-    public synchronized RunResult runProgram(String source, boolean launch, List<String> probes) {
+    public synchronized RunResult runProgram(List<SourceFile> files, boolean launch, List<String> probes) {
         JShell js = cleanShell();
-        String code = blankPackage(source);
-        List<Segment> segments = split(js, code);
-        Optional<Problem> early = missingSemicolon(segments).or(() -> structure(js, segments));
+        List<Unit> units = new ArrayList<>();
+        for (SourceFile f : files) {
+            String code = blankPackage(f.text());
+            units.add(new Unit(f, code, split(js, code, f.name())));
+        }
+        Optional<Problem> early = units.stream().map(u -> missingSemicolon(u.segments())).flatMap(Optional::stream)
+                .findFirst().or(() -> structure(js, units)).or(() -> foreignImport(js, units));
         if (early.isPresent()) {
             return compileError(List.of(early.get()));
         }
@@ -179,23 +195,25 @@ public final class Sandbox implements AutoCloseable {
         Map<DeclarationSnippet, Segment> declared = new LinkedHashMap<>();
         ScheduledFuture<?> dog = arm(js);
         try {
-            for (Segment seg : segments) {
-                List<SnippetEvent> events;
-                try {
-                    events = js.eval(seg.text());
-                } catch (IllegalStateException closed) {
-                    return finish(Outcome.EXITED, List.of(errorAt(seg, Diagnostics.exited(), "JShell closed")));
-                }
-                for (SnippetEvent ev : events) {
-                    if (ev.causeSnippet() != null) {
-                        continue;
+            for (Unit u : units) {
+                for (Segment seg : u.segments()) {
+                    List<SnippetEvent> events;
+                    try {
+                        events = js.eval(seg.text());
+                    } catch (IllegalStateException closed) {
+                        return finish(Outcome.EXITED, List.of(errorAt(seg, Diagnostics.exited(), "JShell closed")));
                     }
-                    bySnippetId.put(ev.snippet().id(), seg);
-                    if (ev.status() == Status.REJECTED) {
-                        return compileError(rejected(js, ev.snippet(), seg, code));
-                    }
-                    if (ev.snippet() instanceof DeclarationSnippet ds) {
-                        declared.put(ds, seg);
+                    for (SnippetEvent ev : events) {
+                        if (ev.causeSnippet() != null) {
+                            continue;
+                        }
+                        bySnippetId.put(ev.snippet().id(), seg);
+                        if (ev.status() == Status.REJECTED) {
+                            return compileError(rejected(js, ev.snippet(), seg, u.code()));
+                        }
+                        if (ev.snippet() instanceof DeclarationSnippet ds) {
+                            declared.put(ds, seg);
+                        }
                     }
                 }
             }
@@ -206,7 +224,7 @@ public final class Sandbox implements AutoCloseable {
                 }
             }
             if (launch) {
-                Optional<RunResult> failed = launch(js, segments, bySnippetId);
+                Optional<RunResult> failed = launch(js, units, bySnippetId);
                 if (failed.isPresent()) {
                     return failed.get();
                 }
@@ -217,14 +235,23 @@ public final class Sandbox implements AutoCloseable {
         String text = output.text();
         boolean truncated = output.truncated();
         List<Probe> probeResults = evaluate(js, probes);
-        return new RunResult(Outcome.OK, text, truncated, Lint.check(source, Set.of()), probeResults);
+        List<Problem> warnings = new ArrayList<>();
+        for (Unit u : units) {
+            for (Problem p : Lint.check(u.file().text(), Set.of())) {
+                warnings.add(new Problem(p.severity(), p.start(), p.end(), p.message(), p.raw(), u.file().name()));
+            }
+        }
+        return new RunResult(Outcome.OK, text, truncated, warnings, probeResults);
     }
 
     /** 呼叫 {@code Main.main}；正常結束時回傳空的 Optional。 */
-    private Optional<RunResult> launch(JShell js, List<Segment> segments, Map<String, Segment> bySnippetId) {
-        Segment main = segments.stream().filter(s -> MAIN_CLASS.equals(typeName(js, s))).findFirst().orElse(null);
+    private Optional<RunResult> launch(JShell js, List<Unit> units, Map<String, Segment> bySnippetId) {
+        Segment main = units.stream().flatMap(u -> u.segments().stream())
+                .filter(s -> MAIN_CLASS.equals(typeName(js, s))).findFirst().orElse(null);
         if (main == null) {
-            Segment first = segments.isEmpty() ? new Segment(0, "", Completeness.EMPTY) : segments.getFirst();
+            Unit unit = units.getFirst();
+            Segment first = unit.segments().isEmpty()
+                    ? new Segment(unit.file().name(), 0, "", Completeness.EMPTY) : unit.segments().getFirst();
             return Optional.of(compileError(List.of(header(first, Diagnostics.noMainClass(MAIN_CLASS),
                     "error: could not find or load main class " + MAIN_CLASS))));
         }
@@ -253,43 +280,98 @@ public final class Sandbox implements AutoCloseable {
         return Optional.empty();
     }
 
-    /** 真正的 Java 檔案裡，class 外面只能有 import；public 類別的名字要跟檔名一樣；類別不能重複宣告。 */
-    private static Optional<Problem> structure(JShell js, List<Segment> segments) {
-        boolean seenType = false;
+    /** 真正的 Java 檔案裡，class 外面只能有 import；public 類別的名字要跟檔名一樣；整個專案的類別不能重複宣告。 */
+    private static Optional<Problem> structure(JShell js, List<Unit> units) {
         Set<String> names = new HashSet<>();
-        for (Segment seg : segments) {
-            List<Snippet> parsed = js.sourceCodeAnalysis().sourceToSnippets(seg.text());
-            if (parsed.isEmpty()) {
-                continue;
-            }
-            Snippet sn = parsed.getFirst();
-            switch (sn.kind()) {
-                case IMPORT -> {
-                    if (seenType) {
-                        return Optional.of(header(seg, Diagnostics.importAfterType(),
+        for (Unit u : units) {
+            boolean seenType = false;
+            for (Segment seg : u.segments()) {
+                List<Snippet> parsed = js.sourceCodeAnalysis().sourceToSnippets(seg.text());
+                if (parsed.isEmpty()) {
+                    continue;
+                }
+                Snippet sn = parsed.getFirst();
+                switch (sn.kind()) {
+                    case IMPORT -> {
+                        if (seenType) {
+                            return Optional.of(header(seg, Diagnostics.importAfterType(),
+                                    "class, interface, enum, or record expected"));
+                        }
+                    }
+                    case TYPE_DECL -> {
+                        seenType = true;
+                        String name = ((TypeDeclSnippet) sn).name();
+                        if (!names.add(name)) {
+                            return Optional.of(header(seg, Diagnostics.duplicateType(name), "duplicate class: " + name));
+                        }
+                        String file = u.file().baseName();
+                        if (isPublic(seg) && !name.equals(file)) {
+                            return Optional.of(header(seg, Diagnostics.publicClassName(name, file),
+                                    "class " + name + " is public, should be declared in a file named " + name + ".java"));
+                        }
+                    }
+                    // 語法本身有錯，交給編譯器回報真正的原因
+                    case ERRONEOUS -> { }
+                    default -> {
+                        return Optional.of(header(seg, Diagnostics.outsideClass(),
                                 "class, interface, enum, or record expected"));
                     }
-                }
-                case TYPE_DECL -> {
-                    seenType = true;
-                    String name = ((TypeDeclSnippet) sn).name();
-                    if (!names.add(name)) {
-                        return Optional.of(header(seg, Diagnostics.duplicateType(name), "duplicate class: " + name));
-                    }
-                    if (isPublic(seg) && !name.equals(MAIN_CLASS)) {
-                        return Optional.of(header(seg, Diagnostics.publicClassName(name, MAIN_CLASS),
-                                "class " + name + " is public, should be declared in a file named " + name + ".java"));
-                    }
-                }
-                // 語法本身有錯，交給編譯器回報真正的原因
-                case ERRONEOUS -> { }
-                default -> {
-                    return Optional.of(header(seg, Diagnostics.outsideClass(),
-                            "class, interface, enum, or record expected"));
                 }
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * JShell 的 import 對之後所有的程式碼都有效，真正的 Java 卻只管到寫它的那個檔案。
+     * 某個檔案用到的類別只有別的檔案 import 過時要擋下來，不然搬到真正的專案就編譯不過。
+     */
+    private static Optional<Problem> foreignImport(JShell js, List<Unit> units) {
+        if (units.size() < 2) {
+            return Optional.empty();
+        }
+        Set<String> types = new HashSet<>();
+        List<Set<String>> imports = new ArrayList<>();
+        for (Unit u : units) {
+            Set<String> own = new HashSet<>();
+            for (Segment seg : u.segments()) {
+                for (Snippet sn : js.sourceCodeAnalysis().sourceToSnippets(seg.text())) {
+                    if (sn instanceof ImportSnippet im && !im.isStatic()) {
+                        own.add(im.fullname());
+                    } else if (sn instanceof TypeDeclSnippet t) {
+                        types.add(t.name());
+                    }
+                }
+            }
+            imports.add(own);
+        }
+        for (int i = 0; i < units.size(); i++) {
+            Unit u = units.get(i);
+            List<Token> code = JavaTokens.tokenize(u.code()).stream().filter(t -> t.kind() != Kind.COMMENT).toList();
+            for (int k = 0; k < code.size(); k++) {
+                Token t = code.get(k);
+                String pkg = Diagnostics.packageOf(t.text());
+                // 前面接著「.」的是寫了完整路徑的名字，例如 java.util.List，不需要 import
+                if (t.kind() != Kind.IDENT || pkg == null || types.contains(t.text())
+                        || k > 0 && code.get(k - 1).text().equals(".") || importsType(imports.get(i), pkg, t.text())) {
+                    continue;
+                }
+                for (int j = 0; j < units.size(); j++) {
+                    if (j != i && importsType(imports.get(j), pkg, t.text())) {
+                        String english = "cannot find symbol\n  symbol:   class " + t.text() + "\n  location: class";
+                        return Optional.of(new Problem(Severity.ERROR, t.start(), t.end(),
+                                Diagnostics.compileError("compiler.err.cant.resolve.location", english,
+                                        new Diagnostics.Names(Set.of(), Set.of(), types)),
+                                "cannot find symbol: class " + t.text(), u.file().name()));
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static boolean importsType(Set<String> imported, String pkg, String type) {
+        return imported.contains(pkg + "." + type) || imported.contains(pkg + ".*");
     }
 
     private static String typeName(JShell js, Segment seg) {
@@ -339,7 +421,8 @@ public final class Sandbox implements AutoCloseable {
                 .mapToInt(Token::start).findFirst().orElse(0);
         int nl = text.indexOf('\n', start);
         int end = nl < 0 ? text.stripTrailing().length() : nl;
-        return new Problem(Severity.ERROR, seg.start() + start, seg.start() + Math.max(end, start + 1), message, raw);
+        return new Problem(Severity.ERROR, seg.start() + start, seg.start() + Math.max(end, start + 1), message, raw,
+                seg.file());
     }
 
     /** 可從其他執行緒呼叫，中斷正在執行的程式。 */
@@ -414,7 +497,7 @@ public final class Sandbox implements AutoCloseable {
         }, timeout.toMillis(), TimeUnit.MILLISECONDS);
     }
 
-    private static List<Segment> split(JShell js, String source) {
+    private static List<Segment> split(JShell js, String source, String file) {
         List<Segment> out = new ArrayList<>();
         int offset = 0;
         String rest = source;
@@ -428,7 +511,7 @@ public final class Sandbox implements AutoCloseable {
             if (text.isEmpty()) {
                 break;
             }
-            out.add(new Segment(offset, text, ci.completeness()));
+            out.add(new Segment(file, offset, text, ci.completeness()));
             if (ci.source() == null) {
                 break;
             }
@@ -451,7 +534,7 @@ public final class Sandbox implements AutoCloseable {
             Token last = code.getLast();
             if (seg.completeness() == Completeness.COMPLETE_WITH_SEMI || !last.text().equals(";") && !last.text().equals("}")) {
                 return Optional.of(new Problem(Severity.ERROR, seg.start() + last.start(), seg.start() + last.end(),
-                        Diagnostics.missingSemicolon(), "';' expected"));
+                        Diagnostics.missingSemicolon(), "';' expected", seg.file()));
             }
         }
         return Optional.empty();
@@ -467,7 +550,8 @@ public final class Sandbox implements AutoCloseable {
             start = Math.min(seg.start() + start, source.length());
             end = Math.min(Math.max(seg.start() + end, start + 1), source.length());
             out.add(new Problem(Severity.ERROR, start, end,
-                    Diagnostics.compileError(d.getCode(), english, names), Diagnostics.cleanWrapperNames(english)));
+                    Diagnostics.compileError(d.getCode(), english, names), Diagnostics.cleanWrapperNames(english),
+                    seg.file()));
         });
         if (out.isEmpty()) {
             out.add(errorAt(seg, "這一段程式沒辦法編譯。", "rejected"));
@@ -484,7 +568,8 @@ public final class Sandbox implements AutoCloseable {
             int start = idx < 0 ? seg.start() : seg.start() + idx;
             int end = idx < 0 ? seg.end() : start + name.length();
             return new Problem(Severity.ERROR, start, end,
-                    Diagnostics.compileError("compiler.err.cant.resolve.location", english, names), "cannot find symbol: " + dep);
+                    Diagnostics.compileError("compiler.err.cant.resolve.location", english, names), "cannot find symbol: " + dep,
+                    seg.file());
         }).toList();
     }
 
@@ -502,7 +587,8 @@ public final class Sandbox implements AutoCloseable {
         }
         int[] range = lineRange(seg, line);
         String raw = cls + (ex.getMessage() == null ? "" : ": " + Diagnostics.cleanWrapperNames(ex.getMessage()));
-        return new Problem(Severity.ERROR, range[0], range[1], Diagnostics.runtimeError(cls, ex.getMessage()), raw);
+        return new Problem(Severity.ERROR, range[0], range[1], Diagnostics.runtimeError(cls, ex.getMessage()), raw,
+                seg.file());
     }
 
     /**
@@ -603,7 +689,7 @@ public final class Sandbox implements AutoCloseable {
 
     private static Problem errorAt(Segment seg, String message, String raw) {
         int[] range = lineRange(seg, -1);
-        return new Problem(Severity.ERROR, range[0], range[1], message, raw);
+        return new Problem(Severity.ERROR, range[0], range[1], message, raw, seg.file());
     }
 
     private static Diagnostics.Names names(JShell js) {

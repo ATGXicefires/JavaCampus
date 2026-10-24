@@ -11,7 +11,8 @@
     {
       "id": "if",
       "title": "如果有滷肉飯",
-      "instructions": "「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。題目給了 `boolean hasLuRouFan`。\n\n先只寫 `if`：`hasLuRouFan` 是 `true` 的時候印出 `吃滷肉飯`，`false` 的時候什麼都不印。",
+      "goal": "先只寫 `if`：`hasLuRouFan` 是 `true` 時印出 `吃滷肉飯`。",
+      "instructions": "「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。題目給了 `boolean hasLuRouFan`。\n\n`false` 的時候什麼都不印。",
       "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
@@ -26,7 +27,8 @@
     {
       "id": "else",
       "title": "否則吃便當",
-      "instructions": "補上 `else`：沒有滷肉飯的時候印出 `吃便當`。\n\n按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種午餐都要印對。",
+      "goal": "補上 `else`：沒有滷肉飯的時候印出 `吃便當`。",
+      "instructions": "按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種午餐都要印對。",
       "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
