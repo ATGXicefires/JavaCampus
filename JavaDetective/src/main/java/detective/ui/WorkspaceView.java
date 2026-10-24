@@ -69,6 +69,7 @@ final class WorkspaceView extends StackPane {
     private final PauseTransition stopReveal = new PauseTransition(Duration.millis(400));
     private final Set<String> shownEvidence = new HashSet<>();
     private Step current;
+    private Step justSolved;
     private List<JavaHighlighter.Mark> marks = List.of();
     private int errorLine = -1;
     private Animation nudge;
@@ -353,9 +354,14 @@ final class WorkspaceView extends StackPane {
             if (solved) {
                 row.getStyleClass().add("solved");
             }
+            if (s == justSolved) {
+                Motion.pop(num);
+                justSolved = null;
+            }
             if (!reachable) {
                 row.getStyleClass().add("locked");
             } else {
+                row.getStyleClass().add("pressable");
                 row.setOnMouseClicked(e -> {
                     if (s != current && !busy) {
                         open(s);
@@ -497,6 +503,9 @@ final class WorkspaceView extends StackPane {
         }
         console.getChildren().addFirst(card);
         consoleScroll.setVvalue(0);
+        if (firstTime) {
+            justSolved = step;
+        }
         refreshSteps();
         refreshDetail();
         if (firstTime) {

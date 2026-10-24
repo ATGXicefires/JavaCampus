@@ -83,6 +83,8 @@ final class CaseSelectView extends StackPane {
             card.setOpacity(0.5);
             return card;
         }
+        card.getStyleClass().add("pressable");
+        Motion.hoverLift(card);
         card.setOnMouseClicked(e -> {
             game.sfx.play(Sfx.Sound.PAPER);
             if (closed) {

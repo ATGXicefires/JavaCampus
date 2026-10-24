@@ -4,8 +4,6 @@ import detective.content.CaseDef;
 import detective.content.Step;
 import detective.fx.Motion;
 import detective.fx.Sfx;
-import javafx.animation.Interpolator;
-import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -60,11 +58,7 @@ final class HintDrawer extends VBox {
     void toggle() {
         open = !open;
         setVisible(true);
-        TranslateTransition t = new TranslateTransition(Duration.millis(260), this);
-        t.setToX(open ? 0 : WIDTH + 40);
-        t.setInterpolator(Interpolator.EASE_BOTH);
-        t.setOnFinished(e -> setVisible(open));
-        t.play();
+        Motion.slideX(this, open ? 0 : WIDTH + 40, open, () -> setVisible(open));
         game.sfx.play(Sfx.Sound.PAPER);
     }
 

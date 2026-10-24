@@ -3,6 +3,7 @@ package detective;
 import detective.content.CaseLibrary;
 import detective.content.Chapter;
 import detective.engine.Sandbox;
+import detective.fx.Motion;
 import detective.fx.Sfx;
 import detective.fx.Viewport;
 import detective.progress.Progress;
@@ -59,6 +60,7 @@ public class App extends Application {
         Game game = new Game(chapters, progress, store, sfx, sandbox, runner, root, stage, viewport);
         Scene scene = new Scene(viewport, 1600, 900);
         scene.getStylesheets().add(App.class.getResource("/detective/theme.css").toExternalForm());
+        Motion.installPress(scene);
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.F11) {
                 e.consume();
