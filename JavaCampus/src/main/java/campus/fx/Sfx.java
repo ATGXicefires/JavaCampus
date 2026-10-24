@@ -20,7 +20,7 @@ public final class Sfx implements AutoCloseable {
 
     public enum Sound {
         KEY, RUN, DING, BONK, GLITCH, HUH, FANFARE, UNLOCK, PAPER("翻頁"),
-        CHOICE_IN, CHOICE_OK, AP, TP, TITLE, SCRIBBLE,
+        CHOICE_IN, CHOICE_OK, TEAR, AP, TP, TITLE, SCRIBBLE,
         BELL("鐘聲"), NOTIFY("手機通知"), DIAL("撥號"), CONNECT("接通"), DOOR_OPEN("開門"), DOOR_CLOSE("關門"),
         OOH("全班噢"), SLAP("吐槽"), HEARTBEAT("心跳");
 
@@ -249,6 +249,7 @@ public final class Sfx implements AutoCloseable {
             case PAPER -> paper(rnd);
             case CHOICE_IN -> choiceIn();
             case CHOICE_OK -> choiceOk(rnd);
+            case TEAR -> tear(rnd);
             case AP -> apBell();
             case TP -> tpWarm(rnd);
             case TITLE -> title(rnd);
@@ -400,6 +401,25 @@ public final class Sfx implements AutoCloseable {
         });
         add(b, 0, 0.01, t -> noise(rnd) * 0.15 * decay(t, 0.002));
         return b;
+    }
+
+    /** 撕下便利貼：紙纖維一根根斷掉的細碎劈啪聲，偏高的頻帶加一點低一些的撕扯聲，先猛後收。 */
+    static float[] tear(Random rnd) {
+        double len = 0.38;
+        float[] b = buffer(len);
+        Synth.BandPass bright = new Synth.BandPass(3200, 0.8);
+        Synth.BandPass fiber = new Synth.BandPass(1100, 1.2);
+        double[] grain = {0};
+        add(b, 0, len, t -> {
+            // 平均每 6 毫秒斷一根，每一下約 6 毫秒就消失，疊起來才是沙沙中帶著劈啪
+            if (rnd.nextDouble() < 0.004) {
+                grain[0] = 0.5 + rnd.nextDouble();
+            }
+            grain[0] *= 0.996;
+            double n = noise(rnd);
+            return (bright.next(n) * (0.25 + grain[0]) + fiber.next(n) * 0.4 * grain[0]) * envelope(t, 0.012, 0.22, 0.16);
+        });
+        return Synth.normalize(b, 0.4);
     }
 
     private static float[] apBell() {

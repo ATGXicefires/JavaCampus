@@ -51,6 +51,7 @@ public final class Staging {
     private Set<String> filters = new HashSet<>();
     private String phone;
     private String call;
+    private String selfExpression;
 
     public String background() {
         return background;
@@ -94,6 +95,21 @@ public final class Staging {
 
     public String call() {
         return call;
+    }
+
+    /** 視角角色現在的表情，給對話框的頭像用；舊存檔沒有這個欄位，當成一般。 */
+    public String selfExpression() {
+        return selfExpression != null ? selfExpression : "一般";
+    }
+
+    /** 視角角色不上舞台，劇本寫給他的登場和表情只記下表情，退場不影響。 */
+    void applySelf(Op.Cmd c) {
+        switch (c.name()) {
+            case "登場" -> selfExpression = c.arg(2) != null ? c.arg(2) : "一般";
+            case "表情" -> selfExpression = c.arg(1);
+            default -> {
+            }
+        }
     }
 
     /** 把會留在畫面上的指令記下來；一次性的指令（音效、震動）不影響舞台。 */
@@ -145,7 +161,7 @@ public final class Staging {
         }
     }
 
-    /** 視角角色不上舞台，劇本裡寫給他的登場、表情、退場都略過。 */
+    /** 視角角色不上舞台，劇本裡寫給他的登場、表情、退場都不交給畫面，只由 {@link #applySelf} 記下表情。 */
     static boolean concernsSelf(Op.Cmd c, Route route) {
         return switch (c.name()) {
             case "登場", "表情", "退場" -> Cast.find(c.arg(0)).map(p -> p.id().equals(route.self)).orElse(false);
@@ -178,5 +194,6 @@ public final class Staging {
         filters().clear();
         phone = null;
         call = null;
+        selfExpression = null;
     }
 }

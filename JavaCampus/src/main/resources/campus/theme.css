@@ -550,6 +550,20 @@
     -fx-fill: #d0675f;
 }
 
+/* 大頭照：白邊照片，上緣貼一段藍色紙膠帶；膠帶的內距是照 118 的邊長算的，只蓋在白邊上 */
+.dialog-face {
+    -fx-background-color: #fbfaf6, rgba(150, 190, 232, 0.75);
+    -fx-background-insets: 0, -9 40 111 40;
+    -fx-padding: 7;
+    -fx-rotate: -3;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 8, 0.1, 1, 3);
+}
+
+/* 照片裡是暗底，剪影的霓虹描邊才亮得起來 */
+.dialog-face-lens {
+    -fx-background-color: radial-gradient(center 50% 35%, radius 80%, #36314c, #15131c);
+}
+
 /* 便利貼：正方形，上緣貼一段半透明膠帶；膠帶的內距是照 220 的邊長算的 */
 .choice {
     note: #fff1a6;
