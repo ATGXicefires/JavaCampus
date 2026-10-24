@@ -1,0 +1,108 @@
+{
+  "id": "ch1-02-clocks",
+  "title": "停住的時鐘",
+  "concepts": ["int", "算術運算", "用變數計算"],
+  "summary": "店裡十二座電子鐘全停在 21:47。總開關是在警衛巡邏後多久被拉下的？",
+  "newspaper": {
+    "paper": "雨港日報",
+    "date": "11 月 4 日　星期二",
+    "headline": "鐘錶行十二座電子鐘　全停在 21:47",
+    "subheadline": "警方：總開關遭人為拉下，竊賊熟悉店內配置",
+    "body": "恆時鐘錶行失竊案出現新線索。店內所有電子鐘都停在同一個時間，電力公司證實當晚並未停電。警方研判，有人在店內拉下了總開關。"
+  },
+  "briefing": [
+    { "who": "周組長", "say": "時間是破案的關鍵，但「21 點 47 分」不能直接拿來減。" },
+    { "who": "周組長", "say": "把時間換算成從午夜算起的分鐘數，就能算出兩個時間差了多久。" }
+  ],
+  "openQuestion": "總開關是在警衛巡邏後多久被拉下的？",
+  "vars": [
+    { "name": "stopHour", "type": "int", "value": "21" },
+    { "name": "stopMinute", "type": "int", "value": "47" },
+    { "name": "roundHour", "type": "int", "value": "21" },
+    { "name": "roundMinute", "type": "int", "value": "30" }
+  ],
+  "evidence": [
+    {
+      "id": "scene-note",
+      "kind": "document",
+      "title": "現場筆記",
+      "content": "店內十二座電子鐘，全部停在 **21:47**。\n\n電力公司表示那一帶當晚沒有停電，是店內的總開關被人拉了下來。"
+    },
+    {
+      "id": "patrol",
+      "kind": "note",
+      "title": "警衛的巡邏表",
+      "content": "21:30　第一次巡邏\n鐵捲門關著，店內燈亮。\n\n22:00　第二次巡邏\n鐵捲門半開，懷錶失竊。"
+    },
+    {
+      "id": "keys",
+      "kind": "document",
+      "title": "鑰匙保管紀錄",
+      "unlockOnStep": "gap",
+      "content": "總開關在店內後方的配電箱，鑰匙只有兩把：\n\n一把在老闆 **何永昌** 身上，一把在保全公司。保全公司的那一把，當晚沒有人借出。"
+    },
+    {
+      "id": "owner-claim",
+      "kind": "note",
+      "title": "老闆的說法",
+      "unlockOnStep": "write-up",
+      "content": "何永昌：「我晚上八點就關店回家了，之後一直待在家裡，什麼都不知道。」"
+    }
+  ],
+  "steps": [
+    {
+      "id": "stop-total",
+      "title": "換算成分鐘",
+      "instructions": "電子鐘停在 `stopHour` 點 `stopMinute` 分。換算成「從午夜算起的第幾分鐘」：**小時 × 60 + 分鐘**。例如 9:30 就是 `9 * 60 + 30`，等於 570。\n\n宣告一個 `int`（整數）變數 `stopTotal` 存放結果。Java 的乘號是 `*`。",
+      "expectedShape": "int stopTotal = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["stopTotal"],
+        "variants": [ { "stopHour": "20", "stopMinute": "5" } ]
+      },
+      "hints": {
+        "lead": "右邊「可用資料」裡有 stopHour 和 stopMinute。",
+        "plain": "寫 int stopTotal = ，等號右邊用 stopHour 乘以 60 再加上 stopMinute，最後加分號。要用變數名，不要直接寫 21 和 47。"
+      },
+      "afterText": "1307 分鐘。電子鐘停住的那一刻，就是總開關被拉下的時間。"
+    },
+    {
+      "id": "gap",
+      "title": "相差幾分鐘",
+      "instructions": "用同樣的方法，把警衛第一次巡邏的時間（`roundHour` 點 `roundMinute` 分）換算成 `roundTotal`。\n\n再宣告 `int gap`，存放斷電時間減去巡邏時間的結果。Java 的減號是 `-`。",
+      "expectedShape": "int roundTotal = …;\nint gap = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["roundTotal", "gap"],
+        "variants": [ { "roundHour": "20", "roundMinute": "58" } ]
+      },
+      "hints": {
+        "lead": "上一步的 stopTotal 還在，可以直接拿來用。",
+        "plain": "先照 stopTotal 的寫法算出 roundTotal，再寫 int gap = stopTotal - roundTotal;"
+      },
+      "afterText": "17 分鐘。巡邏時店裡的燈還亮著，17 分鐘後總開關就被拉下了。當時店裡有人。"
+    },
+    {
+      "id": "write-up",
+      "title": "寫進報告",
+      "instructions": "印出 `巡邏後 17 分鐘斷電`。其中的數字要用變數 `gap`，不能直接寫 17，換一組資料時才會跟著變。\n\n字串和數字也能用 `+` 接在一起，例如 `\"共 \" + 3 + \" 人\"` 會印出 `共 3 人`。注意空格也要放在引號裡面。",
+      "expectedShape": "巡邏後 XX 分鐘斷電",
+      "check": {
+        "type": "output",
+        "variants": [ { "roundHour": "20", "roundMinute": "58" } ]
+      },
+      "hints": {
+        "lead": "整句話分成三段：\"巡邏後 \"、gap、\" 分鐘斷電\"。",
+        "plain": "在 println 的括號裡寫 \"巡邏後 \" + gap + \" 分鐘斷電\"。引號裡要留空格，印出來數字兩邊才會有空格。"
+      },
+      "afterText": "報告送出。周組長：「有人在店裡待到 21:47，而且手上有配電箱的鑰匙。」"
+    }
+  ],
+  "conclusion": { "answer": "17 分鐘", "detail": "21:30 巡邏時燈還亮著，21:47 總開關被拉下" },
+  "explanation": [
+    "電子鐘全停在 21:47 → stopTotal = 21 * 60 + 47 = 1307",
+    "警衛 21:30 巡邏 → roundTotal = 1290",
+    "1307 - 1290 = 17 → 巡邏後 17 分鐘，有人在店裡拉下總開關",
+    "配電箱的鑰匙只有兩把，保全公司那把當晚沒有借出"
+  ]
+}
