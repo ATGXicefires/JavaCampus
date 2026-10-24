@@ -40,11 +40,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        loadFonts(Path.of("fonts"));
+        // 打包版由啟動器告訴我們資料放在哪；從原始碼執行時沒有設定，就照舊用目前的工作目錄
+        Path home = Path.of(System.getProperty("campus.home", ""));
+        loadFonts(home.resolve("fonts"));
         // 劇本放在專案外層的 story/，讓寫劇本的人繼續在原本的資料夾裡寫
-        StoryLibrary story = StoryLibrary.load(Path.of("..", "story", "scripts"));
-        LessonLibrary lessons = LessonLibrary.load(Path.of("lessons"));
-        SaveStore store = new SaveStore(Path.of("save", "progress.json"));
+        StoryLibrary story = StoryLibrary.load(home.resolve(Path.of("..", "story", "scripts")));
+        LessonLibrary lessons = LessonLibrary.load(home.resolve("lessons"));
+        SaveStore store = new SaveStore(home.resolve(Path.of("save", "progress.json")));
         Progress progress = store.load();
         sfx = Sfx.create();
         music = Music.create(sfx);
@@ -61,7 +63,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         root.getStyleClass().add("app-root");
         Viewport viewport = new Viewport(root);
-        game = new Game(story, lessons, new Art(Path.of("art")), progress, store, sfx, music, sandbox, runner,
+        game = new Game(story, lessons, new Art(home.resolve("art")), progress, store, sfx, music, sandbox, runner,
                 root, stage, viewport);
         Progress.Settings settings = progress.settings();
         // 選了預設尺寸就直接用那個大小開，不用先開一個視窗再縮放

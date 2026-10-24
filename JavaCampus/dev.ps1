@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('setup', 'build', 'run', 'test', 'clean')]
+    [ValidateSet('setup', 'build', 'run', 'test', 'package', 'clean')]
     [string]$Task = 'run'
 )
 
@@ -25,6 +25,10 @@ $Deps = @(
 $FxArgs = @('--module-path', 'lib/fx', '--add-modules', 'javafx.controls')
 $AppCp = 'lib/app/*'
 $Sep = [IO.Path]::PathSeparator
+
+$AppVersion = '0.1.0'
+# 打包版自帶的執行環境要放進的模組；jdk.jshell 跑玩家程式的遠端 JVM 要靠 jdk.jdwp.agent 連線
+$RuntimeModules = 'java.desktop,java.sql,javafx.controls,jdk.jshell,jdk.jdwp.agent,jdk.charsets'
 
 function Invoke-Setup {
     foreach ($dep in $Deps) {
@@ -93,10 +97,50 @@ function Invoke-Test {
     if ($LASTEXITCODE -ne 0) { throw '測試失敗' }
 }
 
+function Get-JdkTool([string]$Name) {
+    # jar、jlink、jpackage 不在 Oracle 安裝程式加進 PATH 的 javapath 裡，改從 java.home 找
+    $line = cmd /c 'java -XshowSettings:properties -version 2>&1' | Select-String 'java.home = '
+    $tool = Join-Path $line.ToString().Split('=', 2)[1].Trim() "bin/$Name.exe"
+    if (-not (Test-Path $tool)) { throw "找不到 $tool，打包需要 JDK" }
+    $tool
+}
+
+function Invoke-Package {
+    Invoke-Build
+    $pkg = 'out/package'
+    if (Test-Path $pkg) { Remove-Item -Recurse -Force $pkg }
+    $inDir = "$pkg/input"
+    New-Item -ItemType Directory -Force $inDir | Out-Null
+    & (Get-JdkTool jar) --create --file "$inDir/JavaCampus.jar" -C out/classes .
+    if ($LASTEXITCODE -ne 0) { throw 'jar 失敗' }
+    Copy-Item lib/app/*.jar $inDir
+    Copy-Item -Recurse fonts, lessons $inDir
+
+    # JShell 會用同一套執行環境另開 JVM 跑玩家的程式，所以不能用 --strip-native-commands 拿掉 bin\java.exe
+    & (Get-JdkTool jlink) --module-path lib/fx --add-modules $RuntimeModules --output "$pkg/runtime" `
+        --strip-debug --no-man-pages --no-header-files
+    if ($LASTEXITCODE -ne 0) { throw 'jlink 失敗' }
+
+    & (Get-JdkTool jpackage) --type app-image --name JavaCampus --app-version $AppVersion `
+        --input $inDir --main-jar JavaCampus.jar --main-class campus.App --runtime-image "$pkg/runtime" `
+        --java-options '-Dcampus.home=$APPDIR' --java-options '--enable-native-access=javafx.graphics' `
+        --java-options '-Dfile.encoding=UTF-8' --dest $pkg
+    if ($LASTEXITCODE -ne 0) { throw 'jpackage 失敗' }
+    # 遊戲從 campus.home（app 資料夾）往上一層找 story/scripts
+    New-Item -ItemType Directory -Force "$pkg/JavaCampus/story" | Out-Null
+    Copy-Item -Recurse ../story/scripts "$pkg/JavaCampus/story/"
+
+    $zip = Join-Path (Resolve-Path $pkg) "JavaCampus-Demo-v$AppVersion-windows-x64.zip"
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path "$pkg/JavaCampus"), $zip, 'Optimal', $true)
+    Write-Host "已打包：$zip"
+}
+
 switch ($Task) {
     'setup' { Invoke-Setup }
     'build' { Invoke-Build }
     'run'   { Invoke-Run }
     'test'  { Invoke-Test }
+    'package' { Invoke-Package }
     'clean' { if (Test-Path out) { Remove-Item -Recurse -Force out } }
 }
