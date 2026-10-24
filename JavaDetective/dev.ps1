@@ -87,9 +87,9 @@ function Invoke-Test {
     $testCp = "out/classes$Sep$AppCp$Sep" + 'lib/test/*'
     Invoke-Javac 'src/test/java' 'out/test-classes' $testCp
     $junit = (Get-ChildItem lib/test/junit-platform-console-standalone-*.jar).FullName
+    $runCp = (@('out/test-classes', 'out/classes') + (Get-ChildItem lib/app/*.jar).FullName) -join $Sep
     & java @FxArgs '-Dfile.encoding=UTF-8' '-Dstdout.encoding=UTF-8' -jar $junit execute `
-        --class-path "out/test-classes$Sep" + "out/classes$Sep" + ((Get-ChildItem lib/app/*.jar).FullName -join $Sep) `
-        --scan-classpath out/test-classes --disable-banner --details=tree
+        --class-path $runCp --scan-classpath out/test-classes --disable-banner --details=tree
     if ($LASTEXITCODE -ne 0) { throw '測試失敗' }
 }
 
