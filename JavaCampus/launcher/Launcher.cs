@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -32,6 +34,18 @@ namespace JavaCampus.Launcher
         private const string EnvSaveDir = "JAVACAMPUS_SAVE_DIR";
         // 啟動器所在資料夾；新 exe 放在舊版 zip 解壓資料夾裡時，遊戲會從這裡搬舊存檔
         private const string EnvLauncherDir = "JAVACAMPUS_LAUNCHER_DIR";
+        // 遊戲拿這個網址查新版本；環境裡已經有就沿用，本機測試時可以指向自己的伺服器
+        private const string EnvUpdateUrl = "JAVACAMPUS_UPDATE_URL";
+
+        // releases/latest/download/ 是網頁轉址，不算 GitHub API 的次數；電腦教室共用一個對外 IP 時，API 每小時 60 次很快就用完
+        private const string UpdateUrl = "https://github.com/ATGXicefires/JavaCampus/releases/latest/download/update.txt";
+        // 玩家在標題畫面按了「更新」，遊戲就以這個代碼結束（遊戲端的 campus.Update.EXIT_CODE）
+        private const int UpdateExitCode = 75;
+        // 玩家手上的啟動器不會跟著更新：update.txt 改成不相容的格式時換這個數字，舊啟動器會請玩家重新下載，而不是裝出壞掉的版本
+        private const string ManifestFormat = "1";
+        private const string ManifestFileName = "update.txt";
+        // 遊戲內更新裝好的版本，內容是「版本\t目錄名稱」
+        private const string CurrentFileName = "current.txt";
 
         // 子進程在此毫秒數內以非零代碼結束，視為「可能檔案損毀」並提示修復
         private const long QuickFailThresholdMs = 5000;
@@ -51,20 +65,24 @@ namespace JavaCampus.Launcher
 
                 string baseDir = GetBaseDir();
                 // 目錄名稱帶上建置身分：同版號的新建置解壓到新目錄，不會去動還在執行的舊建置
-                string runtimeName = RuntimeDirPrefix + AppVersion + "-" + GetBuildId();
-                string runtimeDir = Path.Combine(baseDir, runtimeName);
-                string targetExePath = Path.Combine(runtimeDir, ExeFileName);
+                string embeddedDir = Path.Combine(baseDir, RuntimeDirPrefix + AppVersion + "-" + GetBuildId());
                 string identity = GetPayloadIdentity();
 
-                EnsureRuntime(runtimeDir, targetExePath, identity, false);
+                string runtimeDir = FindUpdatedRuntime(baseDir);
+                if (runtimeDir == null)
+                {
+                    runtimeDir = embeddedDir;
+                    EnsureRuntime(runtimeDir, Path.Combine(runtimeDir, ExeFileName), identity, false);
+                }
                 string saveDir = EnsureSaveDirectory();
-                StartCleanup(baseDir, runtimeName);
+                string updateUrl = GetUpdateUrl();
+                StartCleanup(baseDir, Path.GetFileName(runtimeDir));
 
                 long elapsedMs;
-                int exitCode = LaunchProcess(targetExePath, runtimeDir, saveDir, args, out elapsedMs);
+                int exitCode = LaunchProcess(runtimeDir, saveDir, updateUrl, args, out elapsedMs);
 
                 // 啟動後立即異常結束，可能是快取檔案被刪除或損毀：詢問是否修復並重試一次
-                if (exitCode != 0 && elapsedMs < QuickFailThresholdMs)
+                if (exitCode != 0 && exitCode != UpdateExitCode && elapsedMs < QuickFailThresholdMs)
                 {
                     Log("遊戲於 " + elapsedMs + " ms 內以代碼 " + exitCode + " 結束，詢問是否修復。");
 
@@ -77,9 +95,27 @@ namespace JavaCampus.Launcher
                     if (answer == DialogResult.Yes)
                     {
                         Log("使用者選擇修復，重新解壓。");
-                        EnsureRuntime(runtimeDir, targetExePath, identity, true);
-                        exitCode = LaunchProcess(targetExePath, runtimeDir, saveDir, args, out elapsedMs);
+                        if (runtimeDir != embeddedDir)
+                        {
+                            // 壞掉的是遊戲內更新的版本：退回這個 exe 內嵌的版本，回到標題畫面時會再提示更新
+                            TryDeleteFile(Path.Combine(baseDir, CurrentFileName));
+                            runtimeDir = embeddedDir;
+                        }
+                        EnsureRuntime(runtimeDir, Path.Combine(runtimeDir, ExeFileName), identity, true);
+                        exitCode = LaunchProcess(runtimeDir, saveDir, updateUrl, args, out elapsedMs);
                     }
+                }
+
+                // 更新失敗也要開回原本的版本，玩家才不會按了「更新」遊戲就消失
+                while (exitCode == UpdateExitCode)
+                {
+                    string updated = TryUpdate(baseDir, runtimeDir, updateUrl);
+                    if (updated != null)
+                    {
+                        runtimeDir = updated;
+                        StartCleanup(baseDir, Path.GetFileName(runtimeDir));
+                    }
+                    exitCode = LaunchProcess(runtimeDir, saveDir, updateUrl, args, out elapsedMs);
                 }
 
                 return exitCode;
@@ -130,6 +166,48 @@ namespace JavaCampus.Launcher
         private static string GetBuildId()
         {
             return Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToString("N").Substring(0, 8);
+        }
+
+        /// <summary>
+        /// 遊戲內更新裝好的版本比這個 exe 內嵌的新、檔案也完整時，回傳它的目錄；否則回傳 null，改用內嵌的版本。
+        /// 玩家後來下載了更新的 exe 時，內嵌的比較新，就不會被舊的更新蓋過。
+        /// </summary>
+        private static string FindUpdatedRuntime(string baseDir)
+        {
+            try
+            {
+                string pointer = Path.Combine(baseDir, CurrentFileName);
+                if (!File.Exists(pointer))
+                {
+                    return null;
+                }
+
+                string[] fields = File.ReadAllText(pointer, Encoding.UTF8).Trim().Split('\t');
+                if (fields.Length < 2 || !IsNewer(fields[0], AppVersion))
+                {
+                    return null;
+                }
+
+                string dir = Path.Combine(baseDir, fields[1]);
+                if (!IsRuntimeReady(dir, Path.Combine(dir, ExeFileName), fields[1]))
+                {
+                    return null;
+                }
+
+                Log("開啟遊戲內更新的版本：" + fields[1]);
+                return dir;
+            }
+            catch
+            {
+                // 指標檔讀不懂就當作沒更新過，照常開內嵌的版本
+                return null;
+            }
+        }
+
+        private static string GetUpdateUrl()
+        {
+            string url = Environment.GetEnvironmentVariable(EnvUpdateUrl);
+            return string.IsNullOrEmpty(url) ? UpdateUrl : url;
         }
 
         // ------------------------------------------------------------------
@@ -200,7 +278,7 @@ namespace JavaCampus.Launcher
                 return;
             }
 
-            RunWithProgress(delegate(Action<int, string> report)
+            RunWithProgress("首次啟動，正在準備遊戲檔案…", delegate(Action<int, string> report)
             {
                 PrepareRuntime(runtimeDir, targetExePath, identity, force, report);
             });
@@ -215,23 +293,8 @@ namespace JavaCampus.Launcher
 
             using (Mutex mutex = new Mutex(false, @"Local\JavaCampus.Extract." + AppVersion))
             {
-                bool acquired = false;
                 report(-1, "正在等待其他啟動程序完成準備…");
-
-                try
-                {
-                    acquired = mutex.WaitOne(TimeSpan.FromMinutes(5));
-                }
-                catch (AbandonedMutexException)
-                {
-                    // 前一個實例異常結束，目前執行緒已取得所有權，繼續進行
-                    acquired = true;
-                }
-
-                if (!acquired)
-                {
-                    throw new TimeoutException("等待其他啟動程序釋放解壓鎖逾時。");
-                }
+                WaitForMutex(mutex, "等待其他啟動程序釋放解壓鎖逾時。");
 
                 try
                 {
@@ -281,68 +344,10 @@ namespace JavaCampus.Launcher
         {
             Directory.CreateDirectory(destDir);
 
-            List<string> markerLines = new List<string>();
-            markerLines.Add(identity);
-
-            string root = Path.GetFullPath(destDir);
-
             using (Stream payloadStream = GetPayloadResourceStream())
             using (ZipArchive archive = new ZipArchive(payloadStream, ZipArchiveMode.Read))
             {
-                long totalBytes = 0;
-                foreach (ZipArchiveEntry e in archive.Entries)
-                {
-                    totalBytes += e.Length;
-                }
-
-                long doneBytes = 0;
-                int lastPercent = -1;
-                byte[] buffer = new byte[81920];
-
-                foreach (ZipArchiveEntry entry in archive.Entries)
-                {
-                    string destinationPath = Path.GetFullPath(Path.Combine(destDir, entry.FullName));
-
-                    // 防範 Zip Slip：路徑穿越代表封裝異常或遭竄改，直接中止而非悄悄略過
-                    if (!IsPathInside(root, destinationPath))
-                    {
-                        throw new InvalidDataException("封裝包含不安全的路徑：" + entry.FullName);
-                    }
-
-                    // 目錄條目
-                    if (string.IsNullOrEmpty(entry.Name))
-                    {
-                        Directory.CreateDirectory(destinationPath);
-                        continue;
-                    }
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
-
-                    long written = 0;
-                    using (Stream entryStream = entry.Open())
-                    using (FileStream fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
-                    {
-                        int read;
-                        while ((read = entryStream.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            fileStream.Write(buffer, 0, read);
-                            written += read;
-                            doneBytes += read;
-
-                            if (totalBytes > 0)
-                            {
-                                int percent = (int)(doneBytes * 100 / totalBytes);
-                                if (percent != lastPercent)
-                                {
-                                    lastPercent = percent;
-                                    report(percent, null);
-                                }
-                            }
-                        }
-                    }
-
-                    markerLines.Add(written + "\t" + entry.FullName.Replace('/', '\\'));
-                }
+                ExtractEntries(archive, destDir, TrackBytes(TotalLength(archive), report));
             }
 
             if (!File.Exists(Path.Combine(destDir, ExeFileName)))
@@ -351,7 +356,120 @@ namespace JavaCampus.Launcher
             }
 
             // 標記檔最後才寫入；且整個目錄是在暫存區完成後才改名，因此對外永遠是完整狀態
-            File.WriteAllLines(Path.Combine(destDir, ReadyMarkerFileName), markerLines.ToArray(), Encoding.UTF8);
+            WriteReadyMarker(destDir, identity);
+        }
+
+        /// <summary>
+        /// 把 zip 裡的檔案逐一寫到 destDir 底下，每寫一段就把位元組數交給 progress。內嵌封裝和遊戲內更新共用。
+        /// </summary>
+        private static void ExtractEntries(ZipArchive archive, string destDir, Action<long> progress)
+        {
+            string root = Path.GetFullPath(destDir);
+            byte[] buffer = new byte[81920];
+
+            foreach (ZipArchiveEntry entry in archive.Entries)
+            {
+                string destinationPath = Path.GetFullPath(Path.Combine(destDir, entry.FullName));
+
+                // 防範 Zip Slip：路徑穿越代表封裝異常或遭竄改，直接中止而非悄悄略過
+                if (!IsPathInside(root, destinationPath))
+                {
+                    throw new InvalidDataException("封裝包含不安全的路徑：" + entry.FullName);
+                }
+
+                // 目錄條目
+                if (string.IsNullOrEmpty(entry.Name))
+                {
+                    Directory.CreateDirectory(destinationPath);
+                    continue;
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+                using (Stream entryStream = entry.Open())
+                using (FileStream fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    int read;
+                    while ((read = entryStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        fileStream.Write(buffer, 0, read);
+                        progress(read);
+                    }
+                }
+            }
+        }
+
+        private static long TotalLength(ZipArchive archive)
+        {
+            long total = 0;
+            foreach (ZipArchiveEntry e in archive.Entries)
+            {
+                total += e.Length;
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// 把陸續完成的位元組數換成百分比交給進度視窗；百分比有變才回報，不必每 80 KB 就排一次畫面更新。
+        /// </summary>
+        private static Action<long> TrackBytes(long totalBytes, Action<int, string> report)
+        {
+            long doneBytes = 0;
+            int lastPercent = -1;
+            return delegate(long bytes)
+            {
+                doneBytes += bytes;
+                if (totalBytes <= 0)
+                {
+                    return;
+                }
+
+                int percent = (int)(doneBytes * 100 / totalBytes);
+                if (percent != lastPercent)
+                {
+                    lastPercent = percent;
+                    report(percent, null);
+                }
+            };
+        }
+
+        /// <summary>
+        /// 寫入就緒標記檔：第一行是身分，之後每行是一個檔案的「大小\t相對路徑」，啟動時只比對大小以維持秒開。
+        /// </summary>
+        private static void WriteReadyMarker(string dir, string identity)
+        {
+            List<string> lines = new List<string>();
+            lines.Add(identity);
+
+            string root = Path.GetFullPath(dir).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+            {
+                lines.Add(new FileInfo(file).Length + "\t" + Path.GetFullPath(file).Substring(root.Length));
+            }
+
+            File.WriteAllLines(Path.Combine(dir, ReadyMarkerFileName), lines.ToArray(), Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// 等待具名 Mutex 最多五分鐘。
+        /// </summary>
+        private static void WaitForMutex(Mutex mutex, string timeoutMessage)
+        {
+            bool acquired;
+            try
+            {
+                acquired = mutex.WaitOne(TimeSpan.FromMinutes(5));
+            }
+            catch (AbandonedMutexException)
+            {
+                // 前一個實例異常結束，目前執行緒已取得所有權，繼續進行
+                acquired = true;
+            }
+
+            if (!acquired)
+            {
+                throw new TimeoutException(timeoutMessage);
+            }
         }
 
         /// <summary>
@@ -396,6 +514,366 @@ namespace JavaCampus.Launcher
             );
         }
 
+        /// <summary>
+        /// 玩家在標題畫面按了「更新」：在進度視窗裡下載並安裝，成功時回傳新版本的目錄。
+        /// 失敗或其實沒有新版時回傳 null，由呼叫端開回原本的版本。
+        /// </summary>
+        private static string TryUpdate(string baseDir, string currentDir, string updateUrl)
+        {
+            Log("玩家要求更新。");
+            string updated = null;
+            try
+            {
+                RunWithProgress("正在檢查新版本…", delegate(Action<int, string> report)
+                {
+                    updated = InstallUpdate(baseDir, currentDir, updateUrl, report);
+                });
+            }
+            catch (Exception ex)
+            {
+                Log("更新失敗：" + ex);
+
+                MessageBox.Show(
+                    "更新失敗：\n\n" + DescribeError(ex) + "\n\n先開啟目前的版本。",
+                    "JavaCampus",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return null;
+            }
+            return updated;
+        }
+
+        /// <summary>
+        /// 只下載內容雜湊跟目前版本不同的部分，其餘從目前版本複製；在暫存目錄組成完整的新版本後才改名就位，最後寫入指標檔。
+        /// </summary>
+        private static string InstallUpdate(string baseDir, string currentDir, string updateUrl, Action<int, string> report)
+        {
+            using (Mutex mutex = new Mutex(false, @"Local\JavaCampus.Update"))
+            {
+                WaitForMutex(mutex, "等待其他啟動程序完成更新逾時。");
+
+                try
+                {
+                    // csc 直接編、沒指定目標框架的程式，.NET Framework 預設只開 SSL3 和 TLS 1.0（實測），GitHub 會拒絕連線
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                    byte[] manifestBytes = DownloadBytes(updateUrl);
+                    string format;
+                    string version;
+                    List<UpdatePart> parts = ParseManifest(Encoding.UTF8.GetString(manifestBytes), out format, out version);
+                    if (format != ManifestFormat)
+                    {
+                        throw new NotSupportedException("這次的更新需要新版的啟動器，請到 GitHub 重新下載最新版的 JavaCampus。");
+                    }
+                    if (version == null || parts.Count == 0)
+                    {
+                        throw new IOException("更新資訊不完整，請稍後再試。");
+                    }
+
+                    List<UpdatePart> installed = new List<UpdatePart>();
+                    string installedVersion = null;
+                    string installedManifest = Path.Combine(currentDir, ManifestFileName);
+                    if (File.Exists(installedManifest))
+                    {
+                        string installedFormat;
+                        installed = ParseManifest(File.ReadAllText(installedManifest, Encoding.UTF8), out installedFormat, out installedVersion);
+                    }
+                    if (installedVersion == null)
+                    {
+                        installedVersion = AppVersion;
+                    }
+                    if (!IsNewer(version, installedVersion))
+                    {
+                        Log("目前的 " + installedVersion + " 已經是最新版（網路上是 " + version + "）。");
+                        return null;
+                    }
+
+                    string targetName;
+                    using (SHA256 sha = SHA256.Create())
+                    {
+                        // 同一份 update.txt 對到同一個目錄：另一個視窗剛裝好的話就不用再裝一次
+                        targetName = RuntimeDirPrefix + version + "-" + ToHex(sha.ComputeHash(manifestBytes)).Substring(0, 8);
+                    }
+                    string targetDir = Path.Combine(baseDir, targetName);
+                    if (!IsRuntimeReady(targetDir, Path.Combine(targetDir, ExeFileName), targetName))
+                    {
+                        BuildUpdatedRuntime(currentDir, targetDir, targetName, manifestBytes, parts, installed, report);
+                    }
+
+                    File.WriteAllText(Path.Combine(baseDir, CurrentFileName), version + "\t" + targetName, Encoding.UTF8);
+                    return targetDir;
+                }
+                finally
+                {
+                    mutex.ReleaseMutex();
+                }
+            }
+        }
+
+        private static void BuildUpdatedRuntime(string currentDir, string targetDir, string targetName, byte[] manifestBytes,
+            List<UpdatePart> parts, List<UpdatePart> installed, Action<int, string> report)
+        {
+            Dictionary<string, string> installedHashes = new Dictionary<string, string>();
+            foreach (UpdatePart p in installed)
+            {
+                installedHashes[p.Name] = p.Hash;
+            }
+
+            List<UpdatePart> changed = new List<UpdatePart>();
+            long downloadBytes = 0;
+            foreach (UpdatePart p in parts)
+            {
+                string hash;
+                if (!installedHashes.TryGetValue(p.Name, out hash) || hash != p.Hash)
+                {
+                    changed.Add(p);
+                    downloadBytes += p.Size;
+                }
+            }
+
+            string tempDir = targetDir + TempDirInfix + Guid.NewGuid().ToString("N");
+            // 下載的 zip 放在版本目錄外面；名稱裡有 .tmp-，萬一沒刪掉 StartCleanup 一天後會清
+            string zipDir = tempDir + "-zips";
+            try
+            {
+                Directory.CreateDirectory(tempDir);
+                Directory.CreateDirectory(zipDir);
+
+                report(0, "正在下載新版本…");
+                Action<long> downloaded = TrackBytes(downloadBytes, report);
+                foreach (UpdatePart p in changed)
+                {
+                    DownloadPart(p, Path.Combine(zipDir, p.Name + ".zip"), downloaded);
+                }
+
+                report(0, "正在套用更新…");
+                List<string> unchangedFiles = ListUnchangedFiles(currentDir, parts, changed);
+                long applyBytes = 0;
+                foreach (string rel in unchangedFiles)
+                {
+                    applyBytes += new FileInfo(Path.Combine(currentDir, rel)).Length;
+                }
+                foreach (UpdatePart p in changed)
+                {
+                    using (ZipArchive archive = ZipFile.OpenRead(Path.Combine(zipDir, p.Name + ".zip")))
+                    {
+                        applyBytes += TotalLength(archive);
+                    }
+                }
+
+                Action<long> applied = TrackBytes(applyBytes, report);
+                foreach (string rel in unchangedFiles)
+                {
+                    string dest = Path.Combine(tempDir, rel);
+                    Directory.CreateDirectory(Path.GetDirectoryName(dest));
+                    File.Copy(Path.Combine(currentDir, rel), dest);
+                    applied(new FileInfo(dest).Length);
+                }
+                foreach (UpdatePart p in changed)
+                {
+                    using (ZipArchive archive = ZipFile.OpenRead(Path.Combine(zipDir, p.Name + ".zip")))
+                    {
+                        ExtractEntries(archive, tempDir, applied);
+                    }
+                }
+
+                File.WriteAllBytes(Path.Combine(tempDir, ManifestFileName), manifestBytes);
+                if (!File.Exists(Path.Combine(tempDir, ExeFileName)))
+                {
+                    throw new IOException("更新內容缺少主執行檔，請稍後再試。");
+                }
+                WriteReadyMarker(tempDir, targetName);
+
+                if (Directory.Exists(targetDir))
+                {
+                    // 同名但不完整的目錄先整個改名再刪；那份遊戲還開著時改名會失敗，就不會刪到一半
+                    string trash;
+                    if (!TryMoveAway(targetDir, out trash))
+                    {
+                        throw new InvalidOperationException("JavaCampus 正在執行中，請先關閉所有遊戲視窗後再試。");
+                    }
+                    TryDeleteDirectory(trash);
+                }
+
+                Directory.Move(tempDir, targetDir);
+            }
+            catch
+            {
+                TryDeleteDirectory(tempDir);
+                throw;
+            }
+            finally
+            {
+                TryDeleteDirectory(zipDir);
+            }
+
+            Log("已更新到 " + targetName + "，下載了 " +
+                string.Join("、", changed.ConvertAll(delegate(UpdatePart p) { return p.Name; })) +
+                "（" + downloadBytes + " bytes）。");
+        }
+
+        /// <summary>
+        /// 目前版本裡屬於沒變那幾塊的檔案（相對路徑）。照新 update.txt 的前綴分類、最長的優先，和打包時的切法一致；
+        /// update.txt 和就緒標記檔每個版本各寫各的，不複製。
+        /// </summary>
+        private static List<string> ListUnchangedFiles(string dir, List<UpdatePart> parts, List<UpdatePart> changed)
+        {
+            List<string> files = new List<string>();
+            string root = Path.GetFullPath(dir).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            foreach (string file in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+            {
+                string rel = Path.GetFullPath(file).Substring(root.Length);
+                if (rel == ReadyMarkerFileName || rel == ManifestFileName)
+                {
+                    continue;
+                }
+
+                UpdatePart owner = PartOf(rel.Replace('\\', '/'), parts);
+                if (owner != null && !changed.Contains(owner))
+                {
+                    files.Add(rel);
+                }
+            }
+            return files;
+        }
+
+        private static UpdatePart PartOf(string path, List<UpdatePart> parts)
+        {
+            UpdatePart best = null;
+            foreach (UpdatePart p in parts)
+            {
+                if (path.StartsWith(p.Prefix, StringComparison.OrdinalIgnoreCase) &&
+                    (best == null || p.Prefix.Length > best.Prefix.Length))
+                {
+                    best = p;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>
+        /// update.txt 裡的一塊：版本目錄裡哪個前綴底下的檔案、內容雜湊，以及下載用的 zip。
+        /// </summary>
+        private sealed class UpdatePart
+        {
+            public string Name;
+            public string Prefix;
+            public string Hash;
+            public long Size;
+            public string Sha256;
+            public string Url;
+        }
+
+        /// <summary>
+        /// 解析 update.txt。不認得的行和多出來的欄位都略過，之後的版本才能加東西又不弄壞舊啟動器。
+        /// </summary>
+        private static List<UpdatePart> ParseManifest(string text, out string format, out string version)
+        {
+            format = null;
+            version = null;
+            List<UpdatePart> parts = new List<UpdatePart>();
+
+            foreach (string line in text.TrimStart('﻿').Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string[] fields = line.Split('\t');
+                if (fields[0] == "format" && fields.Length >= 2)
+                {
+                    format = fields[1];
+                }
+                else if (fields[0] == "version" && fields.Length >= 2)
+                {
+                    version = fields[1];
+                }
+                else if (fields[0] == "part")
+                {
+                    long size;
+                    if (fields.Length < 7 || !long.TryParse(fields[4], out size))
+                    {
+                        throw new IOException("更新資訊不完整，請稍後再試。");
+                    }
+
+                    UpdatePart part = new UpdatePart();
+                    part.Name = fields[1];
+                    part.Prefix = fields[2];
+                    part.Hash = fields[3];
+                    part.Size = size;
+                    part.Sha256 = fields[5];
+                    part.Url = fields[6];
+                    parts.Add(part);
+                }
+            }
+
+            return parts;
+        }
+
+        private static HttpWebRequest CreateRequest(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.UserAgent = "JavaCampus/" + AppVersion;
+            // Timeout 只管等到回應開頭；大檔案下載中途卡住，靠 ReadWriteTimeout 限制每一次讀取
+            request.Timeout = 30000;
+            request.ReadWriteTimeout = 30000;
+            return request;
+        }
+
+        private static byte[] DownloadBytes(string url)
+        {
+            using (WebResponse response = CreateRequest(url).GetResponse())
+            using (Stream input = response.GetResponseStream())
+            using (MemoryStream output = new MemoryStream())
+            {
+                input.CopyTo(output);
+                return output.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// 下載一塊更新到 path，邊寫邊算 SHA-256；大小或雜湊跟 update.txt 不同就中止。
+        /// </summary>
+        private static void DownloadPart(UpdatePart part, string path, Action<long> progress)
+        {
+            using (WebResponse response = CreateRequest(part.Url).GetResponse())
+            using (Stream input = response.GetResponseStream())
+            using (FileStream output = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (SHA256 sha = SHA256.Create())
+            {
+                byte[] buffer = new byte[81920];
+                long total = 0;
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    total += read;
+                    if (total > part.Size)
+                    {
+                        throw new IOException("下載的更新檔不完整，請稍後再試。");
+                    }
+
+                    output.Write(buffer, 0, read);
+                    sha.TransformBlock(buffer, 0, read, null, 0);
+                    progress(read);
+                }
+                sha.TransformFinalBlock(buffer, 0, 0);
+
+                if (total != part.Size || !string.Equals(ToHex(sha.Hash), part.Sha256, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new IOException("下載的更新檔不完整，請稍後再試。");
+                }
+            }
+        }
+
+        private static string ToHex(byte[] bytes)
+        {
+            return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+        }
+
+        private static bool IsNewer(string candidate, string current)
+        {
+            Version a;
+            Version b;
+            return Version.TryParse(candidate, out a) && Version.TryParse(current, out b) && a > b;
+        }
+
         // ------------------------------------------------------------------
         // 進度視窗
         // ------------------------------------------------------------------
@@ -403,11 +881,11 @@ namespace JavaCampus.Launcher
         /// <summary>
         /// 顯示進度視窗並在背景執行緒執行工作；工作中的例外會於 UI 結束後原樣重新擲出。
         /// </summary>
-        private static void RunWithProgress(Action<Action<int, string>> work)
+        private static void RunWithProgress(string status, Action<Action<int, string>> work)
         {
             Exception error = null;
 
-            using (ProgressForm form = new ProgressForm())
+            using (ProgressForm form = new ProgressForm(status))
             {
                 form.Shown += delegate
                 {
@@ -444,7 +922,7 @@ namespace JavaCampus.Launcher
             private readonly Label statusLabel;
             private readonly ProgressBar progressBar;
 
-            public ProgressForm()
+            public ProgressForm(string status)
             {
                 Text = "JavaCampus";
                 FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -461,7 +939,7 @@ namespace JavaCampus.Launcher
                 statusLabel.Top = 16;
                 statusLabel.Width = 348;
                 statusLabel.Height = 20;
-                statusLabel.Text = "首次啟動，正在準備遊戲檔案…";
+                statusLabel.Text = status;
 
                 progressBar = new ProgressBar();
                 progressBar.Left = 16;
@@ -603,6 +1081,17 @@ namespace JavaCampus.Launcher
             }
         }
 
+        private static void TryDeleteFile(string path)
+        {
+            try
+            {
+                File.Delete(path);
+            }
+            catch
+            {
+            }
+        }
+
         private static void TryDeleteDirectory(string path)
         {
             try
@@ -620,15 +1109,16 @@ namespace JavaCampus.Launcher
         /// <summary>
         /// 喚起主遊戲進程並等待執行完畢。
         /// </summary>
-        private static int LaunchProcess(string exePath, string workingDir, string saveDir, string[] args, out long elapsedMs)
+        private static int LaunchProcess(string runtimeDir, string saveDir, string updateUrl, string[] args, out long elapsedMs)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = exePath;
-            startInfo.WorkingDirectory = workingDir;
+            startInfo.FileName = Path.Combine(runtimeDir, ExeFileName);
+            startInfo.WorkingDirectory = runtimeDir;
             startInfo.Arguments = FormatArguments(args);
             startInfo.UseShellExecute = false;
             startInfo.EnvironmentVariables[EnvSaveDir] = saveDir;
             startInfo.EnvironmentVariables[EnvLauncherDir] = Path.GetDirectoryName(Application.ExecutablePath);
+            startInfo.EnvironmentVariables[EnvUpdateUrl] = updateUrl;
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
@@ -764,6 +1254,11 @@ namespace JavaCampus.Launcher
             if (ex is TimeoutException)
             {
                 return "另一個 JavaCampus 正在準備檔案，等待逾時。請稍後再試。";
+            }
+
+            if (ex is WebException)
+            {
+                return "連不上更新伺服器，請確認網路連線後再試。";
             }
 
             IOException io = ex as IOException;

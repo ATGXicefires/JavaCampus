@@ -12,6 +12,7 @@ import campus.progress.SaveStore;
 import campus.story.StoryLibrary;
 import campus.ui.Game;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
@@ -33,6 +34,9 @@ import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public class App extends Application {
+
+    /** 玩家在標題畫面按了「更新」；{@link #main} 依此決定結束代碼。 */
+    private static volatile boolean updateRequested;
 
     private Sandbox sandbox;
     private ExecutorService runner;
@@ -101,6 +105,8 @@ public class App extends Application {
         game.applySettings();
         game.showTitle();
         stage.show();
+        Update.check(System.getenv("JAVACAMPUS_UPDATE_URL"), System.getProperty("jpackage.app-version"))
+                .thenAcceptAsync(v -> v.ifPresent(game::offerUpdate), Platform::runLater);
     }
 
     @Override
@@ -108,6 +114,7 @@ public class App extends Application {
         // 自動存檔只在場景開頭和選擇時寫入；關視窗時再存一次，下次才會回到正在看的那一句
         if (game != null) {
             game.save();
+            updateRequested = game.updateRequested();
         }
         if (sandbox != null) {
             sandbox.stop();
@@ -177,5 +184,9 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
+        if (updateRequested) {
+            // 啟動器看到這個結束代碼，會先下載新版再重新開啟遊戲
+            System.exit(Update.EXIT_CODE);
+        }
     }
 }
