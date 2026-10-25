@@ -229,6 +229,10 @@ public final class Game {
                         + "%s { -fx-font-family: \"%s\"; }",
                 size, size - 2, CODE_SELECTORS, family.replace("\"", ""));
         String url = "data:text/css;base64," + Base64.getEncoder().encodeToString(css.getBytes(StandardCharsets.UTF_8));
+        // 換樣式表會讓整個畫面重套一次 CSS；拖音量滑桿時每動一下都會走到這裡，字型沒變就不要換
+        if (url.equals(codeFontSheet)) {
+            return;
+        }
         List<String> sheets = stage.getScene().getStylesheets();
         sheets.remove(codeFontSheet);
         sheets.add(url);
