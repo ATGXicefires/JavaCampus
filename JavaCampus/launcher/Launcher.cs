@@ -50,7 +50,8 @@ namespace JavaCampus.Launcher
                 Application.SetCompatibleTextRenderingDefault(false);
 
                 string baseDir = GetBaseDir();
-                string runtimeName = RuntimeDirPrefix + AppVersion;
+                // 目錄名稱帶上建置身分：同版號的新建置解壓到新目錄，不會去動還在執行的舊建置
+                string runtimeName = RuntimeDirPrefix + AppVersion + "-" + GetBuildId();
                 string runtimeDir = Path.Combine(baseDir, runtimeName);
                 string targetExePath = Path.Combine(runtimeDir, ExeFileName);
                 string identity = GetPayloadIdentity();
@@ -121,6 +122,14 @@ namespace JavaCampus.Launcher
         {
             Guid mvid = Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId;
             return AppVersion + "|" + mvid.ToString("N");
+        }
+
+        /// <summary>
+        /// 取 MVID 前 8 碼當作快取目錄名稱的一部分，每次建置都不同。
+        /// </summary>
+        private static string GetBuildId()
+        {
+            return Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToString("N").Substring(0, 8);
         }
 
         // ------------------------------------------------------------------
@@ -241,7 +250,13 @@ namespace JavaCampus.Launcher
 
                         if (Directory.Exists(runtimeDir))
                         {
-                            Directory.Delete(runtimeDir, true);
+                            // 先整個改名再刪；同一份遊戲還開著時改名會失敗，就不會刪到一半
+                            string trash;
+                            if (!TryMoveAway(runtimeDir, out trash))
+                            {
+                                throw new InvalidOperationException("JavaCampus 正在執行中，請先關閉所有遊戲視窗後再試。");
+                            }
+                            TryDeleteDirectory(trash);
                         }
 
                         Directory.Move(tempDir, runtimeDir);
@@ -550,7 +565,12 @@ namespace JavaCampus.Launcher
                             }
                         }
 
-                        TryDeleteDirectory(dir);
+                        // 舊版本可能還開著，改名失敗就留到下次再清
+                        string trash;
+                        if (TryMoveAway(dir, out trash))
+                        {
+                            TryDeleteDirectory(trash);
+                        }
                     }
                 }
                 catch
@@ -560,6 +580,27 @@ namespace JavaCampus.Launcher
             });
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        /// <summary>
+        /// 把目錄改成暫存名稱。裡面有檔案正被執行中的遊戲使用時 Windows 不允許改名，回傳 false。
+        /// </summary>
+        private static bool TryMoveAway(string dir, out string trash)
+        {
+            trash = dir + TempDirInfix + Guid.NewGuid().ToString("N");
+            try
+            {
+                Directory.Move(dir, trash);
+                return true;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
+            }
         }
 
         private static void TryDeleteDirectory(string path)
