@@ -35,6 +35,7 @@ import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -48,7 +49,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 
@@ -666,7 +667,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     }
 
     /**
-     * 選中的便利貼從中間撕成兩半飛走，其他的往下掉。拍下每張的樣子在另一層演，
+     * 選中的便利貼從下面一角往斜對角翻過去撕下來飛走，其他的往下掉。拍下每張的樣子在另一層演，
      * 便利貼本身馬上收掉，劇情不用等動畫。一般動效短一點、不晃；關閉時直接消失。
      */
     private void tearOff(int chosen) {
@@ -685,22 +686,21 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         List<Node> notes = choices.getChildren();
         for (int i = 0; i < notes.size(); i++) {
             Node note = notes.get(i);
+            if (i == chosen) {
+                peel(note, k, bouncy);
+                continue;
+            }
             Bounds b = note.getBoundsInParent();
             Point2D at = scraps.sceneToLocal(choices.localToScene(b.getMinX(), b.getMinY()));
-            Image shot = note.snapshot(params, null);
-            if (i == chosen) {
-                rip(shot, at, b.getWidth(), b.getHeight(), bouncy);
-            } else {
-                ImageView rest = scrap(shot, b.getWidth(), b.getHeight());
-                rest.setLayoutX(at.getX());
-                rest.setLayoutY(at.getY());
-                scraps.getChildren().add(rest);
-                Timeline fall = new Timeline(new KeyFrame(Duration.millis(bouncy ? 220 : 160),
-                        new KeyValue(rest.translateYProperty(), bouncy ? 60 : 30, Interpolator.EASE_IN),
-                        new KeyValue(rest.opacityProperty(), 0, Interpolator.EASE_IN)));
-                fall.setOnFinished(e -> scraps.getChildren().remove(rest));
-                fall.play();
-            }
+            ImageView rest = scrap(note.snapshot(params, null), b.getWidth(), b.getHeight());
+            rest.setLayoutX(at.getX());
+            rest.setLayoutY(at.getY());
+            scraps.getChildren().add(rest);
+            Timeline fall = new Timeline(new KeyFrame(Duration.millis(bouncy ? 220 : 160),
+                    new KeyValue(rest.translateYProperty(), bouncy ? 60 : 30, Interpolator.EASE_IN),
+                    new KeyValue(rest.opacityProperty(), 0, Interpolator.EASE_IN)));
+            fall.setOnFinished(e -> scraps.getChildren().remove(rest));
+            fall.play();
         }
     }
 
@@ -712,53 +712,62 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         return v;
     }
 
-    /** 沿一條鋸齒撕口切成兩半：兩塊用同一串點，拼回去剛好是一整張。 */
-    private void rip(Image shot, Point2D at, double w, double h, boolean bouncy) {
-        Random rnd = new Random();
-        int steps = 14;
-        List<Double> tear = new ArrayList<>();
-        for (int i = 0; i <= steps; i++) {
-            double drift = (i - steps / 2.0) * 0.9;
-            double jag = (i % 2 == 0 ? -1 : 1) * (2 + rnd.nextDouble() * 5);
-            tear.add(w / 2 + drift + jag);
-            tear.add(h * i / steps);
-        }
-        Polygon left = new Polygon(0, 0);
-        left.getPoints().addAll(tear);
-        left.getPoints().addAll(0.0, h);
-        Polygon right = new Polygon(w, 0, w, h);
-        for (int i = tear.size() - 2; i >= 0; i -= 2) {
-            right.getPoints().addAll(tear.get(i), tear.get(i + 1));
-        }
-        for (int side = -1; side <= 1; side += 2) {
-            ImageView v = scrap(shot, w, h);
-            v.setClip(side < 0 ? left : right);
-            // 包一層 Group，旋轉中心才會是這半張自己的中心，而不是整張的中心
-            Group piece = new Group(v);
-            piece.setLayoutX(at.getX());
-            piece.setLayoutY(at.getY());
-            scraps.getChildren().add(piece);
-            double spin = side * (bouncy ? 24 + rnd.nextDouble() * 14 : 10);
-            double away = side * (bouncy ? 70 + rnd.nextDouble() * 40 : 36);
-            Timeline fly = new Timeline();
-            if (bouncy) {
-                // 先猛地往兩邊扯開、往上一頓，再帶著旋轉往下掉
-                fly.getKeyFrames().add(new KeyFrame(Duration.millis(90),
-                        new KeyValue(piece.translateXProperty(), side * 10, Interpolator.EASE_OUT),
-                        new KeyValue(piece.translateYProperty(), -10, Interpolator.EASE_OUT),
-                        new KeyValue(piece.rotateProperty(), side * 6, Interpolator.EASE_OUT)));
-            }
-            Duration end = Duration.millis(bouncy ? 720 : 380);
+    /** 隨機從左下或右下角往斜對角掀起來，像翻頁一樣整張翻過去後撕下，往那個方向飛走。 */
+    private void peel(Node note, double k, boolean bouncy) {
+        // 陰影拍進照片的話會跟著紙一起彎，改成整張翻起來的紙一起投
+        Effect shadow = note.getEffect();
+        note.setStyle("-fx-effect: null;");
+        note.applyCss();
+        Bounds b = note.getBoundsInParent();
+        Point2D center = scraps.sceneToLocal(choices.localToScene(b.getCenterX(), b.getCenterY()));
+        // PeelingNote 只會往上翻，先轉到要掀的那一角朝正下方再拍；便利貼是正方形，對角線斜 45 度。
+        // corner 是 1 時掀右下角
+        double corner = new Random().nextBoolean() ? 1 : -1;
+        double angle = corner * 45;
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        params.setTransform(new Scale(k, k).createConcatenation(new Rotate(angle)));
+        Image front = note.snapshot(params, null);
+        note.setStyle("-fx-effect: null; -fx-text-fill: transparent;");
+        note.applyCss();
+        Image back = note.snapshot(params, null);
+        double w = front.getWidth() / k;
+        double h = front.getHeight() / k;
+        PeelingNote paper = new PeelingNote(front, back, w, h);
+        // 照片的外框繞中心轉回來，中心就落在便利貼原本的中心
+        Rotate turn = new Rotate(-angle, w / 2, h / 2);
+        paper.getTransforms().add(turn);
+        // 陰影掛在沒轉的外層才會一直往下投，掛在轉過的那層會跟著斜
+        Group sheet = new Group(paper);
+        sheet.setEffect(shadow);
+        sheet.setLayoutX(center.getX() - w / 2);
+        sheet.setLayoutY(center.getY() - h / 2);
+        scraps.getChildren().add(sheet);
+        Timeline fly = new Timeline();
+        if (bouncy) {
+            // 先捏著那一角掀起一點、頓一下，再一口氣翻過去
             fly.getKeyFrames().addAll(
-                    new KeyFrame(end.multiply(0.55), new KeyValue(piece.opacityProperty(), 1)),
-                    new KeyFrame(end,
-                            new KeyValue(piece.translateXProperty(), away, Interpolator.EASE_OUT),
-                            new KeyValue(piece.translateYProperty(), bouncy ? 280 : 110, Interpolator.EASE_IN),
-                            new KeyValue(piece.rotateProperty(), spin, Interpolator.EASE_IN),
-                            new KeyValue(piece.opacityProperty(), 0, Interpolator.EASE_IN)));
-            fly.setOnFinished(e -> scraps.getChildren().remove(piece));
-            fly.play();
+                    new KeyFrame(Duration.millis(90), new KeyValue(paper.progressProperty(), 0.12, Interpolator.EASE_OUT)),
+                    new KeyFrame(Duration.millis(150), new KeyValue(paper.progressProperty(), 0.12)));
         }
+        Duration flipped = Duration.millis(bouncy ? 460 : 280);
+        Duration end = Duration.millis(bouncy ? 760 : 420);
+        Duration release = flipped.multiply(0.85);
+        double away = bouncy ? 80 : 36;
+        fly.getKeyFrames().addAll(
+                new KeyFrame(flipped, new KeyValue(paper.progressProperty(), 1, Interpolator.EASE_IN)),
+                new KeyFrame(release,
+                        new KeyValue(sheet.translateXProperty(), 0),
+                        new KeyValue(sheet.translateYProperty(), 0),
+                        new KeyValue(turn.angleProperty(), -angle),
+                        new KeyValue(sheet.opacityProperty(), 1)),
+                new KeyFrame(end,
+                        new KeyValue(sheet.translateXProperty(), -corner * away, Interpolator.EASE_OUT),
+                        new KeyValue(sheet.translateYProperty(), -away, Interpolator.EASE_OUT),
+                        new KeyValue(turn.angleProperty(), -angle - corner * (bouncy ? 14 : 0), Interpolator.EASE_OUT),
+                        new KeyValue(sheet.opacityProperty(), 0, Interpolator.EASE_IN)));
+        fly.setOnFinished(e -> scraps.getChildren().remove(sheet));
+        fly.play();
     }
 
     @Override
