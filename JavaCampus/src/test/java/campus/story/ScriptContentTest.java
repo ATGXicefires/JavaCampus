@@ -15,6 +15,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -166,20 +167,39 @@ class ScriptContentTest {
     /** 自動往下播；選項照 {@code picks} 選，選完了又碰到選項就停在那裡，記下有幾個選項可以選。 */
     private static final class Explorer implements StoryRunner.Stage {
         private final Deque<Integer> picks;
+        private final StoryState state;
         int waitingOptions = -1;
         String chapterEnd;
+        /** 上一個停點之後播過台詞，還沒碰到 {@code @簡介}。 */
+        private boolean untold;
+        /** 前面缺簡介的停點：玩家按「跳過」停在這裡時，跳過的那段沒有簡介可看。 */
+        final Set<String> unsummarized = new LinkedHashSet<>();
 
-        Explorer(List<Integer> picks) {
+        Explorer(List<Integer> picks, StoryState state) {
             this.picks = new ArrayDeque<>(picks);
+            this.state = state;
+        }
+
+        /** 選項、程式題、章末是「跳過」會停下來的地方，播放位置正停在那一行。 */
+        private void stop() {
+            if (untold) {
+                StoryState.Pos at = state.at();
+                Op op = library.chapter(state.chapter()).file(at.file()).scene(at.scene()).orElseThrow()
+                        .ops().get(at.index());
+                unsummarized.add(at.file() + " 第 " + op.line() + " 行");
+            }
+            untold = false;
         }
 
         @Override
         public void line(Op.Line line, boolean read, Runnable next) {
+            untold = true;
             next.run();
         }
 
         @Override
         public void menu(Op.Menu menu, IntConsumer pick) {
+            stop();
             if (picks.isEmpty()) {
                 waitingOptions = menu.options().size();
             } else {
@@ -193,11 +213,17 @@ class ScriptContentTest {
 
         @Override
         public void command(Op.Cmd cmd, Runnable next) {
+            if (cmd.name().equals("簡介")) {
+                untold = false;
+            } else if (cmd.name().equals("程式")) {
+                stop();
+            }
             next.run();
         }
 
         @Override
         public void chapterEnd(String note) {
+            stop();
             chapterEnd = note;
         }
 
@@ -219,7 +245,7 @@ class ScriptContentTest {
                     List<Integer> picks = queue.removeFirst();
                     StoryState state = new StoryState();
                     state.begin(ch, route, false);
-                    Explorer stage = new Explorer(picks);
+                    Explorer stage = new Explorer(picks, state);
                     new StoryRunner(ch, route, state, new HashSet<>(), stage).start();
                     if (stage.waitingOptions >= 0) {
                         for (int i = 0; i < stage.waitingOptions; i++) {
@@ -248,5 +274,32 @@ class ScriptContentTest {
                 assertTrue(minTp >= 10 && maxTp <= 100, where + " 的 TP 超出 10～100：" + minTp + "～" + maxTp);
             }
         }
+    }
+
+    @Test
+    void everyStopHasASummaryAfterTheLastLine() {
+        Set<String> problems = new LinkedHashSet<>();
+        for (Chapter ch : library.chapters()) {
+            for (Route route : Route.values()) {
+                Deque<List<Integer>> queue = new ArrayDeque<>();
+                queue.add(List.of());
+                while (!queue.isEmpty()) {
+                    List<Integer> picks = queue.removeFirst();
+                    StoryState state = new StoryState();
+                    state.begin(ch, route, false);
+                    Explorer stage = new Explorer(picks, state);
+                    new StoryRunner(ch, route, state, new HashSet<>(), stage).start();
+                    for (int i = 0; i < stage.waitingOptions; i++) {
+                        List<Integer> longer = new ArrayList<>(picks);
+                        longer.add(i);
+                        queue.addLast(longer);
+                    }
+                    for (String at : stage.unsummarized) {
+                        problems.add(at + "：最後一句台詞和這裡之間要有 @簡介，按「跳過」停在這裡時才有劇情簡介");
+                    }
+                }
+            }
+        }
+        assertNoProblems(new ArrayList<>(problems));
     }
 }

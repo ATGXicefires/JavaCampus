@@ -255,8 +255,8 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         });
         autoButton.selectedProperty().addListener((obs, was, on) -> refreshMark());
         skipButton.selectedProperty().addListener((obs, was, on) -> refreshMark());
-        HBox menu = new HBox(autoButton, skipButton, quick("紀錄", this::openBacklog), quick("隱藏", () -> hideUi(true)),
-                quick("筆記", this::openHandbook), quick("設定", game::openSettings));
+        HBox menu = new HBox(autoButton, skipButton, quick("跳過", this::askSkip), quick("紀錄", this::openBacklog),
+                quick("隱藏", () -> hideUi(true)), quick("筆記", this::openHandbook), quick("設定", game::openSettings));
         for (Node n : menu.getChildren()) {
             n.getStyleClass().add("quick");
             n.setFocusTraversable(false);
@@ -317,12 +317,14 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         uiFade.play();
     }
 
-    /** 讀檔或從程式題回來時，照存檔裡的舞台狀態直接擺好，不播進場動畫。 */
+    /** 讀檔、從程式題回來或跳過劇情之後，照存檔裡的舞台狀態直接擺好，不播進場動畫。 */
     private void rebuildStage() {
         Staging st = state.staging();
         if (st.background() != null) {
             setBackground(st.background(), st.variant(), false);
         }
+        actors.getChildren().clear();
+        figures.clear();
         for (Map.Entry<String, Staging.Actor> e : st.actors().entrySet()) {
             FigureView f = new FigureView(game.art, e.getKey(), e.getValue().expression());
             figures.put(e.getKey(), f);
@@ -334,9 +336,13 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         if (st.phone() != null) {
             phone.open(st.phone());
             showPhone(true);
+        } else {
+            showPhone(false);
         }
         if (st.call() != null) {
             startCall(st.call());
+        } else {
+            stopCall();
         }
     }
 
@@ -478,6 +484,36 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
             typing.jumpTo("end");
         } else if (pending != null) {
             lineShown();
+        }
+    }
+
+    /** 只有停在台詞上能跳；問的時候先關掉自動和快進，免得底下自己往下走。 */
+    private void askSkip() {
+        if (pending == null) {
+            return;
+        }
+        autoButton.setSelected(false);
+        skipButton.setSelected(false);
+        cancelAuto();
+        game.confirm("要跳過劇情，直接到下一個選項或程式題嗎？", "跳過", this::skipStory);
+    }
+
+    /** 跳到下一個選項或程式題前面，照新的舞台狀態擺好畫面；有簡介就先給玩家看，看完才接著播。 */
+    private void skipStory() {
+        if (typing != null) {
+            typing.stop();
+            typing = null;
+        }
+        pending = null;
+        List<String> summary = runner.skip();
+        // 對話框上還是跳過前那一句，留著會以為選項在回它
+        dialog.setVisible(false);
+        rebuildStage();
+        refreshMark();
+        if (summary.isEmpty()) {
+            runner.start();
+        } else {
+            game.openOverlay(new SummaryView(game, summary), runner::start);
         }
     }
 
