@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Stream;
@@ -47,7 +48,7 @@ public class App extends Application {
         // 劇本放在專案外層的 story/，讓寫劇本的人繼續在原本的資料夾裡寫
         StoryLibrary story = StoryLibrary.load(home.resolve(Path.of("..", "story", "scripts")));
         LessonLibrary lessons = LessonLibrary.load(home.resolve("lessons"));
-        SaveStore store = new SaveStore(resolveSaveFile(home));
+        SaveStore store = new SaveStore(resolveSaveFile(home, System.getProperty("campus.home") != null, System.getenv()));
         Progress progress = store.load();
         sfx = Sfx.create();
         music = Music.create(sfx);
@@ -137,17 +138,28 @@ public class App extends Application {
     }
 
     /** 解析存檔路徑；打包版優先使用 %APPDATA% 並在首次啟動時平滑遷移舊存檔，亦可透過 campus.save 覆寫。 */
-    static Path resolveSaveFile(Path home) {
+    static Path resolveSaveFile(Path home, boolean packaged, Map<String, String> env) {
         String custom = System.getProperty("campus.save");
         if (custom != null && !custom.isBlank()) {
             return Path.of(custom.trim());
         }
 
-        boolean isPackaged = System.getProperty("campus.home") != null;
-        String appData = System.getenv("APPDATA");
-        if (isPackaged && appData != null && !appData.isBlank()) {
-            Path target = Path.of(appData, "JavaCampus", "save", "progress.json");
-            Path legacy = home.resolve(Path.of("save", "progress.json"));
+        // 單檔啟動器會傳入存檔資料夾；直接執行打包版時才自己找 %APPDATA%
+        String saveDir = env.get("JAVACAMPUS_SAVE_DIR");
+        String appData = env.get("APPDATA");
+        Path target;
+        if (saveDir != null && !saveDir.isBlank()) {
+            target = Path.of(saveDir, "progress.json");
+        } else if (packaged && appData != null && !appData.isBlank()) {
+            target = Path.of(appData, "JavaCampus", "save", "progress.json");
+        } else {
+            return home.resolve(Path.of("save", "progress.json"));
+        }
+
+        // 舊版 zip 的存檔在解壓資料夾的 app\save 下；新 exe 放進（或解壓覆蓋到）那個資料夾時，啟動器會把資料夾傳進來
+        String launcherDir = env.get("JAVACAMPUS_LAUNCHER_DIR");
+        if (launcherDir != null && !launcherDir.isBlank()) {
+            Path legacy = Path.of(launcherDir, "app", "save", "progress.json");
             if (!Files.exists(target) && Files.exists(legacy)) {
                 try {
                     Path parent = target.getParent();
@@ -159,10 +171,8 @@ public class App extends Application {
                     System.err.println("舊存檔遷移失敗：" + e.getMessage());
                 }
             }
-            return target;
         }
-
-        return home.resolve(Path.of("save", "progress.json"));
+        return target;
     }
 
     public static void main(String[] args) {

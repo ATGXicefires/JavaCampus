@@ -30,7 +30,8 @@ namespace JavaCampus.Launcher
 
         // 傳遞給遊戲本體的環境變數，避免兩端各自硬編碼路徑
         private const string EnvSaveDir = "JAVACAMPUS_SAVE_DIR";
-        private const string EnvRuntimeDir = "JAVACAMPUS_RUNTIME_DIR";
+        // 啟動器所在資料夾；新 exe 放在舊版 zip 解壓資料夾裡時，遊戲會從這裡搬舊存檔
+        private const string EnvLauncherDir = "JAVACAMPUS_LAUNCHER_DIR";
 
         // 子進程在此毫秒數內以非零代碼結束，視為「可能檔案損毀」並提示修復
         private const long QuickFailThresholdMs = 5000;
@@ -586,7 +587,7 @@ namespace JavaCampus.Launcher
             startInfo.Arguments = FormatArguments(args);
             startInfo.UseShellExecute = false;
             startInfo.EnvironmentVariables[EnvSaveDir] = saveDir;
-            startInfo.EnvironmentVariables[EnvRuntimeDir] = workingDir;
+            startInfo.EnvironmentVariables[EnvLauncherDir] = Path.GetDirectoryName(Application.ExecutablePath);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 
