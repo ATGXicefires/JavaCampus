@@ -63,9 +63,10 @@ function Invoke-Javac([string]$SourceRoot, [string]$OutDir, [string]$ClassPath) 
     $sources = Get-ChildItem -Recurse -Filter *.java $SourceRoot | ForEach-Object { $_.FullName }
     if (-not $sources) { return }
     New-Item -ItemType Directory -Force $OutDir | Out-Null
-    $argFile = Join-Path $OutDir '..\sources.txt'
+    $argFile = Join-Path (Resolve-Path $OutDir) '..\sources.txt'
     # javac 的 @argfile 會把反斜線當跳脫字元，路徑要換成正斜線
-    $sources | ForEach-Object { '"' + ($_ -replace '\\', '/') + '"' } | Set-Content -Encoding utf8 $argFile
+    # Windows PowerShell 5.1 的 Set-Content -Encoding utf8 會加 BOM，javac 會把它當成檔名的一部分，改用 .NET 寫不帶 BOM 的 UTF-8
+    [IO.File]::WriteAllLines($argFile, [string[]]($sources | ForEach-Object { '"' + ($_ -replace '\\', '/') + '"' }))
     & javac -encoding UTF-8 -Xlint:all -Xlint:-serial -Xlint:-classfile -d $OutDir @FxArgs -cp $ClassPath "@$argFile"
     if ($LASTEXITCODE -ne 0) { throw 'javac 編譯失敗' }
 }
