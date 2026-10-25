@@ -10,6 +10,7 @@ import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBase;
@@ -365,7 +366,15 @@ public final class Motion {
         fade.play();
         panel.setScaleX(0.9);
         panel.setScaleY(0.9);
-        scaleTo(panel, 1, springTime(520, 220), spring());
+        // 彈的時候先把面板畫成一張圖再縮放；不然每一格都要重畫整塊面板和它的大陰影，內顯會掉到十幾格。
+        // 動畫被打斷也一樣是 STOPPED，快取一定會關掉，停下來之後字才會清楚
+        panel.setCache(true);
+        panel.setCacheHint(CacheHint.SCALE);
+        scaleTo(panel, 1, springTime(520, 220), spring()).statusProperty().addListener((obs, was, now) -> {
+            if (now == Animation.Status.STOPPED) {
+                panel.setCache(false);
+            }
+        });
     }
 
     /** 抽屜水平滑動：打開時彈一下，收起時加速離開。 */
@@ -458,7 +467,7 @@ public final class Motion {
     }
 
     /** 同一個節點的縮放動畫一次只跑一個，新的會接手舊的。 */
-    private static void scaleTo(Node node, double s, Duration t, Interpolator curve) {
+    private static Timeline scaleTo(Node node, double s, Duration t, Interpolator curve) {
         if (node.getProperties().get(SCALE_KEY) instanceof Animation running) {
             running.stop();
         }
@@ -467,5 +476,6 @@ public final class Motion {
                 new KeyValue(node.scaleYProperty(), s, curve)));
         node.getProperties().put(SCALE_KEY, tl);
         tl.play();
+        return tl;
     }
 }

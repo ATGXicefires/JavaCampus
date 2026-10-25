@@ -62,6 +62,7 @@ class LessonContentTest {
         assertFalse(step.hints().lead().isBlank(), "缺少提點");
         assertFalse(step.hints().plain().isBlank(), "缺少白話提示");
         assertFalse(step.goal().isBlank(), "缺少這一步要做的事");
+        assertTrue(step.expectedShape().contains("…"), "預期的樣子直接寫出答案，玩家要寫的地方要換成 …");
     }
 
     /** 筆記欄平常只顯示這一句，太長就失去「先看重點」的意思了。 */

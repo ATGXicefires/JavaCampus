@@ -24,7 +24,7 @@
       "title": "盒子",
       "goal": "做一個 `String` 盒子叫 `box`，放進 `\"扭蛋\"`，再印出來。",
       "instructions": "範例 2 要講變數。把「宣告區域變數」那段刪掉，改成盒子。\n\n寫法是：盒子的種類、名字、`=`、內容，最後加分號。印的時候括號裡寫 `box`，不加引號。",
-      "expectedShape": "String box = \"扭蛋\";\nSystem.out.println(box);",
+      "expectedShape": "String box = \"…\";\nSystem.out.println(…);",
       "check": { "type": "values", "exprs": ["box"] },
       "hints": {
         "lead": "區域變數宣告：型別、識別字、指定運算子、初始值，以分號結束⋯⋯",
@@ -36,8 +36,8 @@
       "id": "gacha",
       "title": "七個，然後八個",
       "goal": "`gacha` 放進 `7` 印出來，再換成 `8` 印一次。",
-      "instructions": "範例 3 示範換掉盒子裡的東西。先做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再寫 `gacha = 8;`，再印一次。\n\n輸出要是 `7` 和 `8` 兩行。第二次不用再寫 `int`。",
-      "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);\ngacha = 8;\nSystem.out.println(gacha);",
+      "instructions": "範例 3 示範換掉盒子裡的東西。先做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再把它換成 `8`，再印一次。\n\n輸出要是 `7` 和 `8` 兩行。換的時候寫名字、`=`、新的值就好，不用再寫 `int`。",
+      "expectedShape": "int gacha = …;\nSystem.out.println(…);\n… = …;\nSystem.out.println(…);",
       "check": { "type": "output" },
       "hints": {
         "lead": "指定運算式 `gacha = 8` 覆寫既有變數的值；同一個範圍內重複宣告同名區域變數是編譯錯誤⋯⋯",
