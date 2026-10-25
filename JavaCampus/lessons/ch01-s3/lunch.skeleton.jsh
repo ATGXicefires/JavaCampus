@@ -2,5 +2,5 @@
 if (hasLuRouFan) {
     ____.out.println("吃滷肉飯")____
 } else {
-    System.out.println(____吃便當____)____
+    System.out.println(____吃控肉飯____)____
 }

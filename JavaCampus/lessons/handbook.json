@@ -61,7 +61,7 @@
       "chapter": 1,
       "title": "if-else 就是選午餐",
       "summary": "條件成立走 `if`，不成立走 `else`。",
-      "body": "if-else 就像你選午餐：如果有滷肉飯，就吃滷肉飯；否則吃便當。\n\n```\nif (hasLuRouFan) {\n    System.out.println(\"吃滷肉飯\");\n} else {\n    System.out.println(\"吃便當\");\n}\n```\n\n`if` 的括號裡放一個 `boolean`，它只有 `true`（有）和 `false`（沒有）兩種答案。`true` 就走第一對大括號，`false` 就走 `else` 那一對。兩條路只會走一條。"
+      "body": "if-else 就像你選午餐：如果有滷肉飯，就吃滷肉飯；否則吃控肉飯。\n\n```\nif (hasLuRouFan) {\n    System.out.println(\"吃滷肉飯\");\n} else {\n    System.out.println(\"吃控肉飯\");\n}\n```\n\n`if` 的括號裡放一個 `boolean`，它只有 `true`（有）和 `false`（沒有）兩種答案。`true` 就走第一對大括號，`false` 就走 `else` 那一對。兩條路只會走一條。"
     }
   ]
 }

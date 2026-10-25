@@ -1,5 +1,5 @@
 if (hasLuRouFan) {
     System.out.println("吃滷肉飯");
 } else {
-    System.out.println("吃便當");
+    System.out.println("吃控肉飯");
 }
