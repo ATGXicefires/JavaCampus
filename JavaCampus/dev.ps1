@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Position = 0)]
     [ValidateSet('setup', 'build', 'run', 'test', 'package', 'clean')]
     [string]$Task = 'run'
