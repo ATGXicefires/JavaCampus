@@ -27,7 +27,7 @@ $FxArgs = @('--module-path', 'lib/fx', '--add-modules', 'javafx.controls')
 $AppCp = 'lib/app/*'
 $Sep = [IO.Path]::PathSeparator
 
-$AppVersion = '0.1.2'
+$AppVersion = '0.1.3'
 if (-not [string]::IsNullOrWhiteSpace($Version)) {
     $AppVersion = $Version.Trim()
 }
