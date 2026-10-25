@@ -1094,6 +1094,10 @@
     -fx-font-weight: bold;
 }
 
+.step-row.solved .step-title .text {
+    -fx-strikethrough: true;
+}
+
 .detail-title {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
