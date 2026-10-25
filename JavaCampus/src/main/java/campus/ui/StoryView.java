@@ -1,6 +1,7 @@
 package campus.ui;
 
 import campus.art.BackdropView;
+import campus.art.Backgrounds;
 import campus.art.FigureView;
 import campus.art.Figures;
 import campus.fx.Motion;
@@ -334,7 +335,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         playMusic(st.music());
         applyAmbience();
         if (st.phone() != null) {
-            phone.open(st.phone());
+            phone.open(st.phone(), Backgrounds.clock(st.background(), st.variant()));
             showPhone(true);
         } else {
             showPhone(false);
@@ -356,7 +357,10 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
         hideUi(false);
         lineRead = read;
         pending = next;
-        backlog.add(new BacklogView.Entry(l.kind(), l.who(), l.text()));
+        int index = backlog.size();
+        StoryState mark = state.copy();
+        PhonePanel.Memory phoneMark = phone.remember();
+        backlog.add(new BacklogView.Entry(l.kind(), l.who(), l.text(), () -> askJumpBack(index, mark, phoneMark)));
         if (blackout) {
             blackout = false;
             Motion.fade(black, 0, 350, null);
@@ -833,8 +837,9 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
                 p.play();
             }
             case "手機" -> {
-                if (state.staging().phone() != null) {
-                    phone.open(state.staging().phone());
+                Staging st = state.staging();
+                if (st.phone() != null) {
+                    phone.open(st.phone(), Backgrounds.clock(st.background(), st.variant()));
                     dialog.setVisible(false);
                     showPhone(true);
                 } else {
@@ -1040,7 +1045,42 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
     }
 
     private void openBacklog() {
-        game.openOverlay(new BacklogView(backlog), null);
+        game.openOverlay(new BacklogView(backlog, pending != null || pick != null), null);
+    }
+
+    /** 回去會把之後做過的選擇一起取消，先問一聲；按取消就回到紀錄。 */
+    private void askJumpBack(int index, StoryState mark, PhonePanel.Memory phoneMark) {
+        game.confirm("要回到這一句嗎？這之後做過的選擇會取消。", "回到這裡",
+                () -> jumpBack(index, mark, phoneMark), this::openBacklog);
+    }
+
+    /**
+     * 回到對話紀錄裡的某一句：進度、舞台和手機都換回那一句剛出現時的樣子，再從那一句接著播。
+     * 只能在等玩家看台詞或選選項時回去；暗場、等待這類指令演完會自己往下走，中途換掉位置會多跳一行。
+     */
+    private void jumpBack(int index, StoryState mark, PhonePanel.Memory phoneMark) {
+        if (pending == null && pick == null) {
+            return;
+        }
+        if (typing != null) {
+            typing.stop();
+            typing = null;
+        }
+        pending = null;
+        pick = null;
+        choices.setVisible(false);
+        choices.getChildren().clear();
+        autoButton.setSelected(false);
+        skipButton.setSelected(false);
+        cancelAuto();
+        blackout = false;
+        black.setOpacity(0);
+        state.rewindTo(mark);
+        phone.restore(phoneMark);
+        backlog.subList(index, backlog.size()).clear();
+        rebuildStage();
+        game.save();
+        runner.start();
     }
 
     private void openHandbook() {

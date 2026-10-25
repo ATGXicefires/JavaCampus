@@ -28,11 +28,22 @@ public final class Backgrounds {
             "化工科實驗室外", List.of("白天"),
             "亭瑄的房間", List.of("夜"));
 
+    /** 每個變體是一天裡的什麼時候；劇情裡手機狀態列的時間照這個顯示，才會跟背景的天色一致。 */
+    private static final Map<String, String> CLOCKS = Map.of(
+            "白天", "12:20", "傍晚", "17:35", "雨", "17:50", "雨夜", "19:40", "夜", "22:10");
+
     private Backgrounds() {}
 
     public static boolean known(String name, String variant) {
         List<String> variants = NAMES.get(name);
         return variants != null && (variant == null || variants.contains(variant));
+    }
+
+    /** 手機狀態列的時間。沒寫變體時跟 {@link #paint} 一樣用預設的那個；還沒換過背景就當成白天。 */
+    public static String clock(String name, String variant) {
+        List<String> variants = name == null ? null : NAMES.get(name);
+        String v = variant != null ? variant : variants != null ? variants.getFirst() : "白天";
+        return CLOCKS.get(v);
     }
 
     /** 雨只該落在窗外的背景，回傳那扇窗在畫面上的比例位置；整片都可以下雨就是 null。 */

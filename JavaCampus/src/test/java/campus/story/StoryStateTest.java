@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,6 +66,46 @@ class StoryStateTest {
         s.begin(ch, Route.SENPAI, true);
         assertEquals(20, s.ap());
         assertEquals(30, s.tp());
+    }
+
+    @Test
+    void rewindingToALineUndoesWhatCameAfterIt() {
+        String pov = """
+                [開場]
+                @背景 電腦教室 傍晚
+                @登場 阿成 中 笑
+                阿成：「要嗎？」
+                【選項】
+                A. 好 AP+10 TP+20 ★
+                B. 不好
+                @表情 阿成 生氣
+                @旗標 選過了
+                @章末 Day 1
+                """;
+        Chapter ch = StoryRunnerTest.chapter(COMMON, pov, pov);
+        StoryState s = new StoryState();
+        s.begin(ch, Route.SENPAI, false);
+        StoryRunnerTest.AutoStage first = new StoryRunnerTest.AutoStage().pick(0);
+        first.holdLines = true;
+        new StoryRunner(ch, Route.SENPAI, s, new HashSet<>(), first).start();
+        StoryState mark = s.copy();
+        first.held.run();
+        assertEquals(20, s.ap());
+        assertEquals("生氣", s.staging().actors().get("阿成").expression());
+        assertTrue(s.atChapterEnd());
+
+        s.rewindTo(mark);
+        assertEquals(10, s.ap());
+        assertEquals(0, s.keyCount());
+        assertFalse(s.hasFlag("選過了"));
+        assertFalse(s.atChapterEnd());
+        assertEquals("笑", s.staging().actors().get("阿成").expression());
+
+        StoryRunnerTest.AutoStage again = new StoryRunnerTest.AutoStage().pick(1);
+        new StoryRunner(ch, Route.SENPAI, s, new HashSet<>(), again).start();
+        assertEquals(List.of("要嗎？"), again.shown);
+        assertEquals(10, s.ap());
+        assertTrue(s.hasFlag("選過了"));
     }
 
     @Test
