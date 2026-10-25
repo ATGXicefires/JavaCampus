@@ -403,6 +403,10 @@
     -fx-text-fill: #c9bfb1;
 }
 
+.toc-row.cleared .toc-title .text {
+    -fx-strikethrough: true;
+}
+
 .toc-lock-body {
     -fx-fill: #c9bfb1;
 }
@@ -921,6 +925,26 @@
 .backlog-text.choice-made {
     -fx-text-fill: c-accent-dark;
     -fx-font-weight: bold;
+}
+
+.backlog-jump {
+    -fx-background-color: transparent;
+    -fx-padding: 4 6 4 6;
+    -fx-cursor: hand;
+}
+
+.backlog-jump:hover {
+    -fx-background-color: c-panel-2;
+}
+
+.backlog-jump-icon {
+    -fx-fill: transparent;
+    -fx-stroke: c-muted;
+    -fx-stroke-width: 2;
+}
+
+.backlog-jump:hover .backlog-jump-icon {
+    -fx-stroke: c-accent-dark;
 }
 
 /* 劇情簡介 */

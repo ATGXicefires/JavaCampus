@@ -184,6 +184,20 @@ public final class Staging {
         };
     }
 
+    Staging copy() {
+        Staging s = new Staging();
+        s.background = background;
+        s.variant = variant;
+        actors().forEach((who, a) -> s.actors().put(who, new Actor(a.position, a.expression)));
+        s.music = music;
+        s.ambient = new ArrayList<>(ambient());
+        s.filters = new HashSet<>(filters());
+        s.phone = phone;
+        s.call = call;
+        s.selfExpression = selfExpression;
+        return s;
+    }
+
     /** 換章時舞台清空。 */
     void clear() {
         background = null;

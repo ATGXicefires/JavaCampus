@@ -24,8 +24,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +42,6 @@ final class PhonePanel extends StackPane {
     private static final double ISLAND_H = 31;
     private static final double ISLAND_TOP = 10;
     private static final Color GLYPH = Color.web("#1b1a20");
-    private static final DateTimeFormatter CLOCK = DateTimeFormatter.ofPattern("H:mm");
 
     private final Game game;
     private final Route route;
@@ -55,6 +52,7 @@ final class PhonePanel extends StackPane {
     private final Map<String, List<Node>> threads = new HashMap<>();
     private String current;
     private HBox unsent;
+    private PauseTransition reply;
 
     PhonePanel(Game game, Route route) {
         this.game = game;
@@ -187,9 +185,13 @@ final class PhonePanel extends StackPane {
         return key;
     }
 
-    /** 每個聯絡人各留一串對話，切去跟別人聊再切回來，之前的訊息和附件都還在。 */
-    void open(String who) {
-        clock.setText(LocalTime.now().format(CLOCK));
+    /**
+     * 每個聯絡人各留一串對話，切去跟別人聊再切回來，之前的訊息和附件都還在。
+     *
+     * @param time 劇情裡現在幾點，不是玩家電腦的時間
+     */
+    void open(String who, String time) {
+        clock.setText(time);
         if (!who.equals(current)) {
             if (current != null) {
                 threads.put(current, new ArrayList<>(messages.getChildren()));
@@ -225,14 +227,39 @@ final class PhonePanel extends StackPane {
         Label dots = new Label("⋯");
         dots.getStyleClass().addAll("bubble", "theirs", "typing");
         Node row = add(dots, false);
-        PauseTransition wait = new PauseTransition(Duration.millis(520));
-        wait.setOnFinished(e -> {
+        reply = new PauseTransition(Duration.millis(520));
+        reply.setOnFinished(e -> {
             messages.getChildren().remove(row);
             add(bubble, false);
             game.sfx.play(Sfx.Sound.NOTIFY);
             onShown.run();
         });
-        wait.play();
+        reply.play();
+    }
+
+    /** 手機當下的樣子：正在跟誰聊、每個人的對話到哪裡。 */
+    record Memory(String current, Map<String, List<Node>> threads, HBox unsent) {}
+
+    Memory remember() {
+        Map<String, List<Node>> all = new HashMap<>();
+        threads.forEach((who, nodes) -> all.put(who, List.copyOf(nodes)));
+        if (current != null) {
+            all.put(current, List.copyOf(messages.getChildren()));
+        }
+        return new Memory(current, all, unsent);
+    }
+
+    /** 回到 {@link #remember()} 那一刻，之後才收到的訊息都收回去；還在「⋯」的那則也不會再冒出來。 */
+    void restore(Memory m) {
+        if (reply != null) {
+            reply.stop();
+        }
+        threads.clear();
+        m.threads().forEach((who, nodes) -> threads.put(who, new ArrayList<>(nodes)));
+        current = m.current();
+        contact.setText(current);
+        messages.getChildren().setAll(current == null ? List.of() : threads.get(current));
+        unsent = m.unsent();
     }
 
     /** 附件算是緊接在後面那則訊息的人傳的，等那則訊息出現才決定靠左還是靠右。 */
@@ -250,7 +277,6 @@ final class PhonePanel extends StackPane {
         HBox row = new HBox(bubble);
         row.setAlignment(mine ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
         messages.getChildren().add(row);
-        clock.setText(LocalTime.now().format(CLOCK));
         Motion.rise(row, Duration.ZERO);
         scroll.layout();
         scroll.setVvalue(1);

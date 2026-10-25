@@ -160,7 +160,7 @@ public final class StoryState {
         return chapterStarts;
     }
 
-    /** 給窮舉選項組合的測試用：複製一份互不影響的狀態。 */
+    /** 複製一份互不影響的狀態，給窮舉選項組合的測試，和對話紀錄記下每一句當時的進度。 */
     public StoryState copy() {
         StoryState s = new StoryState();
         s.chapter = chapter;
@@ -170,9 +170,25 @@ public final class StoryState {
         s.tp = tp;
         s.flags = new HashSet<>(flags());
         s.keys = new HashSet<>(keys());
+        s.staging = staging().copy();
         s.chapterStarts = new HashMap<>(chapterStarts());
         s.cleared = new LinkedHashSet<>(cleared());
         s.atChapterEnd = atChapterEnd;
         return s;
+    }
+
+    /**
+     * 回到用 {@link #copy()} 記下的那一刻：播放位置、數值、旗標和舞台都換回去，之後做過的選擇等於沒選。
+     * 哪些章開始過、破關過不受影響。同一份紀錄可以拿來回去好幾次。
+     */
+    public void rewindTo(StoryState mark) {
+        at = mark.at;
+        returns = new ArrayList<>(mark.returns());
+        ap = mark.ap;
+        tp = mark.tp;
+        flags = new HashSet<>(mark.flags());
+        keys = new HashSet<>(mark.keys());
+        staging = mark.staging().copy();
+        atChapterEnd = false;
     }
 }

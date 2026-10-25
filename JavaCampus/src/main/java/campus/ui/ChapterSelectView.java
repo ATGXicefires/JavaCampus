@@ -125,6 +125,9 @@ final class ChapterSelectView extends StackPane {
             row.setPrefHeight(ROW);
             row.setMaxHeight(ROW);
             row.getStyleClass().add("toc-row");
+            if (open && s.cleared().contains(ch.id())) {
+                row.getStyleClass().add("cleared");
+            }
             if (open) {
                 row.getStyleClass().addAll("open", "pressable");
                 row.setOnMouseClicked(e -> game.confirm("從第 " + ch.number() + " 章開頭重玩，之後的進度以這次為準。", "重玩",
