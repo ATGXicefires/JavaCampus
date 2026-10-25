@@ -688,23 +688,79 @@
     -fx-effect: dropshadow(gaussian, rgba(242, 158, 76, 0.95), 30, 0.4, 0, 0);
 }
 
-/* 手機 */
+/* 手機：外殼照 iPhone 畫，機身、螢幕、動態島的圓角是實物的形狀，不套全部直角 */
 .phone {
-    -fx-background-color: #f4f1f6;
-    -fx-border-color: #1b1a20;
-    -fx-border-width: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 30, 0.2, 0, 10);
 }
 
+/* 外圓角 58 = 螢幕圓角 46 + 邊框 12，見 PhonePanel.BEZEL */
+.phone-body {
+    -fx-background-color: linear-gradient(to right, #8f897f, #d6d1c8 10%, #b8b2a8 50%, #d6d1c8 90%, #8f897f), #0b0b0d;
+    -fx-background-insets: 0, 3;
+    -fx-background-radius: 58, 55;
+}
+
+.phone-key {
+    -fx-background-color: linear-gradient(to bottom, #8f897f, #cfc9bf 50%, #8f897f);
+    -fx-background-radius: 2;
+}
+
+.phone-screen {
+    -fx-background-color: #f4f1f6;
+}
+
+.phone-status, .phone-header {
+    -fx-background-color: #fbfafc;
+}
+
 .phone-header {
-    -fx-background-color: #1b1a20;
-    -fx-padding: 8 16 12 16;
+    -fx-padding: 4 16 10 16;
+    -fx-border-color: transparent transparent #e4e0ea transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
 .phone-contact {
-    -fx-text-fill: white;
-    -fx-font-size: 18px;
+    -fx-text-fill: c-ink;
+    -fx-font-size: 17px;
     -fx-font-weight: bold;
+}
+
+.phone-clock {
+    -fx-text-fill: #1b1a20;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.phone-island {
+    -fx-background-color: black;
+    -fx-background-radius: 16;
+}
+
+.phone-scroll > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 7;
+    -fx-padding: 4 3 4 0;
+}
+
+.phone-scroll > .scroll-bar > .track {
+    -fx-background-color: transparent;
+}
+
+.phone-scroll > .scroll-bar > .thumb {
+    -fx-background-color: rgba(27, 26, 32, 0.32);
+    -fx-background-insets: 0;
+    -fx-background-radius: 2;
+}
+
+.phone-scroll > .scroll-bar > .increment-button, .phone-scroll > .scroll-bar > .decrement-button,
+.phone-scroll > .scroll-bar .increment-arrow, .phone-scroll > .scroll-bar .decrement-arrow {
+    -fx-padding: 0;
+    -fx-shape: " ";
+}
+
+.phone-home-bar {
+    -fx-background-color: #1b1a20;
+    -fx-background-radius: 3;
 }
 
 .bubble {
