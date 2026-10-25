@@ -31,8 +31,16 @@ $AppVersion = '0.1.2'
 if (-not [string]::IsNullOrWhiteSpace($Version)) {
     $AppVersion = $Version.Trim()
 }
+# 發版的 tag 要是 v$AppVersion，update.txt 裡的下載網址照這個格式組
+$ReleaseUrl = 'https://github.com/ATGXicefires/JavaCampus/releases'
 # 打包版自帶的執行環境要放進的模組；jdk.jshell 跑玩家程式的遠端 JVM 要靠 jdk.jdwp.agent 連線
 $RuntimeModules = 'java.desktop,java.sql,javafx.controls,jdk.jshell,jdk.jdwp.agent,jdk.charsets'
+# 遊戲內更新時各自下載的部分：執行環境和字型很大但很少變，每版會變的只有 app（前綴最長的優先，app 收其他全部）
+$UpdateParts = @(
+    @{ Name = 'runtime'; Prefix = 'runtime/' }
+    @{ Name = 'fonts'; Prefix = 'app/fonts/' }
+    @{ Name = 'app'; Prefix = '' }
+)
 
 function Invoke-Setup {
     foreach ($dep in $Deps) {
@@ -133,6 +141,44 @@ function Sync-LauncherVersion {
     }
 }
 
+function New-UpdateFiles([string]$ImageDir, [string]$OutDir) {
+    # 啟動器拿每一塊的內容雜湊跟已裝的版本比，只下載不同的那幾塊。
+    # 玩家的啟動器不會跟著更新，所以 update.txt 只能加新的行或在行尾加欄位，舊啟動器才讀得懂
+    $root = (Resolve-Path $ImageDir).Path
+    $files = Get-ChildItem -Recurse -File $root | ForEach-Object {
+        $rel = $_.FullName.Substring($root.Length + 1).Replace('\', '/')
+        $part = $UpdateParts | Where-Object { $rel.StartsWith($_.Prefix) } |
+            Sort-Object { $_.Prefix.Length } -Descending | Select-Object -First 1
+        [pscustomobject]@{ Path = $_.FullName; Rel = $rel; Part = $part.Name }
+    }
+
+    Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
+    $sha = [Security.Cryptography.SHA256]::Create()
+    $lines = @("format`t1", "version`t$AppVersion")
+    foreach ($part in $UpdateParts) {
+        $own = @($files | Where-Object { $_.Part -eq $part.Name })
+        # 只看路徑和檔案內容，不看 zip 裡的時間戳，內容沒變的部分每次打包雜湊都一樣
+        $entries = [string[]]@($own | ForEach-Object { $_.Rel + "`t" + (Get-FileHash -Algorithm SHA256 $_.Path).Hash })
+        [Array]::Sort($entries, [StringComparer]::Ordinal)
+        $hash = -join ($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($entries -join "`n")) | ForEach-Object { $_.ToString('x2') })
+
+        $zipName = "update-$($part.Name).zip"
+        $zip = Join-Path $OutDir $zipName
+        $archive = [IO.Compression.ZipFile]::Open($zip, 'Create')
+        try {
+            foreach ($f in $own) {
+                [void][IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $f.Path, $f.Rel, 'Optimal')
+            }
+        } finally {
+            $archive.Dispose()
+        }
+        $zipHash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
+        $lines += @('part', $part.Name, $part.Prefix, $hash, (Get-Item $zip).Length, $zipHash,
+            "$ReleaseUrl/download/v$AppVersion/$zipName") -join "`t"
+    }
+    [IO.File]::WriteAllLines((Join-Path $OutDir 'update.txt'), [string[]]$lines)
+}
+
 function Invoke-Package {
     Sync-LauncherVersion
     Invoke-Build
@@ -166,12 +212,16 @@ function Invoke-Package {
     & (Get-JdkTool jpackage) --type app-image --name JavaCampus --app-version $AppVersion `
         --input $inDir --main-jar JavaCampus.jar --main-class campus.App --runtime-image "$pkg/runtime" `
         --java-options '-Dcampus.home=$APPDIR' --java-options '--enable-native-access=javafx.graphics' `
-        --java-options '-Dfile.encoding=UTF-8' --dest $stageDir
+        --java-options '-Dfile.encoding=UTF-8' --java-options '-Djava.net.useSystemProxies=true' --dest $stageDir
     if ($LASTEXITCODE -ne 0) { throw 'jpackage 失敗' }
 
     # 遊戲從 campus.home（app 資料夾）往上一層找 story/scripts
     New-Item -ItemType Directory -Force "$stageDir/JavaCampus/story" | Out-Null
     Copy-Item -Recurse ../story/scripts "$stageDir/JavaCampus/story/"
+
+    # update.txt 也放進封裝，裝好的版本才知道自己每一塊的雜湊，更新時能跳過沒變的部分
+    New-UpdateFiles "$stageDir/JavaCampus" (Resolve-Path $pkg).Path
+    Copy-Item "$pkg/update.txt" "$stageDir/JavaCampus/"
 
     # 將應用程式封裝為二進位 Payload 壓縮串流
     $payloadZip = Join-Path (Resolve-Path $pkg) 'payload.zip'
@@ -208,6 +258,7 @@ function Invoke-Package {
 
     Write-Host "已產出單一可攜執行檔：$singleExe"
     Write-Host "已封裝發行壓縮檔：$zip"
+    Write-Host "遊戲內更新用（發版時一起上傳）：update.txt、$(($UpdateParts | ForEach-Object { "update-$($_.Name).zip" }) -join '、')"
 }
 
 switch ($Task) {

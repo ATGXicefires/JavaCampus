@@ -80,6 +80,9 @@ public final class Game {
     private Node current;
     private Overlay overlay;
     private String codeFontSheet;
+    /** 背景查到的新版本號；還沒查到或沒有新版時是 null。 */
+    private String newVersion;
+    private boolean updateRequested;
 
     public Game(StoryLibrary story, LessonLibrary lessons, Art art, Progress progress, SaveStore store, Sfx sfx,
                 Music music, Sandbox sandbox, ExecutorService runner, StackPane root, Stage stage, Viewport viewport) {
@@ -462,6 +465,28 @@ public final class Game {
 
     void exit() {
         Platform.exit();
+    }
+
+    /** 背景查到新版本時呼叫；標題畫面已經開著，就直接把「更新」補進選單。 */
+    public void offerUpdate(String version) {
+        newVersion = version;
+        if (current instanceof TitleView t) {
+            t.offerUpdate(version);
+        }
+    }
+
+    String newVersion() {
+        return newVersion;
+    }
+
+    /** 跟「離開」一樣存檔關閉，再由啟動器下載新版、重新開啟，見 {@link campus.App#main(String[])}。 */
+    void update() {
+        updateRequested = true;
+        Platform.exit();
+    }
+
+    public boolean updateRequested() {
+        return updateRequested;
     }
 
     private static void alert(String title, String message) {
