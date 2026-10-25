@@ -69,16 +69,18 @@ public final class Motion {
         return level == Level.OFF;
     }
 
-    private static Interpolator spring() {
+    /** Q 彈時是彈簧，一般時是單純的減速。 */
+    public static Interpolator spring() {
         return level == Level.BOUNCY ? SPRING : Interpolator.EASE_OUT;
     }
 
-    private static Interpolator back() {
+    /** Q 彈時衝過頭一點再收回，一般時是單純的減速；位移比彈簧慢，看得清楚東西從哪裡來。 */
+    public static Interpolator back() {
         return level == Level.BOUNCY ? BACK_OUT : Interpolator.EASE_OUT;
     }
 
     /** 彈簧要多一點時間才晃得完，一般模式就短一點。 */
-    private static Duration springTime(double bouncyMs, double plainMs) {
+    public static Duration springTime(double bouncyMs, double plainMs) {
         return Duration.millis(level == Level.BOUNCY ? bouncyMs : plainMs);
     }
 
