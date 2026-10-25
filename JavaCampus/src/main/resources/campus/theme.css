@@ -256,11 +256,59 @@
     -fx-background-color: linear-gradient(to right, rgba(20, 14, 18, 0.72) 0%, rgba(20, 14, 18, 0.35) 45%, transparent 75%);
 }
 
-.title-big {
-    -fx-font-size: 64px;
+/* 作品名是斜貼的紙膠帶，形狀沿用名牌的 .name-plate；.name-plate 寫在後面，這裡要多一層選擇器才蓋得過 */
+.title-screen .title-tape {
+    -fx-background-color: #ec7f74;
+    -fx-text-fill: #2b2420;
+    -fx-font-family: "LXGW WenKai TC";
+    -fx-font-size: 44px;
+    -fx-font-weight: normal;
+    /* 右邊多留的空白是給便利貼壓的 */
+    -fx-padding: 6 100 6 24;
+    -fx-rotate: -10;
+}
+
+.title-note {
+    -fx-background-color: #fff1a6;
+    -fx-text-fill: #3a3330;
+    -fx-font-size: 60px;
     -fx-font-weight: bold;
-    -fx-text-fill: #fff3e3;
-    -fx-effect: dropshadow(gaussian, rgba(242, 158, 76, 0.9), 26, 0.35, 0, 0);
+    -fx-padding: 0 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 20, 0.1, 2, 10);
+}
+
+/* 副標的配色跟暗色編輯器一樣；字型固定，不跟玩家選的程式字型走 */
+.title-code-text {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 14px;
+    -fx-fill: #d9dde3;
+}
+
+.title-code-kw {
+    -fx-fill: #f29e4c;
+    -fx-font-weight: bold;
+}
+
+.title-code-type {
+    -fx-fill: #6fd0c5;
+}
+
+.title-code-str {
+    -fx-fill: #9ccc7a;
+    -fx-font-size: 19px;
+}
+
+/* 游標比字高，從一開始就撐住整行的基線，打到比較大的字串時前面的字才不會往下跳 */
+.title-caret {
+    -fx-background-color: #fff3e3;
+    -fx-min-width: 2px;
+    -fx-pref-width: 2px;
+    -fx-max-width: 2px;
+    -fx-min-height: 22px;
+    -fx-pref-height: 22px;
+    -fx-max-height: 22px;
+    -fx-translate-x: 2px;
+    -fx-translate-y: 4px;
 }
 
 .title-item {
