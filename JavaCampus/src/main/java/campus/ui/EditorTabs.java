@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -283,6 +284,7 @@ final class EditorTabs extends VBox {
             // 自動完成要先掛，清單開著時 Enter、Tab 是填入，不是換行和縮排
             CodeCompletion.attach(game, area, EditorTabs.this::allCode, vars, program);
             area.addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
+            area.addEventFilter(KeyEvent.KEY_TYPED, this::autoPair);
             area.addEventHandler(KeyEvent.KEY_TYPED, e -> {
                 String ch = e.getCharacter();
                 if (!ch.isEmpty() && !Character.isISOControl(ch.charAt(0)) && !e.isShortcutDown()) {
@@ -354,17 +356,46 @@ final class EditorTabs extends VBox {
             } else if (e.getCode() == KeyCode.TAB && !e.isShiftDown() && !e.isShortcutDown()) {
                 e.consume();
                 area.replaceSelection("    ");
+            } else if (e.getCode() == KeyCode.BACK_SPACE && !e.isShortcutDown() && area.getSelection().getLength() == 0
+                    && AutoPair.deletesPair(area.getText(), area.getCaretPosition())) {
+                e.consume();
+                area.deleteText(area.getCaretPosition() - 1, area.getCaretPosition() + 1);
             }
+        }
+
+        /** 在編輯器自己把字放進去之前攔下來，換成補好另一半的版本；打字聲要自己補，後面的 handler 收不到了。 */
+        private void autoPair(KeyEvent e) {
+            String ch = e.getCharacter();
+            if (ch.length() != 1 || e.isShortcutDown()) {
+                return;
+            }
+            IndexRange sel = area.getSelection();
+            AutoPair.Edit edit = AutoPair.typed(area.getText(), sel.getStart(), sel.getEnd(), ch.charAt(0));
+            if (edit == null) {
+                return;
+            }
+            e.consume();
+            if (!edit.insert().isEmpty()) {
+                area.replaceText(edit.start(), edit.end(), edit.insert());
+            }
+            area.selectRange(edit.anchor(), edit.caret());
+            area.requestFollowCaret();
+            game.sfx.play(Sfx.Sound.KEY);
         }
 
         private void newlineWithIndent() {
             String line = area.getParagraph(area.getCurrentParagraph()).getText();
-            String before = line.substring(0, Math.min(area.getCaretColumn(), line.length()));
+            int column = Math.min(area.getCaretColumn(), line.length());
+            String before = line.substring(0, column);
             String indent = before.substring(0, before.length() - before.stripLeading().length());
             if (before.stripTrailing().endsWith("{")) {
-                indent += "    ";
+                // 補好的 } 本來緊跟在游標後面，把它推到再下一行，跟 { 那一行對齊
+                String closing = line.startsWith("}", column) ? "\n" + indent : "";
+                area.replaceSelection("\n" + indent + "    " + closing);
+                area.moveTo(area.getCaretPosition() - closing.length());
+            } else {
+                area.replaceSelection("\n" + indent);
             }
-            area.replaceSelection("\n" + indent);
             area.requestFollowCaret();
         }
     }
