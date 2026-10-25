@@ -69,7 +69,7 @@ final class StoryView extends StackPane implements Game.KeyAware, StoryRunner.St
 
     private static final Map<String, Double> SLOTS = Map.of("左", 0.24, "中", 0.5, "右", 0.76);
     private static final double CHAR_MS = 34;
-    private static final String[] NUMERALS = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
+    private static final String[] NUMERALS = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
     /** 筆記本和快捷選單分在兩層，用同樣的寬度和邊距，選單才會剛好貼在筆記本右下角。 */
     private static final double PAGE_W = 1180;
     private static final Insets PAGE_MARGIN = new Insets(0, 48, 34, 48);

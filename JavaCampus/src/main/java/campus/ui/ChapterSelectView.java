@@ -22,23 +22,28 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
- * 章節選擇，做成筆記本的目錄頁：紅線左邊是章號，右邊是章名，視角切換是頁頂的索引標籤。
+ * 章節選擇，做成攤開的筆記本目錄：前一半的章節寫在左頁，其餘寫在右頁。
+ * 每頁紅線左邊是章號，右邊是章名；視角切換是左頁頂上的索引標籤。
  * 每個視角各自算玩到哪一章，玩過的章節可以從開頭重玩；沒玩到和還沒寫的章節變淡、加鎖，不能點。
  */
 final class ChapterSelectView extends StackPane {
 
-    private static final double PAGE_WIDTH = 880;
+    private static final double PAGE_WIDTH = 540;
     /** 一列的高度，也是 CSS 裡 {@code .toc-page} 橫線的間距，兩邊要一起改。 */
     private static final double ROW = 64;
     private static final double MARGIN_LINE = 96;
     private static final double NUMBER_WIDTH = 78;
+    /** 中縫的陰影寬度，從裝訂線往兩頁各暈開一半。 */
+    private static final double SEAM = 40;
 
     private final Game game;
     private final VBox sheet = new VBox();
-    private final VBox list = new VBox();
+    private final VBox left = new VBox();
+    private final VBox right = new VBox();
 
     ChapterSelectView(Game game) {
         this.game = game;
@@ -72,13 +77,31 @@ final class ChapterSelectView extends StackPane {
             }
         });
 
+        Region under = new Region();
+        under.getStyleClass().add("toc-under");
+        under.setRotate(1.3);
+        Region seam = new Region();
+        seam.getStyleClass().add("toc-seam");
+        seam.setPrefWidth(SEAM);
+        seam.setMaxWidth(Region.USE_PREF_SIZE);
+        seam.setMouseTransparent(true);
+        StackPane spread = new StackPane(under, new HBox(page(left), page(right)), seam);
+
+        // 墊紙轉了一點角度，左上角會翹到標籤底下；標籤要畫在墊紙上面，選中的那個才會跟頁面接在一起
+        tabs.setViewOrder(-1);
+        sheet.getChildren().addAll(tabs, spread);
+        sheet.getStyleClass().add("toc-sheet");
+        sheet.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        getChildren().addAll(sheet, back);
+        fill(initial);
+    }
+
+    /** 一頁橫線紙，左邊畫紅線。 */
+    private static StackPane page(VBox list) {
         list.getStyleClass().add("toc-page");
         // 底下只留半列，最後一條橫線才不會壓在紙的邊上
         list.setPadding(new Insets(ROW, 56, 40, 0));
         list.setPrefWidth(PAGE_WIDTH);
-        Region under = new Region();
-        under.getStyleClass().add("toc-under");
-        under.setRotate(1.3);
         Region margin = new Region();
         margin.getStyleClass().add("toc-margin");
         margin.setPrefWidth(2);
@@ -86,13 +109,7 @@ final class ChapterSelectView extends StackPane {
         margin.setMouseTransparent(true);
         StackPane.setAlignment(margin, Pos.TOP_LEFT);
         StackPane.setMargin(margin, new Insets(0, 0, 0, MARGIN_LINE));
-        StackPane page = new StackPane(under, list, margin);
-
-        sheet.getChildren().addAll(tabs, page);
-        sheet.getStyleClass().add("toc-sheet");
-        sheet.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        getChildren().addAll(sheet, back);
-        fill(initial);
+        return new StackPane(list, margin);
     }
 
     private static String styleOf(Route r) {
@@ -104,10 +121,13 @@ final class ChapterSelectView extends StackPane {
             sheet.getStyleClass().remove(styleOf(other));
         }
         sheet.getStyleClass().add(styleOf(r));
-        list.getChildren().clear();
+        left.getChildren().clear();
+        right.getChildren().clear();
         StoryState s = game.progress.route(r);
+        List<StoryLibrary.Listing> contents = game.story.contents();
+        int half = (contents.size() + 1) / 2;
         int i = 0;
-        for (StoryLibrary.Listing listing : game.story.contents()) {
+        for (StoryLibrary.Listing listing : contents) {
             Chapter ch = listing.chapter();
             boolean open = ch != null && s != null && s.hasStarted(ch.id());
             Label number = new Label(String.format("%02d", listing.number()));
@@ -140,7 +160,7 @@ final class ChapterSelectView extends StackPane {
                 HBox.setMargin(lock, new Insets(0, 0, 9, 0));
                 row.getChildren().add(lock);
             }
-            list.getChildren().add(row);
+            (i < half ? left : right).getChildren().add(row);
             Motion.rise(row, Duration.millis(50 * i++));
         }
     }
