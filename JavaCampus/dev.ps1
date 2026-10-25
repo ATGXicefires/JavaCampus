@@ -1,7 +1,8 @@
 ﻿param(
     [Parameter(Position = 0)]
-    [ValidateSet('setup', 'build', 'run', 'test', 'package', 'clean')]
-    [string]$Task = 'run'
+    [ValidateSet('setup', 'build', 'run', 'test', 'package', 'clean', 'sync')]
+    [string]$Task = 'run',
+    [string]$Version = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -27,6 +28,9 @@ $AppCp = 'lib/app/*'
 $Sep = [IO.Path]::PathSeparator
 
 $AppVersion = '0.1.2'
+if (-not [string]::IsNullOrWhiteSpace($Version)) {
+    $AppVersion = $Version.Trim()
+}
 # 打包版自帶的執行環境要放進的模組；jdk.jshell 跑玩家程式的遠端 JVM 要靠 jdk.jdwp.agent 連線
 $RuntimeModules = 'java.desktop,java.sql,javafx.controls,jdk.jshell,jdk.jdwp.agent,jdk.charsets'
 
@@ -106,7 +110,31 @@ function Get-JdkTool([string]$Name) {
     $tool
 }
 
+function Sync-LauncherVersion {
+    $launcherPath = "$PSScriptRoot\launcher\Launcher.cs"
+    if (-not (Test-Path $launcherPath)) {
+        throw "找不到啟動器原始檔：$launcherPath"
+    }
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    $content = [System.IO.File]::ReadAllText($launcherPath, [System.Text.Encoding]::UTF8)
+    $pattern = 'private\s+const\s+string\s+AppVersion\s*=\s*"([^"]*)";'
+    $match = [regex]::Match($content, $pattern)
+
+    if ($match.Success) {
+        $currentInFile = $match.Groups[1].Value
+        if ($currentInFile -ne $AppVersion) {
+            $newContent = [regex]::Replace($content, $pattern, "private const string AppVersion = `"$AppVersion`";")
+            [System.IO.File]::WriteAllText($launcherPath, $newContent, $utf8NoBom)
+            Write-Host "已同步更新 Launcher.cs 版本號至 $AppVersion"
+        }
+    } else {
+        throw "在 $launcherPath 中找不到 AppVersion 常數定義"
+    }
+}
+
 function Invoke-Package {
+    Sync-LauncherVersion
     Invoke-Build
     $pkg = 'out/package'
     if (Test-Path $pkg) { Remove-Item -Recurse -Force $pkg }
@@ -189,4 +217,5 @@ switch ($Task) {
     'test'  { Invoke-Test }
     'package' { Invoke-Package }
     'clean' { if (Test-Path out) { Remove-Item -Recurse -Force out } }
+    'sync'  { Sync-LauncherVersion }
 }
