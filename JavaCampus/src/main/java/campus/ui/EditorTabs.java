@@ -11,10 +11,15 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -25,6 +30,10 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.TwoDimensional.Bias;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -34,6 +43,9 @@ import java.util.function.Predicate;
  * 切換分頁時文字、游標、捲動位置和復原紀錄都各自留著。
  */
 final class EditorTabs extends VBox {
+
+    private static final KeyCombination PASTE = new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination PASTE_INSERT = new KeyCodeCombination(KeyCode.INSERT, KeyCombination.SHIFT_DOWN);
 
     private final Game game;
     private final List<SetupVar> vars;
@@ -263,6 +275,19 @@ final class EditorTabs extends VBox {
         });
     }
 
+    /** 有些電腦上 JavaFX 讀不到別的程式複製的文字，讀不到就改用 AWT 的剪貼簿再讀一次。 */
+    private static String clipboardText() {
+        String text = Clipboard.getSystemClipboard().getString();
+        if (text != null && !text.isEmpty()) {
+            return text;
+        }
+        try {
+            return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+        } catch (UnsupportedFlavorException | IOException | IllegalStateException e) {
+            return null;
+        }
+    }
+
     /** 一個檔案：分頁標籤、編輯器，以及這次執行標出來的錯誤。 */
     private final class FileTab {
         final String name;
@@ -291,6 +316,7 @@ final class EditorTabs extends VBox {
                     game.sfx.play(Sfx.Sound.KEY);
                 }
             });
+            area.setContextMenu(editMenu());
             scroll.setVisible(false);
 
             head.getChildren().add(new Label(name));
@@ -360,6 +386,36 @@ final class EditorTabs extends VBox {
                     && AutoPair.deletesPair(area.getText(), area.getCaretPosition())) {
                 e.consume();
                 area.deleteText(area.getCaretPosition() - 1, area.getCaretPosition() + 1);
+            } else if (PASTE.match(e) || PASTE_INSERT.match(e)) {
+                e.consume();
+                paste();
+            }
+        }
+
+        /** 右鍵選單：快捷鍵在某些電腦上沒反應時，至少還能從這裡貼上。 */
+        private ContextMenu editMenu() {
+            MenuItem cut = new MenuItem("剪下");
+            cut.setOnAction(e -> area.cut());
+            MenuItem copy = new MenuItem("複製");
+            copy.setOnAction(e -> area.copy());
+            MenuItem paste = new MenuItem("貼上");
+            paste.setOnAction(e -> paste());
+            MenuItem all = new MenuItem("全選");
+            all.setOnAction(e -> area.selectAll());
+            ContextMenu menu = new ContextMenu(cut, copy, paste, all);
+            menu.setOnShowing(e -> {
+                boolean none = area.getSelection().getLength() == 0;
+                cut.setDisable(none);
+                copy.setDisable(none);
+            });
+            return menu;
+        }
+
+        private void paste() {
+            String text = clipboardText();
+            if (text != null) {
+                area.replaceSelection(text);
+                area.requestFollowCaret();
             }
         }
 

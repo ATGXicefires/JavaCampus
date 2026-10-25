@@ -47,7 +47,11 @@ final class TitleView extends StackPane {
     private static final Duration PER_CHAR = Duration.millis(32);
     private static final Duration BLINK = Duration.millis(530);
 
+    private final Game game;
+    private final VBox menu = new VBox(6);
+
     TitleView(Game game) {
+        this.game = game;
         getStyleClass().add("title-screen");
         BackdropView bg = new BackdropView(game.art, "電腦教室", "傍晚");
         Region shade = new Region();
@@ -93,7 +97,6 @@ final class TitleView extends StackPane {
         logo.setPrefSize(640, 220);
         logo.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        VBox menu = new VBox(6);
         menu.getStyleClass().add("title-menu");
         boolean anyCleared = Arrays.stream(Route.values())
                 .anyMatch(r -> game.progress.route(r) != null && !game.progress.route(r).cleared().isEmpty());
@@ -108,6 +111,9 @@ final class TitleView extends StackPane {
                 item("筆記", () -> game.openOverlay(new HandbookView(game), null)),
                 item("設定", game::openSettings),
                 item("離開", game::exit));
+        if (game.newVersion() != null) {
+            addUpdate(game.newVersion());
+        }
         // 貼在上方：放在正中間的話，副標會碰到二弘的頭
         VBox left = new VBox(48, logo, menu);
         left.setAlignment(Pos.TOP_LEFT);
@@ -188,6 +194,17 @@ final class TitleView extends StackPane {
             }
         });
         typing.play();
+    }
+
+    /** 標題畫面開著時才查到新版本。 */
+    void offerUpdate(String version) {
+        Motion.rise(addUpdate(version), Duration.ZERO);
+    }
+
+    private Button addUpdate(String version) {
+        Button b = item("更新到 v" + version, game::update);
+        menu.getChildren().add(menu.getChildren().size() - 1, b);
+        return b;
     }
 
     private static Button item(String text, Runnable action) {

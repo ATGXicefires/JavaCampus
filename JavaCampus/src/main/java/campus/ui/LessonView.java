@@ -187,7 +187,8 @@ final class LessonView extends StackPane {
         editorZone.getStyleClass().addAll("zone", "editor-zone");
         console.getStyleClass().add("console");
         consoleScroll.setFitToWidth(true);
-        consoleScroll.setFitToHeight(true);
+        // 不用 fitToHeight：它會把內容壓成可視範圍那麼高，輸出一長就被截成「...」而且捲不動；改成至少撐滿
+        consoleScroll.viewportBoundsProperty().addListener((obs, old, b) -> console.setMinHeight(b.getHeight()));
         consoleScroll.getStyleClass().add("console-scroll");
         VBox.setVgrow(consoleScroll, Priority.ALWAYS);
         VBox consoleZone = new VBox(zoneHead("執行結果"), consoleScroll);
