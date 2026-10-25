@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /** 「程式基礎教學筆記」：左邊依章列出條目，沒解鎖的只顯示「⋯⋯」；右邊先是一句重點，再接完整內容。 */
 final class HandbookView extends HBox {
 
-    private static final String[] NUMERALS = {"零", "一", "二", "三", "四", "五", "六", "七"};
+    private static final String[] NUMERALS = {"零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
 
     private final Game game;
     private final VBox detail = new VBox(14);

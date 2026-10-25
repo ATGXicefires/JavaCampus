@@ -158,7 +158,7 @@ class ScriptContentTest {
     @Test
     void contentsListEveryChapterButOnlyWrittenOnesArePlayable() {
         List<Integer> numbers = library.contents().stream().map(StoryLibrary.Listing::number).toList();
-        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7), numbers);
+        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), numbers);
         List<Chapter> written = library.contents().stream().map(StoryLibrary.Listing::chapter)
                 .filter(Objects::nonNull).toList();
         assertEquals(written, library.chapters());

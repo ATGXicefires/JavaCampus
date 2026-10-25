@@ -5,7 +5,12 @@
     {"id": "ch03", "number": 3, "title": "例外處理"},
     {"id": "ch04", "number": 4, "title": "共同開發"},
     {"id": "ch05", "number": 5, "title": "壓力測試"},
-    {"id": "ch06", "number": 6, "title": "無限迴圈"},
-    {"id": "ch07", "number": 7, "title": "Release"}
+    {"id": "ch06", "number": 6, "title": "建構子"},
+    {"id": "ch07", "number": 7, "title": "封裝"},
+    {"id": "ch08", "number": 8, "title": "覆寫"},
+    {"id": "ch09", "number": 9, "title": "介面"},
+    {"id": "ch10", "number": 10, "title": "合併衝突"},
+    {"id": "ch11", "number": 11, "title": "無限迴圈"},
+    {"id": "ch12", "number": 12, "title": "Release"}
   ]
 }
