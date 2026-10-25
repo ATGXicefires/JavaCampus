@@ -337,6 +337,10 @@
     -fx-background-color: #e7a19c;
 }
 
+.toc-seam {
+    -fx-background-color: linear-gradient(to right, transparent, rgba(120, 90, 50, 0.14) 50%, transparent);
+}
+
 .toc-tab {
     -fx-background-color: #eadfcb;
     -fx-text-fill: c-muted;
