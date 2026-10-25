@@ -263,8 +263,8 @@
     -fx-font-family: "LXGW WenKai TC";
     -fx-font-size: 44px;
     -fx-font-weight: normal;
-    /* 右邊多留的空白是給便利貼壓的 */
-    -fx-padding: 6 100 6 24;
+    /* 右邊多留的一段穿過便利貼後面，尾端從便利貼上緣露出來 */
+    -fx-padding: 6 56 6 24;
     -fx-rotate: -10;
 }
 
@@ -275,6 +275,26 @@
     -fx-font-weight: bold;
     -fx-padding: 0 20;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 20, 0.1, 2, 10);
+}
+
+/* 驚嘆號一半在便利貼外面，描邊才看得清楚；角度由程式設，出場時要轉 */
+.title-bang {
+    -fx-font-family: "Source Han Sans TC";
+    -fx-font-size: 104px;
+    -fx-font-weight: bold;
+    -fx-fill: #ec7f74;
+    -fx-stroke: #2b2420;
+    -fx-stroke-width: 4;
+    -fx-stroke-type: outside;
+}
+
+/* 副標是暗色編輯器裡的一行，左邊的橘線是游標所在的那一行 */
+.title-code {
+    -fx-background-color: c-code-bg;
+    -fx-border-color: transparent transparent transparent c-accent;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 8 14 8 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 14, 0, 0, 4);
 }
 
 /* 副標的配色跟暗色編輯器一樣；字型固定，不跟玩家選的程式字型走 */

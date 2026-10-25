@@ -94,7 +94,7 @@ public class App extends Application {
         scene.addEventFilter(KeyEvent.KEY_RELEASED, game::onKey);
         stage.initStyle(settings.borderless() ? StageStyle.UNDECORATED : StageStyle.DECORATED);
         stage.setScene(scene);
-        stage.setTitle("JavaCampus");
+        stage.setTitle("根本沒有這樣的資訊科！");
         // 最小要放得下 1280×720 的預設尺寸；畫面內容由 Viewport 等比例縮放
         stage.setMinWidth(Math.min(960, 1280 / scale));
         stage.setMinHeight(Math.min(540, 720 / scale));
