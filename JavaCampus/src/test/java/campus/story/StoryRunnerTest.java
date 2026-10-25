@@ -215,6 +215,52 @@ class StoryRunnerTest {
     }
 
     @Test
+    void skipStopsBeforeTheNextLessonOrChoiceAndCollectsSummaries() {
+        String senpai = """
+                [開場]
+                二弘：「一。」
+                @登場 阿成 左
+                @簡介 第一段。
+                二弘：「二。」
+                @簡介 第二段。
+                @程式 ch01-s1
+                二弘：「三。」
+                @簡介 第三段。
+                【選項】
+                A. 好 AP+1
+                B. 不好
+                @章末 Day 1
+                """;
+        Chapter ch = chapter(COMMON, senpai, KOUHAI);
+        StoryState s = begin(ch, Route.SENPAI);
+        Set<String> read = new HashSet<>();
+        AutoStage stage = new AutoStage().pick(0);
+        stage.holdLines = true;
+        StoryRunner runner = new StoryRunner(ch, Route.SENPAI, s, read, stage);
+        runner.start();
+
+        assertEquals(List.of("第一段。", "第二段。"), runner.skip());
+        assertEquals(List.of("一。"), stage.shown);
+        assertTrue(stage.commands.isEmpty());
+        assertEquals(Set.of("阿成"), s.staging().actors().keySet());
+        assertEquals(5, s.at().index());
+
+        runner.start();
+        assertEquals(List.of("程式 ch01-s1"), stage.commands);
+        assertEquals(List.of("一。", "三。"), stage.shown);
+
+        assertEquals(List.of("第三段。"), runner.skip());
+        assertEquals(1, stage.picks.size());
+        // 跳過的「二。」不算讀過
+        assertEquals(2, read.size());
+        assertFalse(s.atChapterEnd());
+
+        runner.start();
+        assertEquals(11, s.ap());
+        assertEquals("Day 1", stage.chapterEnd);
+    }
+
+    @Test
     void positionStaysOnALineUntilThePlayerMovesOn() {
         Chapter ch = chapter(COMMON, SENPAI, KOUHAI);
         StoryState s = begin(ch, Route.KOUHAI);

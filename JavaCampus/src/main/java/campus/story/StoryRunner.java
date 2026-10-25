@@ -3,6 +3,7 @@ package campus.story;
 import campus.story.ScriptFile.Scene;
 import campus.story.StoryState.Pos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.IntConsumer;
@@ -40,6 +41,8 @@ public final class StoryRunner {
     private final Stage stage;
     private boolean looping;
     private boolean resume;
+    /** 跳過劇情時收集路上的 {@code @簡介}；沒在跳過就是 null。 */
+    private List<String> summary;
 
     public StoryRunner(Chapter chapter, Route route, StoryState state, Set<String> read, Stage stage) {
         this.chapter = chapter;
@@ -51,6 +54,24 @@ public final class StoryRunner {
 
     public void start() {
         resume();
+    }
+
+    /**
+     * 跳過劇情：一路往下，停在下一個選項、程式題或章末前面，之後呼叫 {@link #start()} 從那裡接著播。
+     * 路上的台詞不交給畫面，也不算讀過；舞台指令照樣記進舞台狀態，畫面再照它重建。
+     * 要在畫面正等玩家看完一行台詞時呼叫，那一行也一起跳過。
+     *
+     * @return 路上經過的 {@code @簡介}
+     */
+    public List<String> skip() {
+        summary = new ArrayList<>();
+        try {
+            step();
+            stage.checkpoint();
+            return summary;
+        } finally {
+            summary = null;
+        }
     }
 
     /** 畫面的「繼續」可能在同一個呼叫裡馬上回來，用迴圈代替遞迴，一長串舞台指令才不會把堆疊撐爆。 */
@@ -81,18 +102,24 @@ public final class StoryRunner {
                 }
                 continue;
             }
-            if (at.index() == 0) {
+            if (at.index() == 0 && summary == null) {
                 stage.checkpoint();
             }
             Op op = scene.ops().get(at.index());
             switch (op) {
                 case Op.Line l -> {
-                    boolean wasRead = !read.add(key(at));
-                    stage.line(l, wasRead, proceed());
-                    return;
+                    if (summary != null) {
+                        advance();
+                    } else {
+                        boolean wasRead = !read.add(key(at));
+                        stage.line(l, wasRead, proceed());
+                        return;
+                    }
                 }
                 case Op.Menu m -> {
-                    stage.menu(m, i -> choose(at, m, i));
+                    if (summary == null) {
+                        stage.menu(m, i -> choose(at, m, i));
+                    }
                     return;
                 }
                 case Op.Goto g -> state.moveTo(new Pos(at.file(), at.scene(), g.index()));
@@ -139,6 +166,9 @@ public final class StoryRunner {
                 return false;
             }
             case "章末" -> {
+                if (summary != null) {
+                    return true;
+                }
                 state.cleared().add(chapter.id());
                 state.setAtChapterEnd(true);
                 stage.checkpoint();
@@ -146,6 +176,17 @@ public final class StoryRunner {
                 return true;
             }
             default -> {
+                if (summary != null) {
+                    if (c.name().equals("程式")) {
+                        return true;
+                    }
+                    if (c.name().equals("簡介")) {
+                        summary.add(c.arg(0));
+                    }
+                    state.staging().apply(c);
+                    advance();
+                    return false;
+                }
                 state.staging().apply(c);
                 stage.command(c, proceed());
                 return true;

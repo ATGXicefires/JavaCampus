@@ -40,6 +40,7 @@ public final class ScriptParser {
             entry("程式", new Spec(true, 1, 1)),
             entry("旗標", new Spec(true, 1, 1)),
             entry("數值", new Spec(false, 1, 2)),
+            entry("簡介", new Spec(true, 1, 1)),
             entry("章末", new Spec(true, 1, 1)));
 
     public static final List<String> POSITIONS = List.of("左", "中", "右");
