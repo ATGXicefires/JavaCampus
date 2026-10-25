@@ -116,9 +116,10 @@ function Invoke-Package {
     New-Item -ItemType Directory -Force $inDir, $fatDir, $stageDir | Out-Null
 
     # 合併第三方依賴與專案類別為單一 Fat JAR，消除散落的 jar 檔案
+    $appJars = (Get-ChildItem lib/app/*.jar).FullName
     Push-Location $fatDir
-    Get-ChildItem ../../lib/app/*.jar | ForEach-Object {
-        & (Get-JdkTool jar) -xf $_.FullName
+    foreach ($jarPath in $appJars) {
+        & (Get-JdkTool jar) -xf $jarPath
     }
     Remove-Item -Recurse -Force META-INF -ErrorAction SilentlyContinue
     Pop-Location
@@ -163,7 +164,7 @@ function Invoke-Package {
         /r:System.Windows.Forms.dll `
         "/resource:$payloadZip,JavaCampus.Payload" `
         "/out:$singleExe" `
-        launcher/Launcher.cs
+        "$PSScriptRoot\launcher\Launcher.cs"
     if ($LASTEXITCODE -ne 0) { throw '單檔啟動器編譯失敗' }
 
     # 清理暫存結構，達成外部零散檔案完全清除的單檔打包
