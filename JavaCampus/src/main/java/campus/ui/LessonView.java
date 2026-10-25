@@ -41,6 +41,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
@@ -143,6 +144,7 @@ final class LessonView extends StackPane {
         detailScroll.setFitToWidth(true);
         VBox.setVgrow(detailScroll, Priority.ALWAYS);
         detail.setPadding(new Insets(4, 6, 12, 2));
+        TextSelection.install(detail);
         VBox body = new VBox(10, stepList, new Separator(), detailScroll);
         body.setPadding(new Insets(12, 14, 14, 14));
         VBox.setVgrow(body, Priority.ALWAYS);
@@ -436,10 +438,10 @@ final class LessonView extends StackPane {
         title.setWrapText(true);
         TextFlow goal = MiniMarkdown.inline(current.goal());
         goal.getStyleClass().add("step-goal");
-        Label shape = new Label(current.expectedShape());
+        Text shapeText = new Text(current.expectedShape());
+        shapeText.getStyleClass().add("shape-text");
+        TextFlow shape = new TextFlow(shapeText);
         shape.getStyleClass().add("shape-box");
-        shape.setMaxWidth(Double.MAX_VALUE);
-        shape.setWrapText(true);
         detail.getChildren().setAll(title, goal, shape);
         if (!current.instructions().isBlank()) {
             detail.getChildren().add(moreDetail(current.instructions()));

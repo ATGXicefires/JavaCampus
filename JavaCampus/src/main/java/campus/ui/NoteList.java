@@ -92,6 +92,7 @@ final class NoteList extends ScrollPane {
             setSpacing(6);
             getChildren().addAll(head, summary);
             getStyleClass().addAll("note-card", "pressable");
+            TextSelection.install(this);
             setOnMouseEntered(e -> {
                 if (body == null) {
                     wait.setOnFinished(f -> showPeek(this));
@@ -99,7 +100,12 @@ final class NoteList extends ScrollPane {
                 }
             });
             setOnMouseExited(e -> hidePeek());
-            setOnMouseClicked(e -> toggle());
+            // 拖曳過是在選字，放開時不要順便收合卡片
+            setOnMouseClicked(e -> {
+                if (e.isStillSincePress()) {
+                    toggle();
+                }
+            });
         }
 
         private void toggle() {

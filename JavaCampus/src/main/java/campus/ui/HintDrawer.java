@@ -13,6 +13,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
 import java.util.List;
@@ -46,6 +48,7 @@ final class HintDrawer extends VBox {
         HBox header = new HBox(close);
         header.setAlignment(Pos.CENTER_RIGHT);
 
+        TextSelection.install(tiers);
         ScrollPane scroll = new ScrollPane(tiers);
         scroll.setFitToWidth(true);
         VBox.setVgrow(scroll, Priority.ALWAYS);
@@ -112,23 +115,24 @@ final class HintDrawer extends VBox {
     /** 好幾個檔案時，每段程式碼上面標出檔名。 */
     private static Node code(List<SourceFile> files) {
         if (files.size() == 1) {
-            return codeLabel(files.getFirst().text());
+            return codeBlock(files.getFirst().text());
         }
         VBox box = new VBox(6);
         for (SourceFile f : files) {
             Label name = new Label(f.name());
             name.getStyleClass().add("hint-file");
-            box.getChildren().addAll(name, codeLabel(f.text()));
+            box.getChildren().addAll(name, codeBlock(f.text()));
         }
         return box;
     }
 
-    private static Label codeLabel(String source) {
-        Label l = new Label(source.strip());
-        l.getStyleClass().add("hint-code");
-        l.setMaxWidth(Double.MAX_VALUE);
-        l.setWrapText(true);
-        return l;
+    /** 用 TextFlow 而不是 Label，骨架和答案才選取得到。 */
+    private static TextFlow codeBlock(String source) {
+        Text text = new Text(source.strip());
+        text.getStyleClass().add("hint-code-text");
+        TextFlow flow = new TextFlow(text);
+        flow.getStyleClass().add("hint-code");
+        return flow;
     }
 
     private void reveal(int tier) {
