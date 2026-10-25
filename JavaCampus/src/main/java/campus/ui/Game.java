@@ -23,17 +23,21 @@ import javafx.css.PseudoClass;
 import javafx.event.EventTarget;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -70,7 +74,8 @@ public final class Game {
     private final SaveStore store;
     private final ExecutorService runner;
     private final StackPane root;
-    private final Stage stage;
+    /** 切換無邊框時會換成新的視窗，見 {@link #restyle(boolean)}。 */
+    private Stage stage;
     private final Viewport viewport;
     private Node current;
     private Overlay overlay;
@@ -91,11 +96,72 @@ public final class Game {
         this.root = root;
         this.stage = stage;
         this.viewport = viewport;
-        // 系統也可能自己把視窗切出全螢幕，以視窗實際狀態為準
-        stage.fullScreenProperty().addListener((obs, was, now) -> {
-            if (progress.settings().fullscreen() != now) {
+        followFullScreen(stage);
+    }
+
+    /** 系統也可能自己把視窗切出全螢幕，以視窗實際狀態為準；換掉的舊視窗關掉時的變化不算。 */
+    private void followFullScreen(Stage s) {
+        s.fullScreenProperty().addListener((obs, was, now) -> {
+            if (s == stage && progress.settings().fullscreen() != now) {
                 progress.settings().setFullscreen(now);
                 save();
+            }
+        });
+    }
+
+    /**
+     * 標題列只能在視窗打開前決定，所以換一個新視窗，把整個畫面搬過去再關掉舊的。
+     * 先開新的再關舊的，中間沒有一刻是零個視窗，程式才不會以為玩家關掉遊戲。
+     */
+    private void restyle(boolean borderless) {
+        Stage old = stage;
+        Stage next = new Stage(borderless ? StageStyle.UNDECORATED : StageStyle.DECORATED);
+        next.setTitle(old.getTitle());
+        next.setMinWidth(old.getMinWidth());
+        next.setMinHeight(old.getMinHeight());
+        next.setFullScreenExitHint(old.getFullScreenExitHint());
+        next.setFullScreenExitKeyCombination(old.getFullScreenExitKeyCombination());
+        // 留在原本那個螢幕上；最大化要在打開前設好，不然會先閃一下原本的大小
+        next.setX(old.getX());
+        next.setY(old.getY());
+        next.setMaximized(progress.settings().windowWidth() <= 0);
+        followFullScreen(next);
+        stage = next;
+        next.setScene(old.getScene());
+        next.show();
+        applyWindowSize();
+        old.hide();
+    }
+
+    /**
+     * 無邊框視窗沒有標題列可以拖，改成按住畫面空白處拖曳。按鈕、選字和編輯器會自己把按下的事件吃掉，
+     * 走得到場景的才算空白處；拖過之後放開的那一下點擊也吃掉，免得劇情順便往下一句。
+     */
+    public void installWindowDrag(Scene scene) {
+        double[] grab = new double[2];
+        boolean[] armed = {false};
+        boolean[] moved = {false};
+        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+            armed[0] = false;
+            moved[0] = false;
+        });
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            armed[0] = e.getButton() == MouseButton.PRIMARY && stage.getStyle() == StageStyle.UNDECORATED
+                    && !stage.isFullScreen() && !stage.isMaximized();
+            grab[0] = stage.getX() - e.getScreenX();
+            grab[1] = stage.getY() - e.getScreenY();
+        });
+        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
+            // 視窗跟著滑鼠走之後滑鼠在畫面裡就不動了，所以一旦開始拖就一路拖到放開
+            if (armed[0] && (moved[0] || !e.isStillSincePress())) {
+                moved[0] = true;
+                stage.setX(e.getScreenX() + grab[0]);
+                stage.setY(e.getScreenY() + grab[1]);
+            }
+        });
+        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (moved[0]) {
+                e.consume();
             }
         });
     }
@@ -139,6 +205,9 @@ public final class Game {
     public void applySettings() {
         Progress.Settings s = progress.settings();
         viewport.setZoom(s.zoom());
+        if (s.borderless() != (stage.getStyle() == StageStyle.UNDECORATED)) {
+            restyle(s.borderless());
+        }
         if (stage.isFullScreen() != s.fullscreen()) {
             stage.setFullScreen(s.fullscreen());
         }

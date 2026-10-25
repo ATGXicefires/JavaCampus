@@ -69,7 +69,7 @@ final class SettingsView extends VBox {
 
         VBox left = new VBox(22,
                 group("顯示",
-                        row("全螢幕", onOff(s.fullscreen(), on -> s.setFullscreen(on))),
+                        row("顯示模式", displayMode()),
                         row("視窗大小", windowSizes()),
                         row("介面大小", segmented(List.of("90%", "100%", "110%", "120%"), zoomIndex(),
                                 i -> s.setZoom(ZOOMS[i])))),
@@ -120,7 +120,17 @@ final class SettingsView extends VBox {
         getChildren().addAll(head, new HBox(40, left, right));
     }
 
-    /** 常見的 16:9 和 16:10 尺寸，放不進目前螢幕的就不列出來（全螢幕另外有開關）。 */
+    /** 選全螢幕時不動有沒有邊框，按 F11 離開全螢幕才回得到原本的樣子。 */
+    private HBox displayMode() {
+        return segmented(List.of("視窗", "無邊框", "全螢幕"), s.fullscreen() ? 2 : s.borderless() ? 1 : 0, i -> {
+            s.setFullscreen(i == 2);
+            if (i < 2) {
+                s.setBorderless(i == 1);
+            }
+        });
+    }
+
+    /** 常見的 16:9 和 16:10 尺寸，放不進目前螢幕的就不列出來（全螢幕在顯示模式裡選）。 */
     private ComboBox<int[]> windowSizes() {
         Screen screen = game.screen();
         double scale = screen.getOutputScaleX();

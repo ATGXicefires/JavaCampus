@@ -47,6 +47,7 @@ public final class Progress {
         private double voice = 0.6;
         private boolean typing = true;
         private boolean fullscreen;
+        private boolean borderless;
         private double zoom = 1;
         private double codeFont = 17;
         private String codeFamily = DEFAULT_CODE_FAMILY;
@@ -84,6 +85,11 @@ public final class Progress {
 
         public boolean fullscreen() {
             return fullscreen;
+        }
+
+        /** 視窗不要系統的標題列和邊框；全螢幕時看不出差別，按 F11 離開全螢幕後回到這個樣子。 */
+        public boolean borderless() {
+            return borderless;
         }
 
         public double zoom() {
@@ -155,6 +161,10 @@ public final class Progress {
 
         public void setFullscreen(boolean on) {
             fullscreen = on;
+        }
+
+        public void setBorderless(boolean on) {
+            borderless = on;
         }
 
         public void setZoom(double z) {

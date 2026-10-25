@@ -20,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,6 +74,7 @@ public class App extends Application {
                 : new Scene(viewport, 1600, 900);
         scene.getStylesheets().add(App.class.getResource("/campus/theme.css").toExternalForm());
         Motion.installPress(scene);
+        game.installWindowDrag(scene);
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.F11) {
                 e.consume();
@@ -85,6 +87,7 @@ public class App extends Application {
             }
         });
         scene.addEventFilter(KeyEvent.KEY_RELEASED, game::onKey);
+        stage.initStyle(settings.borderless() ? StageStyle.UNDECORATED : StageStyle.DECORATED);
         stage.setScene(scene);
         stage.setTitle("JavaCampus");
         // 最小要放得下 1280×720 的預設尺寸；畫面內容由 Viewport 等比例縮放
