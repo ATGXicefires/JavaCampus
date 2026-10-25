@@ -269,6 +269,8 @@
     -fx-font-size: 22px;
     -fx-padding: 6 0;
     -fx-border-color: transparent transparent transparent transparent;
+    /* 沒寫寬度會是 1px，滑到時上下變 0 會矮一截，游標停在底邊就會一直滑到又滑出 */
+    -fx-border-width: 0;
 }
 
 .title-item:hover {
