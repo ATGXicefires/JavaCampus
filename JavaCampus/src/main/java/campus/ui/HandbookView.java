@@ -24,6 +24,7 @@ final class HandbookView extends HBox {
 
     private final Game game;
     private final VBox detail = new VBox(14);
+    private final ScrollPane detailScroll = new ScrollPane(detail);
     private Label selected;
 
     HandbookView(Game game) {
@@ -64,7 +65,6 @@ final class HandbookView extends HBox {
         listScroll.setFitToWidth(true);
         listScroll.setPrefWidth(280);
         listScroll.setMinWidth(280);
-        ScrollPane detailScroll = new ScrollPane(detail);
         detailScroll.setFitToWidth(true);
         HBox.setHgrow(detailScroll, Priority.ALWAYS);
         detail.getStyleClass().add("handbook-detail");
@@ -89,6 +89,7 @@ final class HandbookView extends HBox {
         TextFlow lead = MiniMarkdown.inline(e.summary());
         lead.getStyleClass().add("handbook-lead");
         detail.getChildren().setAll(title, lead, MiniMarkdown.render(e.body()));
-        Motion.rise(detail, Duration.ZERO);
+        // 彈簧會衝過頭一點，動 detail 的話超出捲動區的部分會被切掉；整個捲動區一起動，多出來的落在面板內距裡
+        Motion.rise(detailScroll, Duration.ZERO);
     }
 }

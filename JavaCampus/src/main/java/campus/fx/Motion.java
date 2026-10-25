@@ -47,6 +47,10 @@ public final class Motion {
 
     private static final String SCALE_KEY = "motion.scale";
     private static final String LIFT_KEY = "motion.lift";
+    private static final String RISE_KEY = "motion.rise";
+
+    /** 正在跑的 {@link #rise}，和它要回到的透明度。 */
+    private record Rising(Animation animation, double opacity) {}
 
     private static Level level = Level.BOUNCY;
 
@@ -309,12 +313,17 @@ public final class Motion {
         return off();
     }
 
-    /** 延遲 {@code delay} 後淡入並從下方彈上來，最後回到呼叫前的透明度。 */
+    /** 延遲 {@code delay} 後淡入並從下方彈上來，最後回到呼叫前的透明度；同一個節點上一次還沒跑完的會被接手。 */
     public static void rise(Node node, Duration delay) {
         if (off()) {
             return;
         }
         double target = node.getOpacity();
+        if (node.getProperties().get(RISE_KEY) instanceof Rising last) {
+            // 現在的透明度只是半路上的值，拿它當終點的話連按幾下就越來越透明
+            last.animation().stop();
+            target = last.opacity();
+        }
         node.setOpacity(0);
         node.setTranslateY(18);
         node.setScaleX(0.94);
@@ -326,6 +335,8 @@ public final class Motion {
                         new KeyValue(node.scaleXProperty(), 1, spring()),
                         new KeyValue(node.scaleYProperty(), 1, spring())));
         tl.setDelay(delay);
+        tl.setOnFinished(e -> node.getProperties().remove(RISE_KEY));
+        node.getProperties().put(RISE_KEY, new Rising(tl, target));
         tl.play();
     }
 
