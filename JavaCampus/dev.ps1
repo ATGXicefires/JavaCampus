@@ -1,7 +1,8 @@
 ﻿param(
     [Parameter(Position = 0)]
-    [ValidateSet('setup', 'build', 'run', 'test', 'package', 'clean')]
-    [string]$Task = 'run'
+    [ValidateSet('setup', 'build', 'run', 'test', 'package', 'clean', 'sync')]
+    [string]$Task = 'run',
+    [string]$Version = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -27,6 +28,9 @@ $AppCp = 'lib/app/*'
 $Sep = [IO.Path]::PathSeparator
 
 $AppVersion = '0.1.2'
+if (-not [string]::IsNullOrWhiteSpace($Version)) {
+    $AppVersion = $Version.Trim()
+}
 # 打包版自帶的執行環境要放進的模組；jdk.jshell 跑玩家程式的遠端 JVM 要靠 jdk.jdwp.agent 連線
 $RuntimeModules = 'java.desktop,java.sql,javafx.controls,jdk.jshell,jdk.jdwp.agent,jdk.charsets'
 
@@ -106,15 +110,52 @@ function Get-JdkTool([string]$Name) {
     $tool
 }
 
+function Sync-LauncherVersion {
+    $launcherPath = "$PSScriptRoot\launcher\Launcher.cs"
+    if (-not (Test-Path $launcherPath)) {
+        throw "找不到啟動器原始檔：$launcherPath"
+    }
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    $content = [System.IO.File]::ReadAllText($launcherPath, [System.Text.Encoding]::UTF8)
+    $pattern = 'private\s+const\s+string\s+AppVersion\s*=\s*"([^"]*)";'
+    $match = [regex]::Match($content, $pattern)
+
+    if ($match.Success) {
+        $currentInFile = $match.Groups[1].Value
+        if ($currentInFile -ne $AppVersion) {
+            $newContent = [regex]::Replace($content, $pattern, "private const string AppVersion = `"$AppVersion`";")
+            [System.IO.File]::WriteAllText($launcherPath, $newContent, $utf8NoBom)
+            Write-Host "已同步更新 Launcher.cs 版本號至 $AppVersion"
+        }
+    } else {
+        throw "在 $launcherPath 中找不到 AppVersion 常數定義"
+    }
+}
+
 function Invoke-Package {
+    Sync-LauncherVersion
     Invoke-Build
     $pkg = 'out/package'
     if (Test-Path $pkg) { Remove-Item -Recurse -Force $pkg }
     $inDir = "$pkg/input"
-    New-Item -ItemType Directory -Force $inDir | Out-Null
-    & (Get-JdkTool jar) --create --file "$inDir/JavaCampus.jar" -C out/classes .
+    $fatDir = "$pkg/fat-classes"
+    $stageDir = "$pkg/stage"
+    New-Item -ItemType Directory -Force $inDir, $fatDir, $stageDir | Out-Null
+
+    # 合併第三方依賴與專案類別為單一 Fat JAR，消除散落的 jar 檔案
+    $appJars = (Get-ChildItem lib/app/*.jar).FullName
+    Push-Location $fatDir
+    foreach ($jarPath in $appJars) {
+        & (Get-JdkTool jar) -xf $jarPath
+    }
+    Remove-Item -Recurse -Force META-INF -ErrorAction SilentlyContinue
+    Pop-Location
+    Copy-Item -Recurse -Force out/classes/* $fatDir
+    & (Get-JdkTool jar) --create --file "$inDir/JavaCampus.jar" -C $fatDir .
     if ($LASTEXITCODE -ne 0) { throw 'jar 失敗' }
-    Copy-Item lib/app/*.jar $inDir
+    Remove-Item -Recurse -Force $fatDir
+
     Copy-Item -Recurse fonts, lessons $inDir
 
     # JShell 會用同一套執行環境另開 JVM 跑玩家的程式，所以不能用 --strip-native-commands 拿掉 bin\java.exe
@@ -125,16 +166,48 @@ function Invoke-Package {
     & (Get-JdkTool jpackage) --type app-image --name JavaCampus --app-version $AppVersion `
         --input $inDir --main-jar JavaCampus.jar --main-class campus.App --runtime-image "$pkg/runtime" `
         --java-options '-Dcampus.home=$APPDIR' --java-options '--enable-native-access=javafx.graphics' `
-        --java-options '-Dfile.encoding=UTF-8' --dest $pkg
+        --java-options '-Dfile.encoding=UTF-8' --dest $stageDir
     if ($LASTEXITCODE -ne 0) { throw 'jpackage 失敗' }
-    # 遊戲從 campus.home（app 資料夾）往上一層找 story/scripts
-    New-Item -ItemType Directory -Force "$pkg/JavaCampus/story" | Out-Null
-    Copy-Item -Recurse ../story/scripts "$pkg/JavaCampus/story/"
 
-    $zip = Join-Path (Resolve-Path $pkg) "JavaCampus-Demo-v$AppVersion-windows-x64.zip"
+    # 遊戲從 campus.home（app 資料夾）往上一層找 story/scripts
+    New-Item -ItemType Directory -Force "$stageDir/JavaCampus/story" | Out-Null
+    Copy-Item -Recurse ../story/scripts "$stageDir/JavaCampus/story/"
+
+    # 將應用程式封裝為二進位 Payload 壓縮串流
+    $payloadZip = Join-Path (Resolve-Path $pkg) 'payload.zip'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path "$pkg/JavaCampus"), $zip, 'Optimal', $true)
-    Write-Host "已打包：$zip"
+    [IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path "$stageDir/JavaCampus"), $payloadZip, 'Optimal', $false)
+
+    # 調用系統 C# 編譯器將啟動器與 Payload 編譯為單一可攜執行檔
+    $csc = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+    if (-not (Test-Path $csc)) {
+        $csc = 'C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe'
+    }
+    if (-not (Test-Path $csc)) { throw '找不到 C# 編譯器 csc.exe' }
+
+    $singleExe = Join-Path (Resolve-Path $pkg) 'JavaCampus.exe'
+    & $csc /target:winexe /optimize+ `
+        /r:System.IO.Compression.FileSystem.dll `
+        /r:System.IO.Compression.dll `
+        /r:System.Windows.Forms.dll `
+        "/resource:$payloadZip,JavaCampus.Payload" `
+        "/out:$singleExe" `
+        "$PSScriptRoot\launcher\Launcher.cs"
+    if ($LASTEXITCODE -ne 0) { throw '單檔啟動器編譯失敗' }
+
+    # 清理暫存結構，達成外部零散檔案完全清除的單檔打包
+    Remove-Item -Recurse -Force $inDir, "$pkg/runtime", $stageDir, $payloadZip
+
+    # 產出便攜式發行壓縮包（內含單一執行檔）
+    $zip = Join-Path (Resolve-Path $pkg) "JavaCampus-v$AppVersion-Portable.zip"
+    $tempZipDir = "$pkg/zip-staging"
+    New-Item -ItemType Directory -Force $tempZipDir | Out-Null
+    Copy-Item $singleExe $tempZipDir
+    [IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path $tempZipDir), $zip, 'Optimal', $false)
+    Remove-Item -Recurse -Force $tempZipDir
+
+    Write-Host "已產出單一可攜執行檔：$singleExe"
+    Write-Host "已封裝發行壓縮檔：$zip"
 }
 
 switch ($Task) {
@@ -144,4 +217,5 @@ switch ($Task) {
     'test'  { Invoke-Test }
     'package' { Invoke-Package }
     'clean' { if (Test-Path out) { Remove-Item -Recurse -Force out } }
+    'sync'  { Sync-LauncherVersion }
 }
