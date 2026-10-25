@@ -26,7 +26,7 @@ $FxArgs = @('--module-path', 'lib/fx', '--add-modules', 'javafx.controls')
 $AppCp = 'lib/app/*'
 $Sep = [IO.Path]::PathSeparator
 
-$AppVersion = '0.1.1'
+$AppVersion = '0.1.2'
 # 打包版自帶的執行環境要放進的模組；jdk.jshell 跑玩家程式的遠端 JVM 要靠 jdk.jdwp.agent 連線
 $RuntimeModules = 'java.desktop,java.sql,javafx.controls,jdk.jshell,jdk.jdwp.agent,jdk.charsets'
 
