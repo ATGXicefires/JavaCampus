@@ -3,7 +3,6 @@ package campus.ui;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -41,9 +40,9 @@ public final class MiniMarkdown {
         String[] parts = markdown.replace("\r\n", "\n").split("```", -1);
         for (int i = 0; i < parts.length; i++) {
             if (i % 2 == 1) {
-                Label pre = new Label(parts[i].strip());
+                // 用 TextFlow 而不是 Label，程式說明裡的範例程式才選取得到（見 TextSelection）
+                TextFlow pre = new TextFlow(text(parts[i].strip(), "md-pre-text"));
                 pre.getStyleClass().add("md-pre");
-                pre.setMaxWidth(Double.MAX_VALUE);
                 box.getChildren().add(pre);
                 continue;
             }

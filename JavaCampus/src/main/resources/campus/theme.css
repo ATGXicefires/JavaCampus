@@ -770,6 +770,10 @@
     -fx-text-fill: #e8ecf1;
 }
 
+.doc-code .md-pre-text {
+    -fx-fill: #e8ecf1;
+}
+
 .doc-handwritten {
     -fx-background-color: linear-gradient(to bottom, #fdf8ec, #f3ead6);
 }
@@ -894,12 +898,16 @@
     -fx-padding: 0 0 4 0;
 }
 
+/* 程式區塊是 TextFlow，字型設在外框上讓裡面的字繼承，顏色要設在字上 */
 .md-pre {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 13.5px;
     -fx-background-color: c-code-bg;
     -fx-padding: 10 12;
-    -fx-text-fill: #f0c070;
+}
+
+.md-pre-text {
+    -fx-fill: #f0c070;
 }
 
 /* 程式題 */
@@ -1020,7 +1028,10 @@
 
 .lesson .md-pre {
     -fx-background-color: l-pre-bg;
-    -fx-text-fill: l-pre-ink;
+}
+
+.lesson .md-pre-text {
+    -fx-fill: l-pre-ink;
 }
 
 .topbar {
@@ -1115,11 +1126,24 @@
 .shape-box {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 15px;
-    -fx-text-fill: l-code-ink;
     -fx-background-color: c-code-bg;
     -fx-border-color: l-dash;
     -fx-border-style: segments(5, 4);
     -fx-padding: 10 12;
+}
+
+.shape-text {
+    -fx-fill: l-code-ink;
+}
+
+.selectable TextFlow {
+    -fx-cursor: text;
+}
+
+.text-selection {
+    -fx-fill: c-accent;
+    -fx-opacity: 0.35;
+    -fx-stroke: transparent;
 }
 
 .more-toggle {
@@ -1172,10 +1196,8 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 20, 0.2, 0, 6);
 }
 
-/* 筆記欄很窄，程式碼寧可換行也不要被截成「⋯」 */
 .note-card .md-pre {
     -fx-font-size: 12.5px;
-    -fx-wrap-text: true;
 }
 
 .note-title {
@@ -1273,10 +1295,13 @@
 .hint-code {
     -fx-font-family: "Maple Mono NF CN";
     -fx-font-size: 14px;
-    -fx-text-fill: l-pre-ink;
     -fx-background-color: c-code-bg;
     -fx-border-color: c-line;
     -fx-padding: 8 10;
+}
+
+.hint-code-text {
+    -fx-fill: l-pre-ink;
 }
 
 .hint-file {

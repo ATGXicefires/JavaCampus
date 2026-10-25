@@ -387,6 +387,14 @@ public final class Motion {
                 scaleTo(n, 1, springTime(480, 160), spring());
             }
         });
+        // 按著拖曳是在選卡片裡的字，不是按卡片；先彈回來，免得選字的時候整張卡片縮著
+        scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, e -> {
+            Node n = pressed[0];
+            if (n != null && !e.isStillSincePress()) {
+                pressed[0] = null;
+                scaleTo(n, 1, springTime(480, 160), spring());
+            }
+        });
     }
 
     private static Node pressable(Node n) {
