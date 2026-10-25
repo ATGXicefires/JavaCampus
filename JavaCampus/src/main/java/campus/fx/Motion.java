@@ -9,6 +9,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBase;
@@ -48,6 +49,9 @@ public final class Motion {
     private static final String SCALE_KEY = "motion.scale";
     private static final String LIFT_KEY = "motion.lift";
     private static final String RISE_KEY = "motion.rise";
+
+    /** {@link #hoverLift} 浮起的高度。 */
+    private static final double LIFT = 6;
 
     /** 正在跑的 {@link #rise}，和它要回到的透明度。 */
     private record Rising(Animation animation, double opacity) {}
@@ -423,8 +427,22 @@ public final class Motion {
 
     /** 滑鼠移上去時浮起來，移開時落回原位。 */
     public static void hoverLift(Node node) {
-        node.setOnMouseEntered(e -> lift(node, -6));
-        node.setOnMouseExited(e -> lift(node, 0));
+        boolean[] lifted = {false};
+        EventHandler<MouseEvent> over = e -> {
+            // 游標停在底邊那一條時，一浮起來就離開游標、落下又碰到，會一直抖；
+            // 浮起後游標還在節點上才浮。y 加回 translateY 是相對原位，彈簧會衝過頭約一成所以多留一點
+            double bottom = node.getLayoutBounds().getMaxY() - LIFT * 1.2;
+            if (!lifted[0] && e.getY() + node.getTranslateY() < bottom) {
+                lifted[0] = true;
+                lift(node, -LIFT);
+            }
+        };
+        node.setOnMouseEntered(over);
+        node.setOnMouseMoved(over);
+        node.setOnMouseExited(e -> {
+            lifted[0] = false;
+            lift(node, 0);
+        });
     }
 
     private static void lift(Node node, double y) {
