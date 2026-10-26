@@ -258,6 +258,48 @@
       "title": "找最大最小",
       "summary": "先把第一格當最大，再一格一格比。",
       "body": "找最大值時，先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n```\nint best = a[0];\nfor (int i = 1; i < a.length; i++) {\n    if (a[i] > best) {\n        best = a[i];\n    }\n}\n```\n\n不要從 0 開始比：全部都是負數的時候，0 會贏過每一個人。"
+    },
+    {
+      "id": "class",
+      "chapter": 6,
+      "title": "類別是設計圖",
+      "summary": "`class` 是設計圖，還不是真的東西。",
+      "body": "`class` 是一張設計圖：說好這種東西有哪些欄位、會做哪些事。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n這只是設計圖，還不是真的東西。要用 `new` 照著它做出來，才有一個真的 `Item`。"
+    },
+    {
+      "id": "object",
+      "chapter": 6,
+      "title": "物件是照設計圖做出來的東西",
+      "summary": "`new` 才做出一個；每個的欄位各自一份。",
+      "body": "`new Item()` 照設計圖做出一個**物件**。一張設計圖可以做很多個，每個物件的欄位各自一份。\n\n```\nItem laptop = new Item();\nlaptop.name = \"小白\";\nItem usb = new Item();\nusb.name = \"阿隨\";\n```\n\n改了 `laptop.name`，`usb.name` 不會跟著變。用 `.` 取用物件自己的欄位。"
+    },
+    {
+      "id": "constructor",
+      "chapter": 6,
+      "title": "建構子",
+      "summary": "`new` 的那一刻先執行，名字在出生時決定。",
+      "body": "**建構子**是 `new` 的那一刻第一個執行的方法：名字和類別一樣，沒有回傳型別。\n\n```\nclass Item {\n    String name;\n    String kind;\n\n    Item(String name, String kind) {\n        this.name = name;\n        this.kind = kind;\n    }\n}\n\nItem laptop = new Item(\"小白\", \"筆電\");\n```\n\n名字和種類在出生的時候就決定好，不用 `new` 完再一個一個設定。"
+    },
+    {
+      "id": "this",
+      "chapter": 6,
+      "title": "this 是「我自己的」",
+      "summary": "`this.name` 是物件自己的欄位。",
+      "body": "參數和欄位同名的時候，`this.name` 指的是物件自己的欄位，`name` 指的是傳進來的參數。\n\n```\nItem(String name, String kind) {\n    this.name = name;\n    this.kind = kind;\n}\n```\n\n少寫 `this`，變成 `name = name;`，就是把參數放回參數自己，欄位一直是空的。"
+    },
+    {
+      "id": "obj-method",
+      "chapter": 6,
+      "title": "物件的方法",
+      "summary": "不加 `static` 的方法，屬於每個物件。",
+      "body": "不加 `static` 的方法屬於物件：誰呼叫，就用誰自己的欄位。\n\n```\nclass Mascot {\n    String name;\n    String line;\n\n    void speak() {\n        System.out.println(name + \"：「\" + line + \"」\");\n    }\n}\n```\n\n`roufan.speak()` 就是滷肉在說話。以前要把「誰」傳進方法，現在物件自己知道自己是誰。"
+    },
+    {
+      "id": "null",
+      "chapter": 6,
+      "title": "null 是空盒子",
+      "summary": "還沒放東西的欄位是 `null`，先檢查再用。",
+      "body": "物件的欄位還沒放東西的時候是 `null`，意思是「什麼都沒有」。\n\n```\nif (m.name == null) {\n    System.out.println(\"還沒取名\");\n} else {\n    System.out.println(m.name.length());\n}\n```\n\n對 `null` 呼叫方法，例如 `name.length()`，程式會跌倒（`NullPointerException`）。先用 `== null` 檢查。"
     }
   ]
 }

@@ -1,0 +1,36 @@
+{
+  "id": "ch06-k4",
+  "title": "沒取名的小老師",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["null"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "crash",
+      "title": "跌倒了",
+      "goal": "加上判斷：小老師的名字是 `null` 就印 `還沒取名`，其他照常印出 `滷肉：2 個字`。",
+      "instructions": "起始碼會印出每個小老師名字的字數。第三個還沒取名，跑到一半就跌倒了。",
+      "expectedShape": "if (mascots[i].name == null) {\n    …\n} else {\n    …\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "例外訊息是 NullPointerException。",
+        "plain": "第三個小老師的 `name` 是 `null`，什麼都沒有，對它呼叫 `length()` 就跌倒了。先用 `if (mascots[i].name == null)` 問一句，是空的就印還沒取名。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "default",
+      "title": "先給一個名字",
+      "goal": "改在建構子裡處理：傳進來的名字是 `null`，就先叫 `新同學`。",
+      "instructions": "建構子是出生的那一刻。在那裡先檢查一次，之後就不用每次都擔心名字是空的。",
+      "expectedShape": "Mascot(String name, String line) {\n    if (name == null) {\n        …\n    } else {\n        …\n    }\n    …\n}",
+      "check": { "type": "values", "exprs": ["new Mascot(null, \"嗨\").name", "new Mascot(\"滷肉\", \"嗨\").name"] },
+      "hints": {
+        "lead": "在建構子裡先檢查。",
+        "plain": "傳進來的名字是 `null`，就把 `this.name` 設成 `新同學`；不是的話照原本 `this.name = name;`。"
+      },
+      "afterText": ""
+    }
+  ]
+}
