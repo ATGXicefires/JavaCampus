@@ -138,7 +138,7 @@ public final class Sandbox implements AutoCloseable {
                     }
                     if (ev.status() == Status.RECOVERABLE_DEFINED || ev.status() == Status.RECOVERABLE_NOT_DEFINED) {
                         if (sn instanceof DeclarationSnippet ds) {
-                            return compileError(unresolved(js, ds, seg));
+                            return compileError(unresolved(js, ds, seg, source));
                         }
                     }
                     if (sn instanceof VarSnippet v && v.subKind() != Snippet.SubKind.TEMP_VAR_EXPRESSION_SUBKIND
@@ -221,7 +221,9 @@ public final class Sandbox implements AutoCloseable {
             // 類別可以用到後面才宣告的類別，所以全部定義完才檢查還有沒有找不到的名字
             for (Map.Entry<DeclarationSnippet, Segment> d : declared.entrySet()) {
                 if (js.status(d.getKey()) != Status.VALID) {
-                    return compileError(unresolved(js, d.getKey(), d.getValue()));
+                    Segment seg = d.getValue();
+                    String code = units.stream().filter(u -> u.segments().contains(seg)).findFirst().orElseThrow().code();
+                    return compileError(unresolved(js, d.getKey(), seg, code));
                 }
             }
             if (launch) {
@@ -573,9 +575,9 @@ public final class Sandbox implements AutoCloseable {
         return out;
     }
 
-    private List<Problem> unresolved(JShell js, DeclarationSnippet ds, Segment seg) {
+    private List<Problem> unresolved(JShell js, DeclarationSnippet ds, Segment seg, String source) {
         Diagnostics.Names names = names(js);
-        return js.unresolvedDependencies(ds).map(dep -> {
+        List<Problem> out = js.unresolvedDependencies(ds).map(dep -> {
             String english = "cannot find symbol\n  symbol:   " + dep + "\n  location: class";
             String name = dep.replaceFirst("^\\w+\\s+", "").replaceFirst("\\(.*", "");
             int idx = seg.text().indexOf(name);
@@ -585,6 +587,8 @@ public final class Sandbox implements AutoCloseable {
                     Diagnostics.compileError("compiler.err.cant.resolve.location", english, names), "cannot find symbol: " + dep,
                     seg.file());
         }).toList();
+        // 子類別沒把參數交給父類別的建構子，JShell 也當成之後還能補救，但其實沒有缺少的名字，要看它的錯誤
+        return out.isEmpty() ? rejected(js, ds, seg, source) : out;
     }
 
     private static Problem runtimeProblem(JShellException ex, Map<String, Segment> bySnippetId, Segment current) {

@@ -210,6 +210,11 @@ class SandboxTest {
     }
 
     @Test
+    void subclassMustPassParentConstructorArguments() {
+        assertMentions(run("class Plan {\n    Plan(String name) {\n    }\n}\nclass MyPlan extends Plan {\n}"), "`Plan`", "參數");
+    }
+
+    @Test
     void interfaceMethodNotImplemented() {
         assertMentions(run("interface Drawable {\n    void draw();\n}\nclass Home implements Drawable {\n}"),
                 "`Home`", "`draw()`");

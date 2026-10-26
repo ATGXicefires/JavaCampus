@@ -96,6 +96,12 @@ class ProgramModeTest {
     }
 
     @Test
+    void subclassMustPassParentConstructorArguments() {
+        assertMentions(run("class Plan {\n    Plan(String name) {\n    }\n}\n\nclass MyPlan extends Plan {\n}\n\n"
+                + main("System.out.println(new MyPlan());")), "`Plan`", "參數");
+    }
+
+    @Test
     void codeAfterEndlessLoopIsUnreachable() {
         assertMentions(run(main("while (true) {\n}\nSystem.out.println(\"然後呢？\");")), "永遠不會被執行到");
     }
