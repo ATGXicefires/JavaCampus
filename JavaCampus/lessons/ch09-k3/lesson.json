@@ -1,0 +1,36 @@
+{
+  "id": "ch09-k3",
+  "title": "備審資料的版面",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["interface", "polymorphism"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "sections",
+      "title": "同一個約定",
+      "goal": "寫 `interface Section`，裡面有 `String title();` 和 `String body();`。再寫三節各自實作：`Project` 是 `專題製作`／`小白學程式`，`License` 是 `乙級證照`／`電腦軟體設計`，`Statement` 是 `自傳`／`把術語翻成人話`（前面是標題，後面是內容）。",
+      "instructions": "每一節都照同一個約定，交回自己的標題和內容。",
+      "expectedShape": "interface Section {\n    String title();\n\n    String body();\n}\n\nclass Project implements Section {\n    public String title() {\n        …\n    }\n    …\n}\n…",
+      "check": { "type": "values", "exprs": ["new Project().title()", "new License().body()"] },
+      "hints": {
+        "lead": "三節，同一個約定。",
+        "plain": "備審資料的每一節長得都一樣：一個標題、一段內容。約定好這兩個方法，每一節各自填上自己的字。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "page",
+      "title": "排成一頁",
+      "goal": "再加一節 `Goal`：標題是 `志願`，內容是 `資訊工程系（臺北）`。用 `Section[] page` 照順序放四節，用迴圈印出整頁：每一節先印 `【專題製作】` 這樣的標題，下一行印內容。",
+      "instructions": "`【` 和 `】` 可以從目標複製。",
+      "expectedShape": "Section[] page = {…};\nfor (…) {\n    System.out.println(\"【\" + … + \"】\");\n    System.out.println(…);\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "一個迴圈，一節一節印。",
+        "plain": "四節都照同一個約定，所以排版只要寫一次：先印標題，再印內容，迴圈把每一節走過一遍。"
+      },
+      "afterText": ""
+    }
+  ]
+}

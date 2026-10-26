@@ -370,6 +370,34 @@
       "title": "toString 決定印出來的樣子",
       "summary": "覆寫 `toString()` 決定物件怎麼印。",
       "body": "`System.out.println` 印一個物件的時候，印的是它的 `toString()`。沒覆寫的話，印出來是 `MyPlan@1b6d3586` 這種類別名稱加一串數字；在遊戲裡跑的時候，前面還會多一段 `REPL.$JShell$…` 之類的字。\n\n```\n@Override\npublic String toString() {\n    return month + \"：\" + title;\n}\n```\n\n`toString()` 是所有類別都有的方法，原本就是 `public`，覆寫的時候前面也要寫 `public`。"
+    },
+    {
+      "id": "interface",
+      "chapter": 9,
+      "title": "介面是約定",
+      "summary": "只規定要做到什麼，不管怎麼做。",
+      "body": "`interface` 只寫方法的名字、參數和回傳型別，不寫內容。\n\n```\ninterface Drawable {\n    void draw();\n}\n```\n\n`Drawable` 只說「要會畫」，怎麼畫不管。按鈕、進度條、小老師，各自照這個約定寫自己的版本。實作換了，約定還在。"
+    },
+    {
+      "id": "implements",
+      "chapter": 9,
+      "title": "照約定實作",
+      "summary": "約定的方法都要寫出來，還要加 `public`。",
+      "body": "`implements` 後面寫介面的名字，就是答應照這個約定做。\n\n```\nclass Button implements Drawable {\n    public void draw() {\n        System.out.println(\"[ 開始學習 ]\");\n    }\n}\n```\n\n約定裡的方法每一個都要寫出來，少一個編譯器就會說。介面裡的方法都是 `public`，實作的時候前面也要寫 `public`。"
+    },
+    {
+      "id": "polymorphism",
+      "chapter": 9,
+      "title": "多型",
+      "summary": "同一句 `draw()`，各自畫各自的。",
+      "body": "用介面當型別，就能把不同的物件裝在一起。\n\n```\nDrawable[] screen = {new Button(), new ProgressBar(3, 5)};\nfor (int i = 0; i < screen.length; i++) {\n    screen[i].draw();\n}\n```\n\n迴圈裡都是同一句 `draw()`，按鈕畫按鈕，進度條畫進度條。多了一種元件，只要它也實作 `Drawable`，畫的那段程式一個字都不用改。"
+    },
+    {
+      "id": "abstract",
+      "chapter": 9,
+      "title": "抽象類別",
+      "summary": "共用的寫在一起，抽象方法留給子類別。",
+      "body": "大家共用的寫在 `abstract class` 裡，每個子類別不一樣的部分，寫成 `abstract` 方法留給子類別。\n\n```\nabstract class Screen {\n    void show() {\n        System.out.println(\"== 小白學程式 ==\");\n        body();\n    }\n\n    abstract void body();\n}\n```\n\n`abstract` 方法沒有內容，子類別一定要寫出來。抽象類別還沒寫完，所以不能直接 `new Screen()`，要 `new` 它的子類別。"
     }
   ]
 }

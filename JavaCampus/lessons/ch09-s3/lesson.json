@@ -1,0 +1,38 @@
+{
+  "id": "ch09-s3",
+  "title": "面試官的實作題",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["interface", "polymorphism"],
+  "vars": [
+    { "name": "days", "type": "String[]", "value": "{\"星期一\", \"星期二\", \"星期三\", \"星期四\", \"星期五\"}" }
+  ],
+  "steps": [
+    {
+      "id": "lunch",
+      "title": "午餐的約定",
+      "goal": "寫 `interface Lunch`，裡面只有 `String eat();`。`LuRouFan` 交回 `吃滷肉飯`，`KongRouFan` 交回 `吃控肉飯`。",
+      "instructions": "約定只說「中午要吃」，吃什麼由實作決定。",
+      "expectedShape": "interface Lunch {\n    String eat();\n}\n\nclass LuRouFan implements Lunch {\n    public String eat() {\n        …\n    }\n}\n\nclass KongRouFan implements Lunch {\n    …\n}",
+      "check": { "type": "values", "exprs": ["new LuRouFan().eat()", "new KongRouFan().eat()"] },
+      "hints": {
+        "lead": "介面規定行為，類別各自實作⋯⋯",
+        "plain": "⋯⋯白話：`Lunch` 只說「中午要吃」，吃滷肉飯還是控肉飯，由實作的類別決定。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "week",
+      "title": "約定不變，內容可以換",
+      "goal": "用 `Lunch[] week` 照順序放五天的午餐：滷肉飯、控肉飯、滷肉飯、控肉飯、滷肉飯。用迴圈印出 `星期一：吃滷肉飯` 這樣的五行。",
+      "instructions": "`days` 是題目給的星期一到星期五，`days[i]` 和 `week[i]` 是同一天。",
+      "expectedShape": "Lunch[] week = {new LuRouFan(), …};\nfor (…) {\n    System.out.println(days[i] + \"：\" + week[i].eat());\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "以介面型別的陣列統一呼叫⋯⋯",
+        "plain": "⋯⋯白話：每天都是同一句 `eat()`，吃到什麼看那天放了哪一種午餐。約定不變，內容可以換。"
+      },
+      "afterText": ""
+    }
+  ]
+}

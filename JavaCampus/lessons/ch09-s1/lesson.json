@@ -1,0 +1,36 @@
+{
+  "id": "ch09-s1",
+  "title": "後端照介面寫",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["interface", "implements", "polymorphism"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "checkers",
+      "title": "判斷的約定",
+      "goal": "寫 `interface Checker`，裡面只有 `boolean check(String typed);`。再寫兩種實作：`ExactChecker(String answer)` 去掉前後空白後完全一樣才對，`OptionChecker(String letter)` 選項代號一樣就對。",
+      "instructions": "兩個類別都用建構子收下正確答案。",
+      "expectedShape": "interface Checker {\n    boolean check(String typed);\n}\n\nclass ExactChecker implements Checker {\n    …\n    public boolean check(String typed) {\n        …\n    }\n}\n\nclass OptionChecker implements Checker {\n    …\n}",
+      "check": { "type": "values", "exprs": ["new ExactChecker(\"選午餐\").check(\" 選午餐\")", "new OptionChecker(\"B\").check(\"B\")", "new OptionChecker(\"B\").check(\"A\")"] },
+      "hints": {
+        "lead": "以介面定義行為，由不同類別提供實作⋯⋯",
+        "plain": "⋯⋯白話：「怎麼判斷對錯」先講好，叫 `check`。填空題和選擇題各寫各的判斷，但對外都長得一樣。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "judge",
+      "title": "畫面怎麼改都不會壞",
+      "goal": "寫 `static String judge(Checker c, String typed)`：對就交回 `答對了`，錯就交回 `再試一次`。傳哪一種 `Checker` 進來都能用。",
+      "instructions": "參數的型別寫介面 `Checker`，不寫哪一種實作。",
+      "expectedShape": "static String judge(Checker c, String typed) {\n    if (c.check(typed)) {\n        …\n    }\n    …\n}",
+      "check": { "type": "values", "exprs": ["judge(new ExactChecker(\"選午餐\"), \"選午餐\")", "judge(new OptionChecker(\"B\"), \"A\")"] },
+      "hints": {
+        "lead": "依賴介面而非實作，呼叫端不受實作替換影響⋯⋯",
+        "plain": "⋯⋯白話：`judge` 只認得 `Checker` 這張約定，不管是哪一種題目。之後多了新題型，`judge` 一行都不用改。"
+      },
+      "afterText": ""
+    }
+  ]
+}

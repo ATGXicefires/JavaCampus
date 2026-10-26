@@ -1,0 +1,36 @@
+{
+  "id": "ch09-k4",
+  "title": "共用的標題列",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["abstract"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "screen",
+      "title": "抽象的畫面",
+      "goal": "寫 `abstract class Screen`：`void show()` 先印 `== 小白學程式 ==`，再呼叫 `body()`，最後印 `—— 滷肉和分號陪你寫 ——`；`body()` 寫成 `abstract`。再寫 `class LessonScreen extends Screen`，`body()` 印出 `今天的課：for 迴圈`。`new` 一個 `LessonScreen` 呼叫 `show()`。",
+      "instructions": "`——` 可以從目標複製。`abstract` 方法沒有大括號，直接用分號結尾。",
+      "expectedShape": "abstract class Screen {\n    void show() {\n        …\n        body();\n        …\n    }\n\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() {\n        …\n    }\n}\n\n…",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "共用的寫一次，不同的留給子類別。",
+        "plain": "每個畫面的標題列和頁尾都一樣，寫在 `Screen` 一次就好。中間的內容每個畫面不同，先空著寫成 `abstract`，等子類別來填。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "new",
+      "title": "不能直接 new",
+      "goal": "起始碼的最後一行寫了 `new Screen()`，紅字。改成 `new` 兩種不同的畫面，`LessonScreen` 和 `QuizScreen` 各 `show()` 一次。",
+      "instructions": "抽象類別還沒寫完，不能直接 `new`。",
+      "expectedShape": "new LessonScreen().show();\nnew …().show();",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "new 子類別，不要 new Screen。",
+        "plain": "`Screen` 的內容還空著，就像只有外框的畫面，所以不能直接拿來用。要 `new` 已經填好內容的子類別。"
+      },
+      "afterText": ""
+    }
+  ]
+}
