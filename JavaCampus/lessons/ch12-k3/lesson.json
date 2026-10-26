@@ -1,0 +1,38 @@
+{
+  "id": "ch12-k3",
+  "title": "發表前十分鐘的 bug",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["guard"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "full",
+      "title": "多答了一題",
+      "goal": "試玩的老師答了獎勵題，`done` 比 `total` 多，`repeat` 收到負數就出錯了。修好 `bar()`：完成數超過總數時，畫成全滿。",
+      "instructions": "`main` 會畫出 `(3, 5)` 和 `(6, 5)` 兩條。",
+      "expectedShape": "String bar() {\n    int filled = done;\n    if (filled > total) {\n        …\n    }\n    return \"■\".repeat(filled) + \"□\".repeat(total - filled);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先把格數擋在總數以內。",
+        "plain": "做完的格數不能比總格數多。超過了就當成全滿，剩下的空格才不會變成負的。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "percent",
+      "title": "百分比也要擋",
+      "goal": "`percent()` 超過 100 時就交回 100。",
+      "instructions": "按「完成」時會直接呼叫 `percent()` 測試，`main` 不會執行。",
+      "expectedShape": "int percent() {\n    int p = done * 100 / total;\n    if (…) {\n        return 100;\n    }\n    return p;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["new ProgressBar(6, 5).percent()", "new ProgressBar(3, 4).percent()"] },
+      "hints": {
+        "lead": "超過 100 就說 100。",
+        "plain": "進度最多就是百分之百。算出來比 100 大，就交回 100，其他照算。"
+      },
+      "afterText": ""
+    }
+  ]
+}

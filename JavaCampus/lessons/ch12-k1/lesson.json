@@ -1,0 +1,38 @@
+{
+  "id": "ch12-k1",
+  "title": "使用流程",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["import"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "flow",
+      "title": "畫面的順序",
+      "goal": "在 `Main.java` 最上面寫 `import java.util.ArrayList;`。用 `ArrayList<Drawable>` 依序放進 `首頁`、`課程`、`答題`、`成績` 四個畫面（`new Screen(\"首頁\")` 這樣），用 for-each 全部畫出來。",
+      "instructions": "`Screen` 照 `Drawable` 的約定寫好了，在另一個分頁。",
+      "expectedShape": "import java.util.ArrayList;\n…\nArrayList<Drawable> flow = new ArrayList<>();\nflow.add(new Screen(\"首頁\"));\n…\nfor (Drawable d : flow) {\n    d.draw();\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "清單裝畫面，for-each 一個一個畫。",
+        "plain": "明天上台就照這個順序示範。清單排好四個畫面，迴圈從頭畫到尾，順序就是使用的流程。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "newcomer",
+      "title": "模擬一位新生",
+      "goal": "`main` 裡多了一位新生的作答 `typed`：第一次答錯，第二次答對。用起始碼給的 `checker` 判斷每一次作答，答錯就印 `RETRY`，答對就印 `PASS`。",
+      "instructions": "`RETRY` 和 `PASS` 是 `Main` 裡寫好的兩句台詞，直接印出來。",
+      "expectedShape": "for (String t : typed) {\n    if (checker.check(t)) {\n        System.out.println(PASS);\n    } else {\n        …\n    }\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "交給 checker 判斷。",
+        "plain": "判斷對錯是學長那一半寫好的 `Checker`，你只要把每一次作答交給它，再照結果換小老師說的話。"
+      },
+      "afterText": ""
+    }
+  ]
+}

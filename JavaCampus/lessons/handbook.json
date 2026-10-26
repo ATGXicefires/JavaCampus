@@ -468,6 +468,20 @@
       "title": "無限迴圈",
       "summary": "`while (true)` 一定要留出口。",
       "body": "迴圈的條件永遠成立，就會一直跑下去，停不下來。\n\n```\nwhile (true) {\n    day++;\n    if (day == 30) {\n        break;\n    }\n}\n```\n\n`while (true)` 一定要在裡面留一個 `break` 當出口。用 `while` 時忘了 `i++`，條件也會永遠成立。程式跑超過 3 秒會被強制停止；`while (true)` 後面沒有出口的程式碼，編譯器會說永遠跑不到。"
+    },
+    {
+      "id": "import",
+      "chapter": 12,
+      "title": "import 與 package",
+      "summary": "`import` 寫在檔案最上面。",
+      "body": "要用 `java.util` 裡的類別，例如 `ArrayList`、`HashMap`，先在檔案最上面寫 `import`。\n\n```\nimport java.util.ArrayList;\nimport java.util.HashMap;\n\npublic class Main {\n    …\n}\n```\n\n`import` 只對寫它的那個檔案有效，每個檔案自己 import 自己要用的。`String`、`System` 這些在 `java.lang` 裡，不用 import。\n\n正式的專案會在第一行寫 `package`，把類別分資料夾放。這個遊戲的程式都放在同一個地方，寫了 `package` 也會被忽略。"
+    },
+    {
+      "id": "full-program",
+      "chapter": 12,
+      "title": "完整的專題",
+      "summary": "好幾個檔案，從 `Main` 開始跑。",
+      "body": "完整的專題是好幾個檔案一起合作：\n\n- `Main.java`：從 `main` 開始，把所有東西接起來\n- 每個類別一個檔案，各自 import 自己要用的\n- 介面定好約定，類別照約定實作\n- 清單裝資料，迴圈走過每一筆，例外和邊界都要擋好\n\n這一年學的東西，全部在裡面。"
     }
   ]
 }
