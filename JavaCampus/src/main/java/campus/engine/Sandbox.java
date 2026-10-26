@@ -100,9 +100,9 @@ public final class Sandbox implements AutoCloseable {
         }
 
         List<Segment> segments = split(js, source, null);
-        Optional<Problem> semicolon = missingSemicolon(segments);
-        if (semicolon.isPresent()) {
-            return compileError(List.of(semicolon.get()));
+        Optional<Problem> early = conflictMarker(source, null).or(() -> missingSemicolon(segments));
+        if (early.isPresent()) {
+            return compileError(List.of(early.get()));
         }
 
         output.reset();
@@ -182,8 +182,9 @@ public final class Sandbox implements AutoCloseable {
             String code = blankPackage(f.text());
             units.add(new Unit(f, code, split(js, code, f.name())));
         }
-        Optional<Problem> early = units.stream().map(u -> missingSemicolon(u.segments())).flatMap(Optional::stream)
-                .findFirst().or(() -> structure(js, units)).or(() -> foreignImport(js, units));
+        Optional<Problem> early = units.stream()
+                .map(u -> conflictMarker(u.code(), u.file().name()).or(() -> missingSemicolon(u.segments())))
+                .flatMap(Optional::stream).findFirst().or(() -> structure(js, units)).or(() -> foreignImport(js, units));
         if (early.isPresent()) {
             return compileError(List.of(early.get()));
         }
@@ -519,6 +520,19 @@ public final class Sandbox implements AutoCloseable {
             rest = ci.remaining();
         }
         return out;
+    }
+
+    /** 合併衝突的標記不是 Java，編譯器只會說運算式在這裡斷掉了；直接指出是哪一行。 */
+    private static Optional<Problem> conflictMarker(String source, String file) {
+        int at = 0;
+        for (String line : source.split("\n", -1)) {
+            if (line.startsWith("<<<<<<<") || line.startsWith("=======") || line.startsWith(">>>>>>>")) {
+                return Optional.of(new Problem(Severity.ERROR, at, at + line.stripTrailing().length(),
+                        Diagnostics.conflictMarker(), "merge conflict marker", file));
+            }
+            at += line.length() + 1;
+        }
+        return Optional.empty();
     }
 
     /** JShell 會自動補分號、也接受結尾沒有分號的運算式，真正的 Java 兩者都不允許。 */

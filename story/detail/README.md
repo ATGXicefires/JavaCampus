@@ -181,22 +181,23 @@ Comedy Bad End 到得了，和 `branching.md` 的模擬一樣。
 
 ## 引擎需求
 
-只記錄，這次沒有動程式。依需要的章節排：
+依需要的章節排。「狀態」是做題目時處理的結果。
 
-| 章 | 需求 | 為什麼 |
-|---|---|---|
-| 3 | `lesson.json` 加一個選填欄位，指定用哪一組反應台詞 | 爆發那題（`ch03-s2`）亭瑄就在旁邊，卻一句話都沒說，需要專用的台詞；現在反應組是照搭檔的名字挑的，名字還決定名牌顏色 |
-| 3 | 文件的螢光色標記（可選） | 段考筆記每一頁都有螢光色重點，現在只能用粗體代替 |
-| 4 | `Diagnostics` 補「對 int 呼叫方法」（`cant.deref`）的繁中說明 | 學字串方法時很常見 |
-| 7 | 做題目前先確認：JShell 會擋下片段之間的 private 存取 | `ch07-k1`、`ch07-s1` 的第 2 步靠這個；擋不住就改用完整程式 |
-| 7 | `Diagnostics` 補 private 存取（`report.access`）、對 final 重新指定值 | 這一章的紅字都是這兩種 |
-| 8 | `Diagnostics` 補「`@Override` 沒有覆寫到」（`method.does.not.override.superclass`） | `ch08-k3`、`ch08-s2` |
-| 8 | 筆記不要寫「super 一定要放第一行」 | JDK 25 的建構子允許在 `super(...)` 前面寫敘述（JEP 513） |
-| 9 | `Diagnostics` 補：沒有實作抽象方法（`does.not.override.abstract`）、實作介面的方法沒寫 `public`（`override.weaker.access`）、`new` 抽象類別（`abstract.cant.be.instantiated`） | 第一次寫介面最常碰到 |
-| 10 | `Diagnostics` 補 `ArrayList<int>`（`type.found.req`），說明要改成 `Integer` | `ch10-k2`、`ch10-s2` |
-| 10 | 認出合併衝突的標記（可選） | `<<<<<<<` 現在只會得到一般的語法錯誤 |
-| 11 | `Diagnostics` 補「這一行永遠跑不到」（`unreachable.stmt`） | `ch11-s2` 第 2 步 |
-| 11 | 確認逾時算「起始碼失敗」 | `ch11-s2` 的起始碼靠逾時失敗 |
-| 12 | 結局畫面：結局名稱和結局回顧 | `design/systems.md` 說做到第十二章再做 |
-| 12 | `repeat` 收到負數的 `IllegalArgumentException` 補繁中說明（可選） | `ch12-k3` |
-| 全部 | 同一步同時比對輸出和數值 | 引擎目前不支援（使用者的「後續規劃」）。細綱需要兩種檢查時都拆成兩步；之後支援了，可以合併 |
+| 章 | 需求 | 為什麼 | 狀態 |
+|---|---|---|---|
+| 3 | `lesson.json` 加一個選填欄位，指定用哪一組反應台詞 | 爆發那題（`ch03-s2`）亭瑄就在旁邊，卻一句話都沒說，需要專用的台詞；現在反應組是照搭檔的名字挑的，名字還決定名牌顏色 | 未做：反應台詞等寫劇情時一起處理 |
+| 3 | 文件的螢光色標記（可選） | 段考筆記每一頁都有螢光色重點，現在只能用粗體代替 | 未做：屬於劇中文件 |
+| 4 | `Diagnostics` 補「對 int 呼叫方法」（`cant.deref`）的繁中說明 | 學字串方法時很常見 | 已做 |
+| 7 | 做題目前先確認：JShell 會擋下片段之間的 private 存取 | `ch07-k1`、`ch07-s1` 的第 2 步靠這個；擋不住就改用完整程式 | 已確認會擋，也擋得住數值比對的運算式 |
+| 7 | `Diagnostics` 補 private 存取（`report.access`）、對 final 重新指定值 | 這一章的紅字都是這兩種 | 已做 |
+| 8 | `Diagnostics` 補「`@Override` 沒有覆寫到」（`method.does.not.override.superclass`） | `ch08-k3`、`ch08-s2` | 已做 |
+| 8 | 筆記不要寫「super 一定要放第一行」 | JDK 25 的建構子允許在 `super(...)` 前面寫敘述（JEP 513） | 照做 |
+| 9 | `Diagnostics` 補：沒有實作抽象方法（`does.not.override.abstract`）、實作介面的方法沒寫 `public`（`override.weaker.access`）、`new` 抽象類別（`abstract.cant.be.instantiated`） | 第一次寫介面最常碰到 | 已做 |
+| 10 | `Diagnostics` 補 `ArrayList<int>`（`type.found.req`），說明要改成 `Integer` | `ch10-k2`、`ch10-s2` | 已做 |
+| 10 | 認出合併衝突的標記（可選） | `<<<<<<<` 現在只會得到一般的語法錯誤 | 已做：執行前直接指出標記在哪一行 |
+| 11 | `Diagnostics` 補「這一行永遠跑不到」（`unreachable.stmt`） | `ch11-s2` 第 2 步 | 已做 |
+| 11 | 確認逾時算「起始碼失敗」 | `ch11-s2` 的起始碼靠逾時失敗 | 已確認，有測試 |
+| 12 | 結局畫面：結局名稱和結局回顧 | `design/systems.md` 說做到第十二章再做 | 未做：等寫結局 |
+| 12 | `repeat` 收到負數的 `IllegalArgumentException` 補繁中說明（可選） | `ch12-k3` | 已做 |
+| 4～12 | `Diagnostics` 補「方法裡重複宣告同名變數」（`already.defined`） | 做題目時發現的：寫方法和類別時很常碰到，原本只有英文 | 已做 |
+| 全部 | 同一步同時比對輸出和數值 | 引擎目前不支援（使用者的「後續規劃」）。細綱需要兩種檢查時都拆成兩步；之後支援了，可以合併 | 未做 |

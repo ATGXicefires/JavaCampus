@@ -90,6 +90,26 @@ class ProgramModeTest {
     }
 
     @Test
+    void primitiveInsideAngleBrackets() {
+        assertMentions(run("import java.util.ArrayList;\n\n" + main("ArrayList<int> scores = new ArrayList<>();")),
+                "`int`", "`Integer`");
+    }
+
+    @Test
+    void codeAfterEndlessLoopIsUnreachable() {
+        assertMentions(run(main("while (true) {\n}\nSystem.out.println(\"然後呢？\");")), "永遠不會被執行到");
+    }
+
+    @Test
+    void pointsAtMergeConflictMarker() {
+        String src = main("<<<<<<< 吳二弘\nSystem.out.println(\"a\");\n=======\nSystem.out.println(\"b\");\n>>>>>>> 梁亭瑄");
+        RunResult r = run(src);
+        assertEquals(Outcome.COMPILE_ERROR, r.outcome());
+        assertMentions(r, "合併衝突");
+        assertEquals(src.indexOf("<<<<<<<"), error(r).start());
+    }
+
+    @Test
     void uninitializedLocalIsCompileError() {
         RunResult r = run(main("int w;\nSystem.out.println(w);"));
         assertEquals(Outcome.COMPILE_ERROR, r.outcome());

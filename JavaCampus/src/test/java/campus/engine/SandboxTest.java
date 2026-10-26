@@ -181,6 +181,64 @@ class SandboxTest {
     }
 
     @Test
+    void explainsMethodCallOnInt() {
+        assertMentions(run("int n = 5;\nn.length();"), "`int`", "基本型別");
+    }
+
+    @Test
+    void privateFieldIsBlockedOutsideItsClass() {
+        RunResult r = run("class Bag {\n    private int count;\n}\nBag b = new Bag();\nb.count = 3;");
+        assertEquals(Outcome.COMPILE_ERROR, r.outcome());
+        assertMentions(r, "`count`", "private");
+    }
+
+    @Test
+    void privateFieldIsBlockedInProbes() {
+        RunResult r = sandbox.run(List.of(), "class Bag {\n    private int count;\n}", List.of("new Bag().count"));
+        assertTrue(r.probes().getFirst().error() != null, r.toString());
+    }
+
+    @Test
+    void finalCannotBeReassigned() {
+        assertMentions(run("class Menu {\n    static final int MAX = 12;\n}\nMenu.MAX = 20;"), "`MAX`", "final");
+    }
+
+    @Test
+    void overrideThatOverridesNothing() {
+        assertMentions(run("class Question {\n    boolean check(String a) { return true; }\n}\n"
+                + "class Choice extends Question {\n    @Override\n    boolean chek(String a) { return false; }\n}"), "@Override");
+    }
+
+    @Test
+    void interfaceMethodNotImplemented() {
+        assertMentions(run("interface Drawable {\n    void draw();\n}\nclass Home implements Drawable {\n}"),
+                "`Home`", "`draw()`");
+    }
+
+    @Test
+    void interfaceMethodNeedsPublic() {
+        assertMentions(run("interface Drawable {\n    void draw();\n}\nclass Home implements Drawable {\n    void draw() { }\n}"),
+                "`public`");
+    }
+
+    @Test
+    void abstractClassCannotBeNew() {
+        assertMentions(run("abstract class Screen { }\nScreen s = new Screen();"), "`Screen`", "`new`");
+    }
+
+    @Test
+    void duplicateLocalInsideMethod() {
+        assertMentions(run("void m() {\n    int a = 1;\n    int a = 2;\n}"), "`a`", "已經宣告過");
+    }
+
+    @Test
+    void negativeRepeatCount() {
+        RunResult r = run("String bar = \"□\".repeat(-1);");
+        assertEquals(Outcome.RUNTIME_ERROR, r.outcome());
+        assertMentions(r, "`repeat`", "-1");
+    }
+
+    @Test
     void warnsStringComparedWithEquals() {
         RunResult r = run("String a = \"hi\";\nif (a == \"hi\") {\n    System.out.println(1);\n}");
         assertEquals(Outcome.OK, r.outcome());
