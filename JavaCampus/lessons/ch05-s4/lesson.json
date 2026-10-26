@@ -1,0 +1,23 @@
+{
+  "id": "ch05-s4",
+  "title": "紙條上的 return true",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["bool-method", "fullwidth"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "note",
+      "title": "錯誤較少的版本",
+      "goal": "修到印出 `true`。",
+      "instructions": "照著紙條打進去，執行就紅字。",
+      "expectedShape": "static boolean youCanDoIt() {\n    …\n}\nSystem.out.println(youCanDoIt());",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先是 `not a statement`，再來是 `illegal character: '\\uff1b'`；關鍵字區分大小寫⋯⋯",
+        "plain": "⋯⋯白話：行尾的 `；` 是全形，換成半形的 `;`。`Return` 的 R 要小寫：Java 的 `return` 只有小寫這一種寫法。"
+      },
+      "afterText": ""
+    }
+  ]
+}

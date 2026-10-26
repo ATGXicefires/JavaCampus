@@ -209,6 +209,55 @@
       "title": "比字串要用 equals",
       "summary": "字串一律用 `equals` 比，不要用 `==`。",
       "body": "`==` 比的是「是不是同一個盒子」，`equals` 比的才是「裡面的字一不一樣」。\n\n```\nString typed = \" 小白\".trim();\nSystem.out.println(typed == \"小白\");       // false\nSystem.out.println(typed.equals(\"小白\"));  // true\n```\n\n`trim()` 做出一個新的字串：字一樣，盒子卻是新的。所以比字串一律用 `equals`。"
+    },
+    {
+      "id": "bool-method",
+      "chapter": 5,
+      "title": "boolean 方法",
+      "summary": "答案是對或錯的方法：`isPass(60)`。",
+      "body": "有些方法只回答一個是非題，交回 `true` 或 `false`。名字常用 `is` 開頭，一看就知道在問什麼。\n\n```\nstatic boolean isPass(int score) {\n    return score >= 60;\n}\n```\n\n想到答案就可以馬上 `return`，後面的程式不會再跑。先把不合理的情況擋掉，再判斷正常的情況，方法會清楚很多。"
+    },
+    {
+      "id": "boundary",
+      "chapter": 5,
+      "title": "邊界值",
+      "summary": "60 分及格，就要測 59、60、61。",
+      "body": "bug 最喜歡躲在**邊界**：剛好及格、剛好滿、剛好是 0。\n\n```\nisPass(59)   // false\nisPass(60)   // true\nisPass(61)   // true\n```\n\n`>=` 寫成 `>` 的話，只有 60 分會錯。只測 30 分和 90 分，永遠抓不到這個 bug。"
+    },
+    {
+      "id": "test-data",
+      "chapter": 5,
+      "title": "測資",
+      "summary": "一組資料對，不代表全部都對。",
+      "body": "測資是拿來測程式的資料。一組對了，不代表都對；要換很多組，尤其是奇怪的：0、負數、只有一個、全部一樣。\n\n```\nmax(new int[]{34, 41, 62})\nmax(new int[]{-3, -7})\nmax(new int[]{5})\n```\n\n第二組專抓「從 0 開始比」的寫法：全部都是負數時，它會交回 0。"
+    },
+    {
+      "id": "logic",
+      "chapter": 5,
+      "title": "且／或／不是",
+      "summary": "`&&` 都要成立，`||` 一個就好，`!` 反過來。",
+      "body": "條件可以組合起來。`a && b` 是兩個都成立才成立；`a || b` 是有一個成立就成立；`!a` 是把答案反過來。\n\n```\nboolean showHint = triedTwice && !passed;\n```\n\n意思是：試過兩次，而且還沒過，才給提示。"
+    },
+    {
+      "id": "while",
+      "chapter": 5,
+      "title": "while 是「還沒好就繼續」",
+      "summary": "條件還成立，就再做一次。",
+      "body": "`while` 不用先知道要做幾次，只要條件還成立，就再做一次。\n\n```\nint saved = 0;\nint days = 0;\nwhile (saved < price) {\n    saved += perDay;\n    days++;\n}\n```\n\n錢還不夠，就再存一天。條件一開始就不成立的話，一次都不會做。"
+    },
+    {
+      "id": "nested",
+      "chapter": 5,
+      "title": "巢狀迴圈",
+      "summary": "迴圈裡再放迴圈：外面一列，裡面一格。",
+      "body": "迴圈裡面再放一個迴圈，就能畫出表格。\n\n```\nfor (int r = 1; r <= 2; r++) {\n    String row = \"\";\n    for (int c = 1; c <= 3; c++) {\n        row += \"□\";\n    }\n    System.out.println(row);\n}\n```\n\n外面的迴圈跑一列，裡面的迴圈把那一列的每一格畫完。"
+    },
+    {
+      "id": "max-min",
+      "chapter": 5,
+      "title": "找最大最小",
+      "summary": "先把第一格當最大，再一格一格比。",
+      "body": "找最大值時，先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n```\nint best = a[0];\nfor (int i = 1; i < a.length; i++) {\n    if (a[i] > best) {\n        best = a[i];\n    }\n}\n```\n\n不要從 0 開始比：全部都是負數的時候，0 會贏過每一個人。"
     }
   ]
 }

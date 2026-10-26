@@ -1,0 +1,36 @@
+{
+  "id": "ch05-s1",
+  "title": "術科練習：閏年",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["logic", "bool-method", "boundary"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "four",
+      "title": "四年一閏",
+      "goal": "寫 `static boolean isLeap(int year)`：能被 4 整除的是閏年。",
+      "instructions": "「能被 4 整除」就是除以 4 沒有餘數。",
+      "expectedShape": "static boolean isLeap(int year) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["isLeap(2024)", "isLeap(2023)"] },
+      "hints": {
+        "lead": "整除即餘數為 0：`year % 4 == 0`⋯⋯",
+        "plain": "⋯⋯白話：「能被 4 整除」就是除以 4 剛好沒有剩：`year % 4 == 0`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "century",
+      "title": "百年不閏",
+      "goal": "加上規則：能被 100 整除的不是閏年，但能被 400 整除的又是。",
+      "instructions": "1900 不是閏年，2000 是。",
+      "expectedShape": "return … && … || …;",
+      "check": { "type": "values", "exprs": ["isLeap(1900)", "isLeap(2000)", "isLeap(2100)", "isLeap(2024)"] },
+      "hints": {
+        "lead": "四年一閏、百年不閏、四百年再閏：用 `&&`、`||` 組合條件⋯⋯",
+        "plain": "⋯⋯白話：「能被 4 整除，而且不能被 100 整除」，或者「能被 400 整除」。前半用 `&&`，兩半之間用 `||`。"
+      },
+      "afterText": ""
+    }
+  ]
+}
