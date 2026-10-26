@@ -1,0 +1,36 @@
+{
+  "id": "ch08-s2",
+  "title": "沒有覆寫到",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["override-annotation"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "check",
+      "title": "寫了卻沒用",
+      "goal": "這是寒假前寫的 `FillQuestion`：想讓中間多打空白也算對，可是 `Check` 寫成大寫的 C。先在這個方法上加 `@Override`，看紅字說什麼，再修好。",
+      "instructions": "沒有覆寫到的時候程式照樣能跑，只是一直用父類別的 `check`。",
+      "expectedShape": "@Override\nboolean check(String typed) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選 午 餐\")", "new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選晚餐\")"] },
+      "hints": {
+        "lead": "`method does not override or implement a method from a supertype`⋯⋯",
+        "plain": "⋯⋯白話：`Check` 和 `check` 在 Java 是兩個不同的名字，所以它只是多了一個新方法。改成小寫，才是覆寫父類別的 `check`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "tostring",
+      "title": "toSting",
+      "goal": "`System.out.println(q)` 印出一串看不懂的東西，因為 `toSting()` 也沒覆寫到。一樣先加 `@Override` 再修，讓它印出 `填空題：選午餐`。",
+      "instructions": "`toString()` 原本是 `public`，覆寫時前面也要寫 `public`。",
+      "expectedShape": "@Override\npublic String toString() {\n    …\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`println` 會呼叫 `toString()`；覆寫時存取權限不得更封閉⋯⋯",
+        "plain": "⋯⋯白話：少一個 r，`println` 就找不到她寫的版本。改成 `toString`，前面加上 `public`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

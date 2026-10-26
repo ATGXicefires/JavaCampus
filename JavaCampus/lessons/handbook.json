@@ -335,6 +335,41 @@
       "title": "final 是寫死的",
       "summary": "`final` 設定一次就不能再改。",
       "body": "加了 `final` 的變數，設定一次就不能再改。\n\n```\nstatic final int MAX = 12;\n```\n\n`static final` 常拿來當常數：大家共用，而且不會變。常數的名字習慣全部大寫，單字之間用 `_` 隔開，例如 `NEW_YEAR_SET`。"
+    },
+    {
+      "id": "extends",
+      "chapter": 8,
+      "title": "繼承",
+      "summary": "父類別有的，子類別直接就有。",
+      "body": "`extends` 後面寫另一個類別的名字，這個類別就繼承了它。\n\n```\nclass MyPlan extends ParentsPlan {\n}\n```\n\n`ParentsPlan` 叫父類別，`MyPlan` 叫子類別。`MyPlan` 裡面什麼都沒寫，也已經有父類別所有的欄位和方法：`new MyPlan().future()` 拿到的就是父類別寫好的版本。"
+    },
+    {
+      "id": "override",
+      "chapter": 8,
+      "title": "覆寫",
+      "summary": "同名、同參數的方法，換成自己的版本。",
+      "body": "子類別寫一個和父類別同名、同參數的方法，就換成自己的版本。這叫覆寫。\n\n```\nclass MyPlan extends ParentsPlan {\n    String hobby() {\n        return \"畫畫不只是興趣\";\n    }\n}\n```\n\n覆寫了 `hobby()`，`new MyPlan().hobby()` 就用自己的版本；沒覆寫的 `future()`，照樣用父類別的。"
+    },
+    {
+      "id": "override-annotation",
+      "chapter": 8,
+      "title": "@Override 是請編譯器幫你看",
+      "summary": "沒覆寫到，編譯器會直接告訴你。",
+      "body": "覆寫的方法上面加一行 `@Override`，等於請編譯器幫你確認：父類別真的有這個方法。\n\n```\n@Override\nString describe() {\n    return \"資訊科\";\n}\n```\n\n名字打錯（例如 `descripe`）、大小寫不對、參數不一樣，都不算覆寫，只是多了一個新方法。程式照樣能跑，只是悄悄用了父類別的版本。加了 `@Override`，編譯器會直接說沒覆寫到。"
+    },
+    {
+      "id": "super",
+      "chapter": 8,
+      "title": "super 是父類別",
+      "summary": "`super` 用父類別原本的建構子和方法。",
+      "body": "子類別裡寫 `super`，指的是父類別的那一份。\n\n```\nMyPlan(String name) {\n    super(name);\n}\n\nString future() {\n    return super.future() + \"，而且是我喜歡的那一種\";\n}\n```\n\n`super(name)` 把名字交給父類別的建構子。`super.future()` 呼叫父類別原本的 `future()`，再接上自己的部分：留下一部分，改寫一部分。"
+    },
+    {
+      "id": "tostring",
+      "chapter": 8,
+      "title": "toString 決定印出來的樣子",
+      "summary": "覆寫 `toString()` 決定物件怎麼印。",
+      "body": "`System.out.println` 印一個物件的時候，印的是它的 `toString()`。沒覆寫的話，印出來是 `MyPlan@1b6d3586` 這種類別名稱加一串數字；在遊戲裡跑的時候，前面還會多一段 `REPL.$JShell$…` 之類的字。\n\n```\n@Override\npublic String toString() {\n    return month + \"：\" + title;\n}\n```\n\n`toString()` 是所有類別都有的方法，原本就是 `public`，覆寫的時候前面也要寫 `public`。"
     }
   ]
 }

@@ -1,0 +1,36 @@
+{
+  "id": "ch08-s3",
+  "title": "數字題的 super",
+  "route": "學長",
+  "partner": "阿成",
+  "notes": ["super"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "ctor",
+      "title": "交給父類別",
+      "goal": "寫 `class NumberQuestion extends Question` 和它的建構子 `NumberQuestion(String text, String answer)`：用 `super(text, answer)` 把題目和答案交給父類別。",
+      "instructions": "新的題型，答案是一個數字，例如「8 個扭蛋平均掛在 3 個掛勾上，剩幾個？」答案是 `2`。",
+      "expectedShape": "class NumberQuestion extends Question {\n    NumberQuestion(String text, String answer) {\n        super(…);\n    }\n}",
+      "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").answer"] },
+      "hints": {
+        "lead": "子類別建構子以 `super(...)` 呼叫父類別建構子⋯⋯",
+        "plain": "⋯⋯白話：題目和答案怎麼存，`Question` 已經寫好了。`NumberQuestion` 收到以後，用 `super(text, answer)` 整包交給它。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "check",
+      "title": "先檢查再交給父類別",
+      "goal": "覆寫 `check`：先 `trim()` 去掉前後的空白，用 `Integer.parseInt` 確認打的是數字，不是數字就交回 `false`（用 try-catch）；是數字才交給 `super.check(...)` 判斷。",
+      "instructions": "`parseInt` 不吃前後的空白，要先 `trim()`。",
+      "expectedShape": "@Override\nboolean check(String typed) {\n    String trimmed = typed.trim();\n    try {\n        …\n    } catch (NumberFormatException e) {\n        return false;\n    }\n    return super.check(…);\n}",
+      "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").check(\" 2 \")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"二\")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"3\")"] },
+      "hints": {
+        "lead": "先驗證輸入，再以 `super.check` 沿用父類別的判斷⋯⋯",
+        "plain": "⋯⋯白話：數字題只多一道檢查：不是數字就直接算錯。是數字的話，對不對還是交給 `Question` 原本的 `check` 判斷，不用重寫一次。"
+      },
+      "afterText": ""
+    }
+  ]
+}

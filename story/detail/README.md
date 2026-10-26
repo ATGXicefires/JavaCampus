@@ -192,6 +192,7 @@ Comedy Bad End 到得了，和 `branching.md` 的模擬一樣。
 | 7 | `Diagnostics` 補 private 存取（`report.access`）、對 final 重新指定值 | 這一章的紅字都是這兩種 | 已做 |
 | 8 | `Diagnostics` 補「`@Override` 沒有覆寫到」（`method.does.not.override.superclass`） | `ch08-k3`、`ch08-s2` | 已做 |
 | 8 | 筆記不要寫「super 一定要放第一行」 | JDK 25 的建構子允許在 `super(...)` 前面寫敘述（JEP 513） | 照做 |
+| 8 | 子類別沒把參數交給父類別的建構子時，紅字要有說明 | 做題目時發現的：JShell 把這種錯當成之後還能補救，原本只顯示「程式有錯誤」，底下沒有說明（`ch08-k2`） | 已做 |
 | 9 | `Diagnostics` 補：沒有實作抽象方法（`does.not.override.abstract`）、實作介面的方法沒寫 `public`（`override.weaker.access`）、`new` 抽象類別（`abstract.cant.be.instantiated`） | 第一次寫介面最常碰到 | 已做 |
 | 10 | `Diagnostics` 補 `ArrayList<int>`（`type.found.req`），說明要改成 `Integer` | `ch10-k2`、`ch10-s2` | 已做 |
 | 10 | 認出合併衝突的標記（可選） | `<<<<<<<` 現在只會得到一般的語法錯誤 | 已做：執行前直接指出標記在哪一行 |
