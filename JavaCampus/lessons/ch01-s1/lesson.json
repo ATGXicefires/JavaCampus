@@ -35,7 +35,7 @@
     {
       "id": "gacha",
       "title": "七個，然後八個",
-      "goal": "`gacha` 放進 `7` 印出來，再換成 `8` 印一次。",
+      "goal": "印出兩行：`7` 和 `8`。\n\n做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再把它換成 `8`，再印一次。",
       "instructions": "範例 3 示範換掉盒子裡的東西。先做一個 `int` 盒子叫 `gacha`，放進 `7` 印出來；再把它換成 `8`，再印一次。\n\n輸出要是 `7` 和 `8` 兩行。換的時候寫名字、`=`、新的值就好，不用再寫 `int`。",
       "expectedShape": "int gacha = …;\nSystem.out.println(…);\n… = …;\nSystem.out.println(…);",
       "check": { "type": "output" },

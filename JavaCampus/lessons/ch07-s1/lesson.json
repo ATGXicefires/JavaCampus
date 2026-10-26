@@ -9,7 +9,7 @@
     {
       "id": "ledger",
       "title": "改寫成 Java",
-      "goal": "寫 `class Ledger`：`private int balance`、`void deposit(int amount)`、`int getBalance()`。`new` 一本帳 `book`，存入 350 和 120。",
+      "goal": "存入 350 和 120 之後，`book.getBalance()` 交回 `470`。\n\n寫 `class Ledger`：`private int balance`、`void deposit(int amount)` 存入、`int getBalance()` 交回餘額。再 `new` 一本帳 `book`，存入這兩筆。",
       "instructions": "起始碼的註解是國中寫的 Python 版本，`balance` 誰都能改。改寫成 Java 時，把它鎖起來。",
       "expectedShape": "class Ledger {\n    private int balance;\n    …\n}\n\nLedger book = new Ledger();\nbook.deposit(…);\n…",
       "check": { "type": "values", "exprs": ["book.getBalance()"] },
@@ -22,7 +22,7 @@
     {
       "id": "outside",
       "title": "從外面偷改",
-      "goal": "照 Python 的習慣，從外面寫了 `book.balance = 0;`，紅字。刪掉，改成再存入 80。",
+      "goal": "修好後，`book.getBalance()` 交回 `550`：原本的 470 再存入 80。\n\n起始碼最後一行照 Python 的習慣，從外面寫了 `book.balance = 0;`，紅字。刪掉它，改成用 `deposit` 再存入 80。",
       "instructions": "Java 的 `private` 不准從外面直接改。",
       "expectedShape": "book.deposit(…);",
       "check": { "type": "values", "exprs": ["book.getBalance()"] },

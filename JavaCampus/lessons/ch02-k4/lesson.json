@@ -12,7 +12,7 @@
     {
       "id": "week",
       "title": "一週幾個",
-      "goal": "題目給了 `perDay`（每天吃幾個飯糰，現在是 3）和 `days`（一週上學幾天，現在是 5）。算出一週總共吃幾個，存進 `int perWeek`。",
+      "goal": "每天吃 3 個飯糰、一週上學 5 天，一週總共吃 15 個。\n\n用題目給的 `perDay`（每天吃幾個）和 `days`（一週上學幾天）算出這個數，存進 `int perWeek`。",
       "instructions": "`perDay` 和 `days` 這兩個盒子題目已經做好了，直接拿來用。乘法用 `*`，例如 `2 * 4` 是 `8`。\n\n按「完成」時，會把 `perDay` 改成 2、`days` 改成 4 各檢查一次，所以要用 `perDay` 和 `days` 來算，不能直接寫 `15`。",
       "expectedShape": "int perWeek = …;",
       "check": {
@@ -29,7 +29,7 @@
     {
       "id": "too-many",
       "title": "太多了嗎",
-      "goal": "一週 10 個以上就算太多：`perWeek` 大於等於 10 時，`boolean tooMany` 要是 `true`，否則是 `false`。",
+      "goal": "一週吃 15 個，到了 10 個以上就算太多，所以 `tooMany` 是 `true`。\n\n把 `perWeek` 和 10 比一比，結果存進 `boolean tooMany`：大於等於 10 是 `true`，否則是 `false`。",
       "instructions": "`>=` 是「大於等於」。比較的答案本身就是 `true` 或 `false`，不用寫 `if`，直接放進 `boolean` 盒子。\n\n按「完成」時會把 `perDay` 換成 1 再算一次。",
       "expectedShape": "int perWeek = …;\nboolean tooMany = …;",
       "check": {

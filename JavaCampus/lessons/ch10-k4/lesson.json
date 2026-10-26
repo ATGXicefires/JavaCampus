@@ -9,7 +9,7 @@
     {
       "id": "count",
       "title": "兩張清單",
-      "goal": "起始碼準備好了兩張清單：`screens` 是 App 的畫面，`features` 是另一個分頁 `Features.java` 交回的後端功能。印出兩邊的數量：`畫面 4 個，功能 5 個`。",
+      "goal": "App 有 4 個畫面，後端做好了 5 個功能，就印出 `畫面 4 個，功能 5 個`。\n\n起始碼準備好了兩張清單：`screens`（App 的畫面）和 `features`（`Features.java` 交回的後端功能）。用兩張清單的大小印出這一行。",
       "instructions": "兩個數字都用 `size()` 算。`Features.java` 是寫好的後端，不用改。",
       "expectedShape": "System.out.println(\"畫面 \" + screens.size() + \" 個，功能 \" + … + \" 個\");",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "needs",
       "title": "對照表",
-      "goal": "起始碼多了對照表 `HashMap<String, String> needs`：用畫面查出它需要的功能，例如 `needs.get(\"首頁\")` 是 `登入`。用 for-each 走過 `screens`，遇到需要的功能不在 `features` 裡的畫面，就印出 `成績：找不到「計分」` 這樣的一行。",
+      "goal": "`成績` 需要 `計分`，但功能清單裡沒有，就在數量那一行下面印出 `成績：找不到「計分」`；找得到功能的畫面不用印。\n\n起始碼多了對照表 `HashMap<String, String> needs`，用畫面查出它需要的功能，例如 `needs.get(\"首頁\")` 是 `登入`。用 for-each 走過 `screens`，需要的功能不在 `features` 裡，就印出這樣的一行。",
       "instructions": "`features.contains(…)` 問功能清單裡有沒有。`：`、`「`、`」` 都是全形，可以從目標複製。",
       "expectedShape": "for (String screen : screens) {\n    String need = needs.get(screen);\n    if (…) {\n        System.out.println(screen + \"：找不到「\" + need + \"」\");\n    }\n}",
       "form": "program",
@@ -37,7 +37,7 @@
     {
       "id": "missing",
       "title": "寫成方法",
-      "goal": "在 `Main` 裡寫 `static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have)`：兩個參數都是字串清單，交回 `needs` 裡有、`have` 裡沒有的項目。",
+      "goal": "`needs` 是 `[計分, 提示]`、`have` 是 `[提示]` 時，`missing` 交回 `[計分]`；兩邊都是 `[提示]` 時交回空的清單 `[]`。\n\n在 `Main` 裡寫一個方法 `static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have)`，交回 `needs` 裡有、`have` 裡沒有的項目。",
       "instructions": "這裡的 `needs` 是方法的參數，和 `main` 裡的對照表 `needs` 沒有關係。先 `new` 一個空的清單，找到的就 `add` 進去，最後交回。\n\n按「完成」時會直接呼叫 `missing` 測試，`main` 不會執行。例如 `needs` 是 `[計分, 提示]`、`have` 是 `[提示]` 時交回 `[計分]`；兩邊都是 `[提示]` 時交回空的清單 `[]`。",
       "expectedShape": "static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have) {\n    ArrayList<String> out = new ArrayList<>();\n    for (…) {\n        …\n    }\n    return out;\n}",
       "form": "program",

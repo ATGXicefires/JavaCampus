@@ -9,7 +9,7 @@
     {
       "id": "positive",
       "title": "不能存負數",
-      "goal": "`deposit` 改成交回 `boolean`：收到 0 或負數就不存、交回 `false`；大於 0 才存進去、交回 `true`。",
+      "goal": "`new Ledger().deposit(350)` 交回 `true`；`new Ledger().deposit(0)` 交回 `false`，錢也不會存進去。\n\n把 `deposit` 改成交回 `boolean`：收到 0 或負數就不存、交回 `false`；大於 0 才存進去、交回 `true`。",
       "instructions": "錢櫃的門只有 `deposit` 一扇，就在門口檢查。\n\n按「完成」時，除了看交回的 `true`／`false`，還會在同一本帳先存 350、再試著存 -50，看 `getBalance()` 是不是 350：交回 `true` 的時候，錢要真的存進去。",
       "expectedShape": "boolean deposit(int amount) {\n    if (…) {\n        return false;\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger().deposit(-350)", "new Ledger().deposit(0)", "new Ledger().deposit(350)", "Ledger book = null;", "(book = new Ledger()).deposit(350)", "book.deposit(-50)", "book.getBalance()"] },
@@ -22,7 +22,7 @@
     {
       "id": "withdraw",
       "title": "領錢",
-      "goal": "加上建構子 `Ledger(int start)`（`start` 是一開始的餘額）和 `boolean withdraw(int amount)`：餘額夠就扣掉、交回 `true`，剛好領完也算夠；不夠就不領、交回 `false`。",
+      "goal": "`new Ledger(100).withdraw(100)` 交回 `true`，剛好領完；`new Ledger(100).withdraw(150)` 交回 `false`，不夠領。\n\n加上建構子 `Ledger(int start)`（`start` 是一開始的餘額）和 `boolean withdraw(int amount)`：餘額夠就扣掉、交回 `true`，剛好領完也算夠；不夠就不領、交回 `false`。",
       "instructions": "`withdraw` 和 `deposit` 一樣在方法裡把關，讓餘額永遠不會變成負的。\n\n按「完成」時，會用 `new Ledger(100)` 開一本有 100 元的帳，分別試著領 150、30、100；還會從同一本帳先領 30，看 `getBalance()` 是不是剩 70，再領 100 要交回 `false`、餘額不變。",
       "expectedShape": "Ledger(int start) {\n    …\n}\n\nboolean withdraw(int amount) {\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger(100).withdraw(150)", "new Ledger(100).withdraw(30)", "new Ledger(100).withdraw(100)", "Ledger book = null;", "(book = new Ledger(100)).withdraw(30)", "book.getBalance()", "book.withdraw(100)", "book.getBalance()"] },
@@ -35,7 +35,7 @@
     {
       "id": "typo",
       "title": "差點算錯",
-      "goal": "起始碼最後一行手一滑打成 `book.deposit(-350)`：`deposit` 擋下來、交回了 `false`，畫面上卻什麼都沒說。用 `if` 接住這個 `false`，印出 `金額不對：-350`。",
+      "goal": "`book.deposit(-350)` 被擋下來時，要印出 `金額不對：-350`。\n\n起始碼最後一行手一滑打成 `book.deposit(-350)`，`deposit` 交回了 `false`，畫面上卻什麼都沒說。用 `if` 接住這個 `false`，印出這一行。",
       "instructions": "`deposit` 交回 `false`，就是沒存進去。",
       "expectedShape": "int amount = -350;\nif (…) {\n    System.out.println(\"金額不對：\" + amount);\n}",
       "check": { "type": "output" },

@@ -11,7 +11,7 @@
     {
       "id": "punish",
       "title": "罰寫",
-      "goal": "題目給了 `times`，是要罰寫的遍數（現在是 5）。用 `for` 把 `我不會再用全形分號` 印 `times` 遍，一遍一行。",
+      "goal": "罰寫 5 遍，就是印出 5 行 `我不會再用全形分號`。\n\n用 `for` 照題目給的 `times`（罰寫遍數）印出這幾行。",
       "instructions": "`times` 這個盒子題目已經做好了，直接拿來用。\n\n按「完成」時，會把 `times` 改成 100 和 1 各檢查一次，所以要用 `times` 來數；一行一行寫 `println` 會寫不完。\n\n`for` 的括號裡有三段，用分號隔開：從哪裡開始、做到什麼時候、每做完一次怎麼變。\n\n```\nfor (int i = 1; i <= times; i++) {\n    要重複做的事\n}\n```",
       "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"…\");\n}",
       "check": {
@@ -43,7 +43,7 @@
     {
       "id": "total",
       "title": "越寫越累",
-      "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯算出寫完 `times` 遍總共幾秒，存進 `total`。",
+      "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯罰寫 5 遍總共花 1 + 2 + 3 + 4 + 5 = 15 秒。\n\n用 `for` 照題目給的 `times`（罰寫遍數），把每一遍花的秒數加起來，存進 `total`。",
       "instructions": "`total` 一開始是 0，每一圈把這一遍花的秒數加進去。`total += i` 就是把 `i` 加進 `total`。\n\n這一步只看 `total`，印不印都可以。按「完成」時會把 `times` 換成 100 再算一次。",
       "expectedShape": "int total = 0;\nfor (…) {\n    total += …;\n}",
       "check": {

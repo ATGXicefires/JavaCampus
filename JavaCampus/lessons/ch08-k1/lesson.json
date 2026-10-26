@@ -9,7 +9,7 @@
     {
       "id": "extends",
       "title": "繼承",
-      "goal": "寫 `class MyPlan extends ParentsPlan`，裡面先什麼都不寫。",
+      "goal": "`MyPlan` 裡什麼都不寫，`new MyPlan().hobby()` 也會交回 `ParentsPlan` 的 `畫畫當興趣就好`。\n\n寫 `class MyPlan extends ParentsPlan`，裡面先什麼都不寫。",
       "instructions": "`ParentsPlan` 是起始碼給的父類別。`MyPlan` 裡面什麼都沒寫，也拿得到它的 `future()` 和 `hobby()`。",
       "expectedShape": "class MyPlan extends … {\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().future()", "new MyPlan().hobby()"] },
@@ -22,7 +22,7 @@
     {
       "id": "hobby",
       "title": "自己的版本",
-      "goal": "在 `MyPlan` 裡覆寫 `hobby()`，交回 `畫畫不只是興趣`。`future()` 不動。",
+      "goal": "`new MyPlan().hobby()` 交回 `畫畫不只是興趣`，`new MyPlan().future()` 還是 `學一技之長，找一份穩定的工作`。\n\n在 `MyPlan` 裡覆寫 `String hobby()`，交回自己的這一句；`future()` 不動。",
       "instructions": "覆寫就是寫一個同名、同參數的方法，換成自己的版本。",
       "expectedShape": "class MyPlan extends ParentsPlan {\n    String hobby() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().hobby()", "new MyPlan().future()"] },

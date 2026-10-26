@@ -9,7 +9,7 @@
     {
       "id": "check",
       "title": "寫了卻沒用",
-      "goal": "起始碼的 `FillQuestion` 想讓中間多打空白也算對（答案是 `選午餐`，打 `選 午 餐` 也要算對），可是 `Check` 寫成大寫的 C。先在這個方法上加 `@Override`，看紅字說什麼，再修好。",
+      "goal": "修好後，答案是 `選午餐` 時，`check(\"選 午 餐\")` 交回 `true`，`check(\"選晚餐\")` 交回 `false`。\n\n起始碼的 `FillQuestion` 想覆寫 `check`，讓中間多打空白也算對，卻一直沒有作用。先在那個方法上加 `@Override`，看紅字說什麼，再修好。",
       "instructions": "沒有覆寫到的時候程式照樣能跑，只是一直用父類別的 `check`。\n\n`typed.replace(\" \", \"\")` 會把打的字裡所有空白換成空字串，也就是全部拿掉，再拿去和答案比。",
       "expectedShape": "@Override\nboolean check(String typed) {\n    …\n}",
       "check": { "type": "values", "exprs": ["new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選 午 餐\")", "new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選晚餐\")"] },
@@ -22,7 +22,7 @@
     {
       "id": "tostring",
       "title": "toSting",
-      "goal": "`System.out.println(q)` 印出一串看不懂的東西，因為 `toSting()` 也沒覆寫到。一樣先加 `@Override` 再修，讓它印出 `填空題：選午餐`。",
+      "goal": "修好後，`System.out.println(q)` 要印出 `填空題：選午餐`。\n\n現在印出來的是一串看不懂的東西，因為 `toSting()` 也沒覆寫到。一樣先加 `@Override` 看紅字，再修好。",
       "instructions": "`toString()` 原本是 `public`，覆寫時前面也要寫 `public`。",
       "expectedShape": "@Override\npublic String toString() {\n    …\n}",
       "check": { "type": "output" },

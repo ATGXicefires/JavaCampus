@@ -11,7 +11,7 @@
     {
       "id": "blueprint",
       "title": "扭蛋的設計圖",
-      "goal": "寫 `class Gacha`，欄位是 `name`、`color`。`new` 出兩個，印出兩行：`扭蛋：麻糬（白色）`、`扭蛋：黑糖（咖啡色）`。",
+      "goal": "印出兩行：\n`扭蛋：麻糬（白色）`\n`扭蛋：黑糖（咖啡色）`\n\n寫 `class Gacha`：欄位 `name`（名字）和 `color`（顏色）。再 `new` 出兩個扭蛋，設好名字和顏色，照這個格式印出來。",
       "instructions": "範例要讓人一看就懂：設計圖只有一張，扭蛋可以做很多顆。\n\n`：` 和 `（）` 是全形，可以從這裡複製。",
       "expectedShape": "class Gacha {\n    …\n}\n\nGacha a = new Gacha();\n…",
       "check": { "type": "output" },
@@ -24,7 +24,7 @@
     {
       "id": "eight",
       "title": "一張設計圖，八個扭蛋",
-      "goal": "題目給了 `names`，是 8 個扭蛋的名字（`麻糬`、`黑糖`、`珍奶`⋯⋯）。用 `for` 照 `names` 一個一個 `new` 出 `Gacha`，每個印一行：`第 1 個：麻糬`、`第 2 個：黑糖`，一直到 `第 8 個：愛玉`。",
+      "goal": "8 個扭蛋就是印出 8 行：`第 1 個：麻糬`、`第 2 個：黑糖`，一直到 `第 8 個：愛玉`。\n\n用 `for` 照題目給的 `names`（扭蛋的名字）一個一個 `new` 出 `Gacha`，每個印一行，編號從 1 開始。",
       "instructions": "`names` 題目已經做好了。編號從 1 開始。\n\n按「完成」時，會把 `names` 改成 `{\"麻糬\", \"黑糖\"}` 再檢查一次（只印兩行），所以要照 `names` 跑，不能直接寫八行。",
       "expectedShape": "for (…) {\n    Gacha g = new Gacha();\n    g.name = …;\n    System.out.println(\"第 \" + (…) + \" 個：\" + g.name);\n}",
       "check": {

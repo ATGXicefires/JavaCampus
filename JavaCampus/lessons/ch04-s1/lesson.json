@@ -9,7 +9,7 @@
     {
       "id": "total",
       "title": "加總",
-      "goal": "寫 `static int total(int[] counts)`，交回陣列裡全部數字加起來的和；空陣列交回 0。",
+      "goal": "`total(new int[]{3, 4, 5})` 交回 `12`，`total(new int[]{})` 交回 `0`。\n\n寫一個方法 `static int total(int[] counts)`，交回陣列裡全部數字加起來的和；一格都沒有的空陣列交回 0。",
       "instructions": "按「完成」時會呼叫 `total(new int[]{3, 4, 5})`、`total(new int[]{})`、`total(new int[]{7})`，要交回 `12`、`0`、`7`。\n\n`new int[]{3, 4, 5}` 是直接做出一個 3、4、5 的陣列，`new int[]{}` 是一格都沒有的空陣列。",
       "expectedShape": "static int total(int[] counts) {\n    …\n    return …;\n}",
       "check": { "type": "values", "exprs": ["total(new int[]{3, 4, 5})", "total(new int[]{})", "total(new int[]{7})"] },
@@ -22,7 +22,7 @@
     {
       "id": "percent",
       "title": "百分比",
-      "goal": "寫 `static int percent(int part, int whole)`，交回 `part` 占 `whole` 的百分之幾，小數直接捨去（`percent(2, 3)` 是 `66`）；`whole` 是 0 時交回 0。",
+      "goal": "`percent(1, 4)` 交回 `25`，`percent(2, 3)` 交回 `66`：小數直接捨去。\n\n寫一個方法 `static int percent(int part, int whole)`，交回 `part` 占 `whole` 的百分之幾，小數捨去；`whole` 是 0 時交回 0。",
       "instructions": "先乘 100 再除，答案才不會被整數除法吃掉。\n\n按「完成」時會呼叫 `percent(1, 4)`、`percent(2, 3)`、`percent(0, 0)`，要交回 `25`、`66`、`0`。",
       "expectedShape": "static int percent(int part, int whole) {\n    …\n}",
       "check": { "type": "values", "exprs": ["percent(1, 4)", "percent(2, 3)", "percent(0, 0)"] },
@@ -35,7 +35,7 @@
     {
       "id": "report",
       "title": "她問為什麼",
-      "goal": "寫 `static void report(int part, int whole)`，用 `percent` 算出百分比再印出來，例如 `report(1, 4)` 印 `完成 25%`。寫好後呼叫 `report(1, 4)` 和 `report(3, 4)`，共印兩行。",
+      "goal": "`report(1, 4)` 印出 `完成 25%`，`report(3, 4)` 印出 `完成 75%`。\n\n寫一個方法 `static void report(int part, int whole)`，用 `percent` 算出百分比再印出來。寫好後呼叫 `report(1, 4)` 和 `report(3, 4)`，共印兩行。",
       "instructions": "`percent` 交回數字，`report` 拿那個數字來印。印出來應該是：\n\n```\n完成 25%\n完成 75%\n```",
       "expectedShape": "static void report(int part, int whole) {\n    System.out.println(…);\n}\n\nreport(1, 4);\nreport(3, 4);",
       "check": { "type": "output" },

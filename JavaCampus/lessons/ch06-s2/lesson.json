@@ -9,7 +9,7 @@
     {
       "id": "blueprint",
       "title": "禮物的設計圖",
-      "goal": "寫 `class Gift`：欄位 `to`、`from`、`message`，建構子用 `this`。",
+      "goal": "`new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 做出來，`to` 是 `梁亭瑄`，`from` 是 `吳二弘`，`message` 是 `嗨`。\n\n寫 `class Gift`：三個 `String` 欄位 `to`、`from`、`message`，建構子 `Gift(String to, String from, String message)` 用 `this` 把傳進來的值放進欄位。",
       "instructions": "三個欄位都是 `String`，建構子照順序收 `to`、`from`、`message`。\n\n按「完成」時，會用 `new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 檢查三個欄位有沒有都放好。",
       "expectedShape": "class Gift {\n    …\n    Gift(String to, String from, String message) {\n        this.to = to;\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").message"] },
@@ -22,7 +22,7 @@
     {
       "id": "open",
       "title": "打開卡片",
-      "goal": "加上 `void open()`，印出三行：`給 梁亭瑄`、卡片內容、`—— 吳二弘`。再 `new` 一張 `to` 是 `梁亭瑄`、`from` 是 `吳二弘` 的卡片，呼叫它的 `open()`。卡片內容是：`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`",
+      "goal": "打開卡片要印出三行：\n`給 梁亭瑄`\n卡片內容\n`—— 吳二弘`\n\n幫 `Gift` 加上方法 `void open()` 印出這三行。再 `new` 一張 `to` 是 `梁亭瑄`、`from` 是 `吳二弘` 的卡片，呼叫它的 `open()`。卡片內容是：`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`",
       "instructions": "`open()` 是卡片自己的方法，用的是自己的 `to`、`message`、`from`。寫好以後，`new` 一張卡片，再呼叫它的 `open()`。\n\n卡片內容和 `——` 可以從這裡複製。",
       "expectedShape": "void open() {\n    System.out.println(\"給 \" + to);\n    …\n}\n\nGift card = new Gift(\"梁亭瑄\", \"吳二弘\", \"…\");\ncard.open();",
       "check": { "type": "output" },
@@ -35,7 +35,7 @@
     {
       "id": "flip",
       "title": "背面的小字",
-      "goal": "加上欄位 `ps` 和方法 `void flip()`，在 `open()` 之後印出 `P.S. 木瓜牛奶換成冬天的話，熱可可也可以。`",
+      "goal": "卡片的三行後面，要再多印一行：`P.S. 木瓜牛奶換成冬天的話，熱可可也可以。`\n\n幫 `Gift` 加上欄位 `ps`（背面的小字）和方法 `void flip()`，印出這一行；在 `open()` 之後呼叫 `flip()`。",
       "instructions": "`ps` 在 `new` 好卡片以後再設定：`card.ps = \"…\";`。",
       "expectedShape": "void flip() {\n    System.out.println(\"P.S. \" + ps);\n}\n…\ncard.ps = \"…\";\ncard.open();\ncard.flip();",
       "check": { "type": "output" },

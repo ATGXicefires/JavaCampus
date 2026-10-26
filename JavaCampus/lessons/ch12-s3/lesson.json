@@ -9,7 +9,7 @@
     {
       "id": "empty",
       "title": "第 12 課還沒有題目",
-      "goal": "App 的總覽頁列出每一課的答對率，跑到第 12 課（題數 `count` 是 0）就除以零。修到沒有題目的課顯示 `第 12 課：—`，其他課照常顯示，例如 `第 10 課：75%`。",
+      "goal": "修好後，總覽頁要印出三行：\n`第 10 課：75%`\n`第 11 課：80%`\n`第 12 課：—`\n\n現在跑到第 12 課（題數 `count` 是 0）就除以零，出現紅字。修到題數是 0 的課顯示 `—`，其他課照常顯示答對率。",
       "instructions": "`—` 可以從目標複製。題數是 0 的課不要呼叫 `percent`。",
       "expectedShape": "if (count[i] == 0) {\n    System.out.println(units[i] + \"：—\");\n} else {\n    …\n}",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "guard",
       "title": "隱藏測資",
-      "goal": "`percent(correct, count)` 在 `count` 是 0 時交回 0。",
+      "goal": "`percent(3, 4)` 交回 `75`，`percent(0, 0)` 交回 `0`，不會出錯。\n\n改 `static int percent(int correct, int count)`：`count`（題數）是 0 時交回 0，其他照原本的算法。",
       "instructions": "按「完成」時會直接呼叫 `percent` 測試，`main` 不會執行。",
       "expectedShape": "static int percent(int correct, int count) {\n    if (count == 0) {\n        return 0;\n    }\n    …\n}",
       "form": "program",

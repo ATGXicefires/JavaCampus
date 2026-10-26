@@ -9,7 +9,7 @@
     {
       "id": "skip",
       "title": "跳過收回的",
-      "goal": "寫 `static int countName(String[] log, String name)`：交回有幾則訊息包含 `name`。收回的訊息開頭是 `（已收回）`，這種的用 `continue` 跳過，不算。",
+      "goal": "三則訊息 `二弘早`、`（已收回）二弘`、`學長` 裡數 `二弘`，`countName` 交回 `1`：收回的那則不算。\n\n寫一個方法 `static int countName(String[] log, String name)`，數出 `log` 裡有幾則訊息包含 `name`，交回這個數。開頭是 `（已收回）` 的訊息用 `continue` 跳過。",
       "instructions": "字串的 `startsWith(…)` 問開頭是不是這幾個字，例如 `\"（已收回）二弘\".startsWith(\"（已收回）\")` 是 `true`。`（已收回）` 的括號是全形的，可以從目標複製。\n\n按「完成」時會直接呼叫 `countName` 測試。",
       "expectedShape": "for (String line : log) {\n    if (line.startsWith(\"（已收回）\")) {\n        continue;\n    }\n    …\n}",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "claim",
       "title": "她的主張",
-      "goal": "`main` 裡放好了幾則訊息。印出 `叫了「二弘」2 次（收回的不算）`，次數用 `countName` 算。",
+      "goal": "五則訊息裡，沒收回又包含 `二弘` 的有 2 則，要印出 `叫了「二弘」2 次（收回的不算）`。\n\n用 `countName` 數 `main` 裡的 `log`（幾則訊息）有幾則叫了 `二弘`，接成這一行印出來。",
       "instructions": "`「」` 和 `（）` 都是全形的，可以從目標複製。",
       "expectedShape": "System.out.println(\"叫了「二弘」\" + countName(…) + \" 次（收回的不算）\");",
       "form": "program",

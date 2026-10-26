@@ -9,7 +9,7 @@
     {
       "id": "sections",
       "title": "同一個約定",
-      "goal": "寫 `interface Section`，裡面有 `String title();` 和 `String body();`。再寫備審資料的三節各自實作：`Project` 是 `專題製作`／`小白學程式`，`License` 是 `乙級證照`／`電腦軟體設計`，`Statement` 是 `自傳`／`把術語翻成人話`（前面的字由 `title()` 交回，後面的由 `body()` 交回）。",
+      "goal": "備審資料的每一節都有標題和內容，例如 `new Project().title()` 交回 `專題製作`，`new License().body()` 交回 `電腦軟體設計`。\n\n寫 `interface Section`，裡面有 `String title();` 和 `String body();`。再寫三個類別實作它，各自交回 `title()`／`body()`：`Project` 是 `專題製作`／`小白學程式`，`License` 是 `乙級證照`／`電腦軟體設計`，`Statement` 是 `自傳`／`把術語翻成人話`。",
       "instructions": "每一節都照同一個約定，交回自己的標題和內容。實作的方法前面要寫 `public`。\n\n這一步不用印出來：按「完成」時，會直接問 `new Project().title()`、`new License().body()` 交回什麼。",
       "expectedShape": "interface Section {\n    String title();\n\n    String body();\n}\n\nclass Project implements Section {\n    public String title() {\n        …\n    }\n    …\n}\n…",
       "check": { "type": "values", "exprs": ["new Project().title()", "new License().body()"] },
@@ -22,7 +22,7 @@
     {
       "id": "page",
       "title": "排成一頁",
-      "goal": "再加一節 `Goal`：標題是 `志願`，內容是 `資訊工程系（臺北）`。照 `Project`、`License`、`Statement`、`Goal` 的順序放進 `Section[] page`，用迴圈印出整頁：每一節先印 `【專題製作】` 這樣的標題，下一行印內容。",
+      "goal": "每一節印兩行，例如 `【專題製作】` 下一行是 `小白學程式`。四節依序印完，最後兩行是 `【志願】` 和 `資訊工程系（臺北）`。\n\n再加一節 `Goal`，標題是 `志願`，內容是 `資訊工程系（臺北）`。把 `Project`、`License`、`Statement`、`Goal` 依序放進 `Section[] page`，用迴圈印出整頁，標題前後加上 `【` 和 `】`。",
       "instructions": "`【`、`】` 和內容裡的 `（`、`）` 都是全形，可以從目標複製。",
       "expectedShape": "Section[] page = {…};\nfor (…) {\n    System.out.println(\"【\" + … + \"】\");\n    System.out.println(…);\n}",
       "check": { "type": "output" },

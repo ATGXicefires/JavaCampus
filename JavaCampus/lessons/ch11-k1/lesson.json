@@ -9,7 +9,7 @@
     {
       "id": "for",
       "title": "用 for 數",
-      "goal": "`ChatLog.load()` 會交回朋友小芸一整年的聊天紀錄（1000 則訊息）。在 `Main` 裡寫 `static int count(String[] log, String word)`，用 `for` 數出有幾則訊息包含 `word`，再讓 `main` 數出提到 `學長` 的有幾則，印出 `478 次`。",
+      "goal": "小芸一整年的聊天紀錄（1000 則訊息）裡，有 478 則提到 `學長`，所以要印出 `478 次`。\n\n在 `Main` 裡寫一個方法 `static int count(String[] log, String word)`，用 `for` 數出 `log` 裡有幾則訊息包含 `word`，交回這個數。再讓 `main` 用它數 `log`（`ChatLog.load()` 交回的聊天紀錄）裡的 `學長`，印出這一行。",
       "instructions": "聊天紀錄寫在 `ChatLog.java` 分頁，`main` 第一行已經用 `ChatLog.load()` 把它放進 `log` 了，一格是一則訊息。\n\n字串的 `contains(…)` 問裡面有沒有這幾個字，例如 `\"學長早\".contains(\"學長\")` 是 `true`。",
       "expectedShape": "static int count(String[] log, String word) {\n    int n = 0;\n    for (…) {\n        if (log[i].contains(word)) {\n            …\n        }\n    }\n    return n;\n}",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "while",
       "title": "改成 while",
-      "goal": "再寫 `static int countWhile(String[] log, String word)`，做一樣的事，改用 `while`。",
+      "goal": "三則訊息 `學長早`、`便當`、`學長！` 裡有 2 則包含 `學長`，`countWhile` 要交回 `2`；一則訊息都沒有時交回 `0`。\n\n再寫一個方法 `static int countWhile(String[] log, String word)`，和 `count` 一樣數出有幾則包含 `word`、交回這個數，這次改用 `while`。",
       "instructions": "按「完成」時會直接呼叫 `countWhile`，換幾組訊息測試，`main` 不會執行。",
       "expectedShape": "static int countWhile(String[] log, String word) {\n    int n = 0;\n    int i = 0;\n    while (i < log.length) {\n        …\n        i++;\n    }\n    return n;\n}",
       "form": "program",
@@ -37,7 +37,7 @@
     {
       "id": "again",
       "title": "再統計一次？",
-      "goal": "每次統計完都會問「再統計一次？」，`main` 裡的 `answers` 是依序的回答。用 `do-while`：先統計一次，回答是 `好` 就再來，每次印一行 `第 1 次：478 次`（這組回答會印出 3 行）。",
+      "goal": "三次的回答是 `好`、`好`、`不要` 時，要印出三行：\n`第 1 次：478 次`\n`第 2 次：478 次`\n`第 3 次：478 次`\n\n用 `do-while` 先統計一次、印一行，再看 `main` 裡的 `answers`（每次被問「再統計一次？」的回答）：回答是 `好` 就再來一次。",
       "instructions": "第 1 次統計完的回答是 `answers[0]`，第 2 次是 `answers[1]`，也就是 `answers[第幾次 - 1]`。比字串的內容用 `equals`。\n\n在 `{ }` 裡面做的盒子，出了 `}` 就用不到了。所以 `round` 和 `answer` 要在 `do` 前面先做好，`while (…)` 才看得到 `answer`。最後的 `while (…);` 要加分號。",
       "expectedShape": "do {\n    round++;\n    System.out.println(\"第 \" + round + \" 次：\" + … + \" 次\");\n    answer = answers[round - 1];\n} while (…);",
       "form": "program",

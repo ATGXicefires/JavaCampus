@@ -9,7 +9,7 @@
     {
       "id": "main",
       "title": "放進 main",
-      "goal": "起始碼還是片段的寫法，敘述寫在最外層，紅字。把敘述搬進 `public class Main` 的 `main` 裡，讓它印出 `小白學程式 v0.9`。",
+      "goal": "修好後印出一行 `小白學程式 v0.9`。\n\n起始碼還是片段的寫法，敘述直接寫在最外層，跑起來是紅字。把這幾行搬進 `public class Main` 的 `main` 裡。",
       "instructions": "完整的程式裡，class 外面只能寫 `import` 和類別。",
       "expectedShape": "public class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "split",
       "title": "一個類別一個分頁",
-      "goal": "起始碼多了 `Checker.java` 和 `Question.java` 兩個分頁，但 `Main.java` 裡還留著同樣的 `Checker` 和 `Question`，紅字說名字重複。把 `Main.java` 裡的刪掉，只留 `Main`，讓它印出 `小白學程式 v0.9` 和 `if-else 像什麼？ true` 兩行。",
+      "goal": "修好後印出兩行：\n`小白學程式 v0.9`\n`if-else 像什麼？ true`\n\n起始碼把 `Checker` 和 `Question` 搬到了自己的分頁 `Checker.java`、`Question.java`，跑起來卻是紅字，說名字重複。修到 `Main.java` 裡只剩 `Main` 一個類別。",
       "instructions": "同一個名字的類別，整個程式只能有一個。",
       "expectedShape": "// Main.java\npublic class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",

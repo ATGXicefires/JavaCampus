@@ -9,7 +9,7 @@
     {
       "id": "short",
       "title": "寫不下",
-      "goal": "`main` 裡的 `drafts` 是畢業紀念冊留言的草稿。用迴圈從頭找出第一句不超過 15 個字的草稿，找到就 `break`，印出那一句。",
+      "goal": "草稿裡第一句不超過 15 個字的是 `謝謝你把外星語翻成人話。`，只印出這一句。\n\n用迴圈從頭看 `main` 裡的 `drafts`（畢業紀念冊留言的草稿），找到第一句字數不超過 15 的就印出來，再用 `break` 停下。",
       "instructions": "字數用 `length()` 算，標點和空白也各算一個字；剛好 15 個字也算。只印第一句符合的，後面就算還有更短的也不印。",
       "expectedShape": "for (String d : drafts) {\n    if (d.length() <= 15) {\n        …\n        break;\n    }\n}",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "method",
       "title": "寫成方法",
-      "goal": "寫 `static String firstShort(String[] drafts, int max)`：交回第一句不超過 `max` 個字的草稿，找不到就交回 `（空白）`。",
+      "goal": "草稿是 `太長太長太長` 和 `好`、上限 3 個字時，`firstShort` 交回 `好`；一句都不夠短時，交回 `（空白）`。\n\n寫一個方法 `static String firstShort(String[] drafts, int max)`，交回第一句字數不超過 `max`（字數上限）的草稿，找不到就交回 `（空白）`。",
       "instructions": "`（空白）` 的括號是全形的，可以從目標複製。\n\n按「完成」時會直接呼叫 `firstShort` 測試，`main` 不會執行。",
       "expectedShape": "static String firstShort(String[] drafts, int max) {\n    String found = \"（空白）\";\n    for (…) {\n        …\n    }\n    return found;\n}",
       "form": "program",

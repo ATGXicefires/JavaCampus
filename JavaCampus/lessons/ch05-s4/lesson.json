@@ -9,7 +9,7 @@
     {
       "id": "note",
       "title": "錯誤較少的版本",
-      "goal": "修到印出 `true`。",
+      "goal": "修好後要印出 `true`。\n\n起始碼是照著一張手寫紙條打進去的，一執行就紅字。",
       "instructions": "起始碼是照著一張手寫紙條打進去的，一執行就紅字。",
       "expectedShape": "static boolean youCanDoIt() {\n    …\n}\nSystem.out.println(youCanDoIt());",
       "check": { "type": "output" },

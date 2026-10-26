@@ -9,7 +9,7 @@
     {
       "id": "view",
       "title": "眼鏡",
-      "goal": "寫 `class Glasses`：欄位 `boolean clean`，方法 `String view()`：乾淨就交回 `世界很清楚`，不乾淨就交回 `世界霧霧的`。",
+      "goal": "`new Glasses().view()` 交回 `世界霧霧的`：剛做出來的眼鏡還沒擦過。\n\n寫 `class Glasses`：欄位 `boolean clean`（乾不乾淨），方法 `String view()` 在 `clean` 是 `true` 時交回 `世界很清楚`，否則交回 `世界霧霧的`。",
       "instructions": "不用寫建構子：會用 `new Glasses().view()` 檢查。剛做出來的眼鏡還沒擦過，要交回 `世界霧霧的`。",
       "expectedShape": "class Glasses {\n    boolean clean;\n\n    String view() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Glasses().view()"] },
@@ -22,7 +22,7 @@
     {
       "id": "wipe",
       "title": "擦一擦",
-      "goal": "加上 `void wipe()`，把 `clean` 設成 `true`。`new` 一副眼鏡，印出擦之前和擦之後的 `view()`。",
+      "goal": "印出兩行：擦之前是 `世界霧霧的`，擦之後是 `世界很清楚`。\n\n幫 `Glasses` 加上方法 `void wipe()`，把 `clean` 設成 `true`。再 `new` 一副眼鏡，擦之前和擦之後各印一次 `view()`。",
       "instructions": "輸出是兩行：擦之前一行，擦之後一行。",
       "expectedShape": "void wipe() {\n    …\n}\n…\nGlasses g = new Glasses();\nSystem.out.println(g.view());\ng.wipe();\nSystem.out.println(g.view());",
       "check": { "type": "output" },

@@ -9,7 +9,7 @@
     {
       "id": "blueprint",
       "title": "設計圖",
-      "goal": "寫 `class Item`，欄位是 `String name` 和 `String kind`。`new` 一個出來，名字設成 `小白`、種類設成 `筆電`，印出 `小白（筆電）`。",
+      "goal": "印出一行 `小白（筆電）`：前面是名字，括號裡是種類。\n\n寫 `class Item`：欄位 `String name`（名字）和 `String kind`（種類）。再 `new` 一個 `Item`，名字設成 `小白`、種類設成 `筆電`，照這個格式印出來。",
       "instructions": "`class` 是設計圖：說好一個 `Item` 有名字和種類。設計圖寫好以後，用 `new Item()` 照著做出一個，再用 `.` 設定它的欄位。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n括號 `（）` 是全形的，可以從這裡複製。",
       "expectedShape": "class Item {\n    …\n}\n\nItem laptop = new Item();\nlaptop.name = \"…\";\n…\nSystem.out.println(…);",
       "check": { "type": "output" },
@@ -22,7 +22,7 @@
     {
       "id": "another",
       "title": "再做一個",
-      "goal": "再 `new` 一個 `Item`：名字 `阿隨`、種類 `USB`，也照同樣的格式印出來。輸出兩行：`小白（筆電）`、`阿隨（USB）`。",
+      "goal": "印出兩行：\n`小白（筆電）`\n`阿隨（USB）`\n\n再 `new` 一個 `Item`，名字設成 `阿隨`、種類設成 `USB`，照同樣的格式印出來。",
       "instructions": "同一張設計圖可以用很多次。",
       "expectedShape": "Item usb = new Item();\n…\nSystem.out.println(…);",
       "check": { "type": "output" },
@@ -35,7 +35,7 @@
     {
       "id": "own",
       "title": "各自一份",
-      "goal": "把小白的名字改成 `小白二號`，再把兩個都印一次，後面多出 `小白二號（筆電）`、`阿隨（USB）` 兩行。阿隨不受影響。",
+      "goal": "原本的兩行後面，要再多印出兩行，小白改了名字，阿隨不受影響：\n`小白二號（筆電）`\n`阿隨（USB）`\n\n把小白的名字改成 `小白二號`，再把兩個都印一次。",
       "instructions": "改完以後，輸出會有四行：前兩行是改之前，後兩行是改之後。",
       "expectedShape": "laptop.name = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
       "check": { "type": "output" },

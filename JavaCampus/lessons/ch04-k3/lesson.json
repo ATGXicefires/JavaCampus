@@ -9,7 +9,7 @@
     {
       "id": "hint",
       "title": "提示的第一個字",
-      "goal": "寫 `static String hint(String answer)`：只露出第一個字，其他用 `＿`。`hint(\"吃滷肉飯\")` 是 `吃＿＿＿`。",
+      "goal": "`hint(\"吃滷肉飯\")` 交回 `吃＿＿＿`，`hint(\"小白\")` 交回 `小＿`。\n\n寫一個方法 `static String hint(String answer)`，只露出答案的第一個字，其他每個字換成一個 `＿`。",
       "instructions": "`answer.substring(0, 1)` 會切出第一個字。剩下幾個字，就重複幾次 `＿`。\n\n`＿` 可以從這裡複製。",
       "expectedShape": "static String hint(String answer) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")"] },
@@ -22,7 +22,7 @@
     {
       "id": "correct",
       "title": "多打的空白",
-      "goal": "寫 `static boolean isCorrect(String typed, String answer)`，判斷玩家打的 `typed` 是不是正確答案 `answer`：先用 `trim()` 去掉 `typed` 前後的空白，再用 `equals` 比，一樣就交回 `true`。",
+      "goal": "`isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 交回 `true`，`isCorrect(\"吃控肉飯\", \"吃滷肉飯\")` 交回 `false`：前後多打的空白不算錯。\n\n寫一個方法 `static boolean isCorrect(String typed, String answer)`，判斷玩家打的 `typed` 是不是答案 `answer`：先用 `trim()` 去掉 `typed` 前後的空白，再用 `equals` 比，一樣交回 `true`，不一樣交回 `false`。",
       "instructions": "新生打字常常前後多一個空白。`trim()` 會交回去掉前後空白的字串，例如 `\" 小白 \".trim()` 是 `\"小白\"`。\n\n比字串要用 `a.equals(b)`：`a` 和 `b` 的字一樣就是 `true`。不要用 `==`：`trim()` 做出來的是新的字串，用 `==` 比會是 `false`。\n\n名字前面的 `boolean` 是說這個方法交回 `true` 或 `false`。按「完成」時，會呼叫 `isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 這幾句，檢查交回的值。",
       "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃控肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")"] },
