@@ -1,0 +1,38 @@
+{
+  "id": "ch10-s4",
+  "title": "合併衝突",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["files"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "both",
+      "title": "兩邊都要",
+      "goal": "`StartScreen.java` 裡有合併衝突的標記。他的改動（顯示分數）和她的改動（小老師打招呼）都要留下，照原本的順序排好，再刪掉 `<<<<<<<`、`=======`、`>>>>>>>` 那三行。",
+      "instructions": "`<<<<<<<` 到 `=======` 是一邊的版本，`=======` 到 `>>>>>>>` 是另一邊的。",
+      "expectedShape": "System.out.println(\"分數：\" + Score.total());\nSystem.out.println(\"滷肉：…\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "衝突區塊需手動合併，並移除標記⋯⋯",
+        "plain": "⋯⋯白話：兩個人改到同一個地方，Git 不知道要留哪一邊，就把兩邊都寫出來讓你選。這次兩邊都該留，把標記刪掉就好。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "mascot",
+      "title": "小老師的名字",
+      "goal": "`Mascot.java` 也有衝突：一邊寫 `滷肉飯`，一邊寫 `滷肉`。照設定，小老師叫 `滷肉`。",
+      "instructions": "這次只能留一邊。",
+      "expectedShape": "String name = \"…\";",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "擇一保留，移除另一側與標記⋯⋯",
+        "plain": "⋯⋯白話：小老師只有一個名字。留下 `滷肉` 那一行，另一行和三行標記都刪掉。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "id": "ch10-k2",
+  "title": "她的畫面清單",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["arraylist", "for-each", "generics"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "list",
+      "title": "會變長的清單",
+      "goal": "在檔案最上面寫 `import java.util.ArrayList;`。在 `main` 裡做一個 `ArrayList<String> screens`，依序加入 `首頁`、`課程列表`、`答題`、`成績`，印出 `共 4 個畫面`。",
+      "instructions": "畫面數用 `screens.size()` 算，不要直接寫 4。",
+      "expectedShape": "import java.util.ArrayList;\n\n…\nArrayList<String> screens = new ArrayList<>();\nscreens.add(\"首頁\");\n…\nSystem.out.println(\"共 \" + screens.size() + \" 個畫面\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "add 加進去，size() 數有幾個。",
+        "plain": "陣列像訂好座位的便當盒，格子一開始就固定；清單像購物袋，要裝多少就 `add` 多少。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "each",
+      "title": "for-each",
+      "goal": "用 for-each 把每個畫面印成 `- 首頁` 這樣，接在 `共 4 個畫面` 後面。",
+      "instructions": "for-each 寫成 `for (String s : screens)`，不用索引。",
+      "expectedShape": "for (String s : screens) {\n    System.out.println(\"- \" + …);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "冒號唸成「裡面的每一個」。",
+        "plain": "`for (String s : screens)` 就是「`screens` 裡面的每一個，輪流叫它 `s`」。不用管第幾個，每一個都會輪到。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "taps",
+      "title": "每個畫面被點幾次",
+      "goal": "在 `Main` 裡寫 `static int totalTaps(ArrayList<Integer> taps)`，用 for-each 把清單裡的點擊次數加起來交回。",
+      "instructions": "角括號裡只能放類別，整數要寫 `Integer`。按「完成」時會直接呼叫 `totalTaps`，換幾組清單測試，`main` 不會執行。",
+      "expectedShape": "static int totalTaps(ArrayList<Integer> taps) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())"] },
+      "hints": {
+        "lead": "ArrayList<Integer>，不是 <int>。",
+        "plain": "清單只裝得下物件，`int` 要換成它的包裝 `Integer` 才放得進去。拿出來加的時候，Java 會自動拆開來算。"
+      },
+      "afterText": ""
+    }
+  ]
+}

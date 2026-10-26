@@ -398,6 +398,48 @@
       "title": "抽象類別",
       "summary": "共用的寫在一起，抽象方法留給子類別。",
       "body": "大家共用的寫在 `abstract class` 裡，每個子類別不一樣的部分，寫成 `abstract` 方法留給子類別。\n\n```\nabstract class Screen {\n    void show() {\n        System.out.println(\"== 小白學程式 ==\");\n        body();\n    }\n\n    abstract void body();\n}\n```\n\n`abstract` 方法沒有內容，子類別一定要寫出來。抽象類別還沒寫完，所以不能直接 `new Screen()`，要 `new` 它的子類別。"
+    },
+    {
+      "id": "main",
+      "chapter": 10,
+      "title": "完整程式從 main 開始",
+      "summary": "完整程式從 `main` 開始跑。",
+      "body": "完整的 Java 程式，從 `Main` 類別裡的 `main` 方法開始執行。\n\n```\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(\"小白學程式 v0.9\");\n    }\n}\n```\n\n以前寫在最外層的片段，現在都要放進 `main` 的大括號裡。`import` 寫在檔案最上面，class 外面只能寫 `import` 和類別。"
+    },
+    {
+      "id": "files",
+      "chapter": 10,
+      "title": "一個類別一個檔案",
+      "summary": "`public class` 的名字要和檔名一樣。",
+      "body": "程式變大以後，每個類別放在自己的檔案：`Screen` 放在 `Screen.java`，`Main` 放在 `Main.java`。\n\n```\n// Screen.java\npublic class Screen {\n    void show() {\n        System.out.println(\"== 首頁 ==\");\n    }\n}\n```\n\n寫了 `public` 的類別，名字一定要和檔名一樣。同一個名字的類別，整個程式只能有一個。`import` 只對寫它的那個檔案有效，每個檔案自己 import 自己要用的。"
+    },
+    {
+      "id": "arraylist",
+      "chapter": 10,
+      "title": "ArrayList 是會變長的清單",
+      "summary": "陣列長度固定，清單可以一直加。",
+      "body": "`ArrayList` 是可以一直加東西進去的清單，要先 `import java.util.ArrayList;`。\n\n```\nArrayList<String> screens = new ArrayList<>();\nscreens.add(\"首頁\");\nscreens.add(\"成績\");\nscreens.get(0)          // \"首頁\"，拿第一個\nscreens.size()          // 2，有幾個\nscreens.contains(\"成績\") // true，有沒有\n```\n\n陣列一開始就決定好長度；清單不用先決定，`add` 一次就多一個。"
+    },
+    {
+      "id": "for-each",
+      "chapter": 10,
+      "title": "for-each 是每一個都來一次",
+      "summary": "不用索引，一個一個拿出來。",
+      "body": "只是要把每一個都拿出來用，不需要知道是第幾個的時候，用 for-each。\n\n```\nfor (String s : screens) {\n    System.out.println(\"- \" + s);\n}\n```\n\n冒號唸成「裡面的每一個」：`screens` 裡面的每一個，輪流放進 `s`。清單和陣列都可以這樣走。"
+    },
+    {
+      "id": "generics",
+      "chapter": 10,
+      "title": "角括號寫清楚裝什麼",
+      "summary": "數字要寫 `Integer`，不能寫 `int`。",
+      "body": "`ArrayList<String>` 的角括號，寫清楚這個清單裝什麼。寫了 `String`，放數字進去編譯器就會擋下來。\n\n```\nArrayList<Integer> scores = new ArrayList<>();\nscores.add(72);\n```\n\n角括號裡只能放類別。`int` 不是類別，要寫成它的包裝類別 `Integer`；`double` 也一樣，要寫 `Double`。放進去和拿出來的時候，Java 會自動轉換。"
+    },
+    {
+      "id": "hashmap",
+      "chapter": 10,
+      "title": "HashMap 是對照表",
+      "summary": "`put` 放進去，`get` 查出來。",
+      "body": "`HashMap` 是一張對照表：用一個鍵，查出對應的值。要先 `import java.util.HashMap;`。\n\n```\nHashMap<String, String> initials = new HashMap<>();\ninitials.put(\"tx\", \"梁亭瑄\");\ninitials.get(\"tx\")          // \"梁亭瑄\"\ninitials.containsKey(\"zz\")  // false\n```\n\n角括號裡先寫鍵的型別，再寫值的型別。查不到的鍵，`get` 會交回 `null`，所以先用 `containsKey` 問有沒有；`getOrDefault(鍵, 預設值)` 查不到時交回預設值。"
     }
   ]
 }

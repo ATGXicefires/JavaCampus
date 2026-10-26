@@ -1,0 +1,7 @@
+public class StartScreen {
+    void show() {
+        System.out.println("== 小白學程式 ==");
+        System.out.println("分數：" + Score.____());
+        System.out.println("滷肉：「歡迎回來！」");
+    }
+}

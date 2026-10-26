@@ -1,0 +1,38 @@
+{
+  "id": "ch10-k3",
+  "title": "tx 是誰",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["hashmap"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "table",
+      "title": "縮寫對照表",
+      "goal": "在檔案最上面寫 `import java.util.HashMap;`。在 `main` 裡做一個 `HashMap<String, String> initials`，放入 `yc` → `李有成`、`ys` → `王葉聖`、`wy` → `燕韋芸`、`eh` → `吳二弘`，再用 `get` 印出 `yc 是 李有成`。",
+      "instructions": "縮寫是名字後兩個字的拼音字首。",
+      "expectedShape": "HashMap<String, String> initials = new HashMap<>();\ninitials.put(\"yc\", \"李有成\");\n…\nSystem.out.println(\"yc 是 \" + initials.get(\"yc\"));",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "put 放進去，get 查出來。",
+        "plain": "`HashMap` 像一本通訊錄：左邊是縮寫，右邊是名字。`put` 是寫進一行，`get` 是用縮寫翻到那一行。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "lookup",
+      "title": "查到自己",
+      "goal": "再放入 `tx` → `梁亭瑄`。用 `containsKey` 和 `get` 依序查 `tx` 和 `zz`：查得到印 `tx 是 梁亭瑄`，查不到印 `zz 查無此人`。",
+      "instructions": "`yc` 那一行留著。查不到的縮寫，`get` 會交回 `null`，所以先用 `containsKey` 問有沒有。",
+      "expectedShape": "if (initials.containsKey(…)) {\n    …\n} else {\n    System.out.println(… + \" 查無此人\");\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先問有沒有，再查。",
+        "plain": "翻通訊錄之前先看有沒有這個人。`containsKey` 回答有沒有，有的話再用 `get` 翻出名字，沒有就說查無此人。"
+      },
+      "afterText": ""
+    }
+  ]
+}

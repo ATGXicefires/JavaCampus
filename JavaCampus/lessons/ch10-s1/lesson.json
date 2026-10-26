@@ -1,0 +1,38 @@
+{
+  "id": "ch10-s1",
+  "title": "拆成好幾個分頁",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["main", "files"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "main",
+      "title": "放進 main",
+      "goal": "起始碼還是片段的寫法，敘述寫在最外層，紅字。把敘述搬進 `public class Main` 的 `main` 裡，讓它印出 `小白學程式 v0.9`。",
+      "instructions": "完整的程式裡，class 外面只能寫 `import` 和類別。",
+      "expectedShape": "public class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "頂層只允許型別宣告，敘述必須位於方法內⋯⋯",
+        "plain": "⋯⋯白話：片段可以直接寫敘述，完整的程式不行。全部包進 `main`，程式就知道從哪裡開始跑。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "split",
+      "title": "一個類別一個分頁",
+      "goal": "起始碼多了 `Checker.java` 和 `Question.java` 兩個分頁，但 `Main.java` 裡還留著同樣的 `Checker` 和 `Question`，紅字說名字重複。把 `Main.java` 裡的刪掉，只留 `Main`。",
+      "instructions": "同一個名字的類別，整個程式只能有一個。",
+      "expectedShape": "// Main.java\npublic class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "同一專案內型別名稱不得重複宣告⋯⋯",
+        "plain": "⋯⋯白話：搬到新分頁的類別，舊的那份要刪掉。`Main` 不用 import，就叫得到同一個程式裡其他檔案的類別。"
+      },
+      "afterText": ""
+    }
+  ]
+}

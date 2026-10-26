@@ -113,6 +113,7 @@
 | 1 從 main 開始 | 寫 `public class Main`，裡面放 `public static void main(String[] args)`，印出 `小白學程式 v0.9`。 | 輸出 |
 | 2 另一個檔案 | 新增分頁 `Screen.java`，寫 `class Screen`（欄位 `title`、建構子、`void show()` 印出 `== 首頁 ==` 這樣的標題）。在 main 裡 `new` 兩個畫面，各 show 一次。 | 輸出 |
 
+- 做題目時，兩個畫面是 `首頁` 和 `課程列表`。按「＋」新增的檔案會先寫好 `public class Screen`，所以參考解答也寫成 `public class`。
 - 解鎖筆記：`main`、`files`
 
 ### ch10-k2「她的畫面清單」
@@ -153,6 +154,7 @@
 | 3 寫成方法 | 寫 `static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have)`，交回 `needs` 裡、`have` 沒有的項目。 | 隱藏測資：`needs` 是「計分、提示」、`have` 是「提示」時交回 `[計分]`；兩邊都是「提示」時交回 `[]`（清單照上面的寫法） |
 
 - 第 2 步找到的那一筆，就是等一下會在程式裡碰到的合併衝突。
+- 做題目時，他的功能是 `登入`、`課程`、`題目`、`提示`、`貼紙`；對照表是 `首頁 → 登入`、`課程列表 → 課程`、`答題 → 題目`、`成績 → 計分`。第 2 步另給起始碼，裡面寫好對照表。
 - 解鎖筆記：無
 
 ### ch10-s1「拆成好幾個分頁」
@@ -164,6 +166,7 @@
 | 1 放進 main | 起始碼還是片段的寫法，敘述寫在最外層，紅字說這裡只能寫 import 或 class。把敘述搬進 `main`，讓它印出 `小白學程式 v0.9`。 | 輸出 |
 | 2 一個類別一個分頁 | 起始碼多了 `Question.java` 和 `Checker.java` 兩個分頁，但 `Main.java` 裡還留著同樣的類別，紅字說名字重複。把 `Main.java` 裡的刪掉，只留 main。 | 輸出（和第 1 步一樣） |
 
+- 做題目時，`Checker` 沿用第九章的介面，`Question` 實作它；第 2 步的 main 多了一行，用 `Question` 印出 `if-else 像什麼？ true`，兩個分頁才不是放著沒用。所以第 2 步的輸出比第 1 步多一行。
 - 解鎖筆記：`main`、`files`
 
 ### ch10-s2「清單的型別」
@@ -188,6 +191,7 @@
 | 2 隱藏測資 | 寫 `static int bestAfter(String[] units, int[] scores, String unit)`：照順序記完，交回 `unit` 的最高分。 | 隱藏測資 `Main.bestAfter(new String[]{"第1課", "第1課"}, new int[]{60, 45}, "第1課")`、`Main.bestAfter(new String[]{}, new int[]{}, "第2課")` |
 
 - 第 1 步會用到 `getOrDefault` 或先 `containsKey`。
+- 做題目時，`Records` 放在自己的分頁 `Records.java`。main 照順序記 `第1課 60`、`第2課 80`、`第1課 75`、`第2課 70`，再印出第 1～3 課的最高分（第 3 課沒有紀錄，印 0）。
 - 搭檔反應（阿成）方向：「temporary X 先生，今天也很努力呢。」
 - 解鎖筆記：`hashmap`
 
@@ -215,6 +219,7 @@ class StartScreen {
 | 2 小老師的名字 | `Mascot.java` 也有衝突：一邊寫「滷肉」，一邊寫「滷肉飯」。照設定留「滷肉」。 | 輸出 |
 
 - 程式題只處理「兩邊都該留」的衝突；按鈕上的字留誰的，是劇情的選項。
+- 做題目時，分數由 `Score.java` 算（`30 + 25 + 32`，印出 `分數：87`）；寫「滷肉飯」的是二弘那一邊。第 2 步另給起始碼：`StartScreen` 改成用 `Mascot.greet()` 打招呼，衝突在 `Mascot.java`。
 - 解鎖筆記：無
 
 ## 筆記條目

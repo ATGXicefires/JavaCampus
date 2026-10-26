@@ -1,0 +1,38 @@
+{
+  "id": "ch10-s3",
+  "title": "每一課的最高分",
+  "route": "學長",
+  "partner": "阿成",
+  "notes": ["hashmap"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "records",
+      "title": "最高分紀錄",
+      "goal": "在 `Records.java` 寫好 `class Records`：欄位 `HashMap<String, Integer> best`；`void record(String unit, int score)` 比原本高才更新，第一次就直接放；`int bestOf(String unit)` 沒有紀錄時交回 0。`main` 已經照順序記好幾筆了。",
+      "instructions": "第一次記的課，`best` 裡還沒有它。",
+      "expectedShape": "void record(String unit, int score) {\n    if (!best.containsKey(unit) || …) {\n        best.put(unit, score);\n    }\n}\n\nint bestOf(String unit) {\n    return best.getOrDefault(unit, 0);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "以 `containsKey`／`getOrDefault` 處理鍵不存在的情況⋯⋯",
+        "plain": "⋯⋯白話：第一次記的課還沒有紀錄，直接放；記過的，比原本高才換掉。查的時候沒有紀錄，就交回 0。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hidden",
+      "title": "隱藏測資",
+      "goal": "在 `Main` 裡寫 `static int bestAfter(String[] units, int[] scores, String unit)`：照順序把每一筆記進一個新的 `Records`，交回 `unit` 的最高分。",
+      "instructions": "`units[i]` 和 `scores[i]` 是同一筆。按「完成」時會直接呼叫 `bestAfter` 測試，`main` 不會執行。",
+      "expectedShape": "static int bestAfter(String[] units, int[] scores, String unit) {\n    Records r = new Records();\n    for (…) {\n        …\n    }\n    return r.bestOf(unit);\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.bestAfter(new String[]{\"第1課\", \"第1課\"}, new int[]{60, 45}, \"第1課\")", "Main.bestAfter(new String[]{}, new int[]{}, \"第2課\")"] },
+      "hints": {
+        "lead": "以靜態方法包裝流程，便於以參數驗證⋯⋯",
+        "plain": "⋯⋯白話：把「記幾筆、查一課」包成一個方法，測試的人就能直接丟各種資料進來試，不用每次改 `main`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

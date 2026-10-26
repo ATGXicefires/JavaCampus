@@ -1,0 +1,52 @@
+{
+  "id": "ch10-s2",
+  "title": "清單的型別",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["arraylist", "for-each", "generics"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "integer",
+      "title": "int 放不進去",
+      "goal": "她寫了 `ArrayList<int> scores`，紅字。修到裝得下 `72`、`58`、`65`，印出 `平均：65.0`。",
+      "instructions": "角括號裡只能放類別。",
+      "expectedShape": "ArrayList<…> scores = new ArrayList<>();",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "泛型的型別參數必須是參考型別⋯⋯",
+        "plain": "⋯⋯白話：`int` 不是類別，放不進角括號。改成它的包裝類別 `Integer`，放進去、拿出來，Java 都會自動轉換。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "raw",
+      "title": "沒寫型別的清單",
+      "goal": "她的 `ArrayList names = new ArrayList();` 沒寫型別，還混進了一個數字。加上 `<String>`，讓編譯器擋下那個數字，修到只印出三個名字。",
+      "instructions": "沒寫型別的清單什麼都裝得進去，出錯也不會有紅字。",
+      "expectedShape": "ArrayList<String> names = new ArrayList<>();\nnames.add(…);",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "原始型別不做型別檢查，加上型別參數讓錯誤在編譯期出現⋯⋯",
+        "plain": "⋯⋯白話：沒寫型別，`72` 也混得進名字清單，執行的時候才發現怪怪的。寫清楚只裝 `String`，編譯器馬上擋下來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "total",
+      "title": "for-each 加總",
+      "goal": "在 `Main` 裡寫 `static int total(ArrayList<Integer> list)`，用 for-each 把清單加起來交回。",
+      "instructions": "按「完成」時會直接呼叫 `total`，換幾組清單測試，`main` 不會執行。",
+      "expectedShape": "static int total(ArrayList<Integer> list) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())"] },
+      "hints": {
+        "lead": "增強型 for 迴圈走訪集合⋯⋯",
+        "plain": "⋯⋯白話：不用索引，`for (int n : list)` 每一個都拿出來加一次。空的清單一次都不會進迴圈，交回 0。"
+      },
+      "afterText": ""
+    }
+  ]
+}

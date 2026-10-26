@@ -1,0 +1,52 @@
+{
+  "id": "ch10-k4",
+  "title": "對不上的地方",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["arraylist", "hashmap"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "count",
+      "title": "兩張清單",
+      "goal": "`Main.java` 是你的畫面清單，`Features.java` 是二弘寫好的功能清單。印出兩邊的數量：`畫面 4 個，功能 5 個`。",
+      "instructions": "兩個數字都用 `size()` 算。",
+      "expectedShape": "System.out.println(\"畫面 \" + screens.size() + \" 個，功能 \" + … + \" 個\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "兩張清單，各問一次 size()。",
+        "plain": "`Features.list()` 交回他做好的功能清單。兩張清單各自數一數，接成一句印出來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "needs",
+      "title": "對照表",
+      "goal": "起始碼給好了 `HashMap<String, String> needs`：每個畫面需要哪一個功能。用 for-each 走過每個畫面，找出需要的功能不在他清單裡的，印出 `成績：找不到「計分」` 這樣的一行。",
+      "instructions": "`features.contains(…)` 問他的清單裡有沒有。`「` 和 `」` 可以從目標複製。",
+      "expectedShape": "for (String screen : screens) {\n    String need = needs.get(screen);\n    if (…) {\n        System.out.println(screen + \"：找不到「\" + need + \"」\");\n    }\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "查出需要的功能，再問有沒有。",
+        "plain": "一個畫面一個畫面對：先在對照表查出它需要什麼功能，再去他的清單找。找不到的，就是等一下會出問題的地方。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "missing",
+      "title": "寫成方法",
+      "goal": "在 `Main` 裡寫 `static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have)`，交回 `needs` 裡有、`have` 裡沒有的項目。",
+      "instructions": "先 `new` 一個空的清單，找到的就 `add` 進去，最後交回。按「完成」時會直接呼叫 `missing` 測試，`main` 不會執行。",
+      "expectedShape": "static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have) {\n    ArrayList<String> out = new ArrayList<>();\n    for (…) {\n        …\n    }\n    return out;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.missing(new java.util.ArrayList<>(java.util.List.of(\"計分\", \"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))", "Main.missing(new java.util.ArrayList<>(java.util.List.of(\"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))"] },
+      "hints": {
+        "lead": "沒有的才 add 進去。",
+        "plain": "準備一個空袋子，把需要的一個一個拿出來比對：對方清單裡沒有的，丟進袋子。比完，袋子裡就是缺的那些。"
+      },
+      "afterText": ""
+    }
+  ]
+}
