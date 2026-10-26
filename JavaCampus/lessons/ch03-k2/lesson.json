@@ -1,0 +1,62 @@
+{
+  "id": "ch03-k2",
+  "title": "一排置物櫃",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["array", "index", "array-loop"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" }
+  ],
+  "steps": [
+    {
+      "id": "ends",
+      "title": "第一格和最後一格",
+      "goal": "印出第一個分數和最後一個分數，一個一行。",
+      "instructions": "陣列的編號從 0 開始，第一格是 `scores[0]`。最後一格的編號是「格數減一」，格數是 `scores.length`。\n\n按「完成」時會換一組長度不一樣的分數再跑，所以最後一格不能直接寫 4。",
+      "expectedShape": "System.out.println(scores[…]);\nSystem.out.println(scores[…]);",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{90, 85}" }, { "scores": "{60}" } ]
+      },
+      "hints": {
+        "lead": "第一格是 0 號。",
+        "plain": "置物櫃從 0 號開始編：5 格的櫃子是 0 到 4 號。最後一格永遠是 `scores.length - 1` 號，不管有幾格都對。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "sum",
+      "title": "全部加起來",
+      "goal": "用 `for` 把分數加總，存進 `sum`。",
+      "instructions": "`i` 從 0 走到最後一格，每一圈把 `scores[i]` 加進 `sum`。條件寫 `i < scores.length`。\n\n按「完成」時會換一組分數再算一次。",
+      "expectedShape": "int sum = 0;\nfor (int i = 0; i < …; i++) {\n    sum += …;\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["sum"],
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "i 就是格子的編號。",
+        "plain": "`for` 的 `i` 剛好可以當格子的編號：第一圈 `scores[0]`、第二圈 `scores[1]`⋯⋯走到 `scores.length - 1` 為止，所以條件是 `<`，不是 `<=`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "avg",
+      "title": "平均",
+      "goal": "算出平均，存進 `double avg`，要有小數。",
+      "instructions": "平均是總和除以有幾格。按「完成」時會換一組分數再算一次。",
+      "expectedShape": "double avg = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["avg"],
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "除以格數，記得要有小數。",
+        "plain": "平均是總和除以有幾格：`sum / scores.length`。兩個都是整數，記得先把其中一個變成 `double`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

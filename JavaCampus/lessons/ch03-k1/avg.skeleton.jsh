@@ -1,0 +1,1 @@
+double avg = total / ____;

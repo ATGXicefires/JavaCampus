@@ -1,0 +1,62 @@
+{
+  "id": "ch03-k1",
+  "title": "段考前的複習卷",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["int-div", "cast", "compare", "for"],
+  "vars": [
+    { "name": "total", "type": "int", "value": "312" },
+    { "name": "days", "type": "int", "value": "7" }
+  ],
+  "steps": [
+    {
+      "id": "avg",
+      "title": "五科平均",
+      "goal": "段考 5 科的總分是 `total`，算出平均存進 `double avg`，要有小數。",
+      "instructions": "題目給了 `int total = 312`。按「完成」時會把 `total` 換成 300 再算一次。",
+      "expectedShape": "double avg = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["avg"],
+        "variants": [ { "total": "300" } ]
+      },
+      "hints": {
+        "lead": "整數除以整數會丟掉小數。",
+        "plain": "5 科的平均就是總分除以 5。`total` 和 `5` 都是整數，答案會只剩整數；寫成 `5.0`，答案才會留下小數。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "pass",
+      "title": "及格嗎",
+      "goal": "平均 60 以上印 `及格`，否則印 `再加油`。",
+      "instructions": "「60 以上」包含剛好 60 分。按「完成」時會把 `total` 換成 250 和 300 再跑一次，300 分的平均剛好是 60。",
+      "expectedShape": "if (avg … 60) {\n    System.out.println(\"及格\");\n} else {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "total": "250" }, { "total": "300" } ]
+      },
+      "hints": {
+        "lead": "60 以上，包含 60。",
+        "plain": "「60 以上」包含剛好 60 分，所以用 `>=`。寫成 `>` 的話，剛好 60 分的人會被說再加油。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "countdown",
+      "title": "倒數",
+      "goal": "用 `for` 從 `days` 倒數：`段考倒數 7 天` 到 `段考倒數 1 天`。",
+      "instructions": "倒數就是從大數到小：從 `days` 開始，每一圈減一。`i--` 是 `i++` 的反方向。\n\n按「完成」時會把 `days` 換成 3 再跑一次。",
+      "expectedShape": "for (int i = days; …; i--) {\n    System.out.println(\"段考倒數 \" + i + \" 天\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "days": "3" } ]
+      },
+      "hints": {
+        "lead": "倒數用 i--。",
+        "plain": "`for` 也可以倒著數：從 `days` 開始，`i >= 1` 還成立就繼續，每一圈 `i--` 減一。"
+      },
+      "afterText": ""
+    }
+  ]
+}

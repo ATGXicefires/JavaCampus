@@ -1,0 +1,45 @@
+{
+  "id": "ch03-s5",
+  "title": "你覺得怎麼做比較好？",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["else-if", "array-loop"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{95, 72, 58}" }
+  ],
+  "steps": [
+    {
+      "id": "mascot",
+      "title": "小老師的話",
+      "goal": "每個分數印出滷肉說的話，例如 `95 分 滷肉：「太強了！」`。",
+      "instructions": "90 以上說 `太強了！`，60 以上說 `不錯喔！`，其他說 `沒關係，再跑一次！`。按「完成」時會換一組分數再跑一次。",
+      "expectedShape": "for (…) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" 分 滷肉：「…」\");\n    } else if (…) {\n        …\n    }\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{60, 59}" } ]
+      },
+      "hints": {
+        "lead": "用 for 走訪陣列，迴圈裡做三段式分支⋯⋯",
+        "plain": "⋯⋯白話：每一個分數都問一遍：90 以上、60 以上、其他，各印一句滷肉的話。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "retry",
+      "title": "再試一次",
+      "goal": "算出要顯示「再試一次」按鈕的人數（不及格的人數），存進 `retry`。",
+      "instructions": "不及格是 60 分以下。按「完成」時會換一組分數再算一次。",
+      "expectedShape": "int retry = 0;\nfor (…) {\n    if (…) {\n        retry++;\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["retry"],
+        "variants": [ { "scores": "{60, 59, 0}" } ]
+      },
+      "hints": {
+        "lead": "計數器：條件成立時遞增⋯⋯",
+        "plain": "⋯⋯白話：準備一個從 0 開始的盒子，走過每一格，不及格就 `retry++`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

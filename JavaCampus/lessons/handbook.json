@@ -118,6 +118,55 @@
       "title": "for 是把同一件事做 N 遍",
       "summary": "`for` 是把同一件事做 N 遍。",
       "body": "同一件事要做很多遍，不用複製貼上，用 `for`。\n\n```\nfor (int i = 1; i <= 5; i++) {\n    System.out.println(\"第 \" + i + \" 遍\");\n}\n```\n\n括號裡有三段，用分號隔開：從 `i = 1` 開始；`i <= 5` 還成立就做一遍；每做完一遍 `i++`。所以 `i` 依序是 1、2、3、4、5，大括號裡的事做了 5 遍。"
+    },
+    {
+      "id": "array",
+      "chapter": 3,
+      "title": "陣列是一排置物櫃",
+      "summary": "`int[]` 是一排置物櫃，一格放一個。",
+      "body": "一排置物櫃，每一格放一個東西，這就是陣列。\n\n```\nint[] scores = {72, 58, 65, 80, 49};\n```\n\n`int[]` 的意思是「一排 int」。大括號裡用逗號隔開，一格放一個分數。`scores.length` 是總共有幾格，這裡是 5。"
+    },
+    {
+      "id": "index",
+      "chapter": 3,
+      "title": "索引從 0 開始",
+      "summary": "第一格是 `[0]`，不是 `[1]`。",
+      "body": "置物櫃的編號從 0 開始：第一格是 `scores[0]`，第二格是 `scores[1]`。\n\n```\nint[] scores = {72, 58, 65};\nSystem.out.println(scores[0]);\nSystem.out.println(scores[scores.length - 1]);\n```\n\n有 3 格的話，編號是 0、1、2，所以最後一格是 `scores[scores.length - 1]`。用到 `scores[3]`，程式會在執行時跌倒。"
+    },
+    {
+      "id": "array-loop",
+      "chapter": 3,
+      "title": "走過每一格",
+      "summary": "走完每一格：`i < length`，不是 `<=`。",
+      "body": "用 `for` 從第 0 格走到最後一格，每一格都看一次。\n\n```\nint sum = 0;\nfor (int i = 0; i < scores.length; i++) {\n    sum += scores[i];\n}\n```\n\n條件是 `i < scores.length`。寫成 `<=` 會多走一格，走到不存在的那一格就跌倒了。"
+    },
+    {
+      "id": "else-if",
+      "chapter": 3,
+      "title": "else if 是排隊問問題",
+      "summary": "從上往下問，第一個答「是」的就停。",
+      "body": "`else if` 是一個接一個問下去，第一個成立的就做，後面的都不問了。\n\n```\nif (score >= 90) {\n    System.out.println(\"A\");\n} else if (score >= 80) {\n    System.out.println(\"B\");\n} else {\n    System.out.println(\"C 以下\");\n}\n```\n\n所以順序很重要：先問 90 分，再問 80 分。很多人第一次寫等第會先問 `>= 60`，結果 95 分也停在那一關。"
+    },
+    {
+      "id": "exception",
+      "chapter": 3,
+      "title": "例外是程式在執行時跌倒",
+      "summary": "紅字是看不懂；例外是跑到一半跌倒。",
+      "body": "紅字是程式還沒跑，電腦就看不懂；**例外**是程式跑到一半才跌倒。\n\n```\nint[] scores = {72, 58};\nSystem.out.println(scores[2]);\n```\n\n這段可以編譯，執行時卻會跌倒：`scores` 只有 0 和 1 兩格。看例外訊息停在哪一行，就知道在哪裡跌倒。"
+    },
+    {
+      "id": "parse-int",
+      "chapter": 3,
+      "title": "字串變數字",
+      "summary": "`Integer.parseInt` 把文字變成數字。",
+      "body": "答題框拿到的東西都是文字，就算看起來像數字也一樣。要拿來算，先用 `Integer.parseInt` 換成數字。\n\n```\nString input = \"85\";\nint score = Integer.parseInt(input);\nSystem.out.println(score + 5);\n```\n\n印出 `90`。如果 `input` 是 `\"八十\"`，`parseInt` 看不懂，程式就會跌倒。"
+    },
+    {
+      "id": "try-catch",
+      "chapter": 3,
+      "title": "try-catch 是先準備好接住",
+      "summary": "會跌倒的放 `try`，跌倒時做 `catch`。",
+      "body": "知道某段程式可能會跌倒，就先準備好接住它。\n\n```\ntry {\n    int score = Integer.parseInt(input);\n    System.out.println(\"收到：\" + score);\n} catch (NumberFormatException e) {\n    System.out.println(\"要輸入數字喔\");\n}\n```\n\n`try` 裡的程式跌倒了，就直接跳到 `catch`，程式不會整個停掉。`catch` 的括號寫要接住哪一種例外。"
     }
   ]
 }

@@ -1,0 +1,45 @@
+{
+  "id": "ch03-k3",
+  "title": "跑一半跌倒",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["exception"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" }
+  ],
+  "steps": [
+    {
+      "id": "crash",
+      "title": "它停在哪一行",
+      "goal": "執行看看，照例外訊息修到加總不會跌倒。",
+      "instructions": "這是被退回的成績頁。先按「執行」，看例外訊息停在哪一行、說了什麼。\n\n按「完成」時會換一組分數再算一次。",
+      "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["sum"],
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "例外訊息說索引 5 超出範圍。",
+        "plain": "5 格的陣列只有 0 到 4 號。`i <= scores.length` 會讓 `i` 走到 5，去開一格不存在的櫃子，程式就跌倒了。把 `<=` 改成 `<`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "average",
+      "title": "平均怪怪的",
+      "goal": "平均應該是 64.8，修到印出 `平均：64.8`。",
+      "instructions": "現在印出來的是 `平均：64.0`。按「完成」時會換一組分數再跑一次。",
+      "expectedShape": "double avg = …;\nSystem.out.println(\"平均：\" + avg);",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "又是整數除以整數。",
+        "plain": "`sum` 和 `scores.length` 都是整數，相除的答案會丟掉小數，64.8 就變成 64。讓其中一個先變成 `double`，例如 `(double) sum / scores.length`。"
+      },
+      "afterText": ""
+    }
+  ]
+}
