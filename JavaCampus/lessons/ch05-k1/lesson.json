@@ -10,7 +10,7 @@
       "id": "pass",
       "title": "及格線",
       "goal": "寫 `static boolean isPass(int score)`：60 分以上（剛好 60 也算）交回 `true`，不到 60 交回 `false`。",
-      "instructions": "交回 `true` 或 `false` 的方法，回傳型別寫 `boolean`。比較的答案本身就是 `boolean`，可以直接 `return`。\n\n會用 59、60、61 測：邊界上的錯最容易漏。",
+      "instructions": "交回 `true` 或 `false` 的方法，回傳型別寫 `boolean`。比較的答案本身就是 `boolean`，可以直接 `return`。\n\n會用 59、60、61 測，另外還有 0 和 100：邊界上的錯最容易漏。",
       "expectedShape": "static boolean isPass(int score) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isPass(59)", "isPass(60)", "isPass(61)", "isPass(0)", "isPass(100)"] },
       "hints": {

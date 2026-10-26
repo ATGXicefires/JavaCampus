@@ -28,7 +28,7 @@
       "check": { "type": "values", "exprs": ["new StayPath().describe()"] },
       "hints": {
         "lead": "名字要和父類別一模一樣。",
-        "plain": "`descripe` 少打一個字母，就變成另一個新方法，`describe()` 還是用父類別的 `還不知道`。`@Override` 像是請人幫忙對名字：對不上就直接說出來。"
+        "plain": "`descripe` 打錯一個字母（`b` 打成 `p`），就變成另一個新方法，`describe()` 還是用父類別的 `還不知道`。`@Override` 像是請人幫忙對名字：對不上就直接說出來。"
       },
       "afterText": ""
     }

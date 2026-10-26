@@ -44,8 +44,8 @@
       "id": "progress",
       "title": "進度",
       "goal": "每一行後面加上到那一週為止的進度，例如 `W01 6%`，用整數算 `i * 100 / weeks`。",
-      "instructions": "進度是「第幾週 ÷ 總週數」換成百分比。按「完成」時會把 `weeks` 換成 12 再跑一次。\n\n寫成 `i / weeks * 100` 的話，整數除法會讓前面幾週全部變成 0%。",
-      "expectedShape": "int percent = …;\nSystem.out.println(\"W0\" + i + \" \" + percent + \"%\");",
+      "instructions": "進度是「第幾週 ÷ 總週數」換成百分比。按「完成」時會把 `weeks` 換成 12 再跑一次。\n\n寫成 `i / weeks * 100` 的話，整數除法會讓最後一週以外全部變成 0%。",
+      "expectedShape": "int percent = …;\nif (…) {\n    System.out.println(\"W0\" + i + \" \" + percent + \"%\");\n} else {\n    …\n}",
       "check": {
         "type": "output",
         "variants": [ { "weeks": "12" } ]
