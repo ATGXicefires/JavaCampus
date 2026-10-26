@@ -1,0 +1,46 @@
+{
+  "id": "ch04-s2",
+  "title": "接上她的方法",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["signature"],
+  "vars": [
+    { "name": "units", "type": "String[]", "value": "{\"讓電腦說話\", \"型別與重複\"}" },
+    { "name": "done", "type": "int[]", "value": "{3, 1}" },
+    { "name": "total", "type": "int[]", "value": "{3, 4}" }
+  ],
+  "steps": [
+    {
+      "id": "call",
+      "title": "照約定呼叫",
+      "goal": "每一課印一行，例如 `讓電腦說話 ■■■ 3/3`，進度條用她的 `bar`。",
+      "instructions": "這是之前的草稿，執行就跌倒。她的 `bar` 簽章是 `bar(int done, int total)`。\n\n按「完成」時會換一組完成數再跑一次。",
+      "expectedShape": "System.out.println(units[i] + \" \" + bar(…) + \" \" + done[i] + \"/\" + total[i]);",
+      "check": {
+        "type": "output",
+        "variants": [ { "done": "{0, 4}" } ]
+      },
+      "hints": {
+        "lead": "簽章是 `bar(int done, int total)`：引數照位置對應參數⋯⋯",
+        "plain": "⋯⋯白話：約定是先給完成數、再給總數。順序放反了，進度條就畫錯，剩下的格數還可能變成負的。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "finished",
+      "title": "完成的時候",
+      "goal": "已經完成的課，下一行讓滷肉說 `這一課完成了！`（呼叫她的 `say`）。",
+      "instructions": "完成數等於總數，就是完成了。按「完成」時會換一組完成數再跑一次。",
+      "expectedShape": "if (…) {\n    say(\"滷肉\", \"這一課完成了！\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "done": "{3, 4}" } ]
+      },
+      "hints": {
+        "lead": "直接呼叫既有的方法，不重寫它⋯⋯",
+        "plain": "⋯⋯白話：`done[i] == total[i]` 的時候，叫她的 `say(\"滷肉\", \"這一課完成了！\")`。怎麼印是她的事，你只要照簽章給對東西。"
+      },
+      "afterText": ""
+    }
+  ]
+}

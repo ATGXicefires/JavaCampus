@@ -1,0 +1,49 @@
+{
+  "id": "ch04-s1",
+  "title": "後端的第一個方法",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["method", "param", "return"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "total",
+      "title": "加總",
+      "goal": "寫 `static int total(int[] counts)`，交回全部加起來的和。",
+      "instructions": "空的陣列要交回 0。",
+      "expectedShape": "static int total(int[] counts) {\n    …\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["total(new int[]{3, 4, 5})", "total(new int[]{})", "total(new int[]{7})"] },
+      "hints": {
+        "lead": "方法宣告：回傳型別 `int`、參數 `int[] counts`，以 `return` 交回結果⋯⋯",
+        "plain": "⋯⋯白話：方法裡跟以前一樣用 `for` 加總，最後用 `return sum;` 把結果交回去。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "percent",
+      "title": "百分比",
+      "goal": "寫 `static int percent(int part, int whole)`，交回整數的百分比；`whole` 是 0 時交回 0。",
+      "instructions": "先乘 100 再除，答案才不會被整數除法吃掉。",
+      "expectedShape": "static int percent(int part, int whole) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["percent(1, 4)", "percent(2, 3)", "percent(0, 0)"] },
+      "hints": {
+        "lead": "除數為 0 時先 `return`，避免 `ArithmeticException`⋯⋯",
+        "plain": "⋯⋯白話：先檢查 `whole` 是不是 0，是的話直接交回 0。不是的話，先乘 100 再除。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "report",
+      "title": "她問為什麼",
+      "goal": "寫 `static void report(int part, int whole)`，呼叫 `percent`，印出 `完成 25%`；再呼叫 `report(1, 4)`、`report(3, 4)`。",
+      "instructions": "`percent` 交回數字，`report` 拿那個數字來印。",
+      "expectedShape": "static void report(int part, int whole) {\n    System.out.println(…);\n}\n\nreport(1, 4);\nreport(3, 4);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`void` 方法沒有回傳值，只負責輸出⋯⋯",
+        "plain": "⋯⋯白話：交回來的值可以再拿去用，印出來的就只能看。`report` 用 `percent` 交回的數字，排成一句話印出來。"
+      },
+      "afterText": ""
+    }
+  ]
+}

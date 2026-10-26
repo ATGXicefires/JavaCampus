@@ -167,6 +167,48 @@
       "title": "try-catch 是先準備好接住",
       "summary": "會跌倒的放 `try`，跌倒時做 `catch`。",
       "body": "知道某段程式可能會跌倒，就先準備好接住它。\n\n```\ntry {\n    int score = Integer.parseInt(input);\n    System.out.println(\"收到：\" + score);\n} catch (NumberFormatException e) {\n    System.out.println(\"要輸入數字喔\");\n}\n```\n\n`try` 裡的程式跌倒了，就直接跳到 `catch`，程式不會整個停掉。`catch` 的括號寫要接住哪一種例外。"
+    },
+    {
+      "id": "method",
+      "chapter": 4,
+      "title": "方法是分工",
+      "summary": "把一件事包起來、取個名字，要用時叫它。",
+      "body": "把一件事包起來，取個名字，就是**方法**。要用的時候，叫它的名字就好。\n\n```\nstatic void hello() {\n    System.out.println(\"滷肉：「歡迎來到小白！」\");\n}\n\nhello();\nhello();\n```\n\n`hello();` 叫了兩次，就印兩次。`static` 先照寫，之後會講它是什麼意思。"
+    },
+    {
+      "id": "param",
+      "chapter": 4,
+      "title": "參數是交給對方的東西",
+      "summary": "呼叫時給什麼，方法裡就用什麼。",
+      "body": "方法的括號裡可以寫**參數**：呼叫的人交東西給它，它就拿來用。\n\n```\nstatic void say(String who, String line) {\n    System.out.println(who + \"：「\" + line + \"」\");\n}\n\nsay(\"滷肉\", \"沒關係，再跑一次！\");\n```\n\n呼叫時給的值，會照順序放進 `who` 和 `line`。順序給錯，意思就錯了。"
+    },
+    {
+      "id": "return",
+      "chapter": 4,
+      "title": "回傳值是對方交回來的東西",
+      "summary": "`return` 交回結果；`void` 是不交回。",
+      "body": "方法做完事，可以用 `return` 把結果交回來。交回來的值可以再拿去用，印出來的就只能看。\n\n```\nstatic int percent(int part, int whole) {\n    return part * 100 / whole;\n}\n\nint p = percent(1, 4);\n```\n\n名字前面的 `int` 說它會交回一個整數；寫 `void` 的方法什麼都不交回。"
+    },
+    {
+      "id": "signature",
+      "chapter": 4,
+      "title": "方法簽章就是約定",
+      "summary": "名字、要給什麼、交回什麼，先說好。",
+      "body": "`static int percent(int part, int whole)` 這一行叫**方法簽章**：名字、要給什麼、交回什麼。\n\n兩個人分工時，先把簽章說好。方法裡面怎麼寫，各自決定；要用別人的方法，只要照簽章給對東西，不用看它裡面。\n\n```\nint p = percent(3, 4);\n```"
+    },
+    {
+      "id": "string-methods",
+      "chapter": 4,
+      "title": "字串的方法",
+      "summary": "字串自己會的事：量長度、切開、重複。",
+      "body": "字串有很多自己會做的事，用 `.` 叫出來。\n\n```\nString s = \"吃滷肉飯\";\ns.length()          // 4，有幾個字\ns.substring(0, 1)   // \"吃\"，切出第一個字\n\"■\".repeat(3)       // \"■■■\"，重複三次\n\" 小白 \".trim()      // \"小白\"，去掉前後空白\n```\n\n`substring(開始, 結束)` 切出來的不包含結束那一格：`substring(0, 1)` 就是第 0 個字。"
+    },
+    {
+      "id": "equals",
+      "chapter": 4,
+      "title": "比字串要用 equals",
+      "summary": "字串一律用 `equals` 比，不要用 `==`。",
+      "body": "`==` 比的是「是不是同一個盒子」，`equals` 比的才是「裡面的字一不一樣」。\n\n```\nString typed = \" 小白\".trim();\nSystem.out.println(typed == \"小白\");       // false\nSystem.out.println(typed.equals(\"小白\"));  // true\n```\n\n`trim()` 做出一個新的字串：字一樣，盒子卻是新的。所以比字串一律用 `equals`。"
     }
   ]
 }

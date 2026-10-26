@@ -1,0 +1,49 @@
+{
+  "id": "ch04-k2",
+  "title": "學習進度條",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["string-methods"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "bar",
+      "title": "一格一格",
+      "goal": "寫 `static String bar(int done, int total)`：完成幾課就幾個 `■`，剩下的用 `□`，例如 `bar(3, 5)` 是 `■■■□□`。",
+      "instructions": "`\"■\".repeat(3)` 會交回 `■■■`。完成的用 `■`，剩下的用 `□`，兩段接起來。\n\n`■` 和 `□` 可以從這裡複製。",
+      "expectedShape": "static String bar(int done, int total) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["bar(3, 5)", "bar(0, 4)", "bar(4, 4)"] },
+      "hints": {
+        "lead": "repeat 幾次，就有幾格。",
+        "plain": "`\"■\".repeat(done)` 是完成的部分，`\"□\".repeat(total - done)` 是還沒完成的部分，兩段用 `+` 接起來就是整條進度條。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "progress",
+      "title": "加上數字",
+      "goal": "寫 `static String progress(int done, int total)`，交回 `■■■□□ 3/5`，裡面呼叫自己寫的 `bar`。",
+      "instructions": "不用再寫一次進度條，叫 `bar` 就好。",
+      "expectedShape": "static String progress(int done, int total) {\n    return bar(…) + …;\n}",
+      "check": { "type": "values", "exprs": ["progress(3, 5)", "progress(1, 2)"] },
+      "hints": {
+        "lead": "方法裡也能叫方法。",
+        "plain": "叫 `bar(done, total)` 拿到進度條那一段，再接上空格和 `3/5`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "underline",
+      "title": "標題底線",
+      "goal": "寫 `static String underline(String title)`，交回和標題一樣長的 `=`。",
+      "instructions": "`title.length()` 是標題有幾個字，空格也算。",
+      "expectedShape": "static String underline(String title) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["underline(\"第 1 課\")", "underline(\"變數\")"] },
+      "hints": {
+        "lead": "字串的長度是 length()。",
+        "plain": "`title.length()` 是標題有幾個字，讓 `=` 重複那麼多次就好：`\"=\".repeat(title.length())`。"
+      },
+      "afterText": ""
+    }
+  ]
+}
