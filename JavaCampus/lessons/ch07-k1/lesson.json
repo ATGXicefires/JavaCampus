@@ -9,7 +9,7 @@
     {
       "id": "lock",
       "title": "鎖起來",
-      "goal": "寫 `class GachaBag`：欄位 `private int count`，方法 `void add()` 加一個、`int getCount()` 交回數量。`new` 一個叫 `bag` 的扭蛋包，加 8 個。",
+      "goal": "`new` 一個扭蛋包 `bag`、加 8 個扭蛋之後，`bag.getCount()` 交回 `8`。\n\n寫 `class GachaBag`：欄位 `private int count`，方法 `void add()` 加一個、`int getCount()` 交回數量。再 `new` 一個 `bag`，呼叫 8 次 `add()`。",
       "instructions": "`private` 的欄位只有類別自己能碰。外面要加扭蛋，只能叫 `add()`；要知道有幾個，只能問 `getCount()`。",
       "expectedShape": "class GachaBag {\n    private int count;\n    …\n}\n\nGachaBag bag = new GachaBag();\n…",
       "check": { "type": "values", "exprs": ["bag.getCount()"] },
@@ -22,7 +22,7 @@
     {
       "id": "outside",
       "title": "從外面改不了",
-      "goal": "起始碼的最後一行偷偷寫了 `bag.count = 99;`，紅字說 `count` 是 private。刪掉，改成用 `add()` 再加一個。",
+      "goal": "修好後，`bag.getCount()` 交回 `9`：原本的 8 個再加 1 個。\n\n起始碼最後一行從外面寫了 `bag.count = 99;`，紅字說 `count` 是 private。刪掉它，改成用 `add()` 再加一個。",
       "instructions": "`private` 的意思就是外面碰不到。",
       "expectedShape": "bag.…();",
       "check": { "type": "values", "exprs": ["bag.getCount()"] },

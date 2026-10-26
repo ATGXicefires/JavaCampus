@@ -11,8 +11,8 @@
     {
       "id": "weeks",
       "title": "W1 到 W16",
-      "goal": "用 `for` 印出 `W1` 到 `W16`，一行一個。",
-      "instructions": "提案的時程表。題目給了 `int weeks = 16`；按「完成」時會換成 12 再跑一次。",
+      "goal": "時程表有 16 週，就是印出 16 行：`W1`、`W2`，一直到 `W16`。\n\n用 `for` 照題目給的 `weeks`（總週數）印出這幾行。",
+      "instructions": "提案的時程表。`weeks` 是題目已經宣告好的變數。\n\n按「完成」時，會把 `weeks` 改成 12 再檢查一次，那時要印到 `W12`，所以要用 `weeks` 來數，不能直接寫 `16`。",
       "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"W\" + …);\n}",
       "check": {
         "type": "output",
@@ -44,8 +44,8 @@
       "id": "progress",
       "title": "進度",
       "goal": "每一行後面加上到那一週為止的進度，例如 `W01 6%`，用整數算 `i * 100 / weeks`。",
-      "instructions": "進度是「第幾週 ÷ 總週數」換成百分比。按「完成」時會把 `weeks` 換成 12 再跑一次。\n\n寫成 `i / weeks * 100` 的話，整數除法會讓前面幾週全部變成 0%。",
-      "expectedShape": "int percent = …;\nSystem.out.println(\"W0\" + i + \" \" + percent + \"%\");",
+      "instructions": "進度是「第幾週 ÷ 總週數」換成百分比。按「完成」時會把 `weeks` 換成 12 再跑一次。\n\n寫成 `i / weeks * 100` 的話，整數除法會讓最後一週以外全部變成 0%。",
+      "expectedShape": "int percent = …;\nif (…) {\n    System.out.println(\"W0\" + i + \" \" + percent + \"%\");\n} else {\n    …\n}",
       "check": {
         "type": "output",
         "variants": [ { "weeks": "12" } ]

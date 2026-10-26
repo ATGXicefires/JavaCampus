@@ -9,8 +9,8 @@
     {
       "id": "choice",
       "title": "選擇題",
-      "goal": "在 `ChoiceQuestion` 裡覆寫 `check`：打選項代號（例如 `B`）或完整答案都算對。",
-      "instructions": "`q` 是起始碼裡 `new` 好的選擇題。正確的代號存在 `letter`，完整答案存在父類別的 `answer`。",
+      "goal": "這題的答案是 B 吃滷肉飯，所以 `q.check(\"B\")` 和 `q.check(\"吃滷肉飯\")` 都交回 `true`，`q.check(\"A\")` 交回 `false`。\n\n在 `ChoiceQuestion` 裡覆寫 `boolean check(String typed)`：打的是正確的選項代號（欄位 `letter`）或完整答案（`answer`）就交回 `true`，其他交回 `false`。",
+      "instructions": "`q` 是起始碼裡 `new` 好的選擇題，按「完成」時會檢查 `q.check(\"B\")`、`q.check(\"吃滷肉飯\")`、`q.check(\"A\")`。正確的代號存在 `letter`，完整答案存在父類別的 `answer`。\n\n`ChoiceQuestion` 建構子裡的 `super(text, answer)` 是把題目和答案交給父類別 `Question` 存起來，之後會再細講，先照用。",
       "expectedShape": "boolean check(String typed) {\n    return … || …;\n}",
       "check": { "type": "values", "exprs": ["q.check(\"B\")", "q.check(\"吃滷肉飯\")", "q.check(\"A\")"] },
       "hints": {
@@ -22,7 +22,7 @@
     {
       "id": "hint",
       "title": "不用重寫的",
-      "goal": "在 `Question` 裡加上 `String hint()`，交回 `答案有 4 個字` 這種提示（字數用 `answer.length()`）。`ChoiceQuestion` 不用改，`q.hint()` 就能用。",
+      "goal": "答案是 `吃滷肉飯` 的 `q`，`q.hint()` 交回 `答案有 4 個字`。\n\n在 `Question` 裡加上 `String hint()`，交回這種提示，字數用 `answer.length()`。`ChoiceQuestion` 不用改，`q.hint()` 就能用。",
       "instructions": "提示是每一種題目都一樣的，寫在父類別一次就好。",
       "expectedShape": "String hint() {\n    return \"答案有 \" + … + \" 個字\";\n}",
       "check": { "type": "values", "exprs": ["q.hint()", "new Question(\"if-else 像什麼？\", \"選午餐\").hint()"] },

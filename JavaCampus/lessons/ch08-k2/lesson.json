@@ -9,7 +9,7 @@
     {
       "id": "super",
       "title": "super",
-      "goal": "在 `MyPlan` 裡覆寫 `future()`：用 `super.future()` 留下爸媽的那一部分，後面接上 `，而且是我喜歡的那一種`。",
+      "goal": "`new MyPlan().future()` 交回 `學一技之長，找一份穩定的工作，而且是我喜歡的那一種`：前半句是爸媽原本的版本。\n\n在 `MyPlan` 裡覆寫 `String future()`：用 `super.future()` 拿到父類別 `ParentsPlan` 原本那一句，後面接上 `，而且是我喜歡的那一種`。",
       "instructions": "`super.future()` 呼叫的是父類別原本的 `future()`。",
       "expectedShape": "String future() {\n    return super.future() + \"…\";\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().future()"] },
@@ -22,7 +22,7 @@
     {
       "id": "name",
       "title": "建構子的 super",
-      "goal": "父類別多了建構子 `ParentsPlan(String name)`，`MyPlan` 跟著紅字。幫 `MyPlan` 寫建構子 `MyPlan(String name)`，用 `super(name)` 把名字交給父類別。",
+      "goal": "修好後，`new MyPlan(\"梁亭瑄\").name` 是 `梁亭瑄`。\n\n父類別多了建構子 `ParentsPlan(String name)`，`MyPlan` 跟著紅字。幫 `MyPlan` 寫建構子 `MyPlan(String name)`，用 `super(name)` 把名字交給父類別。",
       "instructions": "子類別的建構子要先把父類別需要的東西交給它。",
       "expectedShape": "MyPlan(String name) {\n    super(…);\n}",
       "check": { "type": "values", "exprs": ["new MyPlan(\"梁亭瑄\").name", "new MyPlan(\"梁亭瑄\").future()"] },

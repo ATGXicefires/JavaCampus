@@ -24,8 +24,8 @@
     {
       "id": "hooks",
       "title": "掛勾",
-      "goal": "`gacha` 個扭蛋平均掛在 3 個掛勾上：每個掛幾個存進 `perHook`，剩幾個存進 `left`。",
-      "instructions": "題目給了 `int gacha = 8`。`/` 是除法，`%` 是除完剩下的。\n\n按「完成」時會把 `gacha` 換成 10 和 12 再算一次，所以要用 `gacha` 來算，不要直接寫答案。",
+      "goal": "8 個扭蛋平分給 3 個掛勾，每個掛勾分到 2 個，還剩 2 個。\n\n用題目給的 `gacha`（扭蛋數）算出這兩個數，分別存進 `perHook` 和 `left`。",
+      "instructions": "`gacha` 這個盒子題目已經做好了，直接拿來用。\n\n`/` 是除法，整數除以整數只留整數；`%` 算的是除完剩下多少。例如 `7 / 2` 是 `3`，`7 % 2` 是 `1`。\n\n按「完成」時，會把 `gacha` 改成 10 和 12 各檢查一次，所以要用 `gacha` 來算，不能直接寫 `2`。",
       "expectedShape": "int perHook = …;\nint left = …;",
       "check": {
         "type": "values",
@@ -33,7 +33,7 @@
         "variants": [ { "gacha": "10" }, { "gacha": "12" } ]
       },
       "hints": {
-        "lead": "分到的用 /，剩下的用 %。",
+        "lead": "掛幾個用 /，剩幾個用 %。",
         "plain": "8 個扭蛋分給 3 個掛勾：每個掛 2 個，還剩 2 個。`gacha / 3` 算的是每個分到幾個，`gacha % 3` 算的是分完還剩幾個。"
       },
       "afterText": ""
@@ -41,8 +41,8 @@
     {
       "id": "average",
       "title": "除不盡",
-      "goal": "算出每個掛勾平均掛幾個，存進 `double avg`，要有小數。",
-      "instructions": "起始碼的 `avg` 算出來是 `2.0`，小數不見了：兩個整數相除，小數會直接丟掉。\n\n按「完成」時會把 `gacha` 換成 10 再算一次。",
+      "goal": "8 個扭蛋平分給 3 個掛勾，平均每個掛勾是 2.666⋯ 個，小數要留下來。\n\n用 `gacha` 算出這個平均，存進 `double avg`。",
+      "instructions": "起始碼的 `avg` 算出來是 `2.0`，小數不見了：兩個整數相除，小數會直接丟掉，放進 `double` 盒子也找不回來。\n\n按「完成」時，會把 `gacha` 改成 10 再檢查一次。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",

@@ -9,8 +9,8 @@
     {
       "id": "reply",
       "title": "回覆",
-      "goal": "讓 `answer()` 交回你的回覆。",
-      "instructions": "`answer()` 會交回一個 `boolean`。",
+      "goal": "`Reply.java` 最上面的註解，是學妹梁亭瑄留給你的 txt。在下面的 `answer()` 裡用 `return` 交回你的回覆。",
+      "instructions": "`answer()` 的回傳型別是 `boolean`，只能交回 `true` 或 `false`。它現在是空的，少了 `return`，所以按執行會出現紅字。\n\n按「完成」時會直接呼叫 `Reply.answer()`。",
       "expectedShape": "static boolean answer() {\n    return …;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Reply.answer()"] },

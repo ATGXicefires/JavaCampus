@@ -9,8 +9,8 @@
     {
       "id": "releases",
       "title": "每一個版本",
-      "goal": "寫 `class Release`：欄位 `version`、`month`、`note` 和建構子，覆寫 `toString()` 交回 `v0.1（11月）校慶試玩版` 這樣的一行。用 `ArrayList<Release>` 照順序放進 `main` 裡的每一個版本，印出整份紀錄。",
-      "instructions": "三個陣列的同一格是同一個版本。",
+      "goal": "印出整份版本紀錄 8 行，從 `v0.1（11月）校慶試玩版` 到 `v1.0（6月）專題發表`。\n\n寫 `class Release`：欄位 `version`、`month`、`note`，建構子 `Release(String version, String month, String note)`，覆寫 `toString()` 交回 `v0.1（11月）校慶試玩版` 這樣的一行。用 `ArrayList<Release>` 照順序放進 `versions`、`months`、`notes` 的每一個版本，再一個一個印出來。",
+      "instructions": "`main` 裡的 `versions`、`months`、`notes` 三個陣列，同一格是同一個版本。`Release` 可以按「＋」放在自己的檔案；`Main.java` 要 `import java.util.ArrayList;`。`（）` 是全形的，可以從目標複製。",
       "expectedShape": "public String toString() {\n    return version + \"（\" + month + \"）\" + note;\n}\n…\nfor (Release r : releases) {\n    System.out.println(r);\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,7 +23,7 @@
     {
       "id": "newest",
       "title": "最新的在最上面",
-      "goal": "版本紀錄的習慣是最新的放最上面。把印的那段改成用索引從最後一個往前印。",
+      "goal": "最新的放最上面：第一行是 `v1.0（6月）專題發表`，最後一行是 `v0.1（11月）校慶試玩版`。\n\n把印的那段改成用索引，從 `releases` 的最後一個往前印。",
       "instructions": "最後一個的索引是 `releases.size() - 1`。",
       "expectedShape": "for (int i = releases.size() - 1; i >= 0; i--) {\n    System.out.println(…);\n}",
       "form": "program",

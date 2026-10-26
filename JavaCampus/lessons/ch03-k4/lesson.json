@@ -12,8 +12,8 @@
     {
       "id": "grade",
       "title": "五個等第",
-      "goal": "把 `score` 換成等第印出來：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
-      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個。\n\n```\nif (score >= 90) {\n    …\n} else if (score >= 80) {\n    …\n} else {\n    …\n}\n```\n\n按「完成」時會把 `score` 換成 95、72、60、59 再跑幾次。",
+      "goal": "85 分要印出 `B`，剛好 60 分要印出 `D`。\n\n用 `if`／`else if`／`else` 判斷題目給的 `score`（一個分數），印出它的等第，只印字母：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
+      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個。\n\n```\nif (score >= 90) {\n    …\n} else if (score >= 80) {\n    …\n} else {\n    …\n}\n```\n\n按「完成」時，會把 `score` 改成 95、72、60、59 再檢查幾次，所以要用 `score` 來判斷，不能直接印 `B`。剛好 60 分是 D。",
       "expectedShape": "if (score >= 90) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
       "check": {
         "type": "output",
@@ -28,8 +28,8 @@
     {
       "id": "all",
       "title": "整排都換",
-      "goal": "用 `for` 把 `scores` 的每個分數換成等第，印成 `72 C` 這樣。",
-      "instructions": "每一圈拿出一格的分數，再用上一步的 `if`／`else if` 判斷。按「完成」時會換一組分數再跑一次。",
+      "goal": "分數是 `{72, 58, 65, 80, 49}` 時，要印出 `72 C`、`58 F`、`65 D`、`80 B`、`49 F`，一個一行。\n\n用 `for` 走過題目給的陣列 `scores`（一排分數），把每個分數換成等第印出來：分數、空格、等第。",
+      "instructions": "起始碼的 `for` 每一圈會把一格的分數放進 `s`，在裡面用上一步的 `if`／`else if` 判斷 `s`。\n\n按「完成」時，會把 `scores` 改成 `{100, 59}` 再檢查一次。",
       "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" A\");\n    } else if (…) {\n        …\n    }\n}",
       "check": {
         "type": "output",

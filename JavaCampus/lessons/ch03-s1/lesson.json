@@ -13,8 +13,8 @@
     {
       "id": "equal",
       "title": "又是全形",
-      "goal": "修到分數剛好 60 時印 `剛好及格`，其他分數什麼都不印。",
-      "instructions": "這一份有兩個紅字。按「完成」時會把 `score` 換成 59 再跑一次，那時什麼都不印。",
+      "goal": "修好後，分數剛好 60 時印出 `剛好及格`，其他分數（例如 59）什麼都不印。\n\n起始碼要判斷題目給的 `score`（一個分數）是不是剛好 60，跑起來卻是紅字。",
+      "instructions": "這一份有兩個紅字。`score` 是題目給的變數。\n\n按「完成」時，會把 `score` 改成 59 再檢查一次，那時什麼都不印。",
       "expectedShape": "if (score … 60) {\n    System.out.println(\"剛好及格\");\n}",
       "check": {
         "type": "output",
@@ -29,7 +29,7 @@
     {
       "id": "avg",
       "title": "平均又是整數",
-      "goal": "修到 `avg` 有小數。",
+      "goal": "修好後，5 科總分 312 分要算出平均 62.4。\n\n起始碼用題目給的 `total`（5 科總分）算平均 `avg`，現在卻算出 `62.0`。",
       "instructions": "現在 `avg` 是 `62.0`。按「完成」時會把 `total` 換成 300 再算一次。",
       "expectedShape": "double avg = …;",
       "check": {
@@ -46,7 +46,7 @@
     {
       "id": "days",
       "title": "少印一天",
-      "goal": "修到從 1 印到 `days`：`第 1 天`⋯⋯",
+      "goal": "修好後，7 天要印出 `第 1 天` 到 `第 7 天`，一天一行。\n\n起始碼照題目給的 `days`（天數）一天印一行，現在卻只印到 `第 6 天`。",
       "instructions": "現在只印到 `第 6 天`。按「完成」時會把 `days` 換成 3 再跑一次。",
       "expectedShape": "for (int i = 1; i … days; i++) {\n    …\n}",
       "check": {

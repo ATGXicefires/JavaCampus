@@ -11,8 +11,8 @@
     {
       "id": "lunch",
       "title": "午餐的約定",
-      "goal": "寫 `interface Lunch`，裡面只有 `String eat();`。`LuRouFan` 交回 `吃滷肉飯`，`KongRouFan` 交回 `吃控肉飯`。",
-      "instructions": "約定只說「中午要吃」，吃什麼由實作決定。",
+      "goal": "`new LuRouFan().eat()` 交回 `吃滷肉飯`，`new KongRouFan().eat()` 交回 `吃控肉飯`。\n\n寫 `interface Lunch`，裡面只有 `String eat();`。再寫 `LuRouFan` 和 `KongRouFan` 兩個類別實作它，`eat()` 各自交回上面那句。",
+      "instructions": "約定只說「中午要吃」，吃什麼由實作決定。\n\n按「完成」時，會直接問 `new LuRouFan().eat()`、`new KongRouFan().eat()` 交回什麼，不用印出來。",
       "expectedShape": "interface Lunch {\n    String eat();\n}\n\nclass LuRouFan implements Lunch {\n    public String eat() {\n        …\n    }\n}\n\nclass KongRouFan implements Lunch {\n    …\n}",
       "check": { "type": "values", "exprs": ["new LuRouFan().eat()", "new KongRouFan().eat()"] },
       "hints": {
@@ -24,8 +24,8 @@
     {
       "id": "week",
       "title": "約定不變，內容可以換",
-      "goal": "用 `Lunch[] week` 照順序放五天的午餐：滷肉飯、控肉飯、滷肉飯、控肉飯、滷肉飯。用迴圈印出 `星期一：吃滷肉飯` 這樣的五行。",
-      "instructions": "`days` 是題目給的星期一到星期五，`days[i]` 和 `week[i]` 是同一天。",
+      "goal": "印出五行，從 `星期一：吃滷肉飯`、`星期二：吃控肉飯` 開始，滷肉飯和控肉飯輪流，最後是 `星期五：吃滷肉飯`。\n\n把五天的午餐依序放進 `Lunch[] week`，再用迴圈配上題目給的 `days`（`星期一` 到 `星期五` 五個字串），一天印一行。",
+      "instructions": "`days` 題目已經做好了，直接拿來用；`days[i]` 和 `week[i]` 是同一天。\n\n冒號是全形的 `：`，可以從目標複製。",
       "expectedShape": "Lunch[] week = {new LuRouFan(), …};\nfor (…) {\n    System.out.println(days[i] + \"：\" + week[i].eat());\n}",
       "check": { "type": "output" },
       "hints": {

@@ -9,7 +9,7 @@
     {
       "id": "four",
       "title": "四年一閏",
-      "goal": "寫 `static boolean isLeap(int year)`：能被 4 整除的是閏年。",
+      "goal": "`isLeap(2024)` 交回 `true`，`isLeap(2023)` 交回 `false`：2024 年是閏年，2023 年不是。\n\n寫一個方法 `static boolean isLeap(int year)`，`year` 能被 4 整除就是閏年，交回 `true`；不能就交回 `false`。",
       "instructions": "「能被 4 整除」就是除以 4 沒有餘數。",
       "expectedShape": "static boolean isLeap(int year) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isLeap(2024)", "isLeap(2023)"] },
@@ -22,7 +22,7 @@
     {
       "id": "century",
       "title": "百年不閏",
-      "goal": "加上規則：能被 100 整除的不是閏年，但能被 400 整除的又是。",
+      "goal": "改好後，`isLeap(1900)` 交回 `false`，`isLeap(2000)` 交回 `true`，`isLeap(2024)` 還是 `true`。\n\n修改 `isLeap`，加上規則：能被 100 整除的不是閏年，但能被 400 整除的又是。",
       "instructions": "1900 不是閏年，2000 是。",
       "expectedShape": "return … && … || …;",
       "check": { "type": "values", "exprs": ["isLeap(1900)", "isLeap(2000)", "isLeap(2100)", "isLeap(2024)"] },

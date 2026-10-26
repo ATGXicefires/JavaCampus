@@ -9,10 +9,10 @@
     {
       "id": "max",
       "title": "掛不下了",
-      "goal": "加上常數 `static final int MAX = 12;` 和建構子 `GachaBag(int count)`。`add()` 改成交回 `boolean`：還沒滿就加一個、交回 `true`；滿了就不加、交回 `false`。",
-      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。",
+      "goal": "`new GachaBag(11).add()` 交回 `true`，`new GachaBag(12).add()` 交回 `false`：最多只能裝 12 個。\n\n加上常數 `static final int MAX = 12;`，和建構子 `GachaBag(int count)` 把一開始有幾個存進欄位 `count`。`add()` 改成交回 `boolean`：還不到 `MAX` 個就加一個、交回 `true`；已經有 `MAX` 個就不加、交回 `false`。",
+      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。\n\n建構子的參數和欄位都叫 `count`，欄位要寫成 `this.count`。\n\n按「完成」時，會檢查 `new GachaBag(11).add()`（還放得下）和 `new GachaBag(12).add()`（已經滿了）交回什麼；還會拿一個有 11 個的扭蛋包 `bag`，加一個之後看 `bag.getCount()` 有沒有變成 12，再加一次要交回 `false`、數量不變。",
       "expectedShape": "static final int MAX = 12;\n…\nboolean add() {\n    if (…) {\n        return false;\n    }\n    …\n}",
-      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()"] },
+      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()", "GachaBag bag = null;", "(bag = new GachaBag(11)).add()", "bag.getCount()", "bag.add()", "bag.getCount()"] },
       "hints": {
         "lead": "滿了就不加。",
         "plain": "`add()` 先問一句：已經到 `MAX` 了嗎？到了就交回 `false`，什麼都不做；還沒滿才加一個，交回 `true`。"
@@ -22,7 +22,7 @@
     {
       "id": "start",
       "title": "一開始就太多",
-      "goal": "建構子收到超過 `MAX` 的數量時只放 `MAX` 個，收到負數就放 0。",
+      "goal": "`new GachaBag(20).getCount()` 交回 `12`，`new GachaBag(-3).getCount()` 交回 `0`。\n\n建構子 `GachaBag(int count)` 也要把關：收到超過 `MAX` 的數量時只放 `MAX` 個，收到負數就放 0，其他照收到的數量放。",
       "instructions": "`new` 的時候給的數量也可能不合理，在建構子裡先檢查。",
       "expectedShape": "GachaBag(int count) {\n    if (count > MAX) {\n        …\n    } else if (…) {\n        …\n    } else {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new GachaBag(20).getCount()", "new GachaBag(-3).getCount()", "new GachaBag(5).getCount()"] },
@@ -35,7 +35,7 @@
     {
       "id": "final",
       "title": "改不了的上限",
-      "goal": "起始碼的最後一行寫了 `GachaBag.MAX = 20;`，紅字說 `final` 不能改。刪掉，改成印出 `最多 12 個`。",
+      "goal": "修好後要印出 `最多 12 個`。\n\n起始碼最後一行寫了 `GachaBag.MAX = 20;`，紅字說 `final` 不能改。刪掉它，改成讀 `GachaBag.MAX` 印出這一行。",
       "instructions": "`MAX` 是 `static final`：大家共用，而且不能改。",
       "expectedShape": "System.out.println(\"最多 \" + … + \" 個\");",
       "check": { "type": "output" },

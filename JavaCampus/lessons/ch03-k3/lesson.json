@@ -11,8 +11,8 @@
     {
       "id": "crash",
       "title": "它停在哪一行",
-      "goal": "執行看看，照例外訊息修到加總不會跌倒。",
-      "instructions": "這是被退回的成績頁。先按「執行」，看例外訊息停在哪一行、說了什麼。\n\n按「完成」時會換一組分數再算一次。",
+      "goal": "修好後，`sum` 要算出五個分數的總和 324。\n\n起始碼是成績頁，用題目給的 `scores`（一排小考分數）算加總和平均，一執行就跌倒。照例外訊息把它修好。",
+      "instructions": "`scores` 是題目做好的一排分數。\n\n先按「執行」。這次不是紅字，是「例外」：程式跑到一半跌倒了。下面的例外訊息會說它停在哪一行、出了什麼事。\n\n這一步只檢查 `sum`，平均不對是下一步的事。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次。",
       "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
       "check": {
         "type": "values",
@@ -29,7 +29,7 @@
       "id": "average",
       "title": "平均怪怪的",
       "goal": "平均應該是 64.8，修到印出 `平均：64.8`。",
-      "instructions": "現在印出來的是 `平均：64.0`。按「完成」時會換一組分數再跑一次。",
+      "instructions": "現在印出來的是 `平均：64.0`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，那時要印 `平均：87.5`，所以不能直接印 64.8。",
       "expectedShape": "double avg = …;\nSystem.out.println(\"平均：\" + avg);",
       "check": {
         "type": "output",

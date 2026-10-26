@@ -11,7 +11,7 @@
     {
       "id": "constructor",
       "title": "建構子",
-      "goal": "幫 `Item` 加上建構子 `Item(String name, String kind)`，讓名字在 `new` 的時候就決定。",
+      "goal": "`new Item(\"小白\", \"筆電\")` 做出來，`name` 就是 `小白`，`kind` 就是 `筆電`。\n\n幫 `Item` 加上建構子 `Item(String name, String kind)`，讓名字和種類在 `new` 的時候就放進欄位。",
       "instructions": "建構子是 `new` 的那一刻第一個執行的方法：名字和類別一樣，前面不寫回傳型別。\n\n參數和欄位同名時，`this.name` 是物件自己的欄位，`name` 是傳進來的參數：\n\n```\nthis.name = name;\n```",
       "expectedShape": "Item(String name, String kind) {\n    this.name = …;\n    …\n}",
       "check": { "type": "values", "exprs": ["new Item(\"小白\", \"筆電\").name", "new Item(\"阿隨\", \"USB\").kind"] },
@@ -24,8 +24,8 @@
     {
       "id": "family",
       "title": "扭蛋全家福",
-      "goal": "用 `for` 把 `names` 裡的每個名字都 `new` 成扭蛋（種類是 `扭蛋`），放進 `Item[] bag`，再印出 `麻糬（扭蛋）`⋯⋯",
-      "instructions": "`new Item[3]` 會做出一排可以放 3 個 `Item` 的格子，格子一開始是空的。用 `for` 把每個名字都 `new` 成扭蛋放進去，再印出來。\n\n按「完成」時會換一組名字再跑一次。",
+      "goal": "扭蛋叫麻糬、黑糖、珍奶時，要印出三行：\n`麻糬（扭蛋）`\n`黑糖（扭蛋）`\n`珍奶（扭蛋）`\n\n用 `for` 把題目給的 `names`（扭蛋的名字）每個都 `new` 成種類是 `扭蛋` 的 `Item`，放進 `Item[] bag`，再一個一行印出來。",
+      "instructions": "`names` 題目已經做好了，直接拿來用。\n\n`new Item[names.length]` 會做出一排可以放 `Item` 的格子，格數和 `names` 一樣多，格子一開始是空的。用 `for` 把每個名字都 `new` 成扭蛋放進去，再印出來。\n\n按「完成」時，會把 `names` 改成只有 `仙草` 一個再檢查一次（只印一行 `仙草（扭蛋）`），所以要照 `names` 來做，不能直接寫三個名字。",
       "expectedShape": "Item[] bag = new Item[names.length];\nfor (…) {\n    bag[i] = new Item(…);\n}\n…",
       "check": {
         "type": "output",

@@ -9,8 +9,8 @@
     {
       "id": "thanks",
       "title": "就這麼簡單",
-      "goal": "照她的建議。",
-      "instructions": "建議寫在最上面的註解裡。",
+      "goal": "照她的建議：起始碼最上面的註解，是學妹留給你的 txt，把「建議」那一行寫的程式碼放進 `main` 裡。",
+      "instructions": "建議寫在最上面的註解裡。註解前面的 `//` 不用抄。",
       "expectedShape": "System.out.println(\"…\");",
       "form": "program",
       "check": { "type": "output" },

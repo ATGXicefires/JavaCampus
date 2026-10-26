@@ -13,8 +13,8 @@
     {
       "id": "parse",
       "title": "字變成數字",
-      "goal": "用 `Integer.parseInt` 把 `input` 變成 int，存進 `score`。",
-      "instructions": "答題框拿到的東西都是字串，就算長得像數字也一樣，不能直接拿來算。`Integer.parseInt(…)` 會把字串換成 int。\n\n按「完成」時會把 `input` 換成 `\"62\"` 再算一次。",
+      "goal": "字串 `\"85\"` 要變成能拿來算的數字 85。\n\n用 `Integer.parseInt` 把題目給的 `input`（答題框收到的字串）變成數字，存進 `int score`。",
+      "instructions": "`input` 這個盒子題目已經做好了。\n\n答題框拿到的東西都是字串，就算長得像數字也一樣，不能直接拿來算。`Integer.parseInt(…)` 會把字串換成 int。\n\n按「完成」時，會把 `input` 改成 `\"62\"` 再檢查一次，所以要用 `input` 來換，不能直接寫 `85`。",
       "expectedShape": "int score = …;",
       "check": {
         "type": "values",
@@ -30,8 +30,8 @@
     {
       "id": "catch",
       "title": "打了國字",
-      "goal": "用 `try`／`catch`：是數字就印 `收到：85`，不是就印 `要輸入數字喔，例如 80`。",
-      "instructions": "新生打的不一定是數字。`parseInt` 看不懂的時候會跌倒，丟出 `NumberFormatException`。\n\n```\ntry {\n    可能跌倒的程式\n} catch (NumberFormatException e) {\n    跌倒時要做的事\n}\n```\n\n按「完成」時會把 `input` 換成 `\"八十\"` 和 `\"62\"` 再跑一次。",
+      "goal": "`input` 是 `\"85\"` 時印出 `收到：85`，是 `\"八十\"` 時印出 `要輸入數字喔，例如 80`。\n\n把題目給的 `input`（答題框收到的字串）換成數字，印出 `收到：` 加上那個數字；換不成時用 `try`／`catch` 接住，改印那句提示。",
+      "instructions": "新生打的不一定是數字。`parseInt` 看不懂的時候會跌倒，丟出 `NumberFormatException`。\n\n```\ntry {\n    可能跌倒的程式\n} catch (NumberFormatException e) {\n    跌倒時要做的事\n}\n```\n\n按「完成」時，會把 `input` 改成 `\"八十\"` 和 `\"62\"` 再檢查兩次：`\"八十\"` 要印 `要輸入數字喔，例如 80`，`\"62\"` 要印 `收到：62`。",
       "expectedShape": "try {\n    …\n} catch (NumberFormatException e) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
@@ -46,8 +46,8 @@
     {
       "id": "zero",
       "title": "還沒有成績",
-      "goal": "印出平均 `平均：80`；`count` 是 0 時會除以零，接住它，印 `還沒有成績`。",
-      "instructions": "平均是 `total / count`。按「完成」時會把 `count` 換成 0 再跑一次。",
+      "goal": "總分 240、共 3 筆成績時印出 `平均：80`；筆數是 0 時改印 `還沒有成績`。\n\n用題目給的 `total`（總分）和 `count`（成績筆數）算出平均印出來；`count` 是 0 時會除以零，要用 `try`／`catch` 接住，改印 `還沒有成績`。",
+      "instructions": "平均直接用整數算 `total / count`，印出來是 `80`，不用小數。\n\n整數除以 0 會跌倒，丟出的例外叫 `ArithmeticException`。接住它的寫法跟上一步一樣，只是括號裡換成這個名字。\n\n按「完成」時，會把 `count` 改成 0 再檢查一次。",
       "expectedShape": "try {\n    System.out.println(\"平均：\" + …);\n} catch (… e) {\n    …\n}",
       "check": {
         "type": "output",

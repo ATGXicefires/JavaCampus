@@ -11,8 +11,8 @@
     {
       "id": "ends",
       "title": "第一格和最後一格",
-      "goal": "印出第一個分數和最後一個分數，一個一行。",
-      "instructions": "陣列的編號從 0 開始，第一格是 `scores[0]`。最後一格的編號是「格數減一」，格數是 `scores.length`。\n\n按「完成」時會換一組長度不一樣的分數再跑，所以最後一格不能直接寫 4。",
+      "goal": "分數是 `{72, 58, 65, 80, 49}` 時，要印出第一格 `72` 和最後一格 `49`，一個一行。\n\n用題目給的陣列 `scores`（一排小考分數）印出這兩格。",
+      "instructions": "`scores` 是一個陣列，像一排置物櫃，每一格放一個分數。題目已經做好了。\n\n置物櫃的編號從 0 開始，第一格是 `scores[0]`。最後一格的編號是「格數減一」，格數是 `scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 和 `{60}` 再檢查兩次。格數不一樣，所以最後一格不能直接寫 `scores[4]`。",
       "expectedShape": "System.out.println(scores[…]);\nSystem.out.println(scores[…]);",
       "check": {
         "type": "output",
@@ -27,8 +27,8 @@
     {
       "id": "sum",
       "title": "全部加起來",
-      "goal": "用 `for` 把分數加總，存進 `sum`。",
-      "instructions": "`i` 從 0 走到最後一格，每一圈把 `scores[i]` 加進 `sum`。條件寫 `i < scores.length`。\n\n按「完成」時會換一組分數再算一次。",
+      "goal": "`{72, 58, 65, 80, 49}` 這五個分數加起來是 324。\n\n用 `for` 走過 `scores` 的每一格，算出全部分數的總和，存進 `sum`。",
+      "instructions": "`i` 從 0 走到最後一格，每一圈把 `scores[i]` 加進 `sum`。條件寫 `i < scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，所以要用 `for` 一格一格加，不能直接寫 `324`。",
       "expectedShape": "int sum = 0;\nfor (int i = 0; i < …; i++) {\n    sum += …;\n}",
       "check": {
         "type": "values",
@@ -44,8 +44,8 @@
     {
       "id": "avg",
       "title": "平均",
-      "goal": "算出平均，存進 `double avg`，要有小數。",
-      "instructions": "平均是總和除以有幾格。按「完成」時會換一組分數再算一次。",
+      "goal": "五個分數總和 324，平均是 64.8，小數要留下來。\n\n用上一步的 `sum` 算出 `scores` 的平均，存進 `double avg`。",
+      "instructions": "平均是總和除以有幾格，格數是 `scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，所以要除以 `scores.length`，不能直接除以 5。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",

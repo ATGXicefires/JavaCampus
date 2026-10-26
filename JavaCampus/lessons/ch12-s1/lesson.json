@@ -9,7 +9,7 @@
     {
       "id": "wire",
       "title": "全部接起來",
-      "goal": "把 `Question`、`Checker`、`Records`、`Screen` 接成一次完整的作答：用 `ArrayList<Question>` 放進 3 題，用 `ExactChecker` 判斷 `typed`，印出 `第 1 題：答對了` 或 `第 1 題：再試一次`。這次的分數是答對題數 × 100 ÷ 題數，記進 `records`，再印出 `最高分：66` 這樣的一行。",
+      "goal": "在 `== 第 1 課 ==` 下面印出四行：\n`第 1 題：答對了`\n`第 2 題：再試一次`\n`第 3 題：答對了`\n`最高分：66`\n\n用 `ArrayList<Question>` 放進 `texts`、`answers` 的 3 題，用 `ExactChecker` 逐題判斷 `typed`（3 題的作答）。這次的分數是答對題數 × 100 ÷ 題數，記進 `records`，再印出 `records` 裡這一課的最高分。",
       "instructions": "`Main.java` 自己要 import `ArrayList`；`Records.java` 用的 `HashMap`，它自己已經 import 了。",
       "expectedShape": "import java.util.ArrayList;\n…\nChecker c = new ExactChecker(…);\nif (c.check(typed[i])) {\n    …\n}\n…\nrecords.record(\"第 1 課\", …);\nSystem.out.println(\"最高分：\" + records.bestOf(\"第 1 課\"));",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "hidden",
       "title": "隱藏測資",
-      "goal": "寫 `static int runQuiz(String[] answers, String[] typed)`，用 `ExactChecker` 判斷每一題，交回答對幾題。",
+      "goal": "答案是 `\"選午餐\"`、`\"B\"`，作答是 `\" 選午餐\"`、`\"A\"` 時，`runQuiz` 交回 `1`；沒有題目時交回 `0`。\n\n寫一個方法 `static int runQuiz(String[] answers, String[] typed)`，`answers` 和 `typed` 的同一格是同一題的答案和作答。每一題用 `ExactChecker` 判斷，交回答對的題數。",
       "instructions": "按「完成」時會直接呼叫 `runQuiz` 測試，`main` 不會執行。",
       "expectedShape": "static int runQuiz(String[] answers, String[] typed) {\n    int correct = 0;\n    for (…) {\n        Checker c = new ExactChecker(…);\n        …\n    }\n    return correct;\n}",
       "form": "program",

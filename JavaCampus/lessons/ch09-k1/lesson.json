@@ -9,7 +9,7 @@
     {
       "id": "button",
       "title": "約定",
-      "goal": "寫 `interface Drawable`，裡面只有 `void draw();`。再寫 `class Button implements Drawable`，`draw()` 印出 `[ 開始學習 ]`。`new` 一個按鈕畫出來。",
+      "goal": "畫出一個按鈕，就是印出一行 `[ 開始學習 ]`。\n\n寫 `interface Drawable`，裡面只有 `void draw();`。再寫 `class Button implements Drawable`，`draw()` 印出這一行。最後 `new` 一個按鈕，呼叫它的 `draw()`。",
       "instructions": "介面裡的方法都是 `public`，實作的時候前面也要寫 `public`。",
       "expectedShape": "interface Drawable {\n    void draw();\n}\n\nclass Button implements Drawable {\n    public void draw() {\n        …\n    }\n}\n\n…",
       "check": { "type": "output" },
@@ -22,7 +22,7 @@
     {
       "id": "bar",
       "title": "進度條也照約定",
-      "goal": "寫 `class ProgressBar implements Drawable`：欄位 `done`、`total` 和建構子，`draw()` 印出 `■■■□□` 這樣的進度條，做完的格子是 `■`，剩下的是 `□`。`new` 一個做了 3 格、總共 5 格的進度條，畫在按鈕下面。",
+      "goal": "按鈕 `[ 開始學習 ]` 下面再畫一條進度條 `■■■□□`：總共 5 格，做完的 3 格是 `■`，剩下的 2 格是 `□`。\n\n寫 `class ProgressBar implements Drawable`：欄位 `int done`、`int total`，建構子 `ProgressBar(int done, int total)`，`draw()` 照這兩個數印出進度條。再用 `new ProgressBar(3, 5)` 做一條進度條，呼叫它的 `draw()`。",
       "instructions": "`■` 和 `□` 可以從目標複製。按鈕和進度條各畫一次。",
       "expectedShape": "class ProgressBar implements Drawable {\n    …\n\n    public void draw() {\n        System.out.println(\"■\".repeat(…) + \"□\".repeat(…));\n    }\n}",
       "check": { "type": "output" },

@@ -9,7 +9,7 @@
     {
       "id": "list",
       "title": "會變長的清單",
-      "goal": "在檔案最上面寫 `import java.util.ArrayList;`。在 `main` 裡做一個 `ArrayList<String> screens`，依序加入 `首頁`、`課程列表`、`答題`、`成績`，印出 `共 4 個畫面`。",
+      "goal": "清單裡放了 4 個畫面，就印出 `共 4 個畫面`。\n\n在檔案最上面寫 `import java.util.ArrayList;`。在 `main` 裡做一個 `ArrayList<String> screens`，依序加入 `首頁`、`課程列表`、`答題`、`成績`，再用清單的大小印出這一行。",
       "instructions": "畫面數用 `screens.size()` 算，不要直接寫 4。",
       "expectedShape": "import java.util.ArrayList;\n\n…\nArrayList<String> screens = new ArrayList<>();\nscreens.add(\"首頁\");\n…\nSystem.out.println(\"共 \" + screens.size() + \" 個畫面\");",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "each",
       "title": "for-each",
-      "goal": "用 for-each 把每個畫面印成 `- 首頁` 這樣，接在 `共 4 個畫面` 後面。",
+      "goal": "`共 4 個畫面` 下面，一個畫面印一行：\n`- 首頁`\n`- 課程列表`\n`- 答題`\n`- 成績`\n\n用 for-each 走過 `screens`，把每個畫面印成這樣。",
       "instructions": "for-each 寫成 `for (String s : screens)`，不用索引。",
       "expectedShape": "for (String s : screens) {\n    System.out.println(\"- \" + …);\n}",
       "form": "program",
@@ -37,8 +37,8 @@
     {
       "id": "taps",
       "title": "每個畫面被點幾次",
-      "goal": "在 `Main` 裡寫 `static int totalTaps(ArrayList<Integer> taps)`，用 for-each 把清單裡的點擊次數加起來交回。",
-      "instructions": "角括號裡只能放類別，整數要寫 `Integer`。按「完成」時會直接呼叫 `totalTaps`，換幾組清單測試，`main` 不會執行。",
+      "goal": "點擊次數的清單是 `12, 30, 7` 時，`totalTaps` 交回 `49`；空的清單交回 `0`。\n\n在 `Main` 裡寫一個方法 `static int totalTaps(ArrayList<Integer> taps)`，用 for-each 把清單裡的點擊次數加起來交回。",
+      "instructions": "角括號裡只能放類別，整數要寫 `Integer`。\n\n按「完成」時會直接呼叫 `totalTaps`，換幾組清單測試，`main` 不會執行。例如清單是 `12, 30, 7` 時要交回 `49`，空的清單交回 `0`。",
       "expectedShape": "static int totalTaps(ArrayList<Integer> taps) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())"] },

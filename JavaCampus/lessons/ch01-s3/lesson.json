@@ -12,7 +12,7 @@
       "id": "lunch",
       "title": "一直紅字",
       "goal": "照紅字修好她的程式，印出 `吃滷肉飯`。",
-      "instructions": "亭瑄：「我照你的 PDF 打了，可是一直紅字。」\n\n從最上面的紅字開始，照它說的修，修一個就執行一次。`hasLuRouFan` 是 `false` 時要印 `吃控肉飯`。",
+      "instructions": "亭瑄：「我照你的 PDF 打了，可是一直紅字。」\n\n從最上面的紅字開始，照它說的修，修一個就執行一次。`hasLuRouFan` 是 `false` 時要印 `吃控肉飯`，按「完成」時會改成 `false` 再檢查一次。",
       "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",

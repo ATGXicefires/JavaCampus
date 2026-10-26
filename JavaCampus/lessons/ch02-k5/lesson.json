@@ -11,8 +11,8 @@
     {
       "id": "per-slide",
       "title": "每張講幾秒",
-      "goal": "報告 5 分鐘：算出總秒數存進 `seconds`，再算每張投影片講幾秒，存進 `perSlide`。",
-      "instructions": "1 分鐘是 60 秒。題目給了 `int slides = 7`；`perSlide` 用整數除法就好。\n\n按「完成」時會把 `slides` 換成 6 和 10 再算一次。",
+      "goal": "報告 5 分鐘是 300 秒，平分給 7 張投影片，每張講 42 秒（只留整數）。\n\n算出這兩個數，分別存進 `seconds` 和 `perSlide`。算 `perSlide` 時要用題目給的 `slides`（投影片張數）。",
+      "instructions": "`slides` 這個盒子題目已經做好了，直接拿來用。\n\n1 分鐘是 60 秒。`perSlide` 用整數除法就好，除不盡的小數直接丟掉：7 張是 42 秒。\n\n按「完成」時，會把 `slides` 改成 6 和 10 各檢查一次，所以要用 `slides` 來算，不能直接寫 `42`。",
       "expectedShape": "int seconds = …;\nint perSlide = …;",
       "check": {
         "type": "values",
@@ -28,7 +28,7 @@
     {
       "id": "exact",
       "title": "精確一點",
-      "goal": "算出有小數的 `double exact`：每張投影片平均講幾秒。",
+      "goal": "300 秒平分給 7 張投影片，平均每張講 42.857⋯ 秒，小數要留下來。\n\n用 `seconds` 和 `slides` 算出這個平均，存進 `double exact`。",
       "instructions": "起始碼的 `exact` 算出來是 `42.0`，小數又不見了。括號裡的東西會先算，想想看括號裡先算了什麼。\n\n按「完成」時會把 `slides` 換成 6 再算一次。",
       "expectedShape": "int seconds = …;\nint perSlide = …;\ndouble exact = …;",
       "check": {
@@ -45,7 +45,7 @@
     {
       "id": "timeline",
       "title": "從第幾秒開始",
-      "goal": "用 `for` 印出每張從第幾秒開始：`第 1 張：0 秒`、`第 2 張：42 秒`⋯⋯",
+      "goal": "7 張投影片、每張講 42 秒，要印出 7 行：`第 1 張：0 秒`、`第 2 張：42 秒`，一直到 `第 7 張：252 秒`。\n\n用 `for` 照題目給的 `slides`（投影片張數）一張印一行，算出那一張從第幾秒開始講。",
       "instructions": "第 1 張從 0 秒開始。輪到第 `i` 張的時候，前面已經講完 `i - 1` 張，每張講 `perSlide` 秒。\n\n按「完成」時會把 `slides` 換成 10 再跑一次。",
       "expectedShape": "for (int i = 1; i <= slides; i++) {\n    System.out.println(\"第 \" + i + \" 張：\" + … + \" 秒\");\n}",
       "check": {

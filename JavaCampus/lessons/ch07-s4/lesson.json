@@ -9,7 +9,7 @@
     {
       "id": "menu",
       "title": "價目表",
-      "goal": "寫 `class Menu`，用 `static final` 定好三個價錢：滷肉飯 35、虱目魚湯 60、年菜套餐 880。印出價目表，一行一道，例如 `滷肉飯 35 元`。",
+      "goal": "印出三行價目表：\n`滷肉飯 35 元`\n`虱目魚湯 60 元`\n`年菜套餐 880 元`\n\n寫 `class Menu`，用 `static final` 定好這三個價錢，再用這些常數印出價目表，一行一道。",
       "instructions": "常數的名字全部大寫，例如 `NEW_YEAR_SET`。",
       "expectedShape": "class Menu {\n    static final int LU_ROU_FAN = 35;\n    …\n}\n\nSystem.out.println(\"滷肉飯 \" + Menu.LU_ROU_FAN + \" 元\");\n…",
       "check": { "type": "output" },
@@ -22,8 +22,8 @@
     {
       "id": "raise",
       "title": "有人想漲價",
-      "goal": "起始碼有一行 `Menu.NEW_YEAR_SET = 980;`，紅字。改成另外算：在價目表後面印出 `年菜套餐（今年）980 元`。",
-      "instructions": "常數不能改，但可以拿來算：今年漲 100 元。",
+      "goal": "價目表後面要多印一行 `年菜套餐（今年）980 元`：年菜今年漲 100 元。\n\n起始碼最後一行想用 `Menu.NEW_YEAR_SET = 980;` 直接改價錢，紅字。刪掉它，改成用常數另外算出今年的價錢。",
+      "instructions": "常數不能改，但可以拿來算：今年漲 100 元。\n\n括號 `（）` 是全形的，可以從這裡複製。",
       "expectedShape": "System.out.println(\"年菜套餐（今年）\" + (…) + \" 元\");",
       "check": { "type": "output" },
       "hints": {

@@ -9,8 +9,8 @@
     {
       "id": "memory",
       "title": "第一句話",
-      "goal": "按「＋」新增 `Memory.java`，用常數存她第一章印出的第一句話：`static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`。`main` 印出它。",
-      "instructions": "常數用 `Memory.FIRST_LINE` 叫出來。",
+      "goal": "按「＋」新增 `Memory.java`，用常數存學妹第一章印出的第一句話：`static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`。`main` 印出它。",
+      "instructions": "常數用 `Memory.FIRST_LINE` 叫出來。那句話的逗號和問號是全形的，可以從目標複製。",
       "expectedShape": "// Memory.java\npublic class Memory {\n    static final String FIRST_LINE = \"…\";\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,7 +23,7 @@
     {
       "id": "egg",
       "title": "機關",
-      "goal": "在 `Main` 寫 `static String easterEgg(String input)`：輸入去掉前後空白後等於 `FIRST_LINE` 才交回訊息，否則交回空字串。訊息先寫成 `TODO`。",
+      "goal": "在 `Main` 寫 `static String easterEgg(String input)`：輸入去掉前後空白後等於 `Memory.FIRST_LINE` 才交回訊息，否則交回空字串。訊息先寫成 `TODO`。",
       "instructions": "比字串內容用 `equals`。按「完成」時會直接呼叫 `easterEgg` 測試，`main` 不會執行。",
       "expectedShape": "static String easterEgg(String input) {\n    if (input.trim().equals(…)) {\n        return \"TODO\";\n    }\n    return \"\";\n}",
       "form": "program",

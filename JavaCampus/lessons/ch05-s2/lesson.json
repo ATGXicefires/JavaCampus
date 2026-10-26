@@ -9,8 +9,8 @@
     {
       "id": "prime",
       "title": "有沒有因數",
-      "goal": "寫 `static boolean isPrime(int n)`：用 `while` 從 2 開始試除，找到因數就提早 `return false`。",
-      "instructions": "1 不是質數。",
+      "goal": "`isPrime(97)` 交回 `true`，`isPrime(91)` 交回 `false`：91 = 7 × 13，不是質數。\n\n寫一個方法 `static boolean isPrime(int n)`，`n` 是質數就交回 `true`，不是就交回 `false`；1 不是質數。用 `while` 從 2 開始試除，找到因數就提早 `return false`。",
+      "instructions": "質數是大於 1、只能被 1 和自己整除的整數。會用 2、97、91（= 7 × 13）、1 測。",
       "expectedShape": "static boolean isPrime(int n) {\n    …\n    while (…) {\n        …\n    }\n    return true;\n}",
       "check": { "type": "values", "exprs": ["isPrime(2)", "isPrime(97)", "isPrime(91)", "isPrime(1)"] },
       "hints": {
@@ -22,7 +22,7 @@
     {
       "id": "count",
       "title": "幾個質數",
-      "goal": "寫 `static int countPrimes(int limit)`，數出 2 到 `limit` 之間有幾個質數。",
+      "goal": "`countPrimes(10)` 交回 4：2 到 10 之間有 2、3、5、7 四個質數。\n\n寫一個方法 `static int countPrimes(int limit)`，數出 2 到 `limit`（包含 `limit`）之間有幾個質數，交回這個數。",
       "instructions": "用剛剛寫好的 `isPrime`。",
       "expectedShape": "static int countPrimes(int limit) {\n    …\n}",
       "check": { "type": "values", "exprs": ["countPrimes(10)", "countPrimes(100)"] },

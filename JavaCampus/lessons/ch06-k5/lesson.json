@@ -11,7 +11,7 @@
     {
       "id": "count-above",
       "title": "第一題：陣列與方法",
-      "goal": "寫 `static int countAbove(int[] a, int line)`，數出有幾個數字大於等於 `line`。",
+      "goal": "陣列是 `{72, 58, 65}`、`line` 是 60 時，`countAbove` 交回 2：72 和 65 都大於等於 60。\n\n寫一個方法 `static int countAbove(int[] a, int line)`，數出陣列 `a` 裡有幾個數字大於等於 `line`，交回這個數；空的陣列交回 0。",
       "instructions": "模擬題用到第 1～6 章。空的陣列要交回 0。",
       "expectedShape": "static int countAbove(int[] a, int line) {\n    …\n}",
       "check": { "type": "values", "exprs": ["countAbove(new int[]{72, 58, 65}, 60)", "countAbove(new int[]{}, 60)", "countAbove(new int[]{60}, 60)"] },
@@ -24,8 +24,8 @@
     {
       "id": "triangle",
       "title": "第二題：迴圈",
-      "goal": "用巢狀迴圈印出 `n` 層的星星三角形：第 1 層 1 顆 `*`，第 `n` 層 `n` 顆。",
-      "instructions": "按「完成」時會把 `n` 換成 2 再跑一次。",
+      "goal": "4 層的星星三角形，就是印出 4 行：`*`、`**`、`***`、`****`。\n\n用巢狀迴圈和題目給的 `n`（層數）畫出三角形：第幾層就印幾顆 `*`，星星之間不空格。",
+      "instructions": "`n` 題目已經做好了。`n` 是 4 時要印出：\n\n```\n*\n**\n***\n****\n```\n\n按「完成」時，會把 `n` 改成 2 再檢查一次，所以要用 `n` 來畫，不能直接印四行。",
       "expectedShape": "for (int i = 1; i <= n; i++) {\n    String row = \"\";\n    for (…) {\n        row += \"*\";\n    }\n    System.out.println(row);\n}",
       "check": {
         "type": "output",
@@ -40,9 +40,9 @@
     {
       "id": "student",
       "title": "第三題：類別",
-      "goal": "寫 `class Student`：欄位 `name`、`score`，建構子，方法 `boolean pass()`（60 分以上及格）。",
-      "instructions": "會用 62 分和 59 分測。",
-      "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(…) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
+      "goal": "`new Student(\"亭瑄\", 62).pass()` 交回 `true`，`new Student(\"阿成\", 59).pass()` 交回 `false`。\n\n寫 `class Student`：欄位 `String name`、`int score`，建構子 `Student(String name, int score)`，方法 `boolean pass()` 在 60 分以上（剛好 60 也算）交回 `true`，不到 60 交回 `false`。",
+      "instructions": "會用 `new Student(\"亭瑄\", 62).pass()`（要是 `true`）和 `new Student(\"阿成\", 59).pass()`（要是 `false`）檢查。",
+      "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(String name, int score) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()"] },
       "hints": {
         "lead": "設計圖、建構子、方法。",

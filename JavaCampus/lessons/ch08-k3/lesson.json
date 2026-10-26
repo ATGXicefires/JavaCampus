@@ -9,7 +9,7 @@
     {
       "id": "paths",
       "title": "兩個子類別",
-      "goal": "寫 `DesignPath` 和 `CodePath`，都繼承 `Path`。建構子用 `super(\"廣設科\")`、`super(\"資訊科\")` 交出名字，再用 `@Override` 覆寫 `describe()`：廣設科交回 `廣設科：畫我喜歡的東西`，資訊科交回 `資訊科：把我畫的東西變成會動的`。",
+      "goal": "`new DesignPath().describe()` 交回 `廣設科：畫我喜歡的東西`，`new CodePath().describe()` 交回 `資訊科：把我畫的東西變成會動的`。\n\n寫 `DesignPath` 和 `CodePath`，都繼承起始碼的 `Path`。建構子 `DesignPath()` 用 `super(\"廣設科\")`、`CodePath()` 用 `super(\"資訊科\")` 交出名字，再用 `@Override` 覆寫 `describe()`，交回上面那兩句。",
       "instructions": "`@Override` 寫在覆寫的方法上面一行。",
       "expectedShape": "class DesignPath extends Path {\n    DesignPath() {\n        super(\"廣設科\");\n    }\n\n    @Override\n    String describe() {\n        …\n    }\n}\n\nclass CodePath extends Path {\n    …\n}",
       "check": { "type": "values", "exprs": ["new DesignPath().describe()", "new CodePath().describe()"] },
@@ -22,13 +22,13 @@
     {
       "id": "typo",
       "title": "打錯字的那一條",
-      "goal": "第三條路 `StayPath` 寫成了 `descripe()`，上面的 `@Override` 紅字。修好，讓它交回 `留下來：先試試看`。",
+      "goal": "修好後，`new StayPath().describe()` 要交回 `留下來：先試試看`。\n\n起始碼多了第三條路 `StayPath`，方法名稱寫成了 `descripe()`，上面的 `@Override` 是紅字。",
       "instructions": "紅字說它沒有覆寫到任何方法。",
       "expectedShape": "@Override\nString describe() {\n    …\n}",
       "check": { "type": "values", "exprs": ["new StayPath().describe()"] },
       "hints": {
         "lead": "名字要和父類別一模一樣。",
-        "plain": "`descripe` 少打一個字母，就變成另一個新方法，`describe()` 還是用父類別的 `還不知道`。`@Override` 像是請人幫忙對名字：對不上就直接說出來。"
+        "plain": "`descripe` 打錯一個字母（`b` 打成 `p`），就變成另一個新方法，`describe()` 還是用父類別的 `還不知道`。`@Override` 像是請人幫忙對名字：對不上就直接說出來。"
       },
       "afterText": ""
     }

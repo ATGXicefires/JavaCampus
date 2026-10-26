@@ -9,7 +9,7 @@
     {
       "id": "integer",
       "title": "int 放不進去",
-      "goal": "她寫了 `ArrayList<int> scores`，紅字。修到裝得下 `72`、`58`、`65`，印出 `平均：65.0`。",
+      "goal": "修好後，清單裝得下 `72`、`58`、`65` 三個分數，印出 `平均：65.0`。\n\n起始碼想把分數放進清單 `scores`，跑起來卻是紅字。",
       "instructions": "角括號裡只能放類別。",
       "expectedShape": "ArrayList<…> scores = new ArrayList<>();",
       "form": "program",
@@ -23,7 +23,7 @@
     {
       "id": "raw",
       "title": "沒寫型別的清單",
-      "goal": "她的 `ArrayList names = new ArrayList();` 沒寫型別，還混進了一個數字。加上 `<String>`，讓編譯器擋下那個數字，修到只印出三個名字。",
+      "goal": "修好後，`平均：65.0` 下面只印出三個名字：\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n起始碼的名字清單 `names` 沒寫型別，混進了一個數字也不會紅字。把它寫成 `ArrayList<String>`，讓編譯器擋下那個數字，再修到只剩三個名字。",
       "instructions": "沒寫型別的清單什麼都裝得進去，出錯也不會有紅字。",
       "expectedShape": "ArrayList<String> names = new ArrayList<>();\nnames.add(…);",
       "form": "program",
@@ -37,8 +37,8 @@
     {
       "id": "total",
       "title": "for-each 加總",
-      "goal": "在 `Main` 裡寫 `static int total(ArrayList<Integer> list)`，用 for-each 把清單加起來交回。",
-      "instructions": "按「完成」時會直接呼叫 `total`，換幾組清單測試，`main` 不會執行。",
+      "goal": "清單是 `72, 58, 65` 時，`total` 交回 `195`；空的清單交回 `0`。\n\n在 `Main` 裡寫一個方法 `static int total(ArrayList<Integer> list)`，用 for-each 把清單裡的數加起來交回。",
+      "instructions": "按「完成」時會直接呼叫 `total`，換幾組清單測試，`main` 不會執行。例如清單是 `72, 58, 65` 時交回 `195`，空的清單交回 `0`。",
       "expectedShape": "static int total(ArrayList<Integer> list) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())"] },

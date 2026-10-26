@@ -23,7 +23,7 @@
     {
       "id": "screen",
       "title": "另一個檔案",
-      "goal": "按分頁列右邊的「＋」新增 `Screen.java`，寫 `class Screen`：欄位 `title`、建構子，`void show()` 印出 `== 首頁 ==` 這樣的標題。在 `main` 裡 `new` 兩個畫面 `首頁` 和 `課程列表`，各 `show()` 一次。",
+      "goal": "版本那一行下面，再印出兩個畫面的標題：\n`== 首頁 ==`\n`== 課程列表 ==`\n\n按分頁列右邊的「＋」新增 `Screen.java`，寫 `class Screen`：欄位 `String title`，建構子 `Screen(String title)`，`void show()` 照這個樣子印出 `title`。在 `main` 裡 `new` 兩個畫面 `首頁` 和 `課程列表`，各 `show()` 一次。",
       "instructions": "新增的檔案會先寫好 `public class Screen`，在大括號裡接著寫。版本那一行留著。",
       "expectedShape": "// Screen.java\npublic class Screen {\n    String title;\n    …\n}\n\n// Main.java\nScreen home = new Screen(\"首頁\");\n…",
       "form": "program",
