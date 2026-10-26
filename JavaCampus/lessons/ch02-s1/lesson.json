@@ -1,0 +1,60 @@
+{
+  "id": "ch02-s1",
+  "title": "白板上的 int",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["types", "arith", "concat"],
+  "vars": [
+    { "name": "gacha", "type": "int", "value": "8" }
+  ],
+  "steps": [
+    {
+      "id": "size",
+      "title": "盒子的尺寸",
+      "goal": "用 `gacha` 和 `+` 印出 `int 盒子：扭蛋有 8 個`。",
+      "instructions": "白板上的第一個例子。`8` 要從 `gacha` 拿出來，不要直接寫在引號裡。\n\n按「完成」時會把 `gacha` 換成 10 再跑一次。",
+      "expectedShape": "System.out.println(\"int 盒子：扭蛋有 \" + … + \" 個\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "gacha": "10" } ]
+      },
+      "hints": {
+        "lead": "串接運算子 `+`：只要有一邊是 `String`，另一邊就會先轉成字串再接起來⋯⋯",
+        "plain": "⋯⋯白話：`+` 碰到字串就是把兩邊接起來。引號裡放固定的字，中間接上盒子的名字 `gacha`，印出來的數字就會跟著盒子變。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hooks",
+      "title": "掛勾",
+      "goal": "用 `/` 和 `%` 印出 `掛 3 個掛勾：每個 2 個，剩 2 個`。",
+      "instructions": "兩個數字都要用 `gacha` 算出來。按「完成」時會把 `gacha` 換成 10 再跑一次。",
+      "expectedShape": "System.out.println(\"掛 3 個掛勾：每個 \" + … + \" 個，剩 \" + … + \" 個\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "gacha": "10" } ]
+      },
+      "hints": {
+        "lead": "`int` 的 `/` 是整數除法，`%` 取餘數；乘除的優先順序高於串接的 `+`⋯⋯",
+        "plain": "⋯⋯白話：`gacha / 3` 是每個掛勾分到幾個，`gacha % 3` 是分完剩下幾個。除法會比 `+` 先算，所以可以直接寫在串接的中間。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "double",
+      "title": "有小數的盒子",
+      "goal": "用 `double` 算兩個掛勾的平均，印出 `double 盒子：兩個掛勾平均 4.0 個`。",
+      "instructions": "就算剛好整除，`double` 也會印出 `.0`。按「完成」時會把 `gacha` 換成 9 再跑一次，那時要印出 `4.5`。",
+      "expectedShape": "double avg = …;\nSystem.out.println(\"double 盒子：兩個掛勾平均 \" + avg + \" 個\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "gacha": "9" } ]
+      },
+      "hints": {
+        "lead": "`int / int` 的結果型別是 `int`，指定給 `double` 之前就已經截斷了⋯⋯",
+        "plain": "⋯⋯白話：兩個整數相除，小數會先被丟掉，放進 `double` 也救不回來。把 `2` 寫成 `2.0`，答案才會留下小數。"
+      },
+      "afterText": ""
+    }
+  ]
+}

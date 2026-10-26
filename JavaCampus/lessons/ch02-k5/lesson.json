@@ -1,0 +1,62 @@
+{
+  "id": "ch02-k5",
+  "title": "五分鐘簡報",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["cast", "for"],
+  "vars": [
+    { "name": "slides", "type": "int", "value": "7" }
+  ],
+  "steps": [
+    {
+      "id": "per-slide",
+      "title": "每張講幾秒",
+      "goal": "報告 5 分鐘：算出總秒數存進 `seconds`，再算每張投影片講幾秒，存進 `perSlide`。",
+      "instructions": "1 分鐘是 60 秒。題目給了 `int slides = 7`；`perSlide` 用整數除法就好。\n\n按「完成」時會把 `slides` 換成 6 和 10 再算一次。",
+      "expectedShape": "int seconds = …;\nint perSlide = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["seconds", "perSlide"],
+        "variants": [ { "slides": "6" }, { "slides": "10" } ]
+      },
+      "hints": {
+        "lead": "先算秒數，再平均分。",
+        "plain": "5 分鐘是 `5 * 60` 秒。每張講幾秒，就是把總秒數平均分給每一張：`seconds / slides`。兩個整數相除會丟掉小數，這一步剛好只要整數。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "exact",
+      "title": "精確一點",
+      "goal": "算出有小數的 `double exact`：每張投影片平均講幾秒。",
+      "instructions": "起始碼的 `exact` 算出來是 `42.0`，小數又不見了。括號裡的東西會先算，想想看括號裡先算了什麼。\n\n按「完成」時會把 `slides` 換成 6 再算一次。",
+      "expectedShape": "int seconds = …;\nint perSlide = …;\ndouble exact = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["exact"],
+        "variants": [ { "slides": "6" } ]
+      },
+      "hints": {
+        "lead": "先轉型，再除。",
+        "plain": "`(seconds / slides)` 是兩個整數相除，算完已經是 42，小數早就丟掉了，再轉成 `double` 也只是 `42.0`。把 `(double)` 放在 `seconds` 前面，讓它先變成小數再除。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "timeline",
+      "title": "從第幾秒開始",
+      "goal": "用 `for` 印出每張從第幾秒開始：`第 1 張：0 秒`、`第 2 張：42 秒`⋯⋯",
+      "instructions": "第 1 張從 0 秒開始。輪到第 `i` 張的時候，前面已經講完 `i - 1` 張，每張講 `perSlide` 秒。\n\n按「完成」時會把 `slides` 換成 10 再跑一次。",
+      "expectedShape": "for (int i = 1; i <= slides; i++) {\n    System.out.println(\"第 \" + i + \" 張：\" + … + \" 秒\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "slides": "10" } ]
+      },
+      "hints": {
+        "lead": "第 i 張前面講完了 i - 1 張。",
+        "plain": "輪到第 3 張時，前面兩張已經講完了，所以是 `perSlide * 2` 秒。換成 `i` 來寫就是 `perSlide * (i - 1)`。乘法會比串接的 `+` 先算，所以直接寫在中間就好。"
+      },
+      "afterText": ""
+    }
+  ]
+}

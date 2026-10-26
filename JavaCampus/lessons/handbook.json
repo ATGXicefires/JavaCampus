@@ -62,6 +62,62 @@
       "title": "if-else 就是選午餐",
       "summary": "條件成立走 `if`，不成立走 `else`。",
       "body": "if-else 就像你選午餐：如果有滷肉飯，就吃滷肉飯；否則吃控肉飯。\n\n```\nif (hasLuRouFan) {\n    System.out.println(\"吃滷肉飯\");\n} else {\n    System.out.println(\"吃控肉飯\");\n}\n```\n\n`if` 的括號裡放一個 `boolean`，它只有 `true`（有）和 `false`（沒有）兩種答案。`true` 就走第一對大括號，`false` 就走 `else` 那一對。兩條路只會走一條。"
+    },
+    {
+      "id": "types",
+      "chapter": 2,
+      "title": "型別是盒子的尺寸",
+      "summary": "`int` 裝整數，`double` 裝小數。",
+      "body": "盒子有分尺寸，裝錯會被退貨。\n\n```\nint gacha = 8;\ndouble temp = 33.5;\nboolean hot = true;\nString city = \"臺南\";\n```\n\n`int` 只裝整數，`double` 裝有小數點的數字，`boolean` 只裝 `true` 或 `false`，`String` 裝文字。要放什麼，就選那個尺寸的盒子。"
+    },
+    {
+      "id": "arith",
+      "chapter": 2,
+      "title": "四則運算與 %",
+      "summary": "`%` 是除完剩下的。",
+      "body": "`+`、`-`、`*`、`/` 就是加減乘除。`%` 比較少見，它算的是**除完剩下的**。\n\n```\nint gacha = 8;\nSystem.out.println(gacha / 3);\nSystem.out.println(gacha % 3);\n```\n\n8 個扭蛋平均掛在 3 個掛勾上：每個掛 2 個（`8 / 3`），還剩 2 個（`8 % 3`）。"
+    },
+    {
+      "id": "int-div",
+      "chapter": 2,
+      "title": "整數除以整數",
+      "summary": "兩個整數相除，小數直接丟掉。",
+      "body": "兩個 `int` 相除，答案也是 `int`：小數點後面直接丟掉，不會四捨五入。\n\n```\nSystem.out.println(7 / 2);\n```\n\n這行印出 `3`，不是 `3.5`。就算把答案放進 `double` 盒子也一樣，因為放進去之前，除法就已經算完了。\n\n```\ndouble avg = 7 / 2;\n```\n\n`avg` 是 `3.0`。"
+    },
+    {
+      "id": "cast",
+      "chapter": 2,
+      "title": "型別轉換",
+      "summary": "要小數，就讓其中一邊變成 `double`。",
+      "body": "想要有小數的答案，只要讓除法的其中一邊變成小數。\n\n```\ndouble a = 7 / 2.0;\ndouble b = (double) 7 / 2;\n```\n\n兩個都是 `3.5`。`(double)` 寫在數字前面，意思是「先把它換到小數的盒子」。\n\n順序很重要：`(double) (7 / 2)` 會先算括號裡的整數除法，得到 3，才換成 `3.0`。"
+    },
+    {
+      "id": "concat",
+      "chapter": 2,
+      "title": "字串串接",
+      "summary": "`+` 碰到字串就變成接起來。",
+      "body": "`+` 碰到字串，就不是加法了，是把兩邊**接起來**。\n\n```\nint gacha = 8;\nSystem.out.println(\"扭蛋有 \" + gacha + \" 個\");\n```\n\n印出 `扭蛋有 8 個`。`+` 從左往右算，所以 `\"總共 \" + 3 + 4` 會先接上 3、再接上 4，變成 `總共 34`。要先算的數字，加括號：`\"總共 \" + (3 + 4)`。"
+    },
+    {
+      "id": "compare",
+      "chapter": 2,
+      "title": "比大小",
+      "summary": "比較的答案是 `boolean`；`==` 才是比。",
+      "body": "`<`、`<=`、`>`、`>=`、`==`、`!=` 都是在問問題，答案只有 `true` 或 `false`，所以可以直接放進 `boolean` 盒子。\n\n```\nint perWeek = 15;\nboolean tooMany = perWeek >= 10;\n```\n\n`=` 是「放進去」，`==` 才是「等不等於」。`!=` 是「不等於」。"
+    },
+    {
+      "id": "inc",
+      "chapter": 2,
+      "title": "i++ 與 +=",
+      "summary": "`i++` 是加一，`total += i` 是加進去。",
+      "body": "`i++` 是「`i` 加一」的簡寫，和 `i = i + 1` 一樣。\n\n`total += i` 是「把 `i` 加進 `total`」，和 `total = total + i` 一樣。\n\n```\nint total = 0;\ntotal += 3;\ntotal += 5;\n```\n\n`total` 最後是 8。字串也能用 `+=`：`s += \"！\"` 會在 `s` 後面接一個「！」。"
+    },
+    {
+      "id": "for",
+      "chapter": 2,
+      "title": "for 是把同一件事做 N 遍",
+      "summary": "`for` 是把同一件事做 N 遍。",
+      "body": "同一件事要做很多遍，不用複製貼上，用 `for`。\n\n```\nfor (int i = 1; i <= 5; i++) {\n    System.out.println(\"第 \" + i + \" 遍\");\n}\n```\n\n括號裡有三段，用分號隔開：從 `i = 1` 開始；`i <= 5` 還成立就做一遍；每做完一遍 `i++`。所以 `i` 依序是 1、2、3、4、5，大括號裡的事做了 5 遍。"
     }
   ]
 }

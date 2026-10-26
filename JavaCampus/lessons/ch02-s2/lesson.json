@@ -1,0 +1,49 @@
+{
+  "id": "ch02-s2",
+  "title": "她的型別錯誤",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["int-div", "cast"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "half",
+      "title": "3.5 個扭蛋",
+      "goal": "修好第一行，讓 `half` 裝得下 `3.5`。",
+      "instructions": "這份練習一執行就紅字。一步修一個錯，先修第一行。",
+      "expectedShape": "… half = 3.5;",
+      "check": { "type": "values", "exprs": ["half"] },
+      "hints": {
+        "lead": "`incompatible types: possible lossy conversion from double to int`⋯⋯",
+        "plain": "⋯⋯白話：`int` 盒子只裝整數，`3.5` 放進去會掉東西，所以電腦不准。換成裝小數的盒子 `double`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "total",
+      "title": "總共 34 個？",
+      "goal": "修到印出 `總共 7 個`。",
+      "instructions": "現在印出來的是 `總共 34 個`。",
+      "expectedShape": "System.out.println(\"總共 \" + … + \" 個\");",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`+` 由左往右結合：`\"總共 \" + 3` 已經是字串，後面的 `+ 4` 也變成串接⋯⋯",
+        "plain": "⋯⋯白話：`+` 從左邊算過來，一碰到字串就變成接起來，3 和 4 就被一個一個接上去。要先加起來的數字，用括號包住：`(3 + 4)`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "avg",
+      "title": "平均是 3？",
+      "goal": "修到 `avg` 是 `3.5`。",
+      "instructions": "現在 `avg` 是 `3.0`。",
+      "expectedShape": "double avg = …;",
+      "check": { "type": "values", "exprs": ["avg"] },
+      "hints": {
+        "lead": "`7 / 2` 是 `int` 運算，得到 3 之後才擴展成 `double` 的 3.0⋯⋯",
+        "plain": "⋯⋯白話：右邊先算完才放進盒子。`7 / 2` 是兩個整數相除，小數已經丟掉了。把其中一個寫成小數，例如 `7 / 2.0`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

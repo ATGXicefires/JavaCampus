@@ -1,0 +1,59 @@
+{
+  "id": "ch02-k1",
+  "title": "int 是什麼",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["types", "arith", "int-div", "cast"],
+  "vars": [
+    { "name": "gacha", "type": "int", "value": "8" }
+  ],
+  "steps": [
+    {
+      "id": "boxes",
+      "title": "三種新盒子",
+      "goal": "做三個盒子：`double temp` 放 `33.5`、`boolean hot` 放 `true`、`String city` 放 `\"臺南\"`。",
+      "instructions": "第一章做過 `int` 和 `String` 的盒子，這次多兩種：`double` 裝有小數點的數字，`boolean` 只裝 `true` 或 `false`。\n\n寫法一樣是：盒子的種類、名字、`=`、內容，最後加分號。",
+      "expectedShape": "double temp = …;\nboolean hot = …;\nString city = \"…\";",
+      "check": { "type": "values", "exprs": ["temp", "hot", "city"] },
+      "hints": {
+        "lead": "有小數用 double，對或錯用 boolean。",
+        "plain": "盒子要配合裡面的東西：`33.5` 有小數點，放進 `double`；`true` 只有對和錯兩種，放進 `boolean`；`\"臺南\"` 是文字，放進 `String`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hooks",
+      "title": "掛勾",
+      "goal": "`gacha` 個扭蛋平均掛在 3 個掛勾上：每個掛幾個存進 `perHook`，剩幾個存進 `left`。",
+      "instructions": "題目給了 `int gacha = 8`。`/` 是除法，`%` 是除完剩下的。\n\n按「完成」時會把 `gacha` 換成 10 和 12 再算一次，所以要用 `gacha` 來算，不要直接寫答案。",
+      "expectedShape": "int perHook = …;\nint left = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["perHook", "left"],
+        "variants": [ { "gacha": "10" }, { "gacha": "12" } ]
+      },
+      "hints": {
+        "lead": "分到的用 /，剩下的用 %。",
+        "plain": "8 個扭蛋分給 3 個掛勾：每個掛 2 個，還剩 2 個。`gacha / 3` 算的是每個分到幾個，`gacha % 3` 算的是分完還剩幾個。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "average",
+      "title": "除不盡",
+      "goal": "算出每個掛勾平均掛幾個，存進 `double avg`，要有小數。",
+      "instructions": "起始碼的 `avg` 算出來是 `2.0`，小數不見了：兩個整數相除，小數會直接丟掉。\n\n按「完成」時會把 `gacha` 換成 10 再算一次。",
+      "expectedShape": "double avg = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["avg"],
+        "variants": [ { "gacha": "10" } ]
+      },
+      "hints": {
+        "lead": "整數除以整數，小數會被丟掉。",
+        "plain": "`gacha` 和 `3` 都是整數，相除的答案也只留整數，放進 `double` 盒子時已經來不及了。把 `3` 寫成 `3.0`，或在前面加 `(double)`，讓其中一邊先變成小數。"
+      },
+      "afterText": ""
+    }
+  ]
+}

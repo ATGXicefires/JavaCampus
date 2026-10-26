@@ -1,0 +1,60 @@
+{
+  "id": "ch02-s4",
+  "title": "簡報的時程表",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["compare", "arith", "for"],
+  "vars": [
+    { "name": "weeks", "type": "int", "value": "16" }
+  ],
+  "steps": [
+    {
+      "id": "weeks",
+      "title": "W1 到 W16",
+      "goal": "用 `for` 印出 `W1` 到 `W16`，一行一個。",
+      "instructions": "提案的時程表。題目給了 `int weeks = 16`；按「完成」時會換成 12 再跑一次。",
+      "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"W\" + …);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "weeks": "12" } ]
+      },
+      "hints": {
+        "lead": "計數迴圈：初始值 `i = 1`，條件 `i <= weeks`，每次 `i++`⋯⋯",
+        "plain": "⋯⋯白話：從第 1 週數到第 `weeks` 週，每一週印一行。`\"W\" + i` 會把週數接在 W 的後面。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "pad",
+      "title": "對齊",
+      "goal": "小於 10 的週數前面補 0：`W01` 到 `W16`。",
+      "instructions": "個位數的週數前面多印一個 `0`，表格才會對齊。按「完成」時會把 `weeks` 換成 12 再跑一次。",
+      "expectedShape": "if (…) {\n    System.out.println(\"W0\" + i);\n} else {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "weeks": "12" } ]
+      },
+      "hints": {
+        "lead": "以 `i < 10` 為條件分支，個位數時多串接一個 \"0\"⋯⋯",
+        "plain": "⋯⋯白話：先問一個問題：這一週是不是個位數？是的話印 `\"W0\" + i`，不是就照原本印。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "progress",
+      "title": "進度",
+      "goal": "每一行後面加上到那一週為止的進度，例如 `W01 6%`，用整數算 `i * 100 / weeks`。",
+      "instructions": "進度是「第幾週 ÷ 總週數」換成百分比。按「完成」時會把 `weeks` 換成 12 再跑一次。\n\n寫成 `i / weeks * 100` 的話，整數除法會讓前面幾週全部變成 0%。",
+      "expectedShape": "int percent = …;\nSystem.out.println(\"W0\" + i + \" \" + percent + \"%\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "weeks": "12" } ]
+      },
+      "hints": {
+        "lead": "整數運算由左往右：先乘 100 再除，避免 `i / weeks` 先被截斷成 0⋯⋯",
+        "plain": "⋯⋯白話：`1 / 16` 是 0，再乘 100 還是 0。先乘 100，變成 `100 / 16`，答案才是 6。同樣的數字，順序換一下，結果差很多。"
+      },
+      "afterText": ""
+    }
+  ]
+}
