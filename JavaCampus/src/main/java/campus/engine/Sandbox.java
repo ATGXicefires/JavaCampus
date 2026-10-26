@@ -218,13 +218,25 @@ public final class Sandbox implements AutoCloseable {
                     }
                 }
             }
-            // 類別可以用到後面才宣告的類別，所以全部定義完才檢查還有沒有找不到的名字
+            // 類別可以用到後面才宣告的類別，所以全部定義完才檢查還有沒有找不到的名字；
+            // 本身就有錯的類別先回報，用到它的類別只會跟著說找不到它
+            Map.Entry<DeclarationSnippet, Segment> broken = null;
             for (Map.Entry<DeclarationSnippet, Segment> d : declared.entrySet()) {
-                if (js.status(d.getKey()) != Status.VALID) {
-                    Segment seg = d.getValue();
-                    String code = units.stream().filter(u -> u.segments().contains(seg)).findFirst().orElseThrow().code();
-                    return compileError(unresolved(js, d.getKey(), seg, code));
+                if (js.status(d.getKey()) == Status.VALID) {
+                    continue;
                 }
+                if (js.unresolvedDependencies(d.getKey()).findAny().isEmpty()) {
+                    broken = d;
+                    break;
+                }
+                if (broken == null) {
+                    broken = d;
+                }
+            }
+            if (broken != null) {
+                Segment seg = broken.getValue();
+                String code = units.stream().filter(u -> u.segments().contains(seg)).findFirst().orElseThrow().code();
+                return compileError(unresolved(js, broken.getKey(), seg, code));
             }
             if (launch) {
                 Optional<RunResult> failed = launch(js, units, bySnippetId);
