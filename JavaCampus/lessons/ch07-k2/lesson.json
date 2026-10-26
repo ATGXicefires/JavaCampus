@@ -10,9 +10,9 @@
       "id": "max",
       "title": "掛不下了",
       "goal": "扭蛋包最多裝 12 個：加上常數 `static final int MAX = 12;`，和建構子 `GachaBag(int count)` 把一開始有幾個存進欄位 `count`。`add()` 改成交回 `boolean`：還不到 `MAX` 個就加一個、交回 `true`；已經有 `MAX` 個就不加、交回 `false`。",
-      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。\n\n建構子的參數和欄位都叫 `count`，欄位要寫成 `this.count`。\n\n按「完成」時，會檢查 `new GachaBag(11).add()`（還放得下）和 `new GachaBag(12).add()`（已經滿了）交回什麼。",
+      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。\n\n建構子的參數和欄位都叫 `count`，欄位要寫成 `this.count`。\n\n按「完成」時，會檢查 `new GachaBag(11).add()`（還放得下）和 `new GachaBag(12).add()`（已經滿了）交回什麼；還會拿一個有 11 個的扭蛋包 `bag`，加一個之後看 `bag.getCount()` 有沒有變成 12，再加一次要交回 `false`、數量不變。",
       "expectedShape": "static final int MAX = 12;\n…\nboolean add() {\n    if (…) {\n        return false;\n    }\n    …\n}",
-      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()"] },
+      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()", "GachaBag bag = null;", "(bag = new GachaBag(11)).add()", "bag.getCount()", "bag.add()", "bag.getCount()"] },
       "hints": {
         "lead": "滿了就不加。",
         "plain": "`add()` 先問一句：已經到 `MAX` 了嗎？到了就交回 `false`，什麼都不做；還沒滿才加一個，交回 `true`。"

@@ -13,12 +13,12 @@
       "id": "week",
       "title": "一週幾個",
       "goal": "題目給了 `perDay`（每天吃幾個飯糰，現在是 3）和 `days`（一週上學幾天，現在是 5）。算出一週總共吃幾個，存進 `int perWeek`。",
-      "instructions": "`perDay` 和 `days` 這兩個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。乘法用 `*`，例如 `2 * 4` 是 `8`。\n\n按「完成」時，會把 `perDay` 改成 2 再檢查一次，所以要用 `perDay` 和 `days` 來算，不能直接寫 `15`。",
+      "instructions": "`perDay` 和 `days` 這兩個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。乘法用 `*`，例如 `2 * 4` 是 `8`。\n\n按「完成」時，會把 `perDay` 改成 2、`days` 改成 4 各檢查一次，所以要用 `perDay` 和 `days` 來算，不能直接寫 `15`。",
       "expectedShape": "int perWeek = …;",
       "check": {
         "type": "values",
         "exprs": ["perWeek"],
-        "variants": [ { "perDay": "2" } ]
+        "variants": [ { "perDay": "2" }, { "days": "4" } ]
       },
       "hints": {
         "lead": "乘法是 *。",

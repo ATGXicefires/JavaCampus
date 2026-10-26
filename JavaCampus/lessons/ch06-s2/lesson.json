@@ -10,9 +10,9 @@
       "id": "blueprint",
       "title": "禮物的設計圖",
       "goal": "寫 `class Gift`：欄位 `to`、`from`、`message`，建構子用 `this`。",
-      "instructions": "三個欄位都是 `String`，建構子照順序收 `to`、`from`、`message`。",
+      "instructions": "三個欄位都是 `String`，建構子照順序收 `to`、`from`、`message`。\n\n按「完成」時，會用 `new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 檢查三個欄位有沒有都放好。",
       "expectedShape": "class Gift {\n    …\n    Gift(String to, String from, String message) {\n        this.to = to;\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from"] },
+      "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").message"] },
       "hints": {
         "lead": "建構子以 `this.欄位 = 參數` 初始化同名欄位⋯⋯",
         "plain": "⋯⋯白話：三個欄位，建構子收三個參數，用 `this.to = to;` 這樣一個一個放好。"
