@@ -440,6 +440,34 @@
       "title": "HashMap 是對照表",
       "summary": "`put` 放進去，`get` 查出來。",
       "body": "`HashMap` 是一張對照表：用一個鍵，查出對應的值。要先 `import java.util.HashMap;`。\n\n```\nHashMap<String, String> initials = new HashMap<>();\ninitials.put(\"tx\", \"梁亭瑄\");\ninitials.get(\"tx\")          // \"梁亭瑄\"\ninitials.containsKey(\"zz\")  // false\n```\n\n角括號裡先寫鍵的型別，再寫值的型別。查不到的鍵，`get` 會交回 `null`，所以先用 `containsKey` 問有沒有；`getOrDefault(鍵, 預設值)` 查不到時交回預設值。"
+    },
+    {
+      "id": "do-while",
+      "chapter": 11,
+      "title": "do-while 是先做再問",
+      "summary": "至少做一次，做完才問要不要再來。",
+      "body": "`while` 先問再做，條件一開始就不成立的話，一次都不做。`do-while` 先做再問，至少會做一次。\n\n```\ndo {\n    System.out.println(\"統計一次\");\n    answer = answers[round];\n    round++;\n} while (answer.equals(\"好\"));\n```\n\n「再統計一次？」「再練一次？」這種一定要先做一次的事，用 `do-while`。最後的 `while (…)` 後面有分號，別忘了。"
+    },
+    {
+      "id": "break",
+      "chapter": 11,
+      "title": "break 是提早離開",
+      "summary": "找到就停，直接跳出迴圈。",
+      "body": "迴圈還沒跑完，但已經找到要的東西了，就用 `break` 直接跳出去。\n\n```\nfor (String d : drafts) {\n    if (d.length() <= 15) {\n        System.out.println(d);\n        break;\n    }\n}\n```\n\n找到第一句夠短的草稿就停，後面的不再看。`break` 只跳出它所在的那一層迴圈。"
+    },
+    {
+      "id": "continue",
+      "chapter": 11,
+      "title": "continue 是跳過這一次",
+      "summary": "這一圈剩下的不做，直接下一圈。",
+      "body": "`continue` 跳過這一圈剩下的部分，直接進入下一圈。\n\n```\nfor (int i = 0; i < 10; i++) {\n    if (weekday == 0 || weekday == 6) {\n        continue;\n    }\n    System.out.println(\"還有 \" + (10 - i) + \" 天\");\n}\n```\n\n週末那一圈，下面的 `println` 不做，迴圈照樣繼續。和 `break` 不一樣：`break` 是整個迴圈都不跑了。"
+    },
+    {
+      "id": "infinite-loop",
+      "chapter": 11,
+      "title": "無限迴圈",
+      "summary": "`while (true)` 一定要留出口。",
+      "body": "迴圈的條件永遠成立，就會一直跑下去，停不下來。\n\n```\nwhile (true) {\n    day++;\n    if (day == 30) {\n        break;\n    }\n}\n```\n\n`while (true)` 一定要在裡面留一個 `break` 當出口。用 `while` 時忘了 `i++`，條件也會永遠成立。程式跑超過 3 秒會被強制停止；`while (true)` 後面沒有出口的程式碼，編譯器會說永遠跑不到。"
     }
   ]
 }

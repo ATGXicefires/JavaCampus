@@ -1,0 +1,38 @@
+{
+  "id": "ch11-k3",
+  "title": "畢冊只寫一行",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["break"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "short",
+      "title": "寫不下",
+      "goal": "`main` 裡是畢冊留言的草稿。用迴圈找出第一句不超過 15 個字的草稿，找到就 `break`，印出那一句。",
+      "instructions": "字數用 `length()` 算。只印第一句符合的。",
+      "expectedShape": "for (String d : drafts) {\n    if (d.length() <= 15) {\n        …\n        break;\n    }\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "找到就 break。",
+        "plain": "草稿一句一句試，寫得下就用那一句，後面的不用再看。`break` 就是「找到了，停」。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "method",
+      "title": "寫成方法",
+      "goal": "寫 `static String firstShort(String[] drafts, int max)`：交回第一句不超過 `max` 個字的草稿，找不到就交回 `（空白）`。",
+      "instructions": "按「完成」時會直接呼叫 `firstShort` 測試，`main` 不會執行。",
+      "expectedShape": "static String firstShort(String[] drafts, int max) {\n    String found = \"（空白）\";\n    for (…) {\n        …\n    }\n    return found;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)", "Main.firstShort(new String[]{\"太長了\"}, 2)"] },
+      "hints": {
+        "lead": "先放好找不到時的答案。",
+        "plain": "先準備好「（空白）」當預設，迴圈裡找到了才換掉，然後馬上停。一句都不合，交回的就是預設的那一個。"
+      },
+      "afterText": ""
+    }
+  ]
+}

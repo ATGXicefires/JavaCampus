@@ -1,0 +1,24 @@
+{
+  "id": "ch11-kt",
+  "title": "找出那句輸入",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["final"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "input",
+      "title": "你先看一下專題",
+      "goal": "讀懂 `easterEgg` 比對的是 `Memory.java` 裡的哪一個常數，把正確的輸入填進 `main` 的最後一行。",
+      "instructions": "輸入對了，`easterEgg` 才會交回東西。",
+      "expectedShape": "System.out.println(Main.easterEgg(\"…\"));",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "看 easterEgg 拿誰來比。",
+        "plain": "`easterEgg` 只認一句話。順著 `if` 裡的比對，找到它用的常數，那個常數存的就是答案。"
+      },
+      "afterText": ""
+    }
+  ]
+}

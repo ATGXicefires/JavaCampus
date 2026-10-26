@@ -1,0 +1,38 @@
+{
+  "id": "ch11-s3",
+  "title": "再練一次",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["do-while"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "again",
+      "title": "至少問一次",
+      "goal": "App 的「再練一次」：`main` 裡有一組作答 `tries`。用 `do-while` 至少問一次：答錯就印 `第 1 次：再試一次`，換下一個作答；答對了就印 `第 3 次答對了！`。",
+      "instructions": "作答先 `trim` 再和 `answer` 比。",
+      "expectedShape": "do {\n    right = tries[round].trim().equals(answer);\n    round++;\n    …\n} while (!right);\nSystem.out.println(\"第 \" + round + \" 次答對了！\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`do-while` 先執行迴圈本體，再判斷條件⋯⋯",
+        "plain": "⋯⋯白話：至少要先答一次，才知道對不對。`trim` 只去掉前後的空白，「吃 滷肉飯」中間那一格還在，所以第二次還是錯的。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "limit",
+      "title": "最多三次",
+      "goal": "寫 `static int triesNeeded(String[] tries, String answer, int limit)`：交回第幾次答對；前 `limit` 次都沒答對就交回 -1。",
+      "instructions": "作答一樣先 `trim`。按「完成」時會直接呼叫 `triesNeeded` 測試，`main` 不會執行。",
+      "expectedShape": "static int triesNeeded(String[] tries, String answer, int limit) {\n    for (…) {\n        …\n    }\n    return -1;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 3)"] },
+      "hints": {
+        "lead": "迴圈條件同時限制陣列長度與次數上限⋯⋯",
+        "plain": "⋯⋯白話：最多只看前 `limit` 次，作答不夠也要停。答對了馬上交回是第幾次，全部看完都沒對，就交回 -1。"
+      },
+      "afterText": ""
+    }
+  ]
+}

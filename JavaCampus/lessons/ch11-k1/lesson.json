@@ -1,0 +1,52 @@
+{
+  "id": "ch11-k1",
+  "title": "478 次",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["do-while", "infinite-loop"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "for",
+      "title": "用 for 數",
+      "goal": "`ChatLog.java` 是小芸給的聊天紀錄。在 `Main` 裡寫 `static int count(String[] log, String word)`，用 `for` 數出有幾則訊息包含 `word`。`main` 印出 `478 次`。",
+      "instructions": "字串的 `contains(…)` 問裡面有沒有這幾個字，例如 `\"學長早\".contains(\"學長\")` 是 `true`。",
+      "expectedShape": "static int count(String[] log, String word) {\n    int n = 0;\n    for (…) {\n        if (log[i].contains(word)) {\n            …\n        }\n    }\n    return n;\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "contains 問有沒有包含。",
+        "plain": "一則一則看過去，裡面有「學長」兩個字就記一筆。看完一千則，記了幾筆就是幾次。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "while",
+      "title": "改成 while",
+      "goal": "再寫 `static int countWhile(String[] log, String word)`，做一樣的事，改用 `while`。",
+      "instructions": "按「完成」時會直接呼叫 `countWhile`，換幾組訊息測試，`main` 不會執行。",
+      "expectedShape": "static int countWhile(String[] log, String word) {\n    int n = 0;\n    int i = 0;\n    while (i < log.length) {\n        …\n        i++;\n    }\n    return n;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")", "Main.countWhile(new String[]{}, \"學長\")"] },
+      "hints": {
+        "lead": "while 要自己 i++。",
+        "plain": "`for` 會自己往下一格，`while` 不會。忘了 `i++`，`i` 永遠是 0，迴圈就停不下來，跑超過 3 秒會被強制停止。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "again",
+      "title": "再統計一次？",
+      "goal": "小芸的爬蟲每次跑完都問「再統計一次？」。`main` 裡寫好了回答 `answers`。用 `do-while`：至少統計一次，回答是 `好` 就再來，每次印 `第 1 次：478 次` 這樣的一行。",
+      "instructions": "第幾次的回答是 `answers[第幾次 - 1]`。",
+      "expectedShape": "do {\n    round++;\n    System.out.println(\"第 \" + round + \" 次：\" + … + \" 次\");\n    answer = answers[round - 1];\n} while (…);",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先做再問。",
+        "plain": "`do-while` 是先統計一次，做完才問「再來嗎？」。不管回答什麼，第一次一定會做。"
+      },
+      "afterText": ""
+    }
+  ]
+}

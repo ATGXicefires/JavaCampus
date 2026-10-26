@@ -1,0 +1,24 @@
+{
+  "id": "ch11-sg",
+  "title": "回覆 true",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["bool-method"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "reply",
+      "title": "回覆",
+      "goal": "讓 `answer()` 交回你的回覆。",
+      "instructions": "`answer()` 會交回一個 `boolean`。",
+      "expectedShape": "static boolean answer() {\n    return …;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Reply.answer()"] },
+      "hints": {
+        "lead": "回傳型別為 `boolean`⋯⋯",
+        "plain": "⋯⋯白話：她問的是 true 或 false。"
+      },
+      "afterText": ""
+    }
+  ]
+}
