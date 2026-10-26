@@ -96,7 +96,12 @@ final class SettingsView extends VBox {
                     "重設", () -> game.resetRoute(r)));
             resets.getChildren().add(reset);
         }
-        VBox progressGroup = group("進度", resets);
+        Button resetPractice = new Button("重設練習進度");
+        resetPractice.getStyleClass().add("btn-danger");
+        resetPractice.setDisable(game.progress.practiceLessons().isEmpty());
+        resetPractice.setOnAction(e -> game.confirm("要清除練習的進度嗎？劇情的進度和設定會保留。", "重設",
+                game::resetPractice));
+        VBox progressGroup = group("進度", resets, resetPractice);
         if (inGame) {
             Button title = new Button("回到標題");
             title.getStyleClass().add("btn-ghost");
