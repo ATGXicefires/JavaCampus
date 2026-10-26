@@ -75,6 +75,7 @@ final class LessonView extends StackPane {
     private final Button stopButton = new Button("停止");
     private final Button resetButton = new Button("重設");
     private final Button continueButton = new Button("繼續　→");
+    private final Button backButton = new Button("←");
     private final Label reactionWho = new Label();
     private final Label reactionText = new Label();
     private final VBox reaction = new VBox(6, reactionWho, reactionText);
@@ -138,11 +139,10 @@ final class LessonView extends StackPane {
         hintButton.setFocusTraversable(false);
         HBox bar = new HBox(16, title, gap, hintButton, game.settingsButton());
         if (practice) {
-            Button back = new Button("←");
-            back.getStyleClass().add("btn-ghost");
-            back.setFocusTraversable(false);
-            back.setOnAction(e -> leave());
-            bar.getChildren().addFirst(back);
+            backButton.getStyleClass().add("btn-ghost");
+            backButton.setFocusTraversable(false);
+            backButton.setOnAction(e -> leave());
+            bar.getChildren().addFirst(backButton);
         }
         bar.setAlignment(Pos.CENTER_LEFT);
         bar.getStyleClass().add("topbar");
@@ -708,6 +708,8 @@ final class LessonView extends StackPane {
         runButton.setDisable(b);
         verifyButton.setDisable(b);
         resetButton.setDisable(b);
+        // 結果晚一步才回來：先離開的話，過關音效會在終端機上響，終端機也補不到打勾那行
+        backButton.setDisable(b);
         if (b) {
             stopReveal.playFromStart();
         } else {
