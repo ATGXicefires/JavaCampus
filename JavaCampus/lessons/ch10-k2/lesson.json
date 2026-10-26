@@ -38,7 +38,7 @@
       "id": "taps",
       "title": "每個畫面被點幾次",
       "goal": "在 `Main` 裡寫 `static int totalTaps(ArrayList<Integer> taps)`，用 for-each 把清單裡的點擊次數加起來交回。",
-      "instructions": "角括號裡只能放類別，整數要寫 `Integer`。按「完成」時會直接呼叫 `totalTaps`，換幾組清單測試，`main` 不會執行。",
+      "instructions": "角括號裡只能放類別，整數要寫 `Integer`。\n\n按「完成」時會直接呼叫 `totalTaps`，換幾組清單測試，`main` 不會執行。例如清單是 `12, 30, 7` 時要交回 `49`，空的清單交回 `0`。",
       "expectedShape": "static int totalTaps(ArrayList<Integer> taps) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())"] },

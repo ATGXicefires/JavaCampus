@@ -10,7 +10,7 @@
       "id": "view",
       "title": "眼鏡",
       "goal": "寫 `class Glasses`：欄位 `boolean clean`，方法 `String view()`：乾淨就交回 `世界很清楚`，不乾淨就交回 `世界霧霧的`。",
-      "instructions": "新的眼鏡還沒擦過。",
+      "instructions": "不用寫建構子：會用 `new Glasses().view()` 檢查。剛做出來的眼鏡還沒擦過，要交回 `世界霧霧的`。",
       "expectedShape": "class Glasses {\n    boolean clean;\n\n    String view() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Glasses().view()"] },
       "hints": {

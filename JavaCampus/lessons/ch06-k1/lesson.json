@@ -22,7 +22,7 @@
     {
       "id": "another",
       "title": "再做一個",
-      "goal": "再 `new` 一個 `阿隨`（種類是 `USB`），兩個都印出來。",
+      "goal": "再 `new` 一個 `Item`：名字 `阿隨`、種類 `USB`，也照同樣的格式印出來。輸出兩行：`小白（筆電）`、`阿隨（USB）`。",
       "instructions": "同一張設計圖可以用很多次。",
       "expectedShape": "Item usb = new Item();\n…\nSystem.out.println(…);",
       "check": { "type": "output" },
@@ -35,7 +35,7 @@
     {
       "id": "own",
       "title": "各自一份",
-      "goal": "把小白的名字改成 `小白二號`，再把兩個都印一次。阿隨不受影響。",
+      "goal": "把小白的名字改成 `小白二號`，再把兩個都印一次，後面多出 `小白二號（筆電）`、`阿隨（USB）` 兩行。阿隨不受影響。",
       "instructions": "改完以後，輸出會有四行：前兩行是改之前，後兩行是改之後。",
       "expectedShape": "laptop.name = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
       "check": { "type": "output" },

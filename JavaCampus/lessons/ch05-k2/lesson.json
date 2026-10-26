@@ -12,8 +12,8 @@
     {
       "id": "days",
       "title": "要存幾天",
-      "goal": "每天存 `perDay` 元，扭蛋一次 `price` 元。用 `while` 算出要存幾天才夠，存進 `days`。",
-      "instructions": "不知道要存幾天，就用 `while`：錢還不夠，就再存一天。\n\n```\nwhile (條件) {\n    條件還成立時，重複做的事\n}\n```\n\n按「完成」時會換一組價錢和每天存的錢再算一次。",
+      "goal": "題目給了 `price`（扭蛋一次多少錢，現在是 50）和 `perDay`（每天存多少錢，現在是 15）。用 `while` 算出要存幾天，存的錢才夠買一次扭蛋（剛好等於價錢也算夠），天數存進 `days`。",
+      "instructions": "`price` 和 `perDay` 這兩個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。\n\n不知道要存幾天，就用 `while`：錢還不夠，就再存一天。\n\n```\nwhile (條件) {\n    條件還成立時，重複做的事\n}\n```\n\n現在每天存 15 元：存 3 天是 45 元，還不夠；存 4 天是 60 元，夠買 50 元的扭蛋了，所以 `days` 是 4。\n\n按「完成」時，會把 `price` 改成 100 再檢查一次，再把 `perDay` 改成 20 檢查一次，所以要用 `price` 和 `perDay` 來算，不能直接寫 `4`。",
       "expectedShape": "while (…) {\n    saved += perDay;\n    days++;\n}",
       "check": {
         "type": "values",
@@ -29,13 +29,13 @@
     {
       "id": "method",
       "title": "寫成方法",
-      "goal": "寫 `static int daysToSave(int price, int perDay)`。",
+      "goal": "寫 `static int daysToSave(int price, int perDay)`：用上一步的算法，交回要存幾天才夠買，例如 `daysToSave(50, 15)` 交回 4。",
       "instructions": "把上一步的算法包成方法：價錢和每天存多少，改成由參數給。\n\n`daysToSave(0, 10)` 要交回 0：條件一開始就不成立，`while` 一次都不會跑。",
       "expectedShape": "static int daysToSave(int price, int perDay) {\n    …\n    return days;\n}",
       "check": { "type": "values", "exprs": ["daysToSave(50, 15)", "daysToSave(30, 30)", "daysToSave(0, 10)"] },
       "hints": {
         "lead": "上一步的程式，包進方法裡。",
-        "plain": "方法的參數 `price` 和 `perDay` 取代題目給的盒子，裡面照抄上一步的 `while`，最後 `return days;`。"
+        "plain": "方法的參數 `price` 和 `perDay` 取代題目給的盒子。上一步的 `saved`、`days` 和 `while` 都搬進方法裡，兩個盒子在方法裡從 0 開始，最後 `return days;`。"
       },
       "afterText": ""
     }

@@ -9,8 +9,8 @@
     {
       "id": "refactor",
       "title": "收在一起",
-      "goal": "起始碼的三個畫面，每一個都自己印一次標題列和頁尾。寫 `abstract class Screen`，把標題列和頁尾搬進 `show()`，三個畫面改成 `extends Screen`，只寫自己的 `body()`。",
-      "instructions": "三個畫面的標題列都要是 `== 小白學程式 ==`。",
+      "goal": "起始碼的三個畫面，每一個都自己印一次標題列和頁尾。寫 `abstract class Screen`，把標題列和頁尾搬進 `show()`，三個畫面改成 `extends Screen`，只寫自己的 `body()`；印出來的標題列都要是 `== 小白學程式 ==`。",
+      "instructions": "`abstract` 方法沒有大括號，直接用分號結尾。起始碼最後三行呼叫 `show()` 的地方不用改。",
       "expectedShape": "abstract class Screen {\n    void show() {\n        …\n        body();\n        …\n    }\n\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() {\n        …\n    }\n}\n…",
       "check": { "type": "output" },
       "hints": {

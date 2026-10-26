@@ -9,8 +9,8 @@
     {
       "id": "space",
       "title": "多打了空白",
-      "goal": "修到前後多打的空白不算錯。",
-      "instructions": "試玩的人打了 `吃滷肉飯 `，後面多一個空白，就被判成答錯。",
+      "goal": "`isCorrect(typed, answer)` 判斷玩家打的 `typed` 是不是答案 `answer`，現在多打一個空白就被判錯。修到 `typed` 前後多打的空白不算錯，例如 `isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")` 要交回 `true`。",
+      "instructions": "試玩的人打了 `吃滷肉飯 `，後面多一個空白，就被判成答錯。\n\n按「完成」時會呼叫 `isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")`、`isCorrect(\" 小白\", \"小白\")`（都要是 `true`）和 `isCorrect(\"小黑\", \"小白\")`（要是 `false`）。",
       "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")", "isCorrect(\" 小白\", \"小白\")", "isCorrect(\"小黑\", \"小白\")"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "both",
       "title": "答案也有空白",
-      "goal": "題庫裡的答案也可能多了空白，兩邊都要處理。",
-      "instructions": "例如題庫裡的答案是 `小白 `，玩家打 `小白`，也要算對。",
+      "goal": "題庫裡的答案 `answer` 也可能前後多了空白，兩邊都要去掉再比：`isCorrect(\"小白\", \"小白 \")` 也要交回 `true`。",
+      "instructions": "例如題庫裡的答案是 `小白 `，玩家打 `小白`，也要算對。按「完成」時還會檢查 `isCorrect(\" 小白 \", \" 小白\")`，也要是 `true`。",
       "expectedShape": "return typed.trim().equals(…);",
       "check": { "type": "values", "exprs": ["isCorrect(\"小白\", \"小白 \")", "isCorrect(\" 小白 \", \" 小白\")"] },
       "hints": {

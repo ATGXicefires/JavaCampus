@@ -22,7 +22,7 @@
     {
       "id": "open",
       "title": "打開卡片",
-      "goal": "加上 `void open()`，印三行：`給 梁亭瑄`、卡片內容、`—— 吳二弘`。卡片內容用最終版：`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`",
+      "goal": "加上 `void open()`，印出三行：`給 梁亭瑄`、卡片內容、`—— 吳二弘`。再 `new` 一張 `to` 是 `梁亭瑄`、`from` 是 `吳二弘` 的卡片，呼叫它的 `open()`。卡片內容是：`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`",
       "instructions": "`open()` 是卡片自己的方法，用的是自己的 `to`、`message`、`from`。寫好以後，`new` 一張卡片，再呼叫它的 `open()`。\n\n卡片內容和 `——` 可以從這裡複製。",
       "expectedShape": "void open() {\n    System.out.println(\"給 \" + to);\n    …\n}\n\nGift card = new Gift(\"梁亭瑄\", \"吳二弘\", \"…\");\ncard.open();",
       "check": { "type": "output" },

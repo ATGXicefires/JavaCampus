@@ -10,7 +10,7 @@
       "id": "table",
       "title": "縮寫對照表",
       "goal": "在檔案最上面寫 `import java.util.HashMap;`。在 `main` 裡做一個 `HashMap<String, String> initials`，放入 `yc` → `李有成`、`ys` → `王葉聖`、`wy` → `燕韋芸`、`eh` → `吳二弘`，再用 `get` 印出 `yc 是 李有成`。",
-      "instructions": "縮寫是名字後兩個字的拼音字首。",
+      "instructions": "對照表左邊的縮寫叫「鍵」，右邊的名字叫「值」：`put(鍵, 值)` 放進一組，`get(鍵)` 查出值。\n\n四組縮寫都已經給好了（名字後兩個字的拼音字首），照著放進去就好。",
       "expectedShape": "HashMap<String, String> initials = new HashMap<>();\ninitials.put(\"yc\", \"李有成\");\n…\nSystem.out.println(\"yc 是 \" + initials.get(\"yc\"));",
       "form": "program",
       "check": { "type": "output" },

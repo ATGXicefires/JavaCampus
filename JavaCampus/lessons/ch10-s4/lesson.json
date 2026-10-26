@@ -9,7 +9,7 @@
     {
       "id": "both",
       "title": "兩邊都要",
-      "goal": "`StartScreen.java` 裡有合併衝突的標記。他的改動（顯示分數）和她的改動（小老師打招呼）都要留下，照原本的順序排好，再刪掉 `<<<<<<<`、`=======`、`>>>>>>>` 那三行。",
+      "goal": "`StartScreen.java` 裡有合併衝突的標記。`吳二弘` 那邊的改動（顯示分數）和 `梁亭瑄` 那邊的改動（小老師打招呼）都要留下：分數那一行在前、小老師那一行在後，再刪掉 `<<<<<<<`、`=======`、`>>>>>>>` 開頭的那三行。",
       "instructions": "`<<<<<<<` 到 `=======` 是一邊的版本，`=======` 到 `>>>>>>>` 是另一邊的。",
       "expectedShape": "System.out.println(\"分數：\" + Score.total());\nSystem.out.println(\"滷肉：…\");",
       "form": "program",
@@ -23,8 +23,8 @@
     {
       "id": "mascot",
       "title": "小老師的名字",
-      "goal": "`Mascot.java` 也有衝突：一邊寫 `滷肉飯`，一邊寫 `滷肉`。照設定，小老師叫 `滷肉`。",
-      "instructions": "這次只能留一邊。",
+      "goal": "`Mascot.java` 也有合併衝突：小老師的名字一邊寫 `滷肉飯`，一邊寫 `滷肉`。App 裡的小老師叫 `滷肉`，這次只能留一邊。",
+      "instructions": "起始碼的 `StartScreen` 改成用 `Mascot.greet()` 打招呼，修好之後印出來的樣子和上一步一樣。",
       "expectedShape": "String name = \"…\";",
       "form": "program",
       "check": { "type": "output" },

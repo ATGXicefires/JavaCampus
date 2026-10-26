@@ -24,8 +24,8 @@
     {
       "id": "triangle",
       "title": "第二題：迴圈",
-      "goal": "用巢狀迴圈印出 `n` 層的星星三角形：第 1 層 1 顆 `*`，第 `n` 層 `n` 顆。",
-      "instructions": "按「完成」時會把 `n` 換成 2 再跑一次。",
+      "goal": "題目給了 `n`（現在是 4）。用巢狀迴圈印出 `n` 層的星星三角形：第 1 層 1 顆 `*`，第 2 層 2 顆，一直到第 `n` 層 `n` 顆，星星之間不空格。",
+      "instructions": "`n` 題目已經做好了，右邊「可用資料」看得到。`n` 是 4 時要印出：\n\n```\n*\n**\n***\n****\n```\n\n按「完成」時，會把 `n` 改成 2 再檢查一次，所以要用 `n` 來畫，不能直接印四行。",
       "expectedShape": "for (int i = 1; i <= n; i++) {\n    String row = \"\";\n    for (…) {\n        row += \"*\";\n    }\n    System.out.println(row);\n}",
       "check": {
         "type": "output",
@@ -40,9 +40,9 @@
     {
       "id": "student",
       "title": "第三題：類別",
-      "goal": "寫 `class Student`：欄位 `name`、`score`，建構子，方法 `boolean pass()`（60 分以上及格）。",
-      "instructions": "會用 62 分和 59 分測。",
-      "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(…) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
+      "goal": "寫 `class Student`：欄位 `String name`、`int score`，建構子 `Student(String name, int score)`，方法 `boolean pass()`：60 分以上（剛好 60 也算）交回 `true`。",
+      "instructions": "會用 `new Student(\"亭瑄\", 62).pass()`（要是 `true`）和 `new Student(\"阿成\", 59).pass()`（要是 `false`）檢查。",
+      "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(String name, int score) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()"] },
       "hints": {
         "lead": "設計圖、建構子、方法。",

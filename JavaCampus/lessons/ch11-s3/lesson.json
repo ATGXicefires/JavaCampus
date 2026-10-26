@@ -9,8 +9,8 @@
     {
       "id": "again",
       "title": "至少問一次",
-      "goal": "App 的「再練一次」：`main` 裡有一組作答 `tries`。用 `do-while` 至少問一次：答錯就印 `第 1 次：再試一次`，換下一個作答；答對了就印 `第 3 次答對了！`。",
-      "instructions": "作答先 `trim` 再和 `answer` 比。",
+      "goal": "App 的「再練一次」：`main` 裡的 `tries` 是依序的作答，`answer` 是正確答案。用 `do-while` 一次看一個作答：答錯就印 `第 1 次：再試一次`（數字是第幾次）再換下一個；答對就停，印 `第 3 次答對了！`。",
+      "instructions": "作答先 `trim` 再和 `answer` 比。記第幾次的 `round` 和這次對不對的 `right`，要宣告在 `do` 前面，`while (…)` 才看得到。",
       "expectedShape": "do {\n    right = tries[round].trim().equals(answer);\n    round++;\n    …\n} while (!right);\nSystem.out.println(\"第 \" + round + \" 次答對了！\");",
       "form": "program",
       "check": { "type": "output" },
@@ -23,7 +23,7 @@
     {
       "id": "limit",
       "title": "最多三次",
-      "goal": "寫 `static int triesNeeded(String[] tries, String answer, int limit)`：交回第幾次答對；前 `limit` 次都沒答對就交回 -1。",
+      "goal": "寫 `static int triesNeeded(String[] tries, String answer, int limit)`：交回第幾次答對（第一個作答算第 1 次）；前 `limit` 次都沒答對，或作答用完了還沒對，就交回 -1。",
       "instructions": "作答一樣先 `trim`。按「完成」時會直接呼叫 `triesNeeded` 測試，`main` 不會執行。",
       "expectedShape": "static int triesNeeded(String[] tries, String answer, int limit) {\n    for (…) {\n        …\n    }\n    return -1;\n}",
       "form": "program",

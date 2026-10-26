@@ -9,7 +9,7 @@
     {
       "id": "positive",
       "title": "不能存負數",
-      "goal": "`deposit` 改成交回 `boolean`：收到 0 或負數就不存、交回 `false`。",
+      "goal": "`deposit` 改成交回 `boolean`：收到 0 或負數就不存、交回 `false`；大於 0 才存進去、交回 `true`。",
       "instructions": "錢櫃的門只有 `deposit` 一扇，就在門口檢查。",
       "expectedShape": "boolean deposit(int amount) {\n    if (…) {\n        return false;\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger().deposit(-350)", "new Ledger().deposit(0)", "new Ledger().deposit(350)"] },
@@ -22,8 +22,8 @@
     {
       "id": "withdraw",
       "title": "領錢",
-      "goal": "加上建構子 `Ledger(int start)` 和 `boolean withdraw(int amount)`：餘額不夠就不領。",
-      "instructions": "`start` 是一開始的餘額。剛好領完也可以。",
+      "goal": "加上建構子 `Ledger(int start)`（`start` 是一開始的餘額）和 `boolean withdraw(int amount)`：餘額夠就扣掉、交回 `true`，剛好領完也算夠；不夠就不領、交回 `false`。",
+      "instructions": "`withdraw` 和 `deposit` 一樣在方法裡把關，讓餘額永遠不會變成負的。\n\n按「完成」時，會用 `new Ledger(100)` 開一本有 100 元的帳，分別試著領 150、30、100。",
       "expectedShape": "Ledger(int start) {\n    …\n}\n\nboolean withdraw(int amount) {\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger(100).withdraw(150)", "new Ledger(100).withdraw(30)", "new Ledger(100).withdraw(100)"] },
       "hints": {
@@ -35,7 +35,7 @@
     {
       "id": "typo",
       "title": "差點算錯",
-      "goal": "手一滑打成 `book.deposit(-350)`。用 `deposit` 交回的結果擋下來，印出 `金額不對：-350`。",
+      "goal": "起始碼最後一行手一滑打成 `book.deposit(-350)`：`deposit` 擋下來、交回了 `false`，畫面上卻什麼都沒說。用 `if` 接住這個 `false`，印出 `金額不對：-350`。",
       "instructions": "`deposit` 交回 `false`，就是沒存進去。",
       "expectedShape": "int amount = -350;\nif (…) {\n    System.out.println(\"金額不對：\" + amount);\n}",
       "check": { "type": "output" },

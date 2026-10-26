@@ -9,8 +9,8 @@
     {
       "id": "screen",
       "title": "放在同一排",
-      "goal": "再寫 `class MascotView implements Drawable`，`draw()` 印出 `滷肉：「歡迎回來！」`。把按鈕、進度條（3 格／5 格）、小老師依序放進 `Drawable[] screen`，用 `for` 全部畫出來。",
-      "instructions": "陣列的型別是 `Drawable[]`，不同的元件都裝得進去。",
+      "goal": "再寫小老師的元件 `class MascotView implements Drawable`（滷肉是 App 裡的小老師），`draw()` 印出 `滷肉：「歡迎回來！」`。把按鈕、進度條 `new ProgressBar(3, 5)`、小老師依序放進 `Drawable[] screen`，用 `for` 全部畫出來。",
+      "instructions": "陣列的型別是 `Drawable[]`，不同的元件都裝得進去。\n\n`：`、`「`、`」` 都是全形，可以從目標複製。",
       "expectedShape": "Drawable[] screen = {new Button(), …};\nfor (…) {\n    screen[i].draw();\n}",
       "check": { "type": "output" },
       "hints": {

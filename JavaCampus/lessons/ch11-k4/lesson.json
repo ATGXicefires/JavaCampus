@@ -9,8 +9,8 @@
     {
       "id": "list",
       "title": "題目清單",
-      "goal": "按「＋」新增 `Question.java`：欄位 `text`、`answer` 和建構子。在 `main` 裡用 `ArrayList<Question>` 照順序放進 5 題，再印出 `第 1 題：印出一行字要用哪個方法？` 這樣的清單。",
-      "instructions": "5 題的題目和答案，`main` 裡的 `texts` 和 `answers` 已經寫好了。",
+      "goal": "按「＋」新增 `Question.java`：欄位 `text`、`answer` 和建構子。在 `main` 裡把 `texts`、`answers` 的 5 題照順序做成 `Question`，放進 `ArrayList<Question>`，再從清單印出 `第 1 題：印出一行字要用哪個方法？` 這樣的 5 行。",
+      "instructions": "5 題的題目和答案，`main` 裡的 `texts` 和 `answers` 已經寫好了：`texts[0]` 和 `answers[0]` 是第 1 題的題目和答案，以此類推。\n\n建構子收題目和答案兩個參數，存進 `text` 和 `answer`。",
       "expectedShape": "ArrayList<Question> quiz = new ArrayList<>();\nfor (…) {\n    quiz.add(new Question(…));\n}\nfor (…) {\n    System.out.println(\"第 \" + (i + 1) + \" 題：\" + …);\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -24,7 +24,7 @@
       "id": "grade",
       "title": "自動作答",
       "goal": "`main` 裡多了一組作答 `typed`。逐題算分（先 `trim` 再 `equals`），印出 `答對 4 題`；答對 3 題以上算及格，再印一行 `★ 完成`。",
-      "instructions": "`typed[i]` 是第 i 題的作答。`★` 可以從目標複製。",
+      "instructions": "`typed[0]` 是第 1 題的作答，要和第 1 題的答案 `quiz.get(0).answer` 比，以此類推。上一步印的題目清單照樣留著。`★` 可以從目標複製。",
       "expectedShape": "int correct = 0;\nfor (…) {\n    if (typed[i].trim().equals(…)) {\n        correct++;\n    }\n}\nSystem.out.println(\"答對 \" + correct + \" 題\");\n…",
       "form": "program",
       "check": { "type": "output" },
@@ -37,7 +37,7 @@
     {
       "id": "score",
       "title": "計分方法",
-      "goal": "寫 `static int score(String[] answers, String[] typed)`：先 `trim` 再比，交回答對幾題。",
+      "goal": "寫 `static int score(String[] answers, String[] typed)`：`answers` 和 `typed` 的同一格是同一題的答案和作答。作答先 `trim` 再和答案比，交回答對幾題。",
       "instructions": "按「完成」時會直接呼叫 `score` 測試，`main` 不會執行。",
       "expectedShape": "static int score(String[] answers, String[] typed) {\n    int correct = 0;\n    for (…) {\n        …\n    }\n    return correct;\n}",
       "form": "program",

@@ -11,8 +11,8 @@
     {
       "id": "tables",
       "title": "每一桌各自的帳",
-      "goal": "寫 `class Table`：`private int amount`、`void order(int price)`、`int getAmount()`，再加 `static int todayTotal`。`t1` 點 80 和 35，`t2` 點 120。",
-      "instructions": "`order` 要同時記進這一桌的帳，和整家店的帳。",
+      "goal": "寫 `class Table`：`private int amount` 是這一桌的帳，`static int todayTotal` 是整家店今天的帳；`void order(int price)` 把價錢同時記進兩個帳，`int getAmount()` 交回這一桌的帳。`new` 兩桌 `t1`、`t2`：`t1` 點 80 和 35，`t2` 點 120。",
+      "instructions": "`amount` 每一桌各一份；`todayTotal` 加了 `static`，整家店只有一份，從外面用 `Table.todayTotal` 讀。",
       "expectedShape": "class Table {\n    static int todayTotal;\n    private int amount;\n    …\n}\n\nTable t1 = new Table();\n…",
       "check": { "type": "values", "exprs": ["t1.getAmount()", "t2.getAmount()", "Table.todayTotal"] },
       "hints": {
@@ -24,8 +24,8 @@
     {
       "id": "day",
       "title": "一整天",
-      "goal": "用 `for` 把 `orders` 每一筆都點在一桌新的客人上。",
-      "instructions": "一筆訂單就是一桌新的客人。按「完成」時會換一組訂單再算一次。",
+      "goal": "題目給了 `orders`，是今天每一筆訂單的金額（現在是 `{80, 35, 120, 60}`）。用 `for` 把每一筆都點在一桌新的客人上，讓 `Table.todayTotal` 變成全部訂單的總和。",
+      "instructions": "`orders` 題目已經做好了，右邊「可用資料」看得到。一筆訂單就是一桌新的客人：每一筆都 `new` 一桌，再點那一筆。\n\n按「完成」時，會把 `orders` 改成 `{35}` 再檢查一次，所以要用 `orders` 來算，不能直接寫答案。",
       "expectedShape": "for (…) {\n    Table t = new Table();\n    t.order(…);\n}",
       "check": {
         "type": "values",

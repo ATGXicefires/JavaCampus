@@ -11,8 +11,8 @@
     {
       "id": "if",
       "title": "如果有滷肉飯",
-      "goal": "寫一個 `if`：有滷肉飯的時候印出 `吃滷肉飯`。",
-      "instructions": "PDF 第 3 頁：**if-else 就像選午餐**。題目給了 `hasLuRouFan`，它是 `boolean`，只有 `true`（有）和 `false`（沒有）兩種值。\n\n沒有滷肉飯的時候什麼都不印。\n\n```\nif (條件) {\n    條件成立時做的事\n}\n```",
+      "goal": "題目給了 `hasLuRouFan`：有滷肉飯是 `true`，沒有是 `false`。寫一個 `if`：有滷肉飯的時候印出 `吃滷肉飯`。",
+      "instructions": "PDF 第 3 頁：**if-else 就像選午餐**。`hasLuRouFan` 這個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。它是 `boolean`，只有 `true`（有）和 `false`（沒有）兩種值。\n\n```\nif (條件) {\n    條件成立時做的事\n}\n```\n\n沒有滷肉飯的時候什麼都不印。按「完成」時，會把 `hasLuRouFan` 改成 `false` 再檢查一次，所以要用 `if` 來判斷，不能直接印。",
       "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",

@@ -11,8 +11,8 @@
     {
       "id": "punish",
       "title": "罰寫",
-      "goal": "用 `for` 把 `我不會再用全形分號` 印 `times` 遍。",
-      "instructions": "題目給了 `int times = 5`。按「完成」時會把 `times` 換成 100 和 1 再跑一次，一行一行寫 `println` 會寫不完。\n\n`for` 的括號裡有三段，用分號隔開：從哪裡開始、做到什麼時候、每做完一次怎麼變。\n\n```\nfor (int i = 1; i <= times; i++) {\n    要重複做的事\n}\n```",
+      "goal": "題目給了 `times`，是要罰寫的遍數（現在是 5）。用 `for` 把 `我不會再用全形分號` 印 `times` 遍，一遍一行。",
+      "instructions": "`times` 這個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。\n\n按「完成」時，會把 `times` 改成 100 和 1 再檢查一次，所以要用 `times` 來數；一行一行寫 `println` 會寫不完。\n\n`for` 的括號裡有三段，用分號隔開：從哪裡開始、做到什麼時候、每做完一次怎麼變。\n\n```\nfor (int i = 1; i <= times; i++) {\n    要重複做的事\n}\n```",
       "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",

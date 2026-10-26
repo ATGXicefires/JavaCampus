@@ -9,7 +9,7 @@
     {
       "id": "super",
       "title": "super",
-      "goal": "在 `MyPlan` 裡覆寫 `future()`：用 `super.future()` 留下爸媽的那一部分，後面接上 `，而且是我喜歡的那一種`。",
+      "goal": "在 `MyPlan` 裡覆寫 `future()`：用 `super.future()` 留下父類別 `ParentsPlan`（爸媽的版本）原本那一句，後面接上 `，而且是我喜歡的那一種`，交回 `學一技之長，找一份穩定的工作，而且是我喜歡的那一種`。",
       "instructions": "`super.future()` 呼叫的是父類別原本的 `future()`。",
       "expectedShape": "String future() {\n    return super.future() + \"…\";\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().future()"] },

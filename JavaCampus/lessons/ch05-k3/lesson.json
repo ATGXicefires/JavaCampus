@@ -9,7 +9,7 @@
     {
       "id": "average",
       "title": "平均",
-      "goal": "寫 `static double average(int[] a)`。",
+      "goal": "寫 `static double average(int[] a)`：交回陣列 `a` 裡所有分數的平均，要留小數，例如 `{90, 85}` 交回 `87.5`。",
       "instructions": "第三章的陣列，用第四章的方法再寫一次。平均要有小數。",
       "expectedShape": "static double average(int[] a) {\n    …\n    return …;\n}",
       "check": { "type": "values", "exprs": ["average(new int[]{72, 58, 65, 80, 49})", "average(new int[]{90, 85})"] },
@@ -22,7 +22,7 @@
     {
       "id": "pass-count",
       "title": "幾個及格",
-      "goal": "寫 `static int passCount(int[] a)`：交回 60 分以上的有幾個。",
+      "goal": "寫 `static int passCount(int[] a)`：交回陣列 `a` 裡 60 分以上（剛好 60 也算）的有幾個。",
       "instructions": "60 分也算及格。",
       "expectedShape": "static int passCount(int[] a) {\n    …\n}",
       "check": { "type": "values", "exprs": ["passCount(new int[]{72, 58, 65})", "passCount(new int[]{59})", "passCount(new int[]{60})"] },
@@ -35,8 +35,8 @@
     {
       "id": "to-score",
       "title": "打錯字也不會倒",
-      "goal": "寫 `static int toScore(String s)`：用 `try`／`catch`，不是數字就交回 -1。",
-      "instructions": "`toScore(\"80\")` 交回 80，`toScore(\"八十\")` 交回 -1。",
+      "goal": "寫 `static int toScore(String s)`：把文字 `s` 轉成分數交回，例如 `toScore(\"80\")` 交回 80；用 `try`／`catch`，不是數字（例如 `\"八十\"`）就交回 -1。",
+      "instructions": "`Integer.parseInt(s)` 會把 `\"80\"` 這種文字變成數字 80；遇到 `\"八十\"` 這種不是數字的文字，會丟出 `NumberFormatException`，程式就跌倒了。`catch` 要接的就是它。",
       "expectedShape": "static int toScore(String s) {\n    try {\n        …\n    } catch (…) {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["toScore(\"80\")", "toScore(\"八十\")"] },
       "hints": {

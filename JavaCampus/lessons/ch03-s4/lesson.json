@@ -13,8 +13,8 @@
     {
       "id": "parse",
       "title": "字串變數字",
-      "goal": "用 `Integer.parseInt` 把 `input` 變成數字，印出 `85 分，再加 5 分是 90 分`。",
-      "instructions": "現在印出來的是 `855 分`：字串接上 5，只是把 5 黏在後面。按「完成」時會把 `input` 換成 `\"62\"` 再跑一次。",
+      "goal": "題目給了字串 `input`（現在是 `\"85\"`）。用 `Integer.parseInt` 把它變成數字，印出 `85 分，再加 5 分是 90 分`。",
+      "instructions": "現在印出來的是 `85 分，再加 5 分是 855 分`：字串接上 5，只是把 5 黏在後面。\n\n按「完成」時，會把 `input` 改成 `\"62\"` 再檢查一次，那時要印 `62 分，再加 5 分是 67 分`。",
       "expectedShape": "int score = …;\nSystem.out.println(score + \" 分，再加 5 分是 \" + (…) + \" 分\");",
       "check": {
         "type": "output",
@@ -29,8 +29,8 @@
     {
       "id": "catch",
       "title": "先準備好接住",
-      "goal": "輸入不是數字時，印 `要輸入數字喔，例如 80`。",
-      "instructions": "按「完成」時會把 `input` 換成 `\"八十\"` 再跑一次。",
+      "goal": "`input` 不是數字時（例如 `\"八十\"`），用 `try`／`catch` 接住，改印 `要輸入數字喔，例如 80`；是數字時照樣印上一步那一句。",
+      "instructions": "按「完成」時，會用原本的 `\"85\"` 和換成的 `\"八十\"` 各檢查一次。",
       "expectedShape": "try {\n    …\n} catch (… e) {\n    System.out.println(\"要輸入數字喔，例如 80\");\n}",
       "check": {
         "type": "output",
@@ -45,8 +45,8 @@
     {
       "id": "zero",
       "title": "除以零",
-      "goal": "`count` 是 0 時印 `還沒有成績`，否則印 `平均：80`。",
-      "instructions": "平均是 `total / count`。按「完成」時會把 `count` 換成 0 再跑一次。",
+      "goal": "題目給了總分 `total`（現在是 240）和成績的筆數 `count`（現在是 3）。印出平均 `平均：80`；`count` 是 0 時改印 `還沒有成績`。",
+      "instructions": "平均直接用整數算 `total / count`，不用小數。按「完成」時，會把 `count` 改成 0 再檢查一次。",
       "expectedShape": "if (count == 0) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",

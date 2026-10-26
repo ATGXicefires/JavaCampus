@@ -9,8 +9,8 @@
     {
       "id": "checkers",
       "title": "判斷的約定",
-      "goal": "寫 `interface Checker`，裡面只有 `boolean check(String typed);`。再寫兩種實作：`ExactChecker(String answer)` 去掉前後空白後完全一樣才對，`OptionChecker(String letter)` 選項代號一樣就對。",
-      "instructions": "兩個類別都用建構子收下正確答案。",
+      "goal": "寫 `interface Checker`，裡面只有 `boolean check(String typed);`，`typed` 是使用者打的答案。再寫兩種實作：填空題的 `ExactChecker(String answer)`，`typed` 去掉前後空白後和 `answer` 完全一樣才對；選擇題的 `OptionChecker(String letter)`，`typed` 和選項代號 `letter` 一樣就對。",
+      "instructions": "兩個類別都用建構子收下正確答案，存在欄位裡給 `check` 用。\n\n按「完成」時，會直接拿 `new ExactChecker(\"選午餐\").check(\" 選午餐\")` 這類寫法，檢查交回的 `true`／`false`，不用印出來。",
       "expectedShape": "interface Checker {\n    boolean check(String typed);\n}\n\nclass ExactChecker implements Checker {\n    …\n    public boolean check(String typed) {\n        …\n    }\n}\n\nclass OptionChecker implements Checker {\n    …\n}",
       "check": { "type": "values", "exprs": ["new ExactChecker(\"選午餐\").check(\" 選午餐\")", "new OptionChecker(\"B\").check(\"B\")", "new OptionChecker(\"B\").check(\"A\")"] },
       "hints": {

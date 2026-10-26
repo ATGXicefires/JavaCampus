@@ -9,8 +9,8 @@
     {
       "id": "first",
       "title": "上學期的",
-      "goal": "修好上學期的五個錯：全形分號、`\"總共 \" + 3 + 4`、`i <= scores.length`、用 `==` 比字串、及格寫成 `> 60`。",
-      "instructions": "一次修一個。紅字先修，修到能跑，再對照輸出找剩下的。",
+      "goal": "起始碼是學妹最後一版的程式。修好上學期的五個錯：全形分號、`\"總共 \" + 3 + 4`、`i <= scores.length`、用 `==` 比字串、及格寫成 `> 60`；修好後，標題下面依序印出 `總共 7 個貼紙`、`總分：195`、`答對了`、`及格`。",
+      "instructions": "一次修一個。紅字先修，修到能跑，再對照目標裡的輸出找剩下的。",
       "expectedShape": "System.out.println(\"總共 \" + (…) + \" 個貼紙\");\nfor (int i = 0; i < …; i++) {\n…\nif (typed.equals(…)) {\n…\nif (score >= 60) {",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "second",
       "title": "下學期的",
-      "goal": "這一版多了下學期寫的類別。修好四個錯：`answer = answer`、從外面改 private 欄位、`chek` 沒覆寫到（加 `@Override` 抓出來）、實作介面沒寫 `public`。",
-      "instructions": "四個錯分散在幾個分頁裡。",
+      "goal": "這一版多了下學期寫的類別。修好四個錯：`answer = answer`、從外面改 private 欄位、`chek` 沒覆寫到（加 `@Override` 抓出來）、實作介面沒寫 `public`；修好後，兩個 `check` 都印 `true`，最後是 `完成 1 章` 和 `★ 完成`。",
+      "instructions": "四個錯分散在幾個分頁裡。上學期那五行輸出照樣印在最前面。",
       "expectedShape": "this.answer = answer;\n…\n@Override\nboolean check(String typed) {\n…\npublic void draw() {\n…\np.finish();",
       "form": "program",
       "check": { "type": "output" },
@@ -37,7 +37,7 @@
     {
       "id": "last",
       "title": "最後一個",
-      "goal": "最後一個是第十章的：修好 `total` 的 `ArrayList<int>`。",
+      "goal": "最後一個是第十章的：`Main` 的 `total` 要交回清單裡所有數字的和，修好它的 `ArrayList<int>`。",
       "instructions": "按「完成」時會直接呼叫 `total` 測試，`main` 不會執行。",
       "expectedShape": "static int total(ArrayList<…> list) {\n    …\n}",
       "form": "program",

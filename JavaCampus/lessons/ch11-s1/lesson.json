@@ -9,8 +9,8 @@
     {
       "id": "countdown",
       "title": "倒數",
-      "goal": "從 10 天倒數到 1 天，印 `還有 10 天` 這樣的一行。今天是星期三，遇到星期六、日用 `continue` 跳過不印。",
-      "instructions": "0 是星期日，6 是星期六。第 `i` 天是星期 `(today + i) % 7`。",
+      "goal": "起始碼每天印一行，從 `還有 10 天` 倒數到 `還有 1 天`，第一行（`i` 是 0）是今天，星期三。加上 `continue`：遇到星期六、日就跳過不印。",
+      "instructions": "星期用數字表示：0 是星期日，1 是星期一⋯⋯6 是星期六，所以 `today` 是 3。第 `i` 圈是星期 `(today + i) % 7`，例如 `i` 是 3 時是 `6 % 7`，也就是 6，星期六，那一圈的 `還有 7 天` 就不印。",
       "expectedShape": "int weekday = (today + i) % 7;\nif (…) {\n    continue;\n}\nSystem.out.println(\"還有 \" + (10 - i) + \" 天\");",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "school",
       "title": "上學的日子",
-      "goal": "寫 `static int schoolDays(int days, int startWeekday)`：從星期 `startWeekday` 開始的 `days` 天裡，數出不是週末的天數。",
-      "instructions": "按「完成」時會直接呼叫 `schoolDays` 測試，`main` 不會執行。",
+      "goal": "寫 `static int schoolDays(int days, int startWeekday)`：第一天是星期 `startWeekday`（0 是星期日，6 是星期六），連續 `days` 天裡，交回不是星期六、日的有幾天，第一天也算在內。",
+      "instructions": "例如 `schoolDays(7, 1)` 是從星期一開始的 7 天，星期一到星期五要上學，交回 5。\n\n按「完成」時會直接呼叫 `schoolDays` 測試，`main` 不會執行。",
       "expectedShape": "static int schoolDays(int days, int startWeekday) {\n    int n = 0;\n    for (…) {\n        …\n    }\n    return n;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.schoolDays(7, 1)", "Main.schoolDays(10, 3)", "Main.schoolDays(0, 1)"] },

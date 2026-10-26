@@ -11,8 +11,8 @@
     {
       "id": "per-slide",
       "title": "每張講幾秒",
-      "goal": "報告 5 分鐘：算出總秒數存進 `seconds`，再算每張投影片講幾秒，存進 `perSlide`。",
-      "instructions": "1 分鐘是 60 秒。題目給了 `int slides = 7`；`perSlide` 用整數除法就好。\n\n按「完成」時會把 `slides` 換成 6 和 10 再算一次。",
+      "goal": "題目給了 `slides`，是投影片的張數（現在是 7）。報告 5 分鐘：總秒數存進 `seconds`，再平分給每張投影片，每張講幾秒（只留整數）存進 `perSlide`。",
+      "instructions": "`slides` 這個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。\n\n1 分鐘是 60 秒。`perSlide` 用整數除法就好，除不盡的小數直接丟掉：7 張是 42 秒。\n\n按「完成」時，會把 `slides` 改成 6 和 10 再檢查一次，所以要用 `slides` 來算，不能直接寫 `42`。",
       "expectedShape": "int seconds = …;\nint perSlide = …;",
       "check": {
         "type": "values",

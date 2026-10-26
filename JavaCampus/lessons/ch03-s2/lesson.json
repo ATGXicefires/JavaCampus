@@ -11,8 +11,8 @@
     {
       "id": "crash",
       "title": "跑一半掛掉",
-      "goal": "看例外訊息，修到加總不會跌倒。",
-      "instructions": "先按「執行」看它停在哪一行。按「完成」時會換一組分數再算一次。",
+      "goal": "這是成績頁的程式：用題目給的 `scores`（五個分數）算加總、平均和等第，跑到一半就跌倒。看例外訊息，修到 `sum` 算得出總和（這組分數加起來是 324）。",
+      "instructions": "先按「執行」看它停在哪一行。`scores` 是題目給的陣列，右邊「可用資料」看得到。\n\n這一步只檢查 `sum`，平均和等第的錯後面兩步再修。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次。",
       "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
       "check": {
         "type": "values",
@@ -29,7 +29,7 @@
       "id": "average",
       "title": "平均",
       "goal": "修到 `avg` 是 `64.8`。",
-      "instructions": "現在印出來的是 `平均：64.0`。按「完成」時會換一組分數再算一次。",
+      "instructions": "現在印出來的是 `平均：64.0`。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，那時 `avg` 要是 `87.5`。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",
@@ -46,7 +46,7 @@
       "id": "order",
       "title": "等第全是 D",
       "goal": "修好條件的順序，每個分數印出正確的等第：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
-      "instructions": "現在 60 分以上全部印成 D，也沒有 A。按「完成」時會換一組分數再跑一次。",
+      "instructions": "現在 60 分以上全部印成 D，也沒有 A。每個分數一行的格式照舊，例如 `72 C`。\n\n按「完成」時，會把 `scores` 改成 `{95, 85, 75, 65, 55}` 再檢查一次。",
       "expectedShape": "if (s >= 90) {\n    System.out.println(s + \" A\");\n} else if (…) {\n    …\n}",
       "check": {
         "type": "output",

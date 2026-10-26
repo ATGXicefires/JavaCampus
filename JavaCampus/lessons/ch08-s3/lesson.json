@@ -10,7 +10,7 @@
       "id": "ctor",
       "title": "交給父類別",
       "goal": "寫 `class NumberQuestion extends Question` 和它的建構子 `NumberQuestion(String text, String answer)`：用 `super(text, answer)` 把題目和答案交給父類別。",
-      "instructions": "新的題型，答案是一個數字，例如「8 個扭蛋平均掛在 3 個掛勾上，剩幾個？」答案是 `2`。",
+      "instructions": "新的題型，答案是一個數字，例如「8 個扭蛋平分到 3 個掛勾上，分完剩幾個？」答案是 `2`。",
       "expectedShape": "class NumberQuestion extends Question {\n    NumberQuestion(String text, String answer) {\n        super(…);\n    }\n}",
       "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").answer"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "check",
       "title": "先檢查再交給父類別",
-      "goal": "覆寫 `check`：先 `trim()` 去掉前後的空白，用 `Integer.parseInt` 確認打的是數字，不是數字就交回 `false`（用 try-catch）；是數字才交給 `super.check(...)` 判斷。",
-      "instructions": "`parseInt` 不吃前後的空白，要先 `trim()`。",
+      "goal": "覆寫 `boolean check(String typed)`：先 `trim()` 去掉前後的空白，用 `Integer.parseInt` 確認打的是數字，不是數字就交回 `false`（用 try-catch）；是數字才把去掉空白的字交給 `super.check(...)` 判斷，所以打 `\" 2 \"` 也算對。",
+      "instructions": "`parseInt` 不吃前後的空白，要先 `trim()`。\n\n按「完成」時，會用答案是 `\"2\"` 的數字題，檢查打 `\" 2 \"`、`\"二\"`、`\"3\"` 的結果。",
       "expectedShape": "@Override\nboolean check(String typed) {\n    String trimmed = typed.trim();\n    try {\n        …\n    } catch (NumberFormatException e) {\n        return false;\n    }\n    return super.check(…);\n}",
       "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").check(\" 2 \")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"二\")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"3\")"] },
       "hints": {

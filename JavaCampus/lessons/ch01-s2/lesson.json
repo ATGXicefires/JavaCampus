@@ -11,8 +11,8 @@
     {
       "id": "if",
       "title": "如果有滷肉飯",
-      "goal": "先只寫 `if`：`hasLuRouFan` 是 `true` 時印出 `吃滷肉飯`。",
-      "instructions": "「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。題目給了 `boolean hasLuRouFan`。\n\n`false` 的時候什麼都不印。",
+      "goal": "題目給了 `boolean hasLuRouFan`，代表有沒有滷肉飯。先只寫 `if`：它是 `true` 時印出 `吃滷肉飯`，`false` 時什麼都不印。",
+      "instructions": "「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。`hasLuRouFan` 是題目已經宣告好的變數，右邊「可用資料」看得到，直接拿來用。\n\n按「完成」時，會把 `hasLuRouFan` 改成 `false` 再檢查一次，那時什麼都不能印，所以要用 `if` 來判斷，不能直接印。",
       "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",

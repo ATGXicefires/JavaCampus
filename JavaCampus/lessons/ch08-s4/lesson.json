@@ -12,9 +12,9 @@
     {
       "id": "sketch",
       "title": "每一張都有名字",
-      "goal": "寫 `class Sketch`：欄位 `month`、`title` 和建構子，覆寫 `public String toString()`，交回 `9月：提案簡報的插圖` 這種格式。",
-      "instructions": "建構子收到的兩個值，存進同名的欄位。",
-      "expectedShape": "class Sketch {\n    String month;\n    String title;\n    …\n\n    @Override\n    public String toString() {\n        …\n    }\n}",
+      "goal": "寫 `class Sketch`：欄位 `month`、`title`，建構子 `Sketch(String month, String title)`，覆寫 `public String toString()`，交回 `9月：提案簡報的插圖` 這種「月份：標題」的格式。",
+      "instructions": "建構子收到的兩個值，存進同名的欄位。\n\n按「完成」時，會檢查 `new Sketch(\"9月\", \"提案簡報的插圖\").toString()` 交回什麼。",
+      "expectedShape": "class Sketch {\n    String month;\n    String title;\n\n    Sketch(String month, String title) {\n        …\n    }\n\n    @Override\n    public String toString() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Sketch(\"9月\", \"提案簡報的插圖\").toString()"] },
       "hints": {
         "lead": "覆寫 `Object.toString()`，定義物件的字串表示⋯⋯",
@@ -25,8 +25,8 @@
     {
       "id": "folder",
       "title": "資料夾的目錄",
-      "goal": "用 `for` 照 `months` 和 `titles` 把每一張草圖 `new` 出來，`System.out.println(sketch)` 印出整個目錄。",
-      "instructions": "按「完成」時會換一組草圖再印一次。",
+      "goal": "題目給了 `months` 和 `titles`，是資料夾裡每張草圖的月份和標題（現在有 6 張），`months[i]` 和 `titles[i]` 是同一張。用 `for` 把每一張 `new` 出來，`System.out.println(sketch)` 印出整個目錄。",
+      "instructions": "兩個陣列題目已經做好了，右邊「可用資料」看得到。\n\n按「完成」時，會把兩個陣列改成只有兩張（`9月` 的 `提案簡報的插圖`、`2月` 的 `貼紙系統的草稿`）再印一次，所以要用 `months` 和 `titles` 來跑，不能直接寫答案。",
       "expectedShape": "for (…) {\n    Sketch sketch = new Sketch(…);\n    System.out.println(sketch);\n}",
       "check": {
         "type": "output",

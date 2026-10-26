@@ -9,7 +9,7 @@
     {
       "id": "empty",
       "title": "第 12 課還沒有題目",
-      "goal": "總覽頁跑到第 12 課就除以零。修到沒有題目的課顯示 `第 12 課：—`，其他課照常顯示百分比。",
+      "goal": "App 的總覽頁列出每一課的答對率，跑到第 12 課（題數 `count` 是 0）就除以零。修到沒有題目的課顯示 `第 12 課：—`，其他課照常顯示，例如 `第 10 課：75%`。",
       "instructions": "`—` 可以從目標複製。題數是 0 的課不要呼叫 `percent`。",
       "expectedShape": "if (count[i] == 0) {\n    System.out.println(units[i] + \"：—\");\n} else {\n    …\n}",
       "form": "program",

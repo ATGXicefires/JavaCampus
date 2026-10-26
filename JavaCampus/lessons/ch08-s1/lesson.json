@@ -9,8 +9,8 @@
     {
       "id": "choice",
       "title": "選擇題",
-      "goal": "在 `ChoiceQuestion` 裡覆寫 `check`：打選項代號（例如 `B`）或完整答案都算對。",
-      "instructions": "`q` 是起始碼裡 `new` 好的選擇題。正確的代號存在 `letter`，完整答案存在父類別的 `answer`。",
+      "goal": "在 `ChoiceQuestion` 裡覆寫 `boolean check(String typed)`：打的是正確的選項代號（欄位 `letter`，這題是 `B`）或完整答案（`answer`）就交回 `true`，其他交回 `false`。",
+      "instructions": "`q` 是起始碼裡 `new` 好的選擇題，按「完成」時會檢查 `q.check(\"B\")`、`q.check(\"吃滷肉飯\")`、`q.check(\"A\")`。正確的代號存在 `letter`，完整答案存在父類別的 `answer`。\n\n`ChoiceQuestion` 建構子裡的 `super(text, answer)` 是把題目和答案交給父類別 `Question` 存起來，之後會再細講，先照用。",
       "expectedShape": "boolean check(String typed) {\n    return … || …;\n}",
       "check": { "type": "values", "exprs": ["q.check(\"B\")", "q.check(\"吃滷肉飯\")", "q.check(\"A\")"] },
       "hints": {

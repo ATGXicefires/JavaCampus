@@ -22,20 +22,20 @@
     {
       "id": "progress",
       "title": "加上數字",
-      "goal": "寫 `static String progress(int done, int total)`，交回 `■■■□□ 3/5`，裡面呼叫自己寫的 `bar`。",
+      "goal": "寫 `static String progress(int done, int total)`，例如 `progress(3, 5)` 交回 `■■■□□ 3/5`：進度條後面接一個空格和「完成數/總數」。進度條要呼叫上一步寫的 `bar`。",
       "instructions": "不用再寫一次進度條，叫 `bar` 就好。",
       "expectedShape": "static String progress(int done, int total) {\n    return bar(…) + …;\n}",
       "check": { "type": "values", "exprs": ["progress(3, 5)", "progress(1, 2)"] },
       "hints": {
         "lead": "方法裡也能叫方法。",
-        "plain": "叫 `bar(done, total)` 拿到進度條那一段，再接上空格和 `3/5`。"
+        "plain": "叫 `bar(done, total)` 拿到進度條那一段，再接上空格、`done`、`\"/\"`、`total`。`3/5` 要跟著參數變，不能直接寫成字。"
       },
       "afterText": ""
     },
     {
       "id": "underline",
       "title": "標題底線",
-      "goal": "寫 `static String underline(String title)`，交回和標題一樣長的 `=`。",
+      "goal": "寫 `static String underline(String title)`，交回和標題一樣長的 `=`，例如 `underline(\"變數\")` 交回 `==`。",
       "instructions": "`title.length()` 是標題有幾個字，空格也算。",
       "expectedShape": "static String underline(String title) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["underline(\"第 1 課\")", "underline(\"變數\")"] },

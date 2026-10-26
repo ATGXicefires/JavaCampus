@@ -9,8 +9,8 @@
     {
       "id": "max",
       "title": "掛不下了",
-      "goal": "加上常數 `static final int MAX = 12;` 和建構子 `GachaBag(int count)`。`add()` 改成交回 `boolean`：還沒滿就加一個、交回 `true`；滿了就不加、交回 `false`。",
-      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。",
+      "goal": "扭蛋包最多裝 12 個：加上常數 `static final int MAX = 12;`，和建構子 `GachaBag(int count)` 把一開始有幾個存進欄位 `count`。`add()` 改成交回 `boolean`：還不到 `MAX` 個就加一個、交回 `true`；已經有 `MAX` 個就不加、交回 `false`。",
+      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。\n\n建構子的參數和欄位都叫 `count`，欄位要寫成 `this.count`。\n\n按「完成」時，會檢查 `new GachaBag(11).add()`（還放得下）和 `new GachaBag(12).add()`（已經滿了）交回什麼。",
       "expectedShape": "static final int MAX = 12;\n…\nboolean add() {\n    if (…) {\n        return false;\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()"] },
       "hints": {
@@ -22,7 +22,7 @@
     {
       "id": "start",
       "title": "一開始就太多",
-      "goal": "建構子收到超過 `MAX` 的數量時只放 `MAX` 個，收到負數就放 0。",
+      "goal": "建構子也要把關：收到超過 `MAX` 的數量時只放 `MAX` 個，收到負數就放 0，其他照收到的數量放。",
       "instructions": "`new` 的時候給的數量也可能不合理，在建構子裡先檢查。",
       "expectedShape": "GachaBag(int count) {\n    if (count > MAX) {\n        …\n    } else if (…) {\n        …\n    } else {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new GachaBag(20).getCount()", "new GachaBag(-3).getCount()", "new GachaBag(5).getCount()"] },

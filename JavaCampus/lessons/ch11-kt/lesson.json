@@ -9,8 +9,8 @@
     {
       "id": "input",
       "title": "你先看一下專題",
-      "goal": "讀懂 `easterEgg` 比對的是 `Memory.java` 裡的哪一個常數，把正確的輸入填進 `main` 的最後一行。",
-      "instructions": "輸入對了，`easterEgg` 才會交回東西。",
+      "goal": "`main` 現在交給 `Main.easterEgg(\"\")` 的是空字串，什麼都印不出來。讀懂 `easterEgg` 拿 `Memory.java` 裡的哪一個常數來比，把那句話填進 `\"\"` 的引號裡，印出藏起來的訊息。",
+      "instructions": "`easterEgg` 只有收到對的那句話，才會交回藏起來的訊息；收到別的就交回空字串。\n\n那句話裡有全形的標點，從 `Memory.java` 分頁把常數的內容複製過來，最不會打錯。",
       "expectedShape": "System.out.println(Main.easterEgg(\"…\"));",
       "form": "program",
       "check": { "type": "output" },

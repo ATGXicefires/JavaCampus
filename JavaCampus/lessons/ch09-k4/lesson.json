@@ -22,7 +22,7 @@
     {
       "id": "new",
       "title": "不能直接 new",
-      "goal": "起始碼的最後一行寫了 `new Screen()`，紅字。改成 `new` 兩種不同的畫面，`LessonScreen` 和 `QuizScreen` 各 `show()` 一次。",
+      "goal": "起始碼多寫好了 `QuizScreen`，但最後一行寫了 `new Screen()`，紅字。改成先 `new` 一個 `LessonScreen`、再 `new` 一個 `QuizScreen`，各 `show()` 一次。",
       "instructions": "抽象類別還沒寫完，不能直接 `new`。",
       "expectedShape": "new LessonScreen().show();\nnew …().show();",
       "check": { "type": "output" },

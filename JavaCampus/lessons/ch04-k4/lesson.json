@@ -12,8 +12,8 @@
     {
       "id": "sum",
       "title": "總共幾顆星",
-      "goal": "用寫好的 `total` 算出總星數，存進 `sum`。",
-      "instructions": "`total(int[] counts)` 的意思是：給它一排整數，它交回總和。不用看它裡面怎麼寫。\n\n按「完成」時會換一組星數再算一次。",
+      "goal": "題目給了 `stars`，是五種口味雞蛋糕各得到幾顆星（`{3, 4, 5, 2, 4}`）。用起始碼裡寫好的方法 `total` 算出總共幾顆星，存進 `int sum`。",
+      "instructions": "`stars` 和口味名稱 `flavors` 題目已經做好了，右邊「可用資料」看得到。\n\n`total(int[] counts)` 的意思是：給它一排整數，它交回總和。不用看它裡面怎麼寫。\n\n按「完成」時，會把 `stars` 改成 `{1, 1, 1, 1, 1}` 再檢查一次，所以要用 `total` 來算，不能直接寫 `18`。",
       "expectedShape": "int sum = …;",
       "check": {
         "type": "values",
@@ -29,8 +29,8 @@
     {
       "id": "rank",
       "title": "排行榜",
-      "goal": "每種口味印一行，例如 `芋頭 ★★★★★ 27%`。星星用 `repeat`，百分比用 `percent(stars[i], sum)`。",
-      "instructions": "`★` 可以從這裡複製。`percent` 交回的是整數，後面自己接上 `%`。\n\n按「完成」時會換一組星數再跑一次。",
+      "goal": "照 `flavors` 的順序，每種口味印一行：名字、星星、占總星數的百分比，例如 `芋頭 ★★★★★ 27%`。星星用 `repeat`，百分比用寫好的 `percent(stars[i], sum)`。",
+      "instructions": "`flavors[i]` 是第 i 種口味的名字，`stars[i]` 是它的星數。照原本的順序印就好，不用排名次。\n\n`percent(int part, int whole)` 交回 `part` 占 `whole` 的百分之幾，是整數，後面自己接上 `%`。`★` 可以從這裡複製。\n\n按「完成」時，會把 `stars` 改成 `{5, 5, 5, 5, 5}` 再檢查一次。",
       "expectedShape": "for (int i = 0; i < flavors.length; i++) {\n    System.out.println(flavors[i] + \" \" + … + \" \" + … + \"%\");\n}",
       "check": {
         "type": "output",

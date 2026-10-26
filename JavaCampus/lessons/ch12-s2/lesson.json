@@ -10,7 +10,7 @@
       "id": "releases",
       "title": "每一個版本",
       "goal": "寫 `class Release`：欄位 `version`、`month`、`note` 和建構子，覆寫 `toString()` 交回 `v0.1（11月）校慶試玩版` 這樣的一行。用 `ArrayList<Release>` 照順序放進 `main` 裡的每一個版本，印出整份紀錄。",
-      "instructions": "三個陣列的同一格是同一個版本。",
+      "instructions": "`main` 裡的 `versions`、`months`、`notes` 三個陣列，同一格是同一個版本。`Release` 可以按「＋」放在自己的檔案；`Main.java` 要 `import java.util.ArrayList;`。`（）` 是全形的，可以從目標複製。",
       "expectedShape": "public String toString() {\n    return version + \"（\" + month + \"）\" + note;\n}\n…\nfor (Release r : releases) {\n    System.out.println(r);\n}",
       "form": "program",
       "check": { "type": "output" },

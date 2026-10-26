@@ -11,8 +11,8 @@
     {
       "id": "total",
       "title": "每一天各自算",
-      "goal": "寫 `class Day`：欄位 `int mentions` 和建構子；再加一個 `static int total`，每 `new` 一天，就把那天的次數加進去。用 `for` 照 `daily` 把每一天都 `new` 出來。",
-      "instructions": "`mentions` 每一天各一份，`Day.total` 是大家共用的一份。每次執行都從乾淨的狀態開始，`total` 不會跨次累加。\n\n按「完成」時會換一組資料再算一次。",
+      "goal": "題目給了 `daily`，是寒假每一天提到「學長」的次數（現在是 `{3, 5, 4, 8, 7, 9, 12}`）。寫 `class Day`：欄位 `int mentions`、建構子 `Day(int mentions)`，再加一個 `static int total`，每 `new` 一天就把那天的次數加進 `total`；用 `for` 照 `daily` 把每一天都 `new` 出來。",
+      "instructions": "`daily` 這個陣列題目已經做好了，右邊「可用資料」看得到，`daily[0]` 是第 1 天。\n\n`mentions` 每一天各一份，`Day.total` 是大家共用的一份。每次執行都從乾淨的狀態開始，`total` 不會跨次累加。\n\n按「完成」時，會把 `daily` 改成 `{1, 1}` 再檢查一次 `Day.total`，所以要用 `daily` 來跑，不能直接寫答案。",
       "expectedShape": "class Day {\n    static int total;\n    int mentions;\n\n    Day(int mentions) {\n        …\n    }\n}\n\nfor (…) {\n    new Day(…);\n}",
       "check": {
         "type": "values",
@@ -28,8 +28,8 @@
     {
       "id": "running",
       "title": "每天的累計",
-      "goal": "每 `new` 一天就印一行：`第 1 天：3 次，累計 3 次`。",
-      "instructions": "按「完成」時會換一組資料再跑一次。",
+      "goal": "在 `for` 裡每 `new` 一天，就印一行那天的次數和到那天為止的累計，例如前兩行是 `第 1 天：3 次，累計 3 次`、`第 2 天：5 次，累計 8 次`。",
+      "instructions": "這一步接著用上一步的程式，改 `for` 裡面就好。\n\n按「完成」時，會把 `daily` 改成 `{1, 2}` 再檢查一次，所以要用 `daily` 來跑，不能直接寫答案。",
       "expectedShape": "Day d = new Day(…);\nSystem.out.println(\"第 \" + (…) + \" 天：\" + d.mentions + \" 次，累計 \" + … + \" 次\");",
       "check": {
         "type": "output",

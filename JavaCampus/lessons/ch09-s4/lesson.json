@@ -9,7 +9,7 @@
     {
       "id": "cheer",
       "title": "還是有 bug",
-      "goal": "修到印出 `學長面試加油！你一定可以！`。",
+      "goal": "起始碼的 `Me` 答應了 `Cheer` 的約定，跑起來卻是紅字。修到最後一行 `new Me().say();` 印出 `學長面試加油！你一定可以！`。",
       "instructions": "一次修一個紅字。",
       "expectedShape": "class Me implements Cheer {\n    public void say() {\n        …\n    }\n}",
       "check": { "type": "output" },

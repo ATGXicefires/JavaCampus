@@ -11,8 +11,8 @@
     {
       "id": "size",
       "title": "盒子的尺寸",
-      "goal": "用 `gacha` 和 `+` 印出 `int 盒子：扭蛋有 8 個`。",
-      "instructions": "白板上的第一個例子。`8` 要從 `gacha` 拿出來，不要直接寫在引號裡。\n\n按「完成」時會把 `gacha` 換成 10 再跑一次。",
+      "goal": "題目給了 `gacha`，是扭蛋的數量（現在是 8）。用 `gacha` 和 `+` 印出 `int 盒子：扭蛋有 8 個`。",
+      "instructions": "白板上的第一個例子。`gacha` 是題目已經宣告好的變數，右邊「可用資料」看得到。\n\n`8` 要從 `gacha` 拿出來，不要直接寫在引號裡：按「完成」時，會把 `gacha` 改成 10 再檢查一次，那時要印出 `int 盒子：扭蛋有 10 個`。",
       "expectedShape": "System.out.println(\"int 盒子：扭蛋有 \" + … + \" 個\");",
       "check": {
         "type": "output",
@@ -27,8 +27,8 @@
     {
       "id": "hooks",
       "title": "掛勾",
-      "goal": "用 `/` 和 `%` 印出 `掛 3 個掛勾：每個 2 個，剩 2 個`。",
-      "instructions": "兩個數字都要用 `gacha` 算出來。按「完成」時會把 `gacha` 換成 10 再跑一次。",
+      "goal": "把扭蛋（`gacha`）平分到 3 個掛勾：用 `/` 算每個掛幾個、`%` 算剩幾個，印出 `掛 3 個掛勾：每個 2 個，剩 2 個`。",
+      "instructions": "兩個 `2` 都要用 `gacha` 算出來，不要直接寫在引號裡。按「完成」時，會把 `gacha` 改成 10 再檢查一次，那時要印出 `掛 3 個掛勾：每個 3 個，剩 1 個`。",
       "expectedShape": "System.out.println(\"掛 3 個掛勾：每個 \" + … + \" 個，剩 \" + … + \" 個\");",
       "check": {
         "type": "output",
@@ -43,8 +43,8 @@
     {
       "id": "double",
       "title": "有小數的盒子",
-      "goal": "用 `double` 算兩個掛勾的平均，印出 `double 盒子：兩個掛勾平均 4.0 個`。",
-      "instructions": "就算剛好整除，`double` 也會印出 `.0`。按「完成」時會把 `gacha` 換成 9 再跑一次，那時要印出 `4.5`。",
+      "goal": "把扭蛋（`gacha`）平分到 2 個掛勾，用 `double` 算平均、留下小數，印出 `double 盒子：兩個掛勾平均 4.0 個`；`gacha` 是 9 時要印 `4.5`。",
+      "instructions": "起始碼在 `gacha` 是 8 時剛好印對，換成 9 卻還是印 `4.0`，小數不見了。\n\n就算剛好整除，`double` 也會印出 `.0`。按「完成」時，會把 `gacha` 改成 9 再檢查一次，那時要印出 `4.5`。",
       "expectedShape": "double avg = …;\nSystem.out.println(\"double 盒子：兩個掛勾平均 \" + avg + \" 個\");",
       "check": {
         "type": "output",
