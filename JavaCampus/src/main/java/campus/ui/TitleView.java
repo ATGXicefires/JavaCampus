@@ -119,6 +119,7 @@ final class TitleView extends StackPane {
             menu.getChildren().add(item("章節", game::showChapterSelect));
         }
         menu.getChildren().addAll(
+                item("不想看劇情，只想當爆肝工程師", game::showPractice),
                 item("筆記", () -> game.openOverlay(new HandbookView(game), null)),
                 item("設定", game::openSettings),
                 item("離開", game::exit));

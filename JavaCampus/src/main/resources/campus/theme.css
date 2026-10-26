@@ -1771,3 +1771,138 @@
     -fx-background-color: transparent, c-accent;
     -fx-background-insets: 0, 5 0 5 0;
 }
+
+/* 練習：終端機的配色跟程式題同一組亮色／暗色，色名在這裡重新定義 */
+.practice {
+    c-panel-2: #f1e7d8;
+    c-line: #e2d6c6;
+    c-muted: #6f655e;
+    t-gap: #ebe2d4;
+    t-chrome: #f4ecdf;
+    t-bg: #fffdf9;
+    t-ink: #2f2a27;
+    t-user: #2e7031;
+    t-path: #1d5fa8;
+    t-id: #a8480b;
+    t-done: #2e7031;
+    t-error: #c0271f;
+    t-hover: #fdecd8;
+    -fx-background-color: t-gap;
+}
+
+.app-root:code-dark .practice {
+    c-panel-2: #262a32;
+    c-line: #323743;
+    c-muted: #9aa2ad;
+    -fx-base: #2a2e36;
+    -fx-background: #1b1e24;
+    -fx-control-inner-background: #17191e;
+    t-gap: #0f1115;
+    t-chrome: #20242b;
+    t-bg: #17191e;
+    t-ink: #d9dde3;
+    t-user: #9ccc7a;
+    t-path: #7fb7f0;
+    t-id: #f29e4c;
+    t-done: #9ccc7a;
+    t-error: #ff7b72;
+    t-hover: #283244;
+}
+
+.term-window {
+    -fx-background-color: t-bg;
+    -fx-border-color: c-line;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 24, 0.1, 0, 8);
+}
+
+.term-titlebar {
+    -fx-background-color: t-chrome;
+    -fx-border-color: transparent transparent c-line transparent;
+    -fx-padding: 0 0 0 16;
+    -fx-min-height: 38;
+    -fx-pref-height: 38;
+}
+
+.term-title {
+    -fx-text-fill: c-muted;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.term-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: c-muted;
+    -fx-font-size: 14px;
+    -fx-padding: 0 18;
+    -fx-min-height: 38;
+    -fx-pref-height: 38;
+}
+
+.term-close:hover {
+    -fx-background-color: #e5484d;
+    -fx-text-fill: white;
+}
+
+.scroll-pane.term-scroll, .scroll-pane.term-scroll > .viewport {
+    -fx-background-color: t-bg;
+}
+
+/* 字型和字級跟著程式字型的設定，見 Game.setCodeFont */
+.term {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 17px;
+    -fx-padding: 14 20 20 20;
+}
+
+.term-line {
+    -fx-padding: 1 0;
+}
+
+.term-link {
+    -fx-cursor: hand;
+}
+
+.term-link:hover {
+    -fx-background-color: t-hover;
+}
+
+.term-plain {
+    -fx-fill: t-ink;
+}
+
+.term-user {
+    -fx-fill: t-user;
+    -fx-font-weight: bold;
+}
+
+.term-path, .term-dir {
+    -fx-fill: t-path;
+    -fx-font-weight: bold;
+}
+
+.term-id {
+    -fx-fill: t-id;
+}
+
+.term-done {
+    -fx-fill: t-done;
+    -fx-font-weight: bold;
+}
+
+.term-group {
+    -fx-fill: c-muted;
+    -fx-font-weight: bold;
+}
+
+.term-error {
+    -fx-fill: t-error;
+}
+
+.term-input, .term-input:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-text-fill: t-ink;
+    -fx-highlight-fill: t-hover;
+    -fx-highlight-text-fill: t-ink;
+}

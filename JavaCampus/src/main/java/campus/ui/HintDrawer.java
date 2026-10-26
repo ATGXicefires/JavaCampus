@@ -5,6 +5,7 @@ import campus.lesson.SourceFile;
 import campus.lesson.Step;
 import campus.fx.Motion;
 import campus.fx.Sfx;
+import campus.progress.Progress;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -26,14 +27,16 @@ final class HintDrawer extends VBox {
     private static final double WIDTH = 400;
 
     private final Game game;
+    private final Progress.LessonRecord record;
     private final Runnable onReveal;
     private final VBox tiers = new VBox(12);
     private Lesson lesson;
     private Step step;
     private boolean open;
 
-    HintDrawer(Game game, Runnable onReveal) {
+    HintDrawer(Game game, Progress.LessonRecord record, Runnable onReveal) {
         this.game = game;
+        this.record = record;
         this.onReveal = onReveal;
         getStyleClass().add("hint-drawer");
         setPrefWidth(WIDTH);
@@ -73,7 +76,7 @@ final class HintDrawer extends VBox {
         if (step == null) {
             return;
         }
-        int revealed = game.progress.hintsRevealed(lesson.id(), step.id());
+        int revealed = record.hintsRevealed(lesson.id(), step.id());
         String[] names = {"提點", "白話", "骨架", "答案"};
         for (int i = 0; i < TIERS; i++) {
             Label chip = new Label(names[i]);
@@ -136,7 +139,7 @@ final class HintDrawer extends VBox {
     }
 
     private void reveal(int tier) {
-        game.progress.setHintsRevealed(lesson.id(), step.id(), tier + 1);
+        record.setHintsRevealed(lesson.id(), step.id(), tier + 1);
         game.save();
         game.sfx.play(Sfx.Sound.PAPER);
         rebuild(tier);
