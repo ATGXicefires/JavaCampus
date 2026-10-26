@@ -187,20 +187,20 @@
 標題的「不想看劇情，只想當爆肝工程師」進來，不用看劇情，任何一題都能挑來寫。
 
 ```
-┌ eh@xiaobai: ~/lessons/ch02 ────────────────────────── ✕ ┐
-│ eh@xiaobai:~/lessons$ ls                                │
+┌ NCKU-PTIVS@LKK: ~/lessons/ch02 ────────────────────── ✕ ┐
+│ NCKU-PTIVS@LKK:~/lessons$ ls                            │
 │   ch01  編譯錯誤                                        │
 │   ch02  Hello World                                     │
 │   ⋯                                                     │
 │   ch12  Release                                         │
-│ eh@xiaobai:~/lessons$ cd ch02                           │
-│ eh@xiaobai:~/lessons/ch02$ ls                           │
+│ NCKU-PTIVS@LKK:~/lessons$ cd ch02                       │
+│ NCKU-PTIVS@LKK:~/lessons/ch02$ ls                       │
 │   學妹                                                  │
 │     k1  int 是什麼    ✓                                 │
 │     k2  蠢事做一百遍                                    │
 │   學長                                                  │
 │     s1  白板上的 int                                    │
-│ eh@xiaobai:~/lessons/ch02$ run k2▏                      │
+│ NCKU-PTIVS@LKK:~/lessons/ch02$ run k2▏                  │
 └─────────────────────────────────────────────────────────┘
 ```
 

@@ -49,7 +49,7 @@ class PracticeShellTest {
     @Test
     void lsAtTheRootListsAllTwelveChaptersWithTheirTitles() {
         PracticeShell.Result r = shell(K1).execute("ls");
-        assertEquals("eh@xiaobai:~/lessons$ ls", texts(r).getFirst());
+        assertEquals("NCKU-PTIVS@LKK:~/lessons$ ls", texts(r).getFirst());
         List<PracticeShell.Line> listed = r.lines().subList(1, r.lines().size());
         assertEquals(12, listed.size());
         assertEquals("  ch01  編譯錯誤", listed.getFirst().text());
@@ -64,10 +64,10 @@ class PracticeShellTest {
         progress.storyLessons().markSolved("ch02-k2", "only");
         PracticeShell s = shell(S1, K2, K1);
         s.execute("cd ch02");
-        assertEquals("eh@xiaobai: ~/lessons/ch02", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons/ch02", s.title());
         PracticeShell.Result r = s.execute("ls");
         assertEquals(List.of(
-                "eh@xiaobai:~/lessons/ch02$ ls",
+                "NCKU-PTIVS@LKK:~/lessons/ch02$ ls",
                 "  學妹",
                 "    k1  int 是什麼    ✓",
                 "    k2  蠢事做一百遍",
@@ -95,7 +95,7 @@ class PracticeShellTest {
         PracticeShell.Result inside = s.execute("run k2");
         assertEquals(PracticeShell.Action.RUN, inside.action());
         assertEquals(K2, inside.lesson());
-        assertEquals("eh@xiaobai:~/lessons/ch02$ run k2", texts(inside).getFirst());
+        assertEquals("NCKU-PTIVS@LKK:~/lessons/ch02$ run k2", texts(inside).getFirst());
 
         s.execute("cd ..");
         PracticeShell.Result fromRoot = s.execute("run ch02-k2");
@@ -111,7 +111,7 @@ class PracticeShellTest {
         PracticeShell s = shell(ENDING, CH11);
         progress.practiceLessons().markSolved("ch11-kt", "only");
         s.execute("cd ch11");
-        assertEquals(List.of("eh@xiaobai:~/lessons/ch11$ ls", "  學妹", "    k1  平常的題目"), texts(s.execute("ls")));
+        assertEquals(List.of("NCKU-PTIVS@LKK:~/lessons/ch11$ ls", "  學妹", "    k1  平常的題目"), texts(s.execute("ls")));
         assertEquals(PracticeShell.Action.NONE, s.execute("run kt").action());
         assertEquals("run k1 ", s.complete("run k").input());
         s.execute("cd ~");
@@ -132,7 +132,7 @@ class PracticeShellTest {
             assertEquals(PracticeShell.Style.ERROR, r.lines().get(1).spans().getFirst().style(), typo);
             assertEquals(PracticeShell.Action.NONE, r.action(), typo);
         }
-        assertEquals("eh@xiaobai: ~/lessons", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons", s.title());
         s.execute("cd ch02");
         PracticeShell.Result missing = s.execute("run k9");
         assertEquals("run: k9: 沒有這一題", missing.lines().get(1).text());
@@ -142,21 +142,21 @@ class PracticeShellTest {
     void cdMovesBetweenChaptersAndBackUp() {
         PracticeShell s = shell(K1);
         s.execute("cd ch02");
-        assertEquals("eh@xiaobai: ~/lessons/ch02", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons/ch02", s.title());
         s.execute("cd ..");
-        assertEquals("eh@xiaobai: ~/lessons", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons", s.title());
         PracticeShell.Result stay = s.execute("cd ..");
         assertEquals(1, stay.lines().size());
-        assertEquals("eh@xiaobai: ~/lessons", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons", s.title());
 
         s.execute("cd ch02");
         s.execute("cd ../ch03");
-        assertEquals("eh@xiaobai: ~/lessons/ch03", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons/ch03", s.title());
         s.execute("cd ~");
-        assertEquals("eh@xiaobai: ~/lessons", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons", s.title());
         s.execute("cd ch04/");
         s.execute("cd");
-        assertEquals("eh@xiaobai: ~/lessons", s.title());
+        assertEquals("NCKU-PTIVS@LKK: ~/lessons", s.title());
     }
 
     @Test
@@ -199,17 +199,17 @@ class PracticeShellTest {
     void clickingAListedItemTypesTheMatchingCommand() {
         PracticeShell s = shell(K1, K2);
         PracticeShell.Result chapter = s.click("ch02");
-        assertEquals("eh@xiaobai:~/lessons$ cd ch02", texts(chapter).getFirst());
-        assertEquals("eh@xiaobai:~/lessons/ch02$ ls", texts(chapter).get(1));
+        assertEquals("NCKU-PTIVS@LKK:~/lessons$ cd ch02", texts(chapter).getFirst());
+        assertEquals("NCKU-PTIVS@LKK:~/lessons/ch02$ ls", texts(chapter).get(1));
         assertEquals("ls", s.older(""));
         assertEquals("cd ch02", s.older("ls"));
 
         PracticeShell.Result inside = s.click("ch02-k1");
-        assertEquals("eh@xiaobai:~/lessons/ch02$ run k1", texts(inside).getFirst());
+        assertEquals("NCKU-PTIVS@LKK:~/lessons/ch02$ run k1", texts(inside).getFirst());
         assertEquals(K1, inside.lesson());
 
         s.execute("cd ..");
-        assertEquals("eh@xiaobai:~/lessons$ run ch02-k1", texts(s.click("ch02-k1")).getFirst());
+        assertEquals("NCKU-PTIVS@LKK:~/lessons$ run ch02-k1", texts(s.click("ch02-k1")).getFirst());
     }
 
     @Test

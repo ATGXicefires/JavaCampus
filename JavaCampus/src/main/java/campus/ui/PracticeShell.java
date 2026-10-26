@@ -48,6 +48,7 @@ final class PracticeShell {
     private static final Set<String> ENDINGS = Set.of("ch11-kt", "ch11-sg", "ch12-kt", "ch12-sb");
     private static final List<String> COMMANDS = List.of("ls", "cd", "run", "help", "clear", "exit");
     private static final Pattern LESSON_ID = Pattern.compile("ch(\\d+)-(.+)");
+    private static final String NAME = "NCKU-PTIVS@LKK";
     private static final String HOME = "~/lessons";
     private static final int ROOT = 0;
 
@@ -76,13 +77,13 @@ final class PracticeShell {
     }
 
     List<Span> prompt() {
-        return List.of(new Span("eh@xiaobai", Style.USER), new Span(":", Style.PLAIN), new Span(path(), Style.PATH),
+        return List.of(new Span(NAME, Style.USER), new Span(":", Style.PLAIN), new Span(path(), Style.PATH),
                 new Span("$ ", Style.PLAIN));
     }
 
     /** 視窗標題列跟著目前的資料夾走，跟一般的終端機一樣。 */
     String title() {
-        return "eh@xiaobai: " + path();
+        return NAME + ": " + path();
     }
 
     private String path() {
