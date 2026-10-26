@@ -1,0 +1,41 @@
+{
+  "id": "ch02-k3",
+  "title": "梁亭瑄天才！",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["concat", "inc", "for"],
+  "vars": [
+    { "name": "spins", "type": "int", "value": "3" }
+  ],
+  "steps": [
+    {
+      "id": "first",
+      "title": "人生第一個程式",
+      "goal": "從空白開始，自己寫一行程式，印出 `梁亭瑄天才！`。",
+      "instructions": "這次沒有範例可以改，整行都要自己打：`System.out.println(…);`。\n\n字串用半形雙引號包起來，最後加分號。",
+      "expectedShape": "System.out.println(\"…\");",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "第一章的 println，整行自己打。",
+        "plain": "先打 `System.out.println`，再打一對括號，括號裡放一對半形雙引號，引號裡寫要印的字，最後加分號。大小寫要一模一樣，`System` 的 S 是大寫。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "spin",
+      "title": "轉三圈",
+      "goal": "用 `for` 和 `+=` 讓字越來越長，印出 `spins` 行：`梁亭瑄天才！`、`梁亭瑄天才！！`⋯⋯",
+      "instructions": "每一圈先 `s += \"！\";`，再把 `s` 印出來。題目給了 `int spins = 3`；按「完成」時會換成 5 再跑一次。",
+      "expectedShape": "String s = \"梁亭瑄天才\";\nfor (…) {\n    s += \"…\";\n    System.out.println(s);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "spins": "5" } ]
+      },
+      "hints": {
+        "lead": "字串也能 +=。",
+        "plain": "`s += \"！\"` 是在 `s` 的後面接一個「！」，再放回 `s`。每轉一圈就接一個，所以印出來的字一行比一行多一個驚嘆號。"
+      },
+      "afterText": ""
+    }
+  ]
+}

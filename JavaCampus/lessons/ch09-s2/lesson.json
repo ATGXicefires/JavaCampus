@@ -1,0 +1,36 @@
+{
+  "id": "ch09-s2",
+  "title": "把重複的程式收進抽象類別",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["abstract"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "refactor",
+      "title": "收在一起",
+      "goal": "起始碼的三個畫面，每一個都自己印一次標題列和頁尾。寫 `abstract class Screen`，把標題列和頁尾搬進 `show()`，三個畫面改成 `extends Screen`，只寫自己的 `body()`。",
+      "instructions": "三個畫面的標題列都要是 `== 小白學程式 ==`。",
+      "expectedShape": "abstract class Screen {\n    void show() {\n        …\n        body();\n        …\n    }\n\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() {\n        …\n    }\n}\n…",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "以抽象類別抽出共用流程，差異留給抽象方法⋯⋯",
+        "plain": "⋯⋯白話：三份複製貼上的程式，第三份已經悄悄打錯字了。標題列和頁尾收進 `Screen` 只寫一次，每個畫面只留自己的內容。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "result",
+      "title": "新畫面只要寫內容",
+      "goal": "加上 `ResultScreen`，只寫 `body()`，印出 `答對 4 題，共 5 題`。在最後也 `show()` 一次。",
+      "instructions": "標題列和頁尾，`Screen` 會幫它印。",
+      "expectedShape": "class ResultScreen extends Screen {\n    void body() {\n        …\n    }\n}\n\n…\nnew ResultScreen().show();",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "新增子類別只需實作抽象方法⋯⋯",
+        "plain": "⋯⋯白話：共用的部分已經收好了，新畫面只要寫它自己的那一行內容。"
+      },
+      "afterText": ""
+    }
+  ]
+}

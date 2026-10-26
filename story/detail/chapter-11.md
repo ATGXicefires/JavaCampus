@@ -133,6 +133,7 @@
 
 - 字串的 `contains` 第一次在這裡用，提示帶一句。
 - 第 2 步改寫時最常忘了 `i++`：程式會停不下來，3 秒後被強制停止。學妹第一次碰到逾時就在這裡，提示專門講這件事。
+- 做題目時，`ChatLog` 產生 1000 則訊息，其中 478 則有「學長」。第 3 步另給起始碼，寫好 `answers`。
 - 解鎖筆記：`do-while`、`infinite-loop`
 
 ### ch11-k2「收回的訊息不算」
@@ -145,6 +146,7 @@
 | 2 她的主張 | main 用題目給的幾則訊息，印出 `叫了「二弘」2 次（收回的不算）`。 | 輸出 |
 
 - 開頭是不是 `（已收回）`，用 `startsWith`，提示帶一句。
+- 做題目時，第 2 步另給起始碼，寫好五則訊息：`二弘學長早安`、`（已收回）二弘`、`二弘你看這個`、`（已收回）二弘二弘二弘`、`學長再見`。
 - 解鎖筆記：`continue`
 
 ### ch11-k3「畢冊只寫一行」
@@ -157,6 +159,7 @@
 | 2 寫成方法 | 寫 `static String firstShort(String[] drafts, int max)`，找不到就交回 `（空白）`。 | 隱藏測資 `Main.firstShort(new String[]{"太長太長太長", "好"}, 3)`、`Main.firstShort(new String[]{"太長了"}, 2)` |
 
 - 草稿越寫越短，最後一句只有 12 個字。
+- 做題目時，那一句後面多放了一句更短的 `學長再見。`：沒有 `break` 的話會印出兩句，或只留下最後一句。
 - 解鎖筆記：`break`
 
 ### ch11-k4「一年的筆記」
@@ -171,6 +174,7 @@ App 最後一關「複習關」：每一章出一題。
 | 2 自動作答 | main 裡有一組作答。用 for-each 算分（先 `trim` 再 `equals`），印出 `答對 4 題`；及格就再印一行徽章 `★ 完成`。 | 輸出 |
 | 3 計分方法 | 寫 `static int score(String[] answers, String[] typed)`。 | 隱藏測資 `Main.score(new String[]{"a", "b"}, new String[]{" a", "c"})`、`Main.score(new String[]{}, new String[]{})` |
 
+- 做題目時，5 題的題目和答案先寫在 main 的兩個陣列，玩家用迴圈放進清單。第 2 步要同時看清單和作答的同一格，改用索引的 for；答對 3 題以上算及格，作答是 `" println"`、`"int"`、`"while"`、`"equals "`、`"if"`。
 - 解鎖筆記：無（複習）
 
 ### ch11-kt「找出那句輸入」
@@ -184,6 +188,7 @@ App 最後一關「複習關」：每一章出一題。
 | 1 你先看一下專題 | 讀懂 `easterEgg` 比對的是哪一個常數，把正確的輸入填進最後一行。 | 輸出（印出大綱那段 Easter egg） |
 
 - 她要讀懂他的程式，才找得到那句話：那是她自己在第一章印出的第一句。
+- 做題目時，`Memory.java` 的常數是 `LAPTOP`（小白）、`FIRST_LUNCH`（滷肉飯）、`GACHA`（8）、`FIRST_LINE`。最後一行直接寫 `Memory.FIRST_LINE` 也算對。
 - 解鎖筆記：無
 
 ### ch11-s1「距離畢業典禮還有 X 天」
@@ -223,6 +228,7 @@ App 最後一關「複習關」：每一章出一題。
 | 2 最多三次 | 寫 `static int triesNeeded(String[] tries, String answer, int limit)`：第幾次答對；超過 `limit` 次還沒對就交回 -1。 | 隱藏測資 `Main.triesNeeded(new String[]{"錯", "錯", "錯", "吃滷肉飯"}, "吃滷肉飯", 3)`、`Main.triesNeeded(new String[]{"吃滷肉飯"}, "吃滷肉飯", 3)` |
 
 - 「吃 滷肉飯」中間的空白，`trim` 不會去掉，所以第二次還是錯的。
+- 做題目時，答錯的那幾次印 `第 1 次：再試一次`。
 - 解鎖筆記：`do-while`
 
 ### ch11-s4「Easter egg」
@@ -250,6 +256,7 @@ App 最後一關「複習關」：每一章出一題。
 | 3 最後一個 | 修好 `ArrayList<int>`（第十章）。 | 隱藏測資 `Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))` |
 
 - 每修一個，他都記得那是哪一天。亭瑄在旁邊：「⋯⋯這些都是我寫的喔？」「⋯⋯嗯。全部。」
+- 做題目時，三步各給一份起始碼。第 1 步只有 `Main.java`。第 2 步多了 `Question.java`（`answer = answer`）、`FillQuestion.java`（`chek`）、`Progress.java`（main 裡寫 `p.done++`）、`Drawable.java` 和 `Badge.java`（`draw()` 沒寫 `public`）。第 3 步在 `Main` 加上用 `ArrayList<int>` 的 `total`。
 - 解鎖筆記：無（複習）
 
 ### ch11-sg「回覆 true」
@@ -264,6 +271,7 @@ App 最後一關「複習關」：每一章出一題。
 
 - 只有一個答案過得了。
 - 參考解答在 `return true;` 後面加了註解：`// 但我不確定你會不會後悔 debug 出這個結果`。
+- 做題目時多給一個 `Main.java` 印出 `Reply.answer()`，按「執行」才不會因為沒有 `Main` 而報錯。她的 txt 照大綱寫在 `Reply.java` 的註解裡。
 - 解鎖筆記：無
 
 ## 筆記條目

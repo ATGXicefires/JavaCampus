@@ -1,0 +1,41 @@
+{
+  "id": "ch06-s1",
+  "title": "用扭蛋解釋類別",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["class", "object"],
+  "vars": [
+    { "name": "names", "type": "String[]", "value": "{\"麻糬\", \"黑糖\", \"珍奶\", \"芋圓\", \"仙草\", \"豆花\", \"粉粿\", \"愛玉\"}" }
+  ],
+  "steps": [
+    {
+      "id": "blueprint",
+      "title": "扭蛋的設計圖",
+      "goal": "寫 `class Gacha`，欄位是 `name`、`color`。`new` 出兩個，印出 `扭蛋：麻糬（白色）`、`扭蛋：黑糖（咖啡色）`。",
+      "instructions": "範例要讓人一看就懂：設計圖只有一張，扭蛋可以做很多顆。",
+      "expectedShape": "class Gacha {\n    …\n}\n\nGacha a = new Gacha();\n…",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "類別定義欄位；以 `new` 建立實例，每個實例擁有自己的欄位⋯⋯",
+        "plain": "⋯⋯白話：`class Gacha` 是扭蛋的設計圖，`new Gacha()` 才是一顆真的扭蛋。兩顆扭蛋各有各的名字和顏色。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "eight",
+      "title": "一張設計圖，八個扭蛋",
+      "goal": "用 `for` 照 `names` 一個一個 `new` 出來，印出 `第 1 個：麻糬`⋯⋯",
+      "instructions": "按「完成」時會換一組名字再跑一次。",
+      "expectedShape": "for (…) {\n    Gacha g = new Gacha();\n    g.name = …;\n    System.out.println(\"第 \" + (…) + \" 個：\" + g.name);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "names": "{\"麻糬\", \"黑糖\"}" } ]
+      },
+      "hints": {
+        "lead": "同一個類別可以在迴圈裡建立任意數量的實例⋯⋯",
+        "plain": "⋯⋯白話：設計圖只要一張，每一圈 `new` 一顆新的，填上名字再印出來。編號從 1 開始，所以是 `i + 1`，記得加括號。"
+      },
+      "afterText": ""
+    }
+  ]
+}

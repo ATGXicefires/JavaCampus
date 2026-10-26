@@ -1,0 +1,36 @@
+{
+  "id": "ch06-s3",
+  "title": "名字一直是 null",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["null", "this"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "this",
+      "title": "null 說了 null",
+      "goal": "修到印出 `滷肉：「沒關係，再跑一次！」`。",
+      "instructions": "現在印出來的是 `null：「null」`。",
+      "expectedShape": "Mascot(String name, String line) {\n    … = name;\n    … = line;\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "參數遮蔽了同名欄位，`name = name` 是把參數指定給自己⋯⋯",
+        "plain": "⋯⋯白話：參數和欄位同名時，`name = name` 是把參數放回參數自己，欄位一直沒被放東西，所以是 `null`。左邊要寫 `this.name`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "length",
+      "title": "還沒取名的",
+      "goal": "她加了 `int nameLength()`，還沒取名的小老師一呼叫就跌倒。修到名字是 `null` 時交回 0。",
+      "instructions": "`nameLength()` 是畫名牌底線要用的。",
+      "expectedShape": "int nameLength() {\n    if (…) {\n        return 0;\n    }\n    return name.length();\n}",
+      "check": { "type": "values", "exprs": ["new Mascot(null, \"嗨\").nameLength()", "new Mascot(\"滷肉\", \"嗨\").nameLength()"] },
+      "hints": {
+        "lead": "對 `null` 參考呼叫方法會丟出 `NullPointerException`⋯⋯",
+        "plain": "⋯⋯白話：還沒取名的小老師，`name` 是 `null`。先問 `name == null`，是的話交回 0，不是才去量長度。"
+      },
+      "afterText": ""
+    }
+  ]
+}

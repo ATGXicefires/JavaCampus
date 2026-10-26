@@ -1,0 +1,45 @@
+{
+  "id": "ch02-s3",
+  "title": "多跑一次的 for",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["compare", "inc", "for"],
+  "vars": [
+    { "name": "times", "type": "int", "value": "5" }
+  ],
+  "steps": [
+    {
+      "id": "once",
+      "title": "多罰了一遍",
+      "goal": "修到剛好印 `times` 行，編號從 1 開始：`第 1 遍：我不會再用全形分號`。",
+      "instructions": "現在從 `第 0 遍` 印到 `第 5 遍`，多罰了一遍。\n\n如果想把編號改成 `i + 1`，要小心串接的順序：`\"第 \" + i + 1` 會印出 `第 01 遍`。按「完成」時會把 `times` 換成 100 再跑一次。",
+      "expectedShape": "for (int i = …; i <= times; i++) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "times": "100" } ]
+      },
+      "hints": {
+        "lead": "`i` 從 0 到 `times`，共執行 `times + 1` 次⋯⋯",
+        "plain": "⋯⋯白話：從 0 數到 5 是 0、1、2、3、4、5，六個數。罰寫從第 1 遍開始，所以 `i` 從 1 開始數，數到 `times` 剛好 `times` 遍。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "sum",
+      "title": "總共花幾秒",
+      "goal": "修好累加，讓 `total` 是 1 加到 `times` 的和。",
+      "instructions": "現在迴圈跑完，`total` 只剩最後一圈的值。按「完成」時會把 `times` 換成 100 再算一次。",
+      "expectedShape": "int total = 0;\nfor (int i = 1; i <= times; i++) {\n    total … i;\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["total"],
+        "variants": [ { "times": "100" } ]
+      },
+      "hints": {
+        "lead": "`total = i` 每次迭代都覆寫 `total`，迴圈結束時只剩最後一次的值⋯⋯",
+        "plain": "⋯⋯白話：`=` 是把盒子裡的東西換掉，所以每一圈都把上一圈的秒數丟了。要「加進去」，寫 `total += i`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

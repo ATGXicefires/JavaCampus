@@ -1,0 +1,62 @@
+{
+  "id": "ch03-s2",
+  "title": "全部重寫",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["array", "index", "array-loop", "exception", "else-if"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" }
+  ],
+  "steps": [
+    {
+      "id": "crash",
+      "title": "跑一半掛掉",
+      "goal": "看例外訊息，修到加總不會跌倒。",
+      "instructions": "先按「執行」看它停在哪一行。按「完成」時會換一組分數再算一次。",
+      "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["sum"],
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "`ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5`⋯⋯",
+        "plain": "⋯⋯白話：5 格只有 0 到 4 號，`<=` 讓 `i` 走到 5。改成 `<`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "average",
+      "title": "平均",
+      "goal": "修到 `avg` 是 `64.8`。",
+      "instructions": "現在印出來的是 `平均：64.0`。按「完成」時會換一組分數再算一次。",
+      "expectedShape": "double avg = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["avg"],
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "`sum / scores.length` 兩邊都是 `int`，整數除法先截斷⋯⋯",
+        "plain": "⋯⋯白話：64.8 被丟掉小數，變成 64。讓其中一邊先變成 `double`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "order",
+      "title": "等第全是 D",
+      "goal": "修好條件的順序，每個分數印出正確的等第：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
+      "instructions": "現在 60 分以上全部印成 D，也沒有 A。按「完成」時會換一組分數再跑一次。",
+      "expectedShape": "if (s >= 90) {\n    System.out.println(s + \" A\");\n} else if (…) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{95, 85, 75, 65, 55}" } ]
+      },
+      "hints": {
+        "lead": "`else if` 由上而下求值，第一個為真的分支執行完就跳出⋯⋯",
+        "plain": "⋯⋯白話：先問 `>= 60` 的話，60 分以上的全部停在 D，後面的問題根本輪不到。從高分往低分問，也補上 90 分以上的 A。"
+      },
+      "afterText": ""
+    }
+  ]
+}

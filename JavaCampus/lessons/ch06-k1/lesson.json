@@ -1,0 +1,49 @@
+{
+  "id": "ch06-k1",
+  "title": "照設計圖做出小白和阿隨",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["class", "object"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "blueprint",
+      "title": "設計圖",
+      "goal": "寫 `class Item`，欄位是 `String name` 和 `String kind`。`new` 一個出來，名字設成 `小白`、種類設成 `筆電`，印出 `小白（筆電）`。",
+      "instructions": "`class` 是設計圖：說好一個 `Item` 有名字和種類。設計圖寫好以後，用 `new Item()` 照著做出一個，再用 `.` 設定它的欄位。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n括號 `（）` 是全形的，可以從這裡複製。",
+      "expectedShape": "class Item {\n    …\n}\n\nItem laptop = new Item();\nlaptop.name = \"…\";\n…\nSystem.out.println(…);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先寫設計圖，再 new。",
+        "plain": "`class Item` 只是設計圖。`new Item()` 才真的做出一個，放進 `laptop` 這個盒子。`laptop.name` 是這一個的名字，用 `.` 拿得到。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "another",
+      "title": "再做一個",
+      "goal": "再 `new` 一個 `阿隨`（種類是 `USB`），兩個都印出來。",
+      "instructions": "同一張設計圖可以用很多次。",
+      "expectedShape": "Item usb = new Item();\n…\nSystem.out.println(…);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "同一張設計圖，再 new 一次。",
+        "plain": "再 `new Item()` 一次，放進另一個盒子 `usb`，設定它自己的名字和種類，再印出來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "own",
+      "title": "各自一份",
+      "goal": "把小白的名字改成 `小白二號`，再把兩個都印一次。阿隨不受影響。",
+      "instructions": "改完以後，輸出會有四行：前兩行是改之前，後兩行是改之後。",
+      "expectedShape": "laptop.name = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "每個物件的欄位各自一份。",
+        "plain": "`laptop` 和 `usb` 是照同一張設計圖做的兩個東西，各有各的名字。改了 `laptop.name`，`usb.name` 不會跟著變。"
+      },
+      "afterText": ""
+    }
+  ]
+}

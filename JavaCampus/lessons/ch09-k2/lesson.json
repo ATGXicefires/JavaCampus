@@ -1,0 +1,36 @@
+{
+  "id": "ch09-k2",
+  "title": "一個迴圈畫全部",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["polymorphism"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "screen",
+      "title": "放在同一排",
+      "goal": "再寫 `class MascotView implements Drawable`，`draw()` 印出 `滷肉：「歡迎回來！」`。把按鈕、進度條（3 格／5 格）、小老師依序放進 `Drawable[] screen`，用 `for` 全部畫出來。",
+      "instructions": "陣列的型別是 `Drawable[]`，不同的元件都裝得進去。",
+      "expectedShape": "Drawable[] screen = {new Button(), …};\nfor (…) {\n    screen[i].draw();\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "同一句 draw()，各自畫各自的。",
+        "plain": "三種元件都答應了同一張約定，所以可以排在同一排。迴圈只管說「畫」，按鈕畫按鈕，進度條畫進度條。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "title",
+      "title": "多一個元件",
+      "goal": "加一個 `class Title implements Drawable`，`draw()` 印出 `== 小白學程式 ==`，放在陣列最前面。迴圈不用改。",
+      "instructions": "多了一種元件，畫的那段程式一個字都不用動。",
+      "expectedShape": "class Title implements Drawable {\n    …\n}\n\nDrawable[] screen = {new Title(), …};",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "新元件也照約定，迴圈不用動。",
+        "plain": "只要新的元件也答應了 `Drawable` 這張約定，放進陣列就會被畫出來。要改的只有陣列裡放了什麼。"
+      },
+      "afterText": ""
+    }
+  ]
+}

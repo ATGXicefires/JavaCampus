@@ -1,0 +1,49 @@
+{
+  "id": "ch05-k3",
+  "title": "自己出的複習題",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["array-loop", "return", "parse-int", "try-catch"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "average",
+      "title": "平均",
+      "goal": "寫 `static double average(int[] a)`。",
+      "instructions": "第三章的陣列，用第四章的方法再寫一次。平均要有小數。",
+      "expectedShape": "static double average(int[] a) {\n    …\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["average(new int[]{72, 58, 65, 80, 49})", "average(new int[]{90, 85})"] },
+      "hints": {
+        "lead": "總和除以格數，要有小數。",
+        "plain": "方法裡先用 `for` 加總，再除以 `a.length`。回傳型別是 `double`，除之前記得讓其中一邊變成小數。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "pass-count",
+      "title": "幾個及格",
+      "goal": "寫 `static int passCount(int[] a)`：交回 60 分以上的有幾個。",
+      "instructions": "60 分也算及格。",
+      "expectedShape": "static int passCount(int[] a) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["passCount(new int[]{72, 58, 65})", "passCount(new int[]{59})", "passCount(new int[]{60})"] },
+      "hints": {
+        "lead": "及格就數一個。",
+        "plain": "準備一個從 0 開始的盒子，走過每一格，60 分以上就 `count++`，最後交回去。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "to-score",
+      "title": "打錯字也不會倒",
+      "goal": "寫 `static int toScore(String s)`：用 `try`／`catch`，不是數字就交回 -1。",
+      "instructions": "`toScore(\"80\")` 交回 80，`toScore(\"八十\")` 交回 -1。",
+      "expectedShape": "static int toScore(String s) {\n    try {\n        …\n    } catch (…) {\n        …\n    }\n}",
+      "check": { "type": "values", "exprs": ["toScore(\"80\")", "toScore(\"八十\")"] },
+      "hints": {
+        "lead": "看不懂就交回 -1。",
+        "plain": "把 `Integer.parseInt(s)` 放進 `try`，成功就直接交回；跌倒的話跳到 `catch`，交回 -1 代表「這不是分數」。"
+      },
+      "afterText": ""
+    }
+  ]
+}

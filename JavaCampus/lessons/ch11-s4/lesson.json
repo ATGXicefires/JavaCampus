@@ -1,0 +1,38 @@
+{
+  "id": "ch11-s4",
+  "title": "Easter egg",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["final", "equals", "string-methods"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "memory",
+      "title": "第一句話",
+      "goal": "按「＋」新增 `Memory.java`，用常數存她第一章印出的第一句話：`static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`。`main` 印出它。",
+      "instructions": "常數用 `Memory.FIRST_LINE` 叫出來。",
+      "expectedShape": "// Memory.java\npublic class Memory {\n    static final String FIRST_LINE = \"…\";\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`static final` 宣告常數⋯⋯",
+        "plain": "⋯⋯白話：那句話寫死在 `Memory` 裡，誰都改不了。別的檔案用 `Memory.FIRST_LINE` 拿得到。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "egg",
+      "title": "機關",
+      "goal": "在 `Main` 寫 `static String easterEgg(String input)`：輸入去掉前後空白後等於 `FIRST_LINE` 才交回訊息，否則交回空字串。訊息先寫成 `TODO`。",
+      "instructions": "比字串內容用 `equals`。按「完成」時會直接呼叫 `easterEgg` 測試，`main` 不會執行。",
+      "expectedShape": "static String easterEgg(String input) {\n    if (input.trim().equals(…)) {\n        return \"TODO\";\n    }\n    return \"\";\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.easterEgg(\"學長，你在說外星語嗎？\")", "Main.easterEgg(\" 學長，你在說外星語嗎？ \")", "Main.easterEgg(\"學長\")"] },
+      "hints": {
+        "lead": "以 `trim` 正規化輸入後，用 `equals` 比對內容⋯⋯",
+        "plain": "⋯⋯白話：前後多打的空白先去掉，再和那句話比。一個字都不能差，才交回訊息。"
+      },
+      "afterText": ""
+    }
+  ]
+}

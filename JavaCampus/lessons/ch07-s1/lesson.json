@@ -1,0 +1,36 @@
+{
+  "id": "ch07-s1",
+  "title": "國中寫的記帳程式",
+  "route": "學長",
+  "partner": "阿嬤",
+  "notes": ["private", "getter-setter"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "ledger",
+      "title": "改寫成 Java",
+      "goal": "寫 `class Ledger`：`private int balance`、`void deposit(int amount)`、`int getBalance()`。`new` 一本帳 `book`，存入 350 和 120。",
+      "instructions": "起始碼的註解是國中寫的 Python 版本，`balance` 誰都能改。改寫成 Java 時，把它鎖起來。",
+      "expectedShape": "class Ledger {\n    private int balance;\n    …\n}\n\nLedger book = new Ledger();\nbook.deposit(…);\n…",
+      "check": { "type": "values", "exprs": ["book.getBalance()"] },
+      "hints": {
+        "lead": "以 `private` 隱藏狀態，只經由方法存取⋯⋯",
+        "plain": "⋯⋯白話：`balance` 鎖起來，只有 `deposit` 能往裡面加錢，只有 `getBalance` 能看。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "outside",
+      "title": "從外面偷改",
+      "goal": "照 Python 的習慣，從外面寫了 `book.balance = 0;`，紅字。刪掉，改成再存入 80。",
+      "instructions": "Java 的 `private` 不准從外面直接改。",
+      "expectedShape": "book.deposit(…);",
+      "check": { "type": "values", "exprs": ["book.getBalance()"] },
+      "hints": {
+        "lead": "`balance has private access in Ledger`⋯⋯",
+        "plain": "⋯⋯白話：Python 的習慣是直接改變數，Java 的 `private` 不准。刪掉那行，照規矩 `book.deposit(80);`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

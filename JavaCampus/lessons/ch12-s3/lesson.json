@@ -1,0 +1,38 @@
+{
+  "id": "ch12-s3",
+  "title": "發表前十分鐘的 bug",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["boundary", "test-data"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "empty",
+      "title": "第 12 課還沒有題目",
+      "goal": "總覽頁跑到第 12 課就除以零。修到沒有題目的課顯示 `第 12 課：—`，其他課照常顯示百分比。",
+      "instructions": "`—` 可以從目標複製。題數是 0 的課不要呼叫 `percent`。",
+      "expectedShape": "if (count[i] == 0) {\n    System.out.println(units[i] + \"：—\");\n} else {\n    …\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`ArithmeticException: / by zero`⋯⋯",
+        "plain": "⋯⋯白話：第 12 課還沒有題目，題數是 0，拿 0 去除就出錯了。沒有題目的課先擋下來，顯示一條線。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "guard",
+      "title": "隱藏測資",
+      "goal": "`percent(correct, count)` 在 `count` 是 0 時交回 0。",
+      "instructions": "按「完成」時會直接呼叫 `percent` 測試，`main` 不會執行。",
+      "expectedShape": "static int percent(int correct, int count) {\n    if (count == 0) {\n        return 0;\n    }\n    …\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.percent(3, 4)", "Main.percent(0, 0)"] },
+      "hints": {
+        "lead": "在方法內處理邊界值，不依賴呼叫端⋯⋯",
+        "plain": "⋯⋯白話：第四章的 `percent` 本來就擋了除以零，整合時重寫把它弄丟了。檢查放回方法裡，誰呼叫都不會出錯。"
+      },
+      "afterText": ""
+    }
+  ]
+}

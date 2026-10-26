@@ -1,0 +1,38 @@
+{
+  "id": "ch11-k2",
+  "title": "收回的訊息不算",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["continue"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "skip",
+      "title": "跳過收回的",
+      "goal": "寫 `static int countName(String[] log, String name)`：數出包含 `name` 的訊息，開頭是 `（已收回）` 的用 `continue` 跳過。",
+      "instructions": "字串的 `startsWith(…)` 問開頭是不是這幾個字。按「完成」時會直接呼叫 `countName` 測試。",
+      "expectedShape": "for (String line : log) {\n    if (line.startsWith(\"（已收回）\")) {\n        continue;\n    }\n    …\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.countName(new String[]{\"二弘早\", \"（已收回）二弘\", \"學長\"}, \"二弘\")", "Main.countName(new String[]{\"（已收回）二弘\"}, \"二弘\")"] },
+      "hints": {
+        "lead": "continue 跳過這一則。",
+        "plain": "收回的訊息直接跳過，後面的計數不做，換下一則。`continue` 就是「這一則不算，看下一則」。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "claim",
+      "title": "她的主張",
+      "goal": "`main` 裡放好了幾則訊息。印出 `叫了「二弘」2 次（收回的不算）`，次數用 `countName` 算。",
+      "instructions": "`「` 和 `」` 可以從目標複製。",
+      "expectedShape": "System.out.println(\"叫了「二弘」\" + countName(…) + \" 次（收回的不算）\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "次數交給 countName。",
+        "plain": "收回的那兩則不算，剩下的才是她真正叫出口的次數。"
+      },
+      "afterText": ""
+    }
+  ]
+}

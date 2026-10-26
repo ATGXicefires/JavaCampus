@@ -1,0 +1,38 @@
+{
+  "id": "ch12-s1",
+  "title": "後端整合",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["import", "full-program"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "wire",
+      "title": "全部接起來",
+      "goal": "把 `Question`、`Checker`、`Records`、`Screen` 接成一次完整的作答：用 `ArrayList<Question>` 放進 3 題，用 `ExactChecker` 判斷 `typed`，印出 `第 1 題：答對了` 或 `第 1 題：再試一次`。這次的分數是答對題數 × 100 ÷ 題數，記進 `records`，再印出 `最高分：66` 這樣的一行。",
+      "instructions": "`Main.java` 自己要 import `ArrayList`；`Records.java` 用的 `HashMap`，它自己已經 import 了。",
+      "expectedShape": "import java.util.ArrayList;\n…\nChecker c = new ExactChecker(…);\nif (c.check(typed[i])) {\n    …\n}\n…\nrecords.record(\"第 1 課\", …);\nSystem.out.println(\"最高分：\" + records.bestOf(\"第 1 課\"));",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "各檔案各自 import 所需類別，由 `Main` 串接⋯⋯",
+        "plain": "⋯⋯白話：每個類別各做各的事：`Question` 裝題目，`Checker` 判斷對錯，`Records` 記最高分，`Screen` 畫標題。`main` 只負責照順序把它們接起來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hidden",
+      "title": "隱藏測資",
+      "goal": "寫 `static int runQuiz(String[] answers, String[] typed)`，用 `ExactChecker` 判斷每一題，交回答對幾題。",
+      "instructions": "按「完成」時會直接呼叫 `runQuiz` 測試，`main` 不會執行。",
+      "expectedShape": "static int runQuiz(String[] answers, String[] typed) {\n    int correct = 0;\n    for (…) {\n        Checker c = new ExactChecker(…);\n        …\n    }\n    return correct;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.runQuiz(new String[]{\"選午餐\", \"B\"}, new String[]{\" 選午餐\", \"A\"})", "Main.runQuiz(new String[]{}, new String[]{})"] },
+      "hints": {
+        "lead": "以介面型別呼叫判斷邏輯⋯⋯",
+        "plain": "⋯⋯白話：判斷交給 `Checker`，`runQuiz` 只管數對了幾題。之後換一種判斷方式，這個方法不用改。"
+      },
+      "afterText": ""
+    }
+  ]
+}

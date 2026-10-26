@@ -1,0 +1,23 @@
+{
+  "id": "ch04-s4",
+  "title": "提示的第一個字",
+  "route": "學長",
+  "partner": "阿成",
+  "notes": ["string-methods"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "fix",
+      "title": "露錯字了",
+      "goal": "修到 `hint(\"吃滷肉飯\")` 是 `吃＿＿＿`。",
+      "instructions": "現在露出來的是第二個字，後面的格數也多了一格；只有一個字的答案還會跌倒。",
+      "expectedShape": "return answer.substring(…) + \"＿\".repeat(…);",
+      "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")", "hint(\"滷\")"] },
+      "hints": {
+        "lead": "`substring(beginIndex, endIndex)`：索引從 0 起算，不含 endIndex⋯⋯",
+        "plain": "⋯⋯白話：`substring(1, 2)` 切到的是第二個字，第一個字是 `substring(0, 1)`。後面的格數要扣掉露出來的那個字：`answer.length() - 1`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

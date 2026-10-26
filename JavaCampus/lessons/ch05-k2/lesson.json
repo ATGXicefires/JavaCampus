@@ -1,0 +1,43 @@
+{
+  "id": "ch05-k2",
+  "title": "存錢買扭蛋",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["while"],
+  "vars": [
+    { "name": "price", "type": "int", "value": "50" },
+    { "name": "perDay", "type": "int", "value": "15" }
+  ],
+  "steps": [
+    {
+      "id": "days",
+      "title": "要存幾天",
+      "goal": "每天存 `perDay` 元，扭蛋一次 `price` 元。用 `while` 算出要存幾天才夠，存進 `days`。",
+      "instructions": "不知道要存幾天，就用 `while`：錢還不夠，就再存一天。\n\n```\nwhile (條件) {\n    條件還成立時，重複做的事\n}\n```\n\n按「完成」時會換一組價錢和每天存的錢再算一次。",
+      "expectedShape": "while (…) {\n    saved += perDay;\n    days++;\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["days"],
+        "variants": [ { "price": "100" }, { "perDay": "20" } ]
+      },
+      "hints": {
+        "lead": "錢還不夠，就再存一天。",
+        "plain": "`while (saved < price)` 的意思是：存的錢還比價錢少，就繼續。每一圈存一天的錢 `saved += perDay`，天數加一 `days++`。錢夠了，迴圈自己會停。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "method",
+      "title": "寫成方法",
+      "goal": "寫 `static int daysToSave(int price, int perDay)`。",
+      "instructions": "把上一步的算法包成方法：價錢和每天存多少，改成由參數給。\n\n`daysToSave(0, 10)` 要交回 0：條件一開始就不成立，`while` 一次都不會跑。",
+      "expectedShape": "static int daysToSave(int price, int perDay) {\n    …\n    return days;\n}",
+      "check": { "type": "values", "exprs": ["daysToSave(50, 15)", "daysToSave(30, 30)", "daysToSave(0, 10)"] },
+      "hints": {
+        "lead": "上一步的程式，包進方法裡。",
+        "plain": "方法的參數 `price` 和 `perDay` 取代題目給的盒子，裡面照抄上一步的 `while`，最後 `return days;`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

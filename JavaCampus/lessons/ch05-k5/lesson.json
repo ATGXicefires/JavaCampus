@@ -1,0 +1,56 @@
+{
+  "id": "ch05-k5",
+  "title": "徽章什麼時候亮",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["logic", "nested"],
+  "vars": [
+    { "name": "rows", "type": "int", "value": "2" },
+    { "name": "cols", "type": "int", "value": "5" },
+    { "name": "done", "type": "int", "value": "7" }
+  ],
+  "steps": [
+    {
+      "id": "badge",
+      "title": "完成徽章",
+      "goal": "寫 `static boolean showBadge(int done, int total, int score)`：全部課都完成，而且分數及格，才亮。",
+      "instructions": "「全部完成」是完成數等於總數；「及格」是 60 分以上。",
+      "expectedShape": "static boolean showBadge(int done, int total, int score) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["showBadge(5, 5, 60)", "showBadge(5, 5, 59)", "showBadge(4, 5, 100)"] },
+      "hints": {
+        "lead": "兩個條件都要成立。",
+        "plain": "「全部完成」是 `done == total`，「及格」是 `score >= 60`，兩個都要成立，用 `&&` 接起來交回去。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hint",
+      "title": "要不要給提示",
+      "goal": "寫 `static boolean showHint(boolean triedTwice, boolean passed)`：試過兩次，而且還沒過，才給提示。",
+      "instructions": "`!` 會把 `true` 和 `false` 反過來。",
+      "expectedShape": "static boolean showHint(boolean triedTwice, boolean passed) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["showHint(true, false)", "showHint(true, true)", "showHint(false, false)"] },
+      "hints": {
+        "lead": "還沒過，是 !passed。",
+        "plain": "`passed` 是「過了」，`!passed` 就是「還沒過」。試過兩次而且還沒過：`triedTwice && !passed`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "grid",
+      "title": "課程格子",
+      "goal": "用巢狀迴圈畫出課程格子：`rows` 列、每列 `cols` 格，前 `done` 格畫 `■`，其他畫 `□`。",
+      "instructions": "外面的迴圈跑一列，裡面的迴圈畫那一列的每一格。記住畫到第幾格了：前 `done` 格畫 `■`，其他畫 `□`。\n\n`■` 和 `□` 可以從這裡複製。按「完成」時會換 `done` 和 `rows` 再跑幾次。",
+      "expectedShape": "for (int r = 0; r < rows; r++) {\n    String line = \"\";\n    for (int c = 0; c < cols; c++) {\n        …\n    }\n    System.out.println(line);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "done": "3" }, { "rows": "3" } ]
+      },
+      "hints": {
+        "lead": "外面一列，裡面一格。",
+        "plain": "用一個 `count` 記住畫到第幾格。每畫一格就 `count++`，還沒超過 `done` 就畫 `■`，超過了畫 `□`。每一列畫完，印出那一列。"
+      },
+      "afterText": ""
+    }
+  ]
+}

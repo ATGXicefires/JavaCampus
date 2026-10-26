@@ -1,0 +1,36 @@
+{
+  "id": "ch04-k3",
+  "title": "答對了沒",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["equals", "string-methods"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "hint",
+      "title": "提示的第一個字",
+      "goal": "寫 `static String hint(String answer)`：只露出第一個字，其他用 `＿`。`hint(\"吃滷肉飯\")` 是 `吃＿＿＿`。",
+      "instructions": "`answer.substring(0, 1)` 會切出第一個字。剩下幾個字，就重複幾次 `＿`。\n\n`＿` 可以從這裡複製。",
+      "expectedShape": "static String hint(String answer) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")"] },
+      "hints": {
+        "lead": "第一個字是 substring(0, 1)。",
+        "plain": "`substring(0, 1)` 從第 0 個字切到第 1 個字之前，剛好是第一個字。剩下的字數是 `answer.length() - 1`，用 `repeat` 補上同樣多的 `＿`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "correct",
+      "title": "多打的空白",
+      "goal": "寫 `static boolean isCorrect(String typed, String answer)`：先用 `trim()` 去掉前後空白，再用 `equals` 比。",
+      "instructions": "新生打字常常前後多一個空白。`trim()` 會交回去掉前後空白的字串。\n\n比字串要用 `equals`，不要用 `==`：`trim()` 做出來的是新的字串，用 `==` 比會是 `false`。",
+      "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃控肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")"] },
+      "hints": {
+        "lead": "先 trim，再 equals。",
+        "plain": "`==` 比的是是不是同一個盒子，`equals` 比的是裡面的字一不一樣。`trim()` 交回的是一個新盒子，字一樣也沒用，所以一定要用 `equals`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "ch07-s2",
+  "title": "錢櫃只有阿嬤能開",
+  "route": "學長",
+  "partner": "阿嬤",
+  "notes": ["guard"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "positive",
+      "title": "不能存負數",
+      "goal": "`deposit` 改成交回 `boolean`：收到 0 或負數就不存、交回 `false`。",
+      "instructions": "錢櫃的門只有 `deposit` 一扇，就在門口檢查。",
+      "expectedShape": "boolean deposit(int amount) {\n    if (…) {\n        return false;\n    }\n    …\n}",
+      "check": { "type": "values", "exprs": ["new Ledger().deposit(-350)", "new Ledger().deposit(0)", "new Ledger().deposit(350)"] },
+      "hints": {
+        "lead": "在修改狀態的方法裡驗證參數⋯⋯",
+        "plain": "⋯⋯白話：0 或負數不收，交回 `false`；其他照常存進去，交回 `true`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "withdraw",
+      "title": "領錢",
+      "goal": "加上建構子 `Ledger(int start)` 和 `boolean withdraw(int amount)`：餘額不夠就不領。",
+      "instructions": "`start` 是一開始的餘額。剛好領完也可以。",
+      "expectedShape": "Ledger(int start) {\n    …\n}\n\nboolean withdraw(int amount) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["new Ledger(100).withdraw(150)", "new Ledger(100).withdraw(30)", "new Ledger(100).withdraw(100)"] },
+      "hints": {
+        "lead": "餘額不足時拒絕，讓餘額永遠不會變成負的⋯⋯",
+        "plain": "⋯⋯白話：領的錢比餘額多，就不給領，交回 `false`；夠的話扣掉，交回 `true`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "typo",
+      "title": "差點算錯",
+      "goal": "手一滑打成 `book.deposit(-350)`。用 `deposit` 交回的結果擋下來，印出 `金額不對：-350`。",
+      "instructions": "`deposit` 交回 `false`，就是沒存進去。",
+      "expectedShape": "int amount = -350;\nif (…) {\n    System.out.println(\"金額不對：\" + amount);\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "依回傳值處理失敗的情況⋯⋯",
+        "plain": "⋯⋯白話：用 `if (!book.deposit(amount))` 接住存不進去的情況，印出提醒。"
+      },
+      "afterText": ""
+    }
+  ]
+}

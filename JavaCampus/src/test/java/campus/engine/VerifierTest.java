@@ -165,6 +165,15 @@ class VerifierTest {
     }
 
     @Test
+    void programThatNeverEndsFails() {
+        String solution = "public class Main {\n    public static void main(String[] args) {\n"
+                + "        System.out.println(\"第 30 天\");\n    }\n}\n";
+        String endless = "public class Main {\n    public static void main(String[] args) {\n"
+                + "        int day = 0;\n        while (true) {\n            day++;\n        }\n    }\n}\n";
+        assertFails(verifier.verify("p3", PROGRAM, List.of(), OUTPUT, solution, endless), "跑太久");
+    }
+
+    @Test
     void programHardcodedAnswerFailsHiddenTest() {
         Check check = new Check(Check.Mode.VALUES, List.of("Main.leaveTime(22, 20, 25)", "Main.leaveTime(21, 10, 40)"), null);
         String hardcoded = """

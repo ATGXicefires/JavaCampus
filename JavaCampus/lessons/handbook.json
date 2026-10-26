@@ -62,6 +62,426 @@
       "title": "if-else 就是選午餐",
       "summary": "條件成立走 `if`，不成立走 `else`。",
       "body": "if-else 就像你選午餐：如果有滷肉飯，就吃滷肉飯；否則吃控肉飯。\n\n```\nif (hasLuRouFan) {\n    System.out.println(\"吃滷肉飯\");\n} else {\n    System.out.println(\"吃控肉飯\");\n}\n```\n\n`if` 的括號裡放一個 `boolean`，它只有 `true`（有）和 `false`（沒有）兩種答案。`true` 就走第一對大括號，`false` 就走 `else` 那一對。兩條路只會走一條。"
+    },
+    {
+      "id": "types",
+      "chapter": 2,
+      "title": "型別是盒子的尺寸",
+      "summary": "`int` 裝整數，`double` 裝小數。",
+      "body": "盒子有分尺寸，裝錯會被退貨。\n\n```\nint gacha = 8;\ndouble temp = 33.5;\nboolean hot = true;\nString city = \"臺南\";\n```\n\n`int` 只裝整數，`double` 裝有小數點的數字，`boolean` 只裝 `true` 或 `false`，`String` 裝文字。要放什麼，就選那個尺寸的盒子。"
+    },
+    {
+      "id": "arith",
+      "chapter": 2,
+      "title": "四則運算與 %",
+      "summary": "`%` 是除完剩下的。",
+      "body": "`+`、`-`、`*`、`/` 就是加減乘除。`%` 比較少見，它算的是**除完剩下的**。\n\n```\nint gacha = 8;\nSystem.out.println(gacha / 3);\nSystem.out.println(gacha % 3);\n```\n\n8 個扭蛋平均掛在 3 個掛勾上：每個掛 2 個（`8 / 3`），還剩 2 個（`8 % 3`）。"
+    },
+    {
+      "id": "int-div",
+      "chapter": 2,
+      "title": "整數除以整數",
+      "summary": "兩個整數相除，小數直接丟掉。",
+      "body": "兩個 `int` 相除，答案也是 `int`：小數點後面直接丟掉，不會四捨五入。\n\n```\nSystem.out.println(7 / 2);\n```\n\n這行印出 `3`，不是 `3.5`。就算把答案放進 `double` 盒子也一樣，因為放進去之前，除法就已經算完了。\n\n```\ndouble avg = 7 / 2;\n```\n\n`avg` 是 `3.0`。"
+    },
+    {
+      "id": "cast",
+      "chapter": 2,
+      "title": "型別轉換",
+      "summary": "要小數，就讓其中一邊變成 `double`。",
+      "body": "想要有小數的答案，只要讓除法的其中一邊變成小數。\n\n```\ndouble a = 7 / 2.0;\ndouble b = (double) 7 / 2;\n```\n\n兩個都是 `3.5`。`(double)` 寫在數字前面，意思是「先把它換到小數的盒子」。\n\n順序很重要：`(double) (7 / 2)` 會先算括號裡的整數除法，得到 3，才換成 `3.0`。"
+    },
+    {
+      "id": "concat",
+      "chapter": 2,
+      "title": "字串串接",
+      "summary": "`+` 碰到字串就變成接起來。",
+      "body": "`+` 碰到字串，就不是加法了，是把兩邊**接起來**。\n\n```\nint gacha = 8;\nSystem.out.println(\"扭蛋有 \" + gacha + \" 個\");\n```\n\n印出 `扭蛋有 8 個`。`+` 從左往右算，所以 `\"總共 \" + 3 + 4` 會先接上 3、再接上 4，變成 `總共 34`。要先算的數字，加括號：`\"總共 \" + (3 + 4)`。"
+    },
+    {
+      "id": "compare",
+      "chapter": 2,
+      "title": "比大小",
+      "summary": "比較的答案是 `boolean`；`==` 才是比。",
+      "body": "`<`、`<=`、`>`、`>=`、`==`、`!=` 都是在問問題，答案只有 `true` 或 `false`，所以可以直接放進 `boolean` 盒子。\n\n```\nint perWeek = 15;\nboolean tooMany = perWeek >= 10;\n```\n\n`=` 是「放進去」，`==` 才是「等不等於」。`!=` 是「不等於」。"
+    },
+    {
+      "id": "inc",
+      "chapter": 2,
+      "title": "i++ 與 +=",
+      "summary": "`i++` 是加一，`total += i` 是加進去。",
+      "body": "`i++` 是「`i` 加一」的簡寫，和 `i = i + 1` 一樣。\n\n`total += i` 是「把 `i` 加進 `total`」，和 `total = total + i` 一樣。\n\n```\nint total = 0;\ntotal += 3;\ntotal += 5;\n```\n\n`total` 最後是 8。字串也能用 `+=`：`s += \"！\"` 會在 `s` 後面接一個「！」。"
+    },
+    {
+      "id": "for",
+      "chapter": 2,
+      "title": "for 是把同一件事做 N 遍",
+      "summary": "`for` 是把同一件事做 N 遍。",
+      "body": "同一件事要做很多遍，不用複製貼上，用 `for`。\n\n```\nfor (int i = 1; i <= 5; i++) {\n    System.out.println(\"第 \" + i + \" 遍\");\n}\n```\n\n括號裡有三段，用分號隔開：從 `i = 1` 開始；`i <= 5` 還成立就做一遍；每做完一遍 `i++`。所以 `i` 依序是 1、2、3、4、5，大括號裡的事做了 5 遍。"
+    },
+    {
+      "id": "array",
+      "chapter": 3,
+      "title": "陣列是一排置物櫃",
+      "summary": "`int[]` 是一排置物櫃，一格放一個。",
+      "body": "一排置物櫃，每一格放一個東西，這就是陣列。\n\n```\nint[] scores = {72, 58, 65, 80, 49};\n```\n\n`int[]` 的意思是「一排 int」。大括號裡用逗號隔開，一格放一個分數。`scores.length` 是總共有幾格，這裡是 5。"
+    },
+    {
+      "id": "index",
+      "chapter": 3,
+      "title": "索引從 0 開始",
+      "summary": "第一格是 `[0]`，不是 `[1]`。",
+      "body": "置物櫃的編號從 0 開始：第一格是 `scores[0]`，第二格是 `scores[1]`。\n\n```\nint[] scores = {72, 58, 65};\nSystem.out.println(scores[0]);\nSystem.out.println(scores[scores.length - 1]);\n```\n\n有 3 格的話，編號是 0、1、2，所以最後一格是 `scores[scores.length - 1]`。用到 `scores[3]`，程式會在執行時跌倒。"
+    },
+    {
+      "id": "array-loop",
+      "chapter": 3,
+      "title": "走過每一格",
+      "summary": "走完每一格：`i < length`，不是 `<=`。",
+      "body": "用 `for` 從第 0 格走到最後一格，每一格都看一次。\n\n```\nint sum = 0;\nfor (int i = 0; i < scores.length; i++) {\n    sum += scores[i];\n}\n```\n\n條件是 `i < scores.length`。寫成 `<=` 會多走一格，走到不存在的那一格就跌倒了。"
+    },
+    {
+      "id": "else-if",
+      "chapter": 3,
+      "title": "else if 是排隊問問題",
+      "summary": "從上往下問，第一個答「是」的就停。",
+      "body": "`else if` 是一個接一個問下去，第一個成立的就做，後面的都不問了。\n\n```\nif (score >= 90) {\n    System.out.println(\"A\");\n} else if (score >= 80) {\n    System.out.println(\"B\");\n} else {\n    System.out.println(\"C 以下\");\n}\n```\n\n所以順序很重要：先問 90 分，再問 80 分。很多人第一次寫等第會先問 `>= 60`，結果 95 分也停在那一關。"
+    },
+    {
+      "id": "exception",
+      "chapter": 3,
+      "title": "例外是程式在執行時跌倒",
+      "summary": "紅字是看不懂；例外是跑到一半跌倒。",
+      "body": "紅字是程式還沒跑，電腦就看不懂；**例外**是程式跑到一半才跌倒。\n\n```\nint[] scores = {72, 58};\nSystem.out.println(scores[2]);\n```\n\n這段可以編譯，執行時卻會跌倒：`scores` 只有 0 和 1 兩格。看例外訊息停在哪一行，就知道在哪裡跌倒。"
+    },
+    {
+      "id": "parse-int",
+      "chapter": 3,
+      "title": "字串變數字",
+      "summary": "`Integer.parseInt` 把文字變成數字。",
+      "body": "答題框拿到的東西都是文字，就算看起來像數字也一樣。要拿來算，先用 `Integer.parseInt` 換成數字。\n\n```\nString input = \"85\";\nint score = Integer.parseInt(input);\nSystem.out.println(score + 5);\n```\n\n印出 `90`。如果 `input` 是 `\"八十\"`，`parseInt` 看不懂，程式就會跌倒。"
+    },
+    {
+      "id": "try-catch",
+      "chapter": 3,
+      "title": "try-catch 是先準備好接住",
+      "summary": "會跌倒的放 `try`，跌倒時做 `catch`。",
+      "body": "知道某段程式可能會跌倒，就先準備好接住它。\n\n```\ntry {\n    int score = Integer.parseInt(input);\n    System.out.println(\"收到：\" + score);\n} catch (NumberFormatException e) {\n    System.out.println(\"要輸入數字喔\");\n}\n```\n\n`try` 裡的程式跌倒了，就直接跳到 `catch`，程式不會整個停掉。`catch` 的括號寫要接住哪一種例外。"
+    },
+    {
+      "id": "method",
+      "chapter": 4,
+      "title": "方法是分工",
+      "summary": "把一件事包起來、取個名字，要用時叫它。",
+      "body": "把一件事包起來，取個名字，就是**方法**。要用的時候，叫它的名字就好。\n\n```\nstatic void hello() {\n    System.out.println(\"滷肉：「歡迎來到小白！」\");\n}\n\nhello();\nhello();\n```\n\n`hello();` 叫了兩次，就印兩次。`static` 先照寫，之後會講它是什麼意思。"
+    },
+    {
+      "id": "param",
+      "chapter": 4,
+      "title": "參數是交給對方的東西",
+      "summary": "呼叫時給什麼，方法裡就用什麼。",
+      "body": "方法的括號裡可以寫**參數**：呼叫的人交東西給它，它就拿來用。\n\n```\nstatic void say(String who, String line) {\n    System.out.println(who + \"：「\" + line + \"」\");\n}\n\nsay(\"滷肉\", \"沒關係，再跑一次！\");\n```\n\n呼叫時給的值，會照順序放進 `who` 和 `line`。順序給錯，意思就錯了。"
+    },
+    {
+      "id": "return",
+      "chapter": 4,
+      "title": "回傳值是對方交回來的東西",
+      "summary": "`return` 交回結果；`void` 是不交回。",
+      "body": "方法做完事，可以用 `return` 把結果交回來。交回來的值可以再拿去用，印出來的就只能看。\n\n```\nstatic int percent(int part, int whole) {\n    return part * 100 / whole;\n}\n\nint p = percent(1, 4);\n```\n\n名字前面的 `int` 說它會交回一個整數；寫 `void` 的方法什麼都不交回。"
+    },
+    {
+      "id": "signature",
+      "chapter": 4,
+      "title": "方法簽章就是約定",
+      "summary": "名字、要給什麼、交回什麼，先說好。",
+      "body": "`static int percent(int part, int whole)` 這一行叫**方法簽章**：名字、要給什麼、交回什麼。\n\n兩個人分工時，先把簽章說好。方法裡面怎麼寫，各自決定；要用別人的方法，只要照簽章給對東西，不用看它裡面。\n\n```\nint p = percent(3, 4);\n```"
+    },
+    {
+      "id": "string-methods",
+      "chapter": 4,
+      "title": "字串的方法",
+      "summary": "字串自己會的事：量長度、切開、重複。",
+      "body": "字串有很多自己會做的事，用 `.` 叫出來。\n\n```\nString s = \"吃滷肉飯\";\ns.length()          // 4，有幾個字\ns.substring(0, 1)   // \"吃\"，切出第一個字\n\"■\".repeat(3)       // \"■■■\"，重複三次\n\" 小白 \".trim()      // \"小白\"，去掉前後空白\n```\n\n`substring(開始, 結束)` 切出來的不包含結束那一格：`substring(0, 1)` 就是第 0 個字。"
+    },
+    {
+      "id": "equals",
+      "chapter": 4,
+      "title": "比字串要用 equals",
+      "summary": "字串一律用 `equals` 比，不要用 `==`。",
+      "body": "`==` 比的是「是不是同一個盒子」，`equals` 比的才是「裡面的字一不一樣」。\n\n```\nString typed = \" 小白\".trim();\nSystem.out.println(typed == \"小白\");       // false\nSystem.out.println(typed.equals(\"小白\"));  // true\n```\n\n`trim()` 做出一個新的字串：字一樣，盒子卻是新的。所以比字串一律用 `equals`。"
+    },
+    {
+      "id": "bool-method",
+      "chapter": 5,
+      "title": "boolean 方法",
+      "summary": "答案是對或錯的方法：`isPass(60)`。",
+      "body": "有些方法只回答一個是非題，交回 `true` 或 `false`。名字常用 `is` 開頭，一看就知道在問什麼。\n\n```\nstatic boolean isPass(int score) {\n    return score >= 60;\n}\n```\n\n想到答案就可以馬上 `return`，後面的程式不會再跑。先把不合理的情況擋掉，再判斷正常的情況，方法會清楚很多。"
+    },
+    {
+      "id": "boundary",
+      "chapter": 5,
+      "title": "邊界值",
+      "summary": "60 分及格，就要測 59、60、61。",
+      "body": "bug 最喜歡躲在**邊界**：剛好及格、剛好滿、剛好是 0。\n\n```\nisPass(59)   // false\nisPass(60)   // true\nisPass(61)   // true\n```\n\n`>=` 寫成 `>` 的話，只有 60 分會錯。只測 30 分和 90 分，永遠抓不到這個 bug。"
+    },
+    {
+      "id": "test-data",
+      "chapter": 5,
+      "title": "測資",
+      "summary": "一組資料對，不代表全部都對。",
+      "body": "測資是拿來測程式的資料。一組對了，不代表都對；要換很多組，尤其是奇怪的：0、負數、只有一個、全部一樣。\n\n```\nmax(new int[]{34, 41, 62})\nmax(new int[]{-3, -7})\nmax(new int[]{5})\n```\n\n第二組專抓「從 0 開始比」的寫法：全部都是負數時，它會交回 0。"
+    },
+    {
+      "id": "logic",
+      "chapter": 5,
+      "title": "且／或／不是",
+      "summary": "`&&` 都要成立，`||` 一個就好，`!` 反過來。",
+      "body": "條件可以組合起來。`a && b` 是兩個都成立才成立；`a || b` 是有一個成立就成立；`!a` 是把答案反過來。\n\n```\nboolean showHint = triedTwice && !passed;\n```\n\n意思是：試過兩次，而且還沒過，才給提示。"
+    },
+    {
+      "id": "while",
+      "chapter": 5,
+      "title": "while 是「還沒好就繼續」",
+      "summary": "條件還成立，就再做一次。",
+      "body": "`while` 不用先知道要做幾次，只要條件還成立，就再做一次。\n\n```\nint saved = 0;\nint days = 0;\nwhile (saved < price) {\n    saved += perDay;\n    days++;\n}\n```\n\n錢還不夠，就再存一天。條件一開始就不成立的話，一次都不會做。"
+    },
+    {
+      "id": "nested",
+      "chapter": 5,
+      "title": "巢狀迴圈",
+      "summary": "迴圈裡再放迴圈：外面一列，裡面一格。",
+      "body": "迴圈裡面再放一個迴圈，就能畫出表格。\n\n```\nfor (int r = 1; r <= 2; r++) {\n    String row = \"\";\n    for (int c = 1; c <= 3; c++) {\n        row += \"□\";\n    }\n    System.out.println(row);\n}\n```\n\n外面的迴圈跑一列，裡面的迴圈把那一列的每一格畫完。"
+    },
+    {
+      "id": "max-min",
+      "chapter": 5,
+      "title": "找最大最小",
+      "summary": "先把第一格當最大，再一格一格比。",
+      "body": "找最大值時，先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n```\nint best = a[0];\nfor (int i = 1; i < a.length; i++) {\n    if (a[i] > best) {\n        best = a[i];\n    }\n}\n```\n\n不要從 0 開始比：全部都是負數的時候，0 會贏過每一個人。"
+    },
+    {
+      "id": "class",
+      "chapter": 6,
+      "title": "類別是設計圖",
+      "summary": "`class` 是設計圖，還不是真的東西。",
+      "body": "`class` 是一張設計圖：說好這種東西有哪些欄位、會做哪些事。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n這只是設計圖，還不是真的東西。要用 `new` 照著它做出來，才有一個真的 `Item`。"
+    },
+    {
+      "id": "object",
+      "chapter": 6,
+      "title": "物件是照設計圖做出來的東西",
+      "summary": "`new` 才做出一個；每個的欄位各自一份。",
+      "body": "`new Item()` 照設計圖做出一個**物件**。一張設計圖可以做很多個，每個物件的欄位各自一份。\n\n```\nItem laptop = new Item();\nlaptop.name = \"小白\";\nItem usb = new Item();\nusb.name = \"阿隨\";\n```\n\n改了 `laptop.name`，`usb.name` 不會跟著變。用 `.` 取用物件自己的欄位。"
+    },
+    {
+      "id": "constructor",
+      "chapter": 6,
+      "title": "建構子",
+      "summary": "`new` 的那一刻先執行，名字在出生時決定。",
+      "body": "**建構子**是 `new` 的那一刻第一個執行的方法：名字和類別一樣，沒有回傳型別。\n\n```\nclass Item {\n    String name;\n    String kind;\n\n    Item(String name, String kind) {\n        this.name = name;\n        this.kind = kind;\n    }\n}\n\nItem laptop = new Item(\"小白\", \"筆電\");\n```\n\n名字和種類在出生的時候就決定好，不用 `new` 完再一個一個設定。"
+    },
+    {
+      "id": "this",
+      "chapter": 6,
+      "title": "this 是「我自己的」",
+      "summary": "`this.name` 是物件自己的欄位。",
+      "body": "參數和欄位同名的時候，`this.name` 指的是物件自己的欄位，`name` 指的是傳進來的參數。\n\n```\nItem(String name, String kind) {\n    this.name = name;\n    this.kind = kind;\n}\n```\n\n少寫 `this`，變成 `name = name;`，就是把參數放回參數自己，欄位一直是空的。"
+    },
+    {
+      "id": "obj-method",
+      "chapter": 6,
+      "title": "物件的方法",
+      "summary": "不加 `static` 的方法，屬於每個物件。",
+      "body": "不加 `static` 的方法屬於物件：誰呼叫，就用誰自己的欄位。\n\n```\nclass Mascot {\n    String name;\n    String line;\n\n    void speak() {\n        System.out.println(name + \"：「\" + line + \"」\");\n    }\n}\n```\n\n`roufan.speak()` 就是滷肉在說話。以前要把「誰」傳進方法，現在物件自己知道自己是誰。"
+    },
+    {
+      "id": "null",
+      "chapter": 6,
+      "title": "null 是空盒子",
+      "summary": "還沒放東西的欄位是 `null`，先檢查再用。",
+      "body": "物件的欄位還沒放東西的時候是 `null`，意思是「什麼都沒有」。\n\n```\nif (m.name == null) {\n    System.out.println(\"還沒取名\");\n} else {\n    System.out.println(m.name.length());\n}\n```\n\n對 `null` 呼叫方法，例如 `name.length()`，程式會跌倒（`NullPointerException`）。先用 `== null` 檢查。"
+    },
+    {
+      "id": "private",
+      "chapter": 7,
+      "title": "private 是只有自己能開的抽屜",
+      "summary": "`private` 欄位只有類別自己能碰。",
+      "body": "在欄位前面加 `private`，它就變成只有這個類別自己能開的抽屜。\n\n```\nclass GachaBag {\n    private int count;\n}\n```\n\n外面寫 `bag.count = 99;` 會被編譯器擋下來。外面想看、想改，都要透過類別自己開放的方法。"
+    },
+    {
+      "id": "getter-setter",
+      "chapter": 7,
+      "title": "getter 和 setter",
+      "summary": "用方法開放：讓人看，或照規矩改。",
+      "body": "`private` 的欄位，用方法決定要開放什麼。\n\n```\nint getCount() {\n    return count;\n}\n\nvoid add() {\n    count++;\n}\n```\n\n`getCount()` 讓外面看數量，這種方法叫 getter；`add()` 讓外面照規矩改，一次只能加一個。開放什麼、怎麼開放，類別自己決定。"
+    },
+    {
+      "id": "guard",
+      "chapter": 7,
+      "title": "在方法裡把關",
+      "summary": "規則寫在方法裡，誰都繞不過去。",
+      "body": "欄位是 `private` 的，外面只能透過方法改它。所以把規則寫在方法裡，誰都繞不過去。\n\n```\nboolean deposit(int amount) {\n    if (amount <= 0) {\n        return false;\n    }\n    balance += amount;\n    return true;\n}\n```\n\n錢不能存負數、扭蛋不能超過上限，都在方法裡把關。"
+    },
+    {
+      "id": "static-field",
+      "chapter": 7,
+      "title": "static 是大家共用的",
+      "summary": "`static` 欄位整個類別只有一份。",
+      "body": "一般的欄位每個物件各一份；`static` 欄位屬於整個類別，大家共用同一份。\n\n```\nclass Table {\n    static int todayTotal;\n    private int amount;\n}\n```\n\n`amount` 每一桌各算各的，`Table.todayTotal` 整家店只有一個。第四章照寫的 `static` 就是這個意思：屬於類別，不屬於哪一個物件。"
+    },
+    {
+      "id": "final",
+      "chapter": 7,
+      "title": "final 是寫死的",
+      "summary": "`final` 設定一次就不能再改。",
+      "body": "加了 `final` 的變數，設定一次就不能再改。\n\n```\nstatic final int MAX = 12;\n```\n\n`static final` 常拿來當常數：大家共用，而且不會變。常數的名字習慣全部大寫，單字之間用 `_` 隔開，例如 `NEW_YEAR_SET`。"
+    },
+    {
+      "id": "extends",
+      "chapter": 8,
+      "title": "繼承",
+      "summary": "父類別有的，子類別直接就有。",
+      "body": "`extends` 後面寫另一個類別的名字，這個類別就繼承了它。\n\n```\nclass MyPlan extends ParentsPlan {\n}\n```\n\n`ParentsPlan` 叫父類別，`MyPlan` 叫子類別。`MyPlan` 裡面什麼都沒寫，也已經有父類別所有的欄位和方法：`new MyPlan().future()` 拿到的就是父類別寫好的版本。"
+    },
+    {
+      "id": "override",
+      "chapter": 8,
+      "title": "覆寫",
+      "summary": "同名、同參數的方法，換成自己的版本。",
+      "body": "子類別寫一個和父類別同名、同參數的方法，就換成自己的版本。這叫覆寫。\n\n```\nclass MyPlan extends ParentsPlan {\n    String hobby() {\n        return \"畫畫不只是興趣\";\n    }\n}\n```\n\n覆寫了 `hobby()`，`new MyPlan().hobby()` 就用自己的版本；沒覆寫的 `future()`，照樣用父類別的。"
+    },
+    {
+      "id": "override-annotation",
+      "chapter": 8,
+      "title": "@Override 是請編譯器幫你看",
+      "summary": "沒覆寫到，編譯器會直接告訴你。",
+      "body": "覆寫的方法上面加一行 `@Override`，等於請編譯器幫你確認：父類別真的有這個方法。\n\n```\n@Override\nString describe() {\n    return \"資訊科\";\n}\n```\n\n名字打錯（例如 `descripe`）、大小寫不對、參數不一樣，都不算覆寫，只是多了一個新方法。程式照樣能跑，只是悄悄用了父類別的版本。加了 `@Override`，編譯器會直接說沒覆寫到。"
+    },
+    {
+      "id": "super",
+      "chapter": 8,
+      "title": "super 是父類別",
+      "summary": "`super` 用父類別原本的建構子和方法。",
+      "body": "子類別裡寫 `super`，指的是父類別的那一份。\n\n```\nMyPlan(String name) {\n    super(name);\n}\n\nString future() {\n    return super.future() + \"，而且是我喜歡的那一種\";\n}\n```\n\n`super(name)` 把名字交給父類別的建構子。`super.future()` 呼叫父類別原本的 `future()`，再接上自己的部分：留下一部分，改寫一部分。"
+    },
+    {
+      "id": "tostring",
+      "chapter": 8,
+      "title": "toString 決定印出來的樣子",
+      "summary": "覆寫 `toString()` 決定物件怎麼印。",
+      "body": "`System.out.println` 印一個物件的時候，印的是它的 `toString()`。沒覆寫的話，印出來是 `MyPlan@1b6d3586` 這種類別名稱加一串數字；在遊戲裡跑的時候，前面還會多一段 `REPL.$JShell$…` 之類的字。\n\n```\n@Override\npublic String toString() {\n    return month + \"：\" + title;\n}\n```\n\n`toString()` 是所有類別都有的方法，原本就是 `public`，覆寫的時候前面也要寫 `public`。"
+    },
+    {
+      "id": "interface",
+      "chapter": 9,
+      "title": "介面是約定",
+      "summary": "只規定要做到什麼，不管怎麼做。",
+      "body": "`interface` 只寫方法的名字、參數和回傳型別，不寫內容。\n\n```\ninterface Drawable {\n    void draw();\n}\n```\n\n`Drawable` 只說「要會畫」，怎麼畫不管。按鈕、進度條、小老師，各自照這個約定寫自己的版本。實作換了，約定還在。"
+    },
+    {
+      "id": "implements",
+      "chapter": 9,
+      "title": "照約定實作",
+      "summary": "約定的方法都要寫出來，還要加 `public`。",
+      "body": "`implements` 後面寫介面的名字，就是答應照這個約定做。\n\n```\nclass Button implements Drawable {\n    public void draw() {\n        System.out.println(\"[ 開始學習 ]\");\n    }\n}\n```\n\n約定裡的方法每一個都要寫出來，少一個編譯器就會說。介面裡的方法都是 `public`，實作的時候前面也要寫 `public`。"
+    },
+    {
+      "id": "polymorphism",
+      "chapter": 9,
+      "title": "多型",
+      "summary": "同一句 `draw()`，各自畫各自的。",
+      "body": "用介面當型別，就能把不同的物件裝在一起。\n\n```\nDrawable[] screen = {new Button(), new ProgressBar(3, 5)};\nfor (int i = 0; i < screen.length; i++) {\n    screen[i].draw();\n}\n```\n\n迴圈裡都是同一句 `draw()`，按鈕畫按鈕，進度條畫進度條。多了一種元件，只要它也實作 `Drawable`，畫的那段程式一個字都不用改。"
+    },
+    {
+      "id": "abstract",
+      "chapter": 9,
+      "title": "抽象類別",
+      "summary": "共用的寫在一起，抽象方法留給子類別。",
+      "body": "大家共用的寫在 `abstract class` 裡，每個子類別不一樣的部分，寫成 `abstract` 方法留給子類別。\n\n```\nabstract class Screen {\n    void show() {\n        System.out.println(\"== 小白學程式 ==\");\n        body();\n    }\n\n    abstract void body();\n}\n```\n\n`abstract` 方法沒有內容，子類別一定要寫出來。抽象類別還沒寫完，所以不能直接 `new Screen()`，要 `new` 它的子類別。"
+    },
+    {
+      "id": "main",
+      "chapter": 10,
+      "title": "完整程式從 main 開始",
+      "summary": "完整程式從 `main` 開始跑。",
+      "body": "完整的 Java 程式，從 `Main` 類別裡的 `main` 方法開始執行。\n\n```\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(\"小白學程式 v0.9\");\n    }\n}\n```\n\n以前寫在最外層的片段，現在都要放進 `main` 的大括號裡。`import` 寫在檔案最上面，class 外面只能寫 `import` 和類別。"
+    },
+    {
+      "id": "files",
+      "chapter": 10,
+      "title": "一個類別一個檔案",
+      "summary": "`public class` 的名字要和檔名一樣。",
+      "body": "程式變大以後，每個類別放在自己的檔案：`Screen` 放在 `Screen.java`，`Main` 放在 `Main.java`。\n\n```\n// Screen.java\npublic class Screen {\n    void show() {\n        System.out.println(\"== 首頁 ==\");\n    }\n}\n```\n\n寫了 `public` 的類別，名字一定要和檔名一樣。同一個名字的類別，整個程式只能有一個。`import` 只對寫它的那個檔案有效，每個檔案自己 import 自己要用的。"
+    },
+    {
+      "id": "arraylist",
+      "chapter": 10,
+      "title": "ArrayList 是會變長的清單",
+      "summary": "陣列長度固定，清單可以一直加。",
+      "body": "`ArrayList` 是可以一直加東西進去的清單，要先 `import java.util.ArrayList;`。\n\n```\nArrayList<String> screens = new ArrayList<>();\nscreens.add(\"首頁\");\nscreens.add(\"成績\");\nscreens.get(0)          // \"首頁\"，拿第一個\nscreens.size()          // 2，有幾個\nscreens.contains(\"成績\") // true，有沒有\n```\n\n陣列一開始就決定好長度；清單不用先決定，`add` 一次就多一個。"
+    },
+    {
+      "id": "for-each",
+      "chapter": 10,
+      "title": "for-each 是每一個都來一次",
+      "summary": "不用索引，一個一個拿出來。",
+      "body": "只是要把每一個都拿出來用，不需要知道是第幾個的時候，用 for-each。\n\n```\nfor (String s : screens) {\n    System.out.println(\"- \" + s);\n}\n```\n\n冒號唸成「裡面的每一個」：`screens` 裡面的每一個，輪流放進 `s`。清單和陣列都可以這樣走。"
+    },
+    {
+      "id": "generics",
+      "chapter": 10,
+      "title": "角括號寫清楚裝什麼",
+      "summary": "數字要寫 `Integer`，不能寫 `int`。",
+      "body": "`ArrayList<String>` 的角括號，寫清楚這個清單裝什麼。寫了 `String`，放數字進去編譯器就會擋下來。\n\n```\nArrayList<Integer> scores = new ArrayList<>();\nscores.add(72);\n```\n\n角括號裡只能放類別。`int` 不是類別，要寫成它的包裝類別 `Integer`；`double` 也一樣，要寫 `Double`。放進去和拿出來的時候，Java 會自動轉換。"
+    },
+    {
+      "id": "hashmap",
+      "chapter": 10,
+      "title": "HashMap 是對照表",
+      "summary": "`put` 放進去，`get` 查出來。",
+      "body": "`HashMap` 是一張對照表：用一個鍵，查出對應的值。要先 `import java.util.HashMap;`。\n\n```\nHashMap<String, String> initials = new HashMap<>();\ninitials.put(\"tx\", \"梁亭瑄\");\ninitials.get(\"tx\")          // \"梁亭瑄\"\ninitials.containsKey(\"zz\")  // false\n```\n\n角括號裡先寫鍵的型別，再寫值的型別。查不到的鍵，`get` 會交回 `null`，所以先用 `containsKey` 問有沒有；`getOrDefault(鍵, 預設值)` 查不到時交回預設值。"
+    },
+    {
+      "id": "do-while",
+      "chapter": 11,
+      "title": "do-while 是先做再問",
+      "summary": "至少做一次，做完才問要不要再來。",
+      "body": "`while` 先問再做，條件一開始就不成立的話，一次都不做。`do-while` 先做再問，至少會做一次。\n\n```\ndo {\n    System.out.println(\"統計一次\");\n    answer = answers[round];\n    round++;\n} while (answer.equals(\"好\"));\n```\n\n「再統計一次？」「再練一次？」這種一定要先做一次的事，用 `do-while`。最後的 `while (…)` 後面有分號，別忘了。"
+    },
+    {
+      "id": "break",
+      "chapter": 11,
+      "title": "break 是提早離開",
+      "summary": "找到就停，直接跳出迴圈。",
+      "body": "迴圈還沒跑完，但已經找到要的東西了，就用 `break` 直接跳出去。\n\n```\nfor (String d : drafts) {\n    if (d.length() <= 15) {\n        System.out.println(d);\n        break;\n    }\n}\n```\n\n找到第一句夠短的草稿就停，後面的不再看。`break` 只跳出它所在的那一層迴圈。"
+    },
+    {
+      "id": "continue",
+      "chapter": 11,
+      "title": "continue 是跳過這一次",
+      "summary": "這一圈剩下的不做，直接下一圈。",
+      "body": "`continue` 跳過這一圈剩下的部分，直接進入下一圈。\n\n```\nfor (int i = 0; i < 10; i++) {\n    if (weekday == 0 || weekday == 6) {\n        continue;\n    }\n    System.out.println(\"還有 \" + (10 - i) + \" 天\");\n}\n```\n\n週末那一圈，下面的 `println` 不做，迴圈照樣繼續。和 `break` 不一樣：`break` 是整個迴圈都不跑了。"
+    },
+    {
+      "id": "infinite-loop",
+      "chapter": 11,
+      "title": "無限迴圈",
+      "summary": "`while (true)` 一定要留出口。",
+      "body": "迴圈的條件永遠成立，就會一直跑下去，停不下來。\n\n```\nwhile (true) {\n    day++;\n    if (day == 30) {\n        break;\n    }\n}\n```\n\n`while (true)` 一定要在裡面留一個 `break` 當出口。用 `while` 時忘了 `i++`，條件也會永遠成立。程式跑超過 3 秒會被強制停止；`while (true)` 後面沒有出口的程式碼，編譯器會說永遠跑不到。"
+    },
+    {
+      "id": "import",
+      "chapter": 12,
+      "title": "import 與 package",
+      "summary": "`import` 寫在檔案最上面。",
+      "body": "要用 `java.util` 裡的類別，例如 `ArrayList`、`HashMap`，先在檔案最上面寫 `import`。\n\n```\nimport java.util.ArrayList;\nimport java.util.HashMap;\n\npublic class Main {\n    …\n}\n```\n\n`import` 只對寫它的那個檔案有效，每個檔案自己 import 自己要用的。`String`、`System` 這些在 `java.lang` 裡，不用 import。\n\n正式的專案會在第一行寫 `package`，把類別分資料夾放。這個遊戲的程式都放在同一個地方，寫了 `package` 也會被忽略。"
+    },
+    {
+      "id": "full-program",
+      "chapter": 12,
+      "title": "完整的專題",
+      "summary": "好幾個檔案，從 `Main` 開始跑。",
+      "body": "完整的專題是好幾個檔案一起合作：\n\n- `Main.java`：從 `main` 開始，把所有東西接起來\n- 每個類別一個檔案，各自 import 自己要用的\n- 介面定好約定，類別照約定實作\n- 清單裝資料，迴圈走過每一筆，例外和邊界都要擋好\n\n這一年學的東西，全部在裡面。"
     }
   ]
 }

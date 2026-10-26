@@ -1,0 +1,46 @@
+{
+  "id": "ch04-k4",
+  "title": "五種口味的雞蛋糕",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["signature"],
+  "vars": [
+    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}" },
+    { "name": "stars", "type": "int[]", "value": "{3, 4, 5, 2, 4}" }
+  ],
+  "steps": [
+    {
+      "id": "sum",
+      "title": "總共幾顆星",
+      "goal": "用寫好的 `total` 算出總星數，存進 `sum`。",
+      "instructions": "`total(int[] counts)` 的意思是：給它一排整數，它交回總和。不用看它裡面怎麼寫。\n\n按「完成」時會換一組星數再算一次。",
+      "expectedShape": "int sum = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["sum"],
+        "variants": [ { "stars": "{1, 1, 1, 1, 1}" } ]
+      },
+      "hints": {
+        "lead": "照簽章給它一個 int[]。",
+        "plain": "`total(int[] counts)` 說：給我一排整數，我交回總和。把 `stars` 交給它，交回來的放進 `sum`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "rank",
+      "title": "排行榜",
+      "goal": "每種口味印一行，例如 `芋頭 ★★★★★ 27%`。星星用 `repeat`，百分比用 `percent(stars[i], sum)`。",
+      "instructions": "`★` 可以從這裡複製。`percent` 交回的是整數，後面自己接上 `%`。\n\n按「完成」時會換一組星數再跑一次。",
+      "expectedShape": "for (int i = 0; i < flavors.length; i++) {\n    System.out.println(flavors[i] + \" \" + … + \" \" + … + \"%\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "stars": "{5, 5, 5, 5, 5}" } ]
+      },
+      "hints": {
+        "lead": "一行一種口味。",
+        "plain": "用 `for` 走過每一種口味：名字是 `flavors[i]`，星星是 `\"★\".repeat(stars[i])`，百分比交給 `percent(stars[i], sum)`，三段用空格接起來。"
+      },
+      "afterText": ""
+    }
+  ]
+}

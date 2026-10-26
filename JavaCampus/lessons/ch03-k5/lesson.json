@@ -1,0 +1,63 @@
+{
+  "id": "ch03-k5",
+  "title": "README 說可以問",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["parse-int", "try-catch"],
+  "vars": [
+    { "name": "input", "type": "String", "value": "\"85\"" },
+    { "name": "total", "type": "int", "value": "240" },
+    { "name": "count", "type": "int", "value": "3" }
+  ],
+  "steps": [
+    {
+      "id": "parse",
+      "title": "字變成數字",
+      "goal": "用 `Integer.parseInt` 把 `input` 變成 int，存進 `score`。",
+      "instructions": "答題框拿到的東西都是字串，就算長得像數字也一樣，不能直接拿來算。`Integer.parseInt(…)` 會把字串換成 int。\n\n按「完成」時會把 `input` 換成 `\"62\"` 再算一次。",
+      "expectedShape": "int score = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["score"],
+        "variants": [ { "input": "\"62\"" } ]
+      },
+      "hints": {
+        "lead": "Integer.parseInt(input)。",
+        "plain": "`\"85\"` 是兩個字，`85` 才是數字。`Integer.parseInt` 會讀那段字，把它換成真正的數字，換好的放進 `int` 盒子。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "catch",
+      "title": "打了國字",
+      "goal": "用 `try`／`catch`：是數字就印 `收到：85`，不是就印 `要輸入數字喔，例如 80`。",
+      "instructions": "新生打的不一定是數字。`parseInt` 看不懂的時候會跌倒，丟出 `NumberFormatException`。\n\n```\ntry {\n    可能跌倒的程式\n} catch (NumberFormatException e) {\n    跌倒時要做的事\n}\n```\n\n按「完成」時會把 `input` 換成 `\"八十\"` 和 `\"62\"` 再跑一次。",
+      "expectedShape": "try {\n    …\n} catch (NumberFormatException e) {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "input": "\"八十\"" }, { "input": "\"62\"" } ]
+      },
+      "hints": {
+        "lead": "可能跌倒的放進 try。",
+        "plain": "`try` 是「試試看」：裡面的程式跌倒了，不會整個停掉，而是跳到 `catch` 去做備案。`catch` 的括號寫要接住哪一種例外，這裡是 `NumberFormatException`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "zero",
+      "title": "還沒有成績",
+      "goal": "印出平均 `平均：80`；`count` 是 0 時會除以零，接住它，印 `還沒有成績`。",
+      "instructions": "平均是 `total / count`。按「完成」時會把 `count` 換成 0 再跑一次。",
+      "expectedShape": "try {\n    System.out.println(\"平均：\" + …);\n} catch (… e) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "count": "0" } ]
+      },
+      "hints": {
+        "lead": "除以零是 ArithmeticException。",
+        "plain": "整數除以 0 會跌倒，丟出 `ArithmeticException`。把除法放進 `try`，在 `catch (ArithmeticException e)` 裡印出還沒有成績。也可以先用 `if` 檢查 `count` 是不是 0。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "ch08-k2",
+  "title": "留下一部分",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["super"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "super",
+      "title": "super",
+      "goal": "在 `MyPlan` 裡覆寫 `future()`：用 `super.future()` 留下爸媽的那一部分，後面接上 `，而且是我喜歡的那一種`。",
+      "instructions": "`super.future()` 呼叫的是父類別原本的 `future()`。",
+      "expectedShape": "String future() {\n    return super.future() + \"…\";\n}",
+      "check": { "type": "values", "exprs": ["new MyPlan().future()"] },
+      "hints": {
+        "lead": "super.future() 是爸媽的版本。",
+        "plain": "不用整句重寫。`super.future()` 先拿到爸媽原本那一句，後面再接上自己想加的話：留下一部分，改寫一部分。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "name",
+      "title": "建構子的 super",
+      "goal": "父類別多了建構子 `ParentsPlan(String name)`，`MyPlan` 跟著紅字。幫 `MyPlan` 寫建構子 `MyPlan(String name)`，用 `super(name)` 把名字交給父類別。",
+      "instructions": "子類別的建構子要先把父類別需要的東西交給它。",
+      "expectedShape": "MyPlan(String name) {\n    super(…);\n}",
+      "check": { "type": "values", "exprs": ["new MyPlan(\"梁亭瑄\").name", "new MyPlan(\"梁亭瑄\").future()"] },
+      "hints": {
+        "lead": "父類別要一個名字，用 super(name) 交給它。",
+        "plain": "父類別現在要先知道名字才能建立。`MyPlan` 收到名字，用 `super(name)` 原封不動地交給爸媽那一層，`name` 就存好了。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "ch06-k3",
+  "title": "小老師會說話",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["obj-method"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "speak",
+      "title": "小老師的設計圖",
+      "goal": "寫 `class Mascot`：欄位 `name`、`line`，加上建構子，和方法 `void speak()`，印出 `滷肉：「沒關係，再跑一次！」`。`new` 出滷肉和分號，各自 speak。",
+      "instructions": "分號的台詞是 `分號。`。`speak()` 不加 `static`，它就是每個小老師自己的方法。",
+      "expectedShape": "class Mascot {\n    …\n    void speak() {\n        System.out.println(…);\n    }\n}\n\nMascot roufan = new Mascot(…);\n…\nroufan.speak();\n…",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "不寫 static，方法就屬於物件。",
+        "plain": "`roufan.speak()` 用的是滷肉自己的 `name` 和 `line`，`semi.speak()` 用的是分號的。同一個方法，誰呼叫就說誰的話。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "greet",
+      "title": "交回一句話",
+      "goal": "加上 `String greet(String user)`，交回 `滷肉：「梁亭瑄，歡迎回來！」`。",
+      "instructions": "這次不印，交回來。說話的是哪個小老師，用它自己的 `name`。",
+      "expectedShape": "String greet(String user) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["new Mascot(\"滷肉\", \"沒關係，再跑一次！\").greet(\"梁亭瑄\")", "new Mascot(\"分號\", \"分號。\").greet(\"新同學\")"] },
+      "hints": {
+        "lead": "方法裡直接用自己的 name。",
+        "plain": "`greet` 不用問「誰在說話」：它屬於哪個小老師，`name` 就是那個小老師的名字。把 `user` 接進句子裡交回去。"
+      },
+      "afterText": ""
+    }
+  ]
+}

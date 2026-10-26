@@ -1,0 +1,38 @@
+{
+  "id": "ch11-s2",
+  "title": "while(true) 卡住畢業典禮",
+  "route": "學長",
+  "partner": "阿成",
+  "notes": ["break", "infinite-loop"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "exit",
+      "title": "技術上可行",
+      "goal": "先按執行：程式停不下來，3 秒後被強制停止。加上出口：`day` 到 30 就 `break`，迴圈後面印出 `第 30 天：畢業典禮`。",
+      "instructions": "`while (true)` 的條件永遠成立，出口要自己寫在裡面。",
+      "expectedShape": "while (true) {\n    day++;\n    if (…) {\n        break;\n    }\n}\nSystem.out.println(\"第 \" + day + \" 天：畢業典禮\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "無限迴圈須以 `break` 提供終止條件⋯⋯",
+        "plain": "⋯⋯白話：日子一直加，永遠到不了畢業典禮。在裡面放一個 `break`：到第 30 天就跳出來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "after",
+      "title": "迴圈後面",
+      "goal": "這一版在 `while (true)` 後面多了兩行，可是迴圈沒有出口，紅字說這裡永遠跑不到。讓它們跑得到，印出 `第 30 天：畢業典禮` 和 `然後呢？`。",
+      "instructions": "沒有 `break` 的 `while (true)`，後面寫什麼都不會執行。",
+      "expectedShape": "while (true) {\n    …\n}\nSystem.out.println(\"第 \" + day + \" 天：畢業典禮\");\nSystem.out.println(\"然後呢？\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`unreachable statement`⋯⋯",
+        "plain": "⋯⋯白話：編譯器看得出這個迴圈出不來，所以後面那兩行永遠輪不到。給迴圈一個出口，後面才跑得到。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "ch03-s4",
+  "title": "段考筆記：例外",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["parse-int", "try-catch"],
+  "vars": [
+    { "name": "input", "type": "String", "value": "\"85\"" },
+    { "name": "total", "type": "int", "value": "240" },
+    { "name": "count", "type": "int", "value": "3" }
+  ],
+  "steps": [
+    {
+      "id": "parse",
+      "title": "字串變數字",
+      "goal": "用 `Integer.parseInt` 把 `input` 變成數字，印出 `85 分，再加 5 分是 90 分`。",
+      "instructions": "現在印出來的是 `855 分`：字串接上 5，只是把 5 黏在後面。按「完成」時會把 `input` 換成 `\"62\"` 再跑一次。",
+      "expectedShape": "int score = …;\nSystem.out.println(score + \" 分，再加 5 分是 \" + (…) + \" 分\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "input": "\"62\"" } ]
+      },
+      "hints": {
+        "lead": "`Integer.parseInt(String)` 把十進位字串解析成 `int`⋯⋯",
+        "plain": "⋯⋯白話：`\"85\"` 是字，接上 5 只會變成 `855`。先用 `Integer.parseInt` 換成數字，加法才會是加法。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "catch",
+      "title": "先準備好接住",
+      "goal": "輸入不是數字時，印 `要輸入數字喔，例如 80`。",
+      "instructions": "按「完成」時會把 `input` 換成 `\"八十\"` 再跑一次。",
+      "expectedShape": "try {\n    …\n} catch (… e) {\n    System.out.println(\"要輸入數字喔，例如 80\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "input": "\"八十\"" } ]
+      },
+      "hints": {
+        "lead": "`NumberFormatException` 是 unchecked exception，用 try-catch 攔截⋯⋯",
+        "plain": "⋯⋯白話：把可能跌倒的那兩行放進 `try`，跌倒時跳到 `catch`，印出提醒。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "zero",
+      "title": "除以零",
+      "goal": "`count` 是 0 時印 `還沒有成績`，否則印 `平均：80`。",
+      "instructions": "平均是 `total / count`。按「完成」時會把 `count` 換成 0 再跑一次。",
+      "expectedShape": "if (count == 0) {\n    …\n} else {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "count": "0" } ]
+      },
+      "hints": {
+        "lead": "整數除以零會丟出 `ArithmeticException`；先檢查除數就不會發生⋯⋯",
+        "plain": "⋯⋯白話：除之前先問一句：有沒有成績？`count` 是 0 就直接說還沒有成績，不要去除。用 `try`／`catch` 接住也可以。"
+      },
+      "afterText": ""
+    }
+  ]
+}

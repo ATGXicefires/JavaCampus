@@ -1,0 +1,42 @@
+{
+  "id": "ch07-s3",
+  "title": "整家店今天的營業額",
+  "route": "學長",
+  "partner": "阿嬤",
+  "notes": ["static-field"],
+  "vars": [
+    { "name": "orders", "type": "int[]", "value": "{80, 35, 120, 60}" }
+  ],
+  "steps": [
+    {
+      "id": "tables",
+      "title": "每一桌各自的帳",
+      "goal": "寫 `class Table`：`private int amount`、`void order(int price)`、`int getAmount()`，再加 `static int todayTotal`。`t1` 點 80 和 35，`t2` 點 120。",
+      "instructions": "`order` 要同時記進這一桌的帳，和整家店的帳。",
+      "expectedShape": "class Table {\n    static int todayTotal;\n    private int amount;\n    …\n}\n\nTable t1 = new Table();\n…",
+      "check": { "type": "values", "exprs": ["t1.getAmount()", "t2.getAmount()", "Table.todayTotal"] },
+      "hints": {
+        "lead": "實例欄位每個物件一份；`static` 欄位屬於類別⋯⋯",
+        "plain": "⋯⋯白話：`amount` 每一桌各算各的，`todayTotal` 整家店只有一個。`order` 同時加進兩個地方。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "day",
+      "title": "一整天",
+      "goal": "用 `for` 把 `orders` 每一筆都點在一桌新的客人上。",
+      "instructions": "一筆訂單就是一桌新的客人。按「完成」時會換一組訂單再算一次。",
+      "expectedShape": "for (…) {\n    Table t = new Table();\n    t.order(…);\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["Table.todayTotal"],
+        "variants": [ { "orders": "{35}" } ]
+      },
+      "hints": {
+        "lead": "所有實例共用同一個 `static` 欄位⋯⋯",
+        "plain": "⋯⋯白話：每一筆訂單 `new` 一桌新的客人來點，不管有幾桌，錢都加進同一個 `todayTotal`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

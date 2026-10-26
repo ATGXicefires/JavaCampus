@@ -1,0 +1,45 @@
+{
+  "id": "ch07-k3",
+  "title": "小芸的寒假統計",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["static-field"],
+  "vars": [
+    { "name": "daily", "type": "int[]", "value": "{3, 5, 4, 8, 7, 9, 12}" }
+  ],
+  "steps": [
+    {
+      "id": "total",
+      "title": "每一天各自算",
+      "goal": "寫 `class Day`：欄位 `int mentions` 和建構子；再加一個 `static int total`，每 `new` 一天，就把那天的次數加進去。用 `for` 照 `daily` 把每一天都 `new` 出來。",
+      "instructions": "`mentions` 每一天各一份，`Day.total` 是大家共用的一份。每次執行都從乾淨的狀態開始，`total` 不會跨次累加。\n\n按「完成」時會換一組資料再算一次。",
+      "expectedShape": "class Day {\n    static int total;\n    int mentions;\n\n    Day(int mentions) {\n        …\n    }\n}\n\nfor (…) {\n    new Day(…);\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["Day.total"],
+        "variants": [ { "daily": "{1, 1}" } ]
+      },
+      "hints": {
+        "lead": "static 是大家共用的那一份。",
+        "plain": "`mentions` 每一天各一份；`total` 加了 `static`，整個 `Day` 只有一份，每一天都往同一個地方加。在建構子裡寫 `total += mentions;`，每 `new` 一天就加一次。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "running",
+      "title": "每天的累計",
+      "goal": "每 `new` 一天就印一行：`第 1 天：3 次，累計 3 次`。",
+      "instructions": "按「完成」時會換一組資料再跑一次。",
+      "expectedShape": "Day d = new Day(…);\nSystem.out.println(\"第 \" + (…) + \" 天：\" + d.mentions + \" 次，累計 \" + … + \" 次\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "daily": "{1, 2}" } ]
+      },
+      "hints": {
+        "lead": "d.mentions 是那一天的，Day.total 是大家的。",
+        "plain": "每 `new` 一天就印一行：那一天自己的 `d.mentions`，和到目前為止的 `Day.total`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

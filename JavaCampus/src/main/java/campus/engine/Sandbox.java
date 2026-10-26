@@ -100,9 +100,9 @@ public final class Sandbox implements AutoCloseable {
         }
 
         List<Segment> segments = split(js, source, null);
-        Optional<Problem> semicolon = missingSemicolon(segments);
-        if (semicolon.isPresent()) {
-            return compileError(List.of(semicolon.get()));
+        Optional<Problem> early = conflictMarker(source, null).or(() -> missingSemicolon(segments));
+        if (early.isPresent()) {
+            return compileError(List.of(early.get()));
         }
 
         output.reset();
@@ -138,7 +138,7 @@ public final class Sandbox implements AutoCloseable {
                     }
                     if (ev.status() == Status.RECOVERABLE_DEFINED || ev.status() == Status.RECOVERABLE_NOT_DEFINED) {
                         if (sn instanceof DeclarationSnippet ds) {
-                            return compileError(unresolved(js, ds, seg));
+                            return compileError(unresolved(js, ds, seg, source));
                         }
                     }
                     if (sn instanceof VarSnippet v && v.subKind() != Snippet.SubKind.TEMP_VAR_EXPRESSION_SUBKIND
@@ -182,8 +182,9 @@ public final class Sandbox implements AutoCloseable {
             String code = blankPackage(f.text());
             units.add(new Unit(f, code, split(js, code, f.name())));
         }
-        Optional<Problem> early = units.stream().map(u -> missingSemicolon(u.segments())).flatMap(Optional::stream)
-                .findFirst().or(() -> structure(js, units)).or(() -> foreignImport(js, units));
+        Optional<Problem> early = units.stream()
+                .map(u -> conflictMarker(u.code(), u.file().name()).or(() -> missingSemicolon(u.segments())))
+                .flatMap(Optional::stream).findFirst().or(() -> structure(js, units)).or(() -> foreignImport(js, units));
         if (early.isPresent()) {
             return compileError(List.of(early.get()));
         }
@@ -217,11 +218,25 @@ public final class Sandbox implements AutoCloseable {
                     }
                 }
             }
-            // 類別可以用到後面才宣告的類別，所以全部定義完才檢查還有沒有找不到的名字
+            // 類別可以用到後面才宣告的類別，所以全部定義完才檢查還有沒有找不到的名字；
+            // 本身就有錯的類別先回報，用到它的類別只會跟著說找不到它
+            Map.Entry<DeclarationSnippet, Segment> broken = null;
             for (Map.Entry<DeclarationSnippet, Segment> d : declared.entrySet()) {
-                if (js.status(d.getKey()) != Status.VALID) {
-                    return compileError(unresolved(js, d.getKey(), d.getValue()));
+                if (js.status(d.getKey()) == Status.VALID) {
+                    continue;
                 }
+                if (js.unresolvedDependencies(d.getKey()).findAny().isEmpty()) {
+                    broken = d;
+                    break;
+                }
+                if (broken == null) {
+                    broken = d;
+                }
+            }
+            if (broken != null) {
+                Segment seg = broken.getValue();
+                String code = units.stream().filter(u -> u.segments().contains(seg)).findFirst().orElseThrow().code();
+                return compileError(unresolved(js, broken.getKey(), seg, code));
             }
             if (launch) {
                 Optional<RunResult> failed = launch(js, units, bySnippetId);
@@ -521,6 +536,19 @@ public final class Sandbox implements AutoCloseable {
         return out;
     }
 
+    /** 合併衝突的標記不是 Java，編譯器只會說運算式在這裡斷掉了；直接指出是哪一行。 */
+    private static Optional<Problem> conflictMarker(String source, String file) {
+        int at = 0;
+        for (String line : source.split("\n", -1)) {
+            if (line.startsWith("<<<<<<<") || line.startsWith("=======") || line.startsWith(">>>>>>>")) {
+                return Optional.of(new Problem(Severity.ERROR, at, at + line.stripTrailing().length(),
+                        Diagnostics.conflictMarker(), "merge conflict marker", file));
+            }
+            at += line.length() + 1;
+        }
+        return Optional.empty();
+    }
+
     /** JShell 會自動補分號、也接受結尾沒有分號的運算式，真正的 Java 兩者都不允許。 */
     private static Optional<Problem> missingSemicolon(List<Segment> segments) {
         for (Segment seg : segments) {
@@ -559,9 +587,9 @@ public final class Sandbox implements AutoCloseable {
         return out;
     }
 
-    private List<Problem> unresolved(JShell js, DeclarationSnippet ds, Segment seg) {
+    private List<Problem> unresolved(JShell js, DeclarationSnippet ds, Segment seg, String source) {
         Diagnostics.Names names = names(js);
-        return js.unresolvedDependencies(ds).map(dep -> {
+        List<Problem> out = js.unresolvedDependencies(ds).map(dep -> {
             String english = "cannot find symbol\n  symbol:   " + dep + "\n  location: class";
             String name = dep.replaceFirst("^\\w+\\s+", "").replaceFirst("\\(.*", "");
             int idx = seg.text().indexOf(name);
@@ -571,6 +599,8 @@ public final class Sandbox implements AutoCloseable {
                     Diagnostics.compileError("compiler.err.cant.resolve.location", english, names), "cannot find symbol: " + dep,
                     seg.file());
         }).toList();
+        // 子類別沒把參數交給父類別的建構子，JShell 也當成之後還能補救，但其實沒有缺少的名字，要看它的錯誤
+        return out.isEmpty() ? rejected(js, ds, seg, source) : out;
     }
 
     private static Problem runtimeProblem(JShellException ex, Map<String, Segment> bySnippetId, Segment current) {

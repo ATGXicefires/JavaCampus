@@ -1,0 +1,38 @@
+{
+  "id": "ch12-kt",
+  "title": "我現在看得懂了",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["println", "if-else"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "output",
+      "title": "4.2",
+      "goal": "把 4.2 那一段術語翻成白話，印出 `把引號裡的字，原封不動印出來`。",
+      "instructions": "這句白話就是教學筆記第一頁寫的那一句。",
+      "expectedShape": "System.out.println(\"…\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "翻成一句白話。",
+        "plain": "那一長段說的，其實就是 `println` 會把引號裡的字照樣印出來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "if",
+      "title": "4.4",
+      "goal": "再把 4.4 翻成白話，印出 `如果有滷肉飯就吃滷肉飯，否則吃控肉飯`。",
+      "instructions": "4.2 那一行留著。",
+      "expectedShape": "System.out.println(\"如果…，否則…\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "if-else 就是選午餐。",
+        "plain": "條件成立做這個，否則做那個，就像中午有滷肉飯就吃滷肉飯，沒有就吃控肉飯。"
+      },
+      "afterText": ""
+    }
+  ]
+}

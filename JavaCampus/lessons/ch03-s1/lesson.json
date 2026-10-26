@@ -1,0 +1,63 @@
+{
+  "id": "ch03-s1",
+  "title": "她這個月寫的",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["compare", "int-div", "for"],
+  "vars": [
+    { "name": "score", "type": "int", "value": "60" },
+    { "name": "total", "type": "int", "value": "312" },
+    { "name": "days", "type": "int", "value": "7" }
+  ],
+  "steps": [
+    {
+      "id": "equal",
+      "title": "又是全形",
+      "goal": "修到分數剛好 60 時印 `剛好及格`，其他分數什麼都不印。",
+      "instructions": "這一份有兩個紅字。按「完成」時會把 `score` 換成 59 再跑一次，那時什麼都不印。",
+      "expectedShape": "if (score … 60) {\n    System.out.println(\"剛好及格\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "score": "59" } ]
+      },
+      "hints": {
+        "lead": "`incompatible types: int cannot be converted to boolean`，還有 `illegal character: '\\uff1b'`⋯⋯",
+        "plain": "⋯⋯白話：`=` 是把 60 放進 `score`，不是在比較；比較要用 `==`。行尾的 `；` 是全形，換成半形的 `;`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "avg",
+      "title": "平均又是整數",
+      "goal": "修到 `avg` 有小數。",
+      "instructions": "現在 `avg` 是 `62.0`。按「完成」時會把 `total` 換成 300 再算一次。",
+      "expectedShape": "double avg = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["avg"],
+        "variants": [ { "total": "300" } ]
+      },
+      "hints": {
+        "lead": "`total / 5` 是 `int` 除法，指定給 `double` 之前就已經截斷⋯⋯",
+        "plain": "⋯⋯白話：兩個整數相除會丟掉小數。把 `5` 寫成 `5.0`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "days",
+      "title": "少印一天",
+      "goal": "修到從 1 印到 `days`：`第 1 天`⋯⋯",
+      "instructions": "現在只印到 `第 6 天`。按「完成」時會把 `days` 換成 3 再跑一次。",
+      "expectedShape": "for (int i = 1; i … days; i++) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "days": "3" } ]
+      },
+      "hints": {
+        "lead": "`i < days` 在 `i == days` 時就結束，少執行一次⋯⋯",
+        "plain": "⋯⋯白話：從 1 數到 7 要包含 7，所以條件是 `i <= days`。和從 0 開始數、多跑一次的錯剛好相反。"
+      },
+      "afterText": ""
+    }
+  ]
+}

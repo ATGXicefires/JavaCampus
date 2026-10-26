@@ -1,0 +1,63 @@
+{
+  "id": "ch02-k4",
+  "title": "一週十五個飯糰",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["arith", "compare"],
+  "vars": [
+    { "name": "perDay", "type": "int", "value": "3" },
+    { "name": "days", "type": "int", "value": "5" }
+  ],
+  "steps": [
+    {
+      "id": "week",
+      "title": "一週幾個",
+      "goal": "每天 `perDay` 個飯糰、一週上學 `days` 天：算出一週幾個，存進 `perWeek`。",
+      "instructions": "題目給了 `int perDay = 3`、`int days = 5`。乘法用 `*`。\n\n按「完成」時會把 `perDay` 換成 2 再算一次。",
+      "expectedShape": "int perWeek = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["perWeek"],
+        "variants": [ { "perDay": "2" } ]
+      },
+      "hints": {
+        "lead": "乘法是 *。",
+        "plain": "一天 3 個、5 天就是 3 × 5。Java 的乘號寫成 `*`，用盒子的名字來算：`perDay * days`，數字換了，答案也會跟著換。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "too-many",
+      "title": "太多了嗎",
+      "goal": "`perWeek` 大於等於 10 就是太多了：把結果存進 `boolean tooMany`。",
+      "instructions": "`>=` 是「大於等於」。比較的答案本身就是 `true` 或 `false`，不用寫 `if`，直接放進 `boolean` 盒子。\n\n按「完成」時會把 `perDay` 換成 1 再算一次。",
+      "expectedShape": "int perWeek = …;\nboolean tooMany = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["tooMany"],
+        "variants": [ { "perDay": "1" } ]
+      },
+      "hints": {
+        "lead": "比較的答案就是 boolean。",
+        "plain": "`perWeek >= 10` 是在問：「一週的量有沒有到 10 個？」答案只有 `true` 或 `false`，剛好可以直接放進 `boolean` 盒子。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "tell",
+      "title": "跟媽媽說",
+      "goal": "太多就印 `媽，明天便當多做一份。`，否則印 `再觀察一週。`。",
+      "instructions": "用第一章的 `if`／`else`，括號裡放 `tooMany`。按「完成」時會把 `perDay` 換成 1 再跑一次，兩句都要印對。",
+      "expectedShape": "if (…) {\n    System.out.println(\"…\");\n} else {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "perDay": "1" } ]
+      },
+      "hints": {
+        "lead": "if 的括號裡放 tooMany。",
+        "plain": "`tooMany` 本身就是 `boolean`，可以直接放進 `if` 的括號：是 `true` 就走第一對大括號，是 `false` 就走 `else`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

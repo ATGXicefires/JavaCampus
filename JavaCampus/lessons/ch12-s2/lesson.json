@@ -1,0 +1,38 @@
+{
+  "id": "ch12-s2",
+  "title": "Release notes",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["tostring", "arraylist"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "releases",
+      "title": "每一個版本",
+      "goal": "寫 `class Release`：欄位 `version`、`month`、`note` 和建構子，覆寫 `toString()` 交回 `v0.1（11月）校慶試玩版` 這樣的一行。用 `ArrayList<Release>` 照順序放進 `main` 裡的每一個版本，印出整份紀錄。",
+      "instructions": "三個陣列的同一格是同一個版本。",
+      "expectedShape": "public String toString() {\n    return version + \"（\" + month + \"）\" + note;\n}\n…\nfor (Release r : releases) {\n    System.out.println(r);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "覆寫 `toString` 定義每筆紀錄的格式⋯⋯",
+        "plain": "⋯⋯白話：每一版的樣子寫在 `toString()` 裡，清單從 v0.1 排到 v1.0，迴圈一行一行印。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "newest",
+      "title": "最新的在最上面",
+      "goal": "版本紀錄的習慣是最新的放最上面。把印的那段改成用索引從最後一個往前印。",
+      "instructions": "最後一個的索引是 `releases.size() - 1`。",
+      "expectedShape": "for (int i = releases.size() - 1; i >= 0; i--) {\n    System.out.println(…);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "由尾端往前走訪⋯⋯",
+        "plain": "⋯⋯白話：從 v1.0 印回 v0.1。索引從最後一個開始，每次減一，減到 0 為止。"
+      },
+      "afterText": ""
+    }
+  ]
+}

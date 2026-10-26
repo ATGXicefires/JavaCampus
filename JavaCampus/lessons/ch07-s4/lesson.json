@@ -1,0 +1,36 @@
+{
+  "id": "ch07-s4",
+  "title": "年菜的價錢不能改",
+  "route": "學長",
+  "partner": "阿嬤",
+  "notes": ["final"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "menu",
+      "title": "價目表",
+      "goal": "寫 `class Menu`，用 `static final` 定好三個價錢：滷肉飯 35、虱目魚湯 60、年菜套餐 880。印出價目表，一行一道，例如 `滷肉飯 35 元`。",
+      "instructions": "常數的名字全部大寫，例如 `NEW_YEAR_SET`。",
+      "expectedShape": "class Menu {\n    static final int LU_ROU_FAN = 35;\n    …\n}\n\nSystem.out.println(\"滷肉飯 \" + Menu.LU_ROU_FAN + \" 元\");\n…",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`static final` 宣告類別層級的常數，命名慣例為全大寫⋯⋯",
+        "plain": "⋯⋯白話：價目表寫死在 `Menu` 裡，誰都改不了。名字全部大寫，單字之間用 `_` 隔開。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "raise",
+      "title": "有人想漲價",
+      "goal": "起始碼有一行 `Menu.NEW_YEAR_SET = 980;`，紅字。改成另外算：在價目表後面印出 `年菜套餐（今年）980 元`。",
+      "instructions": "常數不能改，但可以拿來算：今年漲 100 元。",
+      "expectedShape": "System.out.println(\"年菜套餐（今年）\" + (…) + \" 元\");",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`cannot assign a value to static final variable NEW_YEAR_SET`⋯⋯",
+        "plain": "⋯⋯白話：常數不能改，但可以拿來算：`Menu.NEW_YEAR_SET + 100` 就是今年的價錢。放進字串中間記得加括號。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "ch10-k1",
+  "title": "第一個 Main.java",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["main", "files"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "main",
+      "title": "從 main 開始",
+      "goal": "寫 `public class Main`，裡面放 `public static void main(String[] args)`，在 `main` 裡印出 `小白學程式 v0.9`。",
+      "instructions": "完整的程式從 `main` 開始執行。以前寫在最外層的敘述，現在都要放進 `main` 的大括號裡。",
+      "expectedShape": "public class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "敘述都放進 main 裡。",
+        "plain": "`Main` 像是整個程式的大門，`main` 是進門的第一步。按下執行，電腦就從 `main` 的第一行開始往下跑。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "screen",
+      "title": "另一個檔案",
+      "goal": "按分頁列右邊的「＋」新增 `Screen.java`，寫 `class Screen`：欄位 `title`、建構子，`void show()` 印出 `== 首頁 ==` 這樣的標題。在 `main` 裡 `new` 兩個畫面 `首頁` 和 `課程列表`，各 `show()` 一次。",
+      "instructions": "新增的檔案會先寫好 `public class Screen`，在大括號裡接著寫。版本那一行留著。",
+      "expectedShape": "// Screen.java\npublic class Screen {\n    String title;\n    …\n}\n\n// Main.java\nScreen home = new Screen(\"首頁\");\n…",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "一個類別一個檔案。",
+        "plain": "程式變大以後，每個類別住在自己的檔案，像資料夾裡一份一份的文件。`Main` 不用搬家，也叫得到隔壁檔案的 `Screen`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

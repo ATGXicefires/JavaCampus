@@ -1,0 +1,61 @@
+{
+  "id": "ch03-s3",
+  "title": "段考筆記：陣列與等第",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["array", "index", "else-if"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" },
+    { "name": "score", "type": "int", "value": "85" }
+  ],
+  "steps": [
+    {
+      "id": "lockers",
+      "title": "置物櫃",
+      "goal": "用 `for` 印出每一格：`第 0 格：72`⋯⋯",
+      "instructions": "把編號和分數一起印出來。按「完成」時會換一組分數再跑一次。",
+      "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    System.out.println(\"第 \" + … + \" 格：\" + …);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "陣列索引是從 0 起算的位移量⋯⋯",
+        "plain": "⋯⋯白話：把編號和分數一起印出來，一眼就看得出編號從 0 開始。`i` 是編號，`scores[i]` 是那一格的分數。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "last",
+      "title": "最後一格",
+      "goal": "在下面再印一行 `最後一格是第 4 格`，用 `length - 1` 算。",
+      "instructions": "按「完成」時會換一組分數再跑一次，那時最後一格是第 1 格。",
+      "expectedShape": "System.out.println(\"最後一格是第 \" + (…) + \" 格\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "最後一個索引是 `length - 1`；放在串接裡要加括號⋯⋯",
+        "plain": "⋯⋯白話：5 格的最後一格是 4 號，用 `scores.length - 1` 算。放進字串中間時要加括號，不然 `-` 會碰到字串。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "grade",
+      "title": "順序很重要",
+      "goal": "寫出正確的等第範例，印出 `85 分是 B`。",
+      "instructions": "90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。按「完成」時會把 `score` 換成 95、60、59 再跑幾次。",
+      "expectedShape": "if (score >= 90) {\n    System.out.println(score + \" 分是 A\");\n} else if (…) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "score": "95" }, { "score": "60" }, { "score": "59" } ]
+      },
+      "hints": {
+        "lead": "多分支選擇依序判斷，條件要從嚴到寬排列⋯⋯",
+        "plain": "⋯⋯白話：從 90 分開始往下問，第一個成立的就是答案。95 分停在 A，60 分停在 D，59 分走到最後的 F。"
+      },
+      "afterText": ""
+    }
+  ]
+}

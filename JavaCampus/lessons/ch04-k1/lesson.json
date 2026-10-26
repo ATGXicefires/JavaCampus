@@ -1,0 +1,49 @@
+{
+  "id": "ch04-k1",
+  "title": "小老師說話",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["method", "param", "return"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "hello",
+      "title": "打招呼",
+      "goal": "寫 `static void hello()`，印出 `滷肉：「歡迎來到小白！」`，再呼叫它兩次。",
+      "instructions": "把要做的事包進大括號，取名叫 `hello`，就是一個方法。寫好以後，要用的時候寫 `hello();` 叫它。\n\n```\nstatic void 名字() {\n    要做的事\n}\n```\n\n`static` 先照寫。`void` 的意思是這個方法做完事，不交回任何東西。",
+      "expectedShape": "static void hello() {\n    …\n}\n\nhello();\n…",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先寫好，再叫兩次。",
+        "plain": "方法就像一張寫好的便條：大括號裡是要做的事，`hello` 是便條的名字。寫 `hello();` 就是照便條做一次，叫兩次就做兩次。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "say",
+      "title": "誰說什麼",
+      "goal": "寫 `static void say(String who, String line)`，讓滷肉說 `沒關係，再跑一次！`、分號說 `分號。`，格式是 `滷肉：「沒關係，再跑一次！」`。",
+      "instructions": "括號裡的 `who` 和 `line` 叫參數：呼叫的時候給什麼，方法裡就用什麼。\n\n照順序給：第一個是誰說的，第二個是說什麼。",
+      "expectedShape": "static void say(String who, String line) {\n    System.out.println(…);\n}\n\nsay(\"滷肉\", \"…\");\nsay(\"分號\", \"…\");",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "括號裡放要交給它的東西。",
+        "plain": "`who` 和 `line` 是兩個空盒子，呼叫 `say` 的時候才把名字和台詞放進去。方法裡用這兩個名字排出那一句話。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "line",
+      "title": "交回一句話",
+      "goal": "寫 `static String line(String who, String text)`：這次不印，把排好的那句話交回來。",
+      "instructions": "和上一步不一樣：這次不印，用 `return` 交回去。\n\n名字前面要寫交回來的東西是什麼型別，這裡是 `String`。",
+      "expectedShape": "static String line(String who, String text) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["line(\"分號\", \"分號。\")", "line(\"滷肉\", \"好耶\")"] },
+      "hints": {
+        "lead": "用 return 交回去。",
+        "plain": "名字前面的 `String` 是在說：這個方法做完會交回一段文字。用 `return` 把排好的那句話交回去，呼叫的人可以拿去印，也可以拿去做別的事。"
+      },
+      "afterText": ""
+    }
+  ]
+}

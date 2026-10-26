@@ -1,0 +1,23 @@
+{
+  "id": "ch09-s4",
+  "title": "她的加油訊息",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["implements"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "cheer",
+      "title": "還是有 bug",
+      "goal": "修到印出 `學長面試加油！你一定可以！`。",
+      "instructions": "一次修一個紅字。",
+      "expectedShape": "class Me implements Cheer {\n    public void say() {\n        …\n    }\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`Me is not abstract and does not override abstract method say() in Cheer`⋯⋯",
+        "plain": "⋯⋯白話：`sey` 打錯字，所以 `Me` 沒有寫出約定裡的 `say()`。改好名字以後，前面還要加上 `public`：介面裡的方法都是 public。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "ch08-k3",
+  "title": "兩條路",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["override-annotation"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "paths",
+      "title": "兩個子類別",
+      "goal": "寫 `DesignPath` 和 `CodePath`，都繼承 `Path`。建構子用 `super(\"廣設科\")`、`super(\"資訊科\")` 交出名字，再用 `@Override` 覆寫 `describe()`：廣設科交回 `廣設科：畫我喜歡的東西`，資訊科交回 `資訊科：把我畫的東西變成會動的`。",
+      "instructions": "`@Override` 寫在覆寫的方法上面一行。",
+      "expectedShape": "class DesignPath extends Path {\n    DesignPath() {\n        super(\"廣設科\");\n    }\n\n    @Override\n    String describe() {\n        …\n    }\n}\n\nclass CodePath extends Path {\n    …\n}",
+      "check": { "type": "values", "exprs": ["new DesignPath().describe()", "new CodePath().describe()"] },
+      "hints": {
+        "lead": "兩個子類別，各寫一個 describe()。",
+        "plain": "同一個 `Path`，分出兩條路：各自交出自己的名字，各自寫自己的 `describe()`。交回的字可以直接用 `name` 接上去。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "typo",
+      "title": "打錯字的那一條",
+      "goal": "第三條路 `StayPath` 寫成了 `descripe()`，上面的 `@Override` 紅字。修好，讓它交回 `留下來：先試試看`。",
+      "instructions": "紅字說它沒有覆寫到任何方法。",
+      "expectedShape": "@Override\nString describe() {\n    …\n}",
+      "check": { "type": "values", "exprs": ["new StayPath().describe()"] },
+      "hints": {
+        "lead": "名字要和父類別一模一樣。",
+        "plain": "`descripe` 少打一個字母，就變成另一個新方法，`describe()` 還是用父類別的 `還不知道`。`@Override` 像是請人幫忙對名字：對不上就直接說出來。"
+      },
+      "afterText": ""
+    }
+  ]
+}

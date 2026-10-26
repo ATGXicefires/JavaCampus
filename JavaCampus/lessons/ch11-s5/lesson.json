@@ -1,0 +1,52 @@
+{
+  "id": "ch11-s5",
+  "title": "一年的 bug",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["fullwidth", "concat", "index", "equals", "boundary", "this", "private", "override-annotation", "implements", "generics"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "first",
+      "title": "上學期的",
+      "goal": "修好上學期的五個錯：全形分號、`\"總共 \" + 3 + 4`、`i <= scores.length`、用 `==` 比字串、及格寫成 `> 60`。",
+      "instructions": "一次修一個。紅字先修，修到能跑，再對照輸出找剩下的。",
+      "expectedShape": "System.out.println(\"總共 \" + (…) + \" 個貼紙\");\nfor (int i = 0; i < …; i++) {\n…\nif (typed.equals(…)) {\n…\nif (score >= 60) {",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "編譯錯誤、執行期例外、邏輯錯誤依序排除⋯⋯",
+        "plain": "⋯⋯白話：五個錯分別是第一章到第五章踩過的坑：分號、字串接數字、陣列的最後一格、字串比內容、剛好 60 分。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "second",
+      "title": "下學期的",
+      "goal": "這一版多了下學期寫的類別。修好四個錯：`answer = answer`、從外面改 private 欄位、`chek` 沒覆寫到（加 `@Override` 抓出來）、實作介面沒寫 `public`。",
+      "instructions": "四個錯分散在幾個分頁裡。",
+      "expectedShape": "this.answer = answer;\n…\n@Override\nboolean check(String typed) {\n…\npublic void draw() {\n…\np.finish();",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`this`、封裝、覆寫、介面實作的常見錯誤⋯⋯",
+        "plain": "⋯⋯白話：第六章到第九章的坑：參數蓋住欄位、`private` 從外面碰不到、名字打錯就沒覆寫到、介面的方法要寫 `public`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "last",
+      "title": "最後一個",
+      "goal": "最後一個是第十章的：修好 `total` 的 `ArrayList<int>`。",
+      "instructions": "按「完成」時會直接呼叫 `total` 測試，`main` 不會執行。",
+      "expectedShape": "static int total(ArrayList<…> list) {\n    …\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))"] },
+      "hints": {
+        "lead": "型別參數不可為基本型別⋯⋯",
+        "plain": "⋯⋯白話：角括號裡只能放類別，`int` 要寫成 `Integer`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

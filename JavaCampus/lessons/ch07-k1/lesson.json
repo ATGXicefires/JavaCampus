@@ -1,0 +1,36 @@
+{
+  "id": "ch07-k1",
+  "title": "只有我能開的扭蛋包",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["private", "getter-setter"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "lock",
+      "title": "鎖起來",
+      "goal": "寫 `class GachaBag`：欄位 `private int count`，方法 `void add()` 加一個、`int getCount()` 交回數量。`new` 一個叫 `bag` 的扭蛋包，加 8 個。",
+      "instructions": "`private` 的欄位只有類別自己能碰。外面要加扭蛋，只能叫 `add()`；要知道有幾個，只能問 `getCount()`。",
+      "expectedShape": "class GachaBag {\n    private int count;\n    …\n}\n\nGachaBag bag = new GachaBag();\n…",
+      "check": { "type": "values", "exprs": ["bag.getCount()"] },
+      "hints": {
+        "lead": "外面只能用方法。",
+        "plain": "`count` 鎖在扭蛋包裡面，只有 `GachaBag` 自己的方法能改它。`add()` 讓它加一，`getCount()` 把數量交出來。加 8 個就叫 8 次 `add()`，用 `for` 比較快。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "outside",
+      "title": "從外面改不了",
+      "goal": "起始碼的最後一行偷偷寫了 `bag.count = 99;`，紅字說 `count` 是 private。刪掉，改成用 `add()` 再加一個。",
+      "instructions": "`private` 的意思就是外面碰不到。",
+      "expectedShape": "bag.…();",
+      "check": { "type": "values", "exprs": ["bag.getCount()"] },
+      "hints": {
+        "lead": "照規矩，用 add()。",
+        "plain": "`private` 的欄位，外面連看都不行，更不能直接改。想多一個扭蛋，就照扭蛋包開放的方法 `bag.add();`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

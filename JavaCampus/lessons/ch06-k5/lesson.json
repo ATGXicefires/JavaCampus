@@ -1,0 +1,54 @@
+{
+  "id": "ch06-k5",
+  "title": "學長出的模擬題",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["array-loop", "nested", "constructor"],
+  "vars": [
+    { "name": "n", "type": "int", "value": "4" }
+  ],
+  "steps": [
+    {
+      "id": "count-above",
+      "title": "第一題：陣列與方法",
+      "goal": "寫 `static int countAbove(int[] a, int line)`，數出有幾個數字大於等於 `line`。",
+      "instructions": "模擬題用到第 1～6 章。空的陣列要交回 0。",
+      "expectedShape": "static int countAbove(int[] a, int line) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["countAbove(new int[]{72, 58, 65}, 60)", "countAbove(new int[]{}, 60)", "countAbove(new int[]{60}, 60)"] },
+      "hints": {
+        "lead": "大於等於，包含剛好的。",
+        "plain": "準備一個從 0 開始的盒子，走過每一格，`a[i] >= line` 就數一個，最後交回去。空的陣列一次都不會數，剛好是 0。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "triangle",
+      "title": "第二題：迴圈",
+      "goal": "用巢狀迴圈印出 `n` 層的星星三角形：第 1 層 1 顆 `*`，第 `n` 層 `n` 顆。",
+      "instructions": "按「完成」時會把 `n` 換成 2 再跑一次。",
+      "expectedShape": "for (int i = 1; i <= n; i++) {\n    String row = \"\";\n    for (…) {\n        row += \"*\";\n    }\n    System.out.println(row);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "n": "2" } ]
+      },
+      "hints": {
+        "lead": "第 i 層有 i 顆。",
+        "plain": "外面的迴圈數第幾層，裡面的迴圈畫那一層的星星：第 `i` 層畫 `i` 顆，所以裡面的條件是 `j <= i`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "student",
+      "title": "第三題：類別",
+      "goal": "寫 `class Student`：欄位 `name`、`score`，建構子，方法 `boolean pass()`（60 分以上及格）。",
+      "instructions": "會用 62 分和 59 分測。",
+      "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(…) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
+      "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()"] },
+      "hints": {
+        "lead": "設計圖、建構子、方法。",
+        "plain": "照第六章的寫法：兩個欄位、一個用 `this` 的建構子，`pass()` 交回 `score >= 60`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

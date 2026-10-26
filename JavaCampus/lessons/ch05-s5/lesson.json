@@ -1,0 +1,49 @@
+{
+  "id": "ch05-s5",
+  "title": "幫她的程式做壓力測試",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["test-data", "max-min"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "check",
+      "title": "比對",
+      "goal": "寫 `static String check(boolean actual, boolean expected)`：一樣交回 `PASS`，不一樣交回 `FAIL`。",
+      "instructions": "上面是她寫好的 `isPass`、`max`、`showBadge`。先寫一個比對用的小工具。",
+      "expectedShape": "static String check(boolean actual, boolean expected) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["check(true, true)", "check(true, false)", "check(false, false)"] },
+      "hints": {
+        "lead": "比較兩個 `boolean`，回傳對應的字串⋯⋯",
+        "plain": "⋯⋯白話：實際的結果和預期的一樣就是 PASS，不一樣就是 FAIL。兩個 `boolean` 可以直接用 `==` 比。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "boundary",
+      "title": "邊界全部測一遍",
+      "goal": "把測資放進陣列 `{59, 60, 61, 0, 100}`，預期結果也放進陣列，用迴圈印出 `isPass(59) PASS` 這樣的每一行。",
+      "instructions": "測資放一個陣列，預期的答案放另一個 `boolean[]`，同一個 `i` 對同一組。",
+      "expectedShape": "int[] tests = {59, 60, 61, 0, 100};\nboolean[] expected = {…};\nfor (…) {\n    System.out.println(\"isPass(\" + tests[i] + \") \" + check(…));\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "以兩個平行陣列存放測資與預期結果⋯⋯",
+        "plain": "⋯⋯白話：測資放一個陣列，預期的答案放另一個，同一個 `i` 對同一組。每一組印一行結果。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "my-max",
+      "title": "自己寫一份對照",
+      "goal": "寫 `static int myMax(int[] a)`，拿它檢查她的 `max`：三組刁鑽的測資，每組印一行，例如 `第 1 組 PASS`。",
+      "instructions": "三組測資：全部是負數的 `{-3, -7}`、只有一個的 `{5}`、最大的在最前面的 `{62, 41, 34}`。兩邊算出來一樣就是 PASS。",
+      "expectedShape": "static int myMax(int[] a) {\n    …\n}\n\nint[] t1 = {-3, -7};\n…\nSystem.out.println(\"第 1 組 \" + check(max(t1) == myMax(t1), true));",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "以獨立實作作為測試的對照組⋯⋯",
+        "plain": "⋯⋯白話：自己另外寫一份找最大值的方法，拿同一組資料給兩邊算，答案一樣就是 PASS。三組都挑刁鑽的。"
+      },
+      "afterText": ""
+    }
+  ]
+}

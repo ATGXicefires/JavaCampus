@@ -1,0 +1,42 @@
+{
+  "id": "ch08-k4",
+  "title": "印出來看得懂",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["tostring"],
+  "vars": [
+    { "name": "months", "type": "String[]", "value": "{\"9月\", \"11月\", \"2月\"}" },
+    { "name": "titles", "type": "String[]", "value": "{\"提案簡報的插圖\", \"校慶版的介面\", \"貼紙系統的草稿\"}" }
+  ],
+  "steps": [
+    {
+      "id": "plan",
+      "title": "看不懂的印法",
+      "goal": "`System.out.println(plan)` 印出一串看不懂的東西。在 `MyPlan` 裡覆寫 `public String toString()`，讓它印出 `梁亭瑄的計畫：資訊科，繼續畫畫`。",
+      "instructions": "`println` 印物件時，印的是它的 `toString()`。`toString()` 原本是 `public`，覆寫時前面也要寫 `public`。",
+      "expectedShape": "@Override\npublic String toString() {\n    return name + \"的計畫：\" + …;\n}",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "println 印的是 toString()。",
+        "plain": "沒覆寫的 `toString()`，只會印出類別名稱加一串數字，像資料夾只寫了編號。覆寫它，用欄位拼出你想讓人看到的那一句。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "sketches",
+      "title": "每一張草圖",
+      "goal": "寫 `class Sketch`：欄位 `month`、`title` 和建構子，覆寫 `toString()` 交回 `9月：提案簡報的插圖` 這種格式。用 `for` 照 `months` 和 `titles` 把每一張印出來。",
+      "instructions": "`months[i]` 和 `titles[i]` 是同一張草圖。按「完成」時會換一組草圖再印一次。",
+      "expectedShape": "class Sketch {\n    …\n\n    @Override\n    public String toString() {\n        …\n    }\n}\n\nfor (…) {\n    System.out.println(new Sketch(…));\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "months": "{\"1月\"}", "titles": "{\"小老師的類別圖\"}" } ]
+      },
+      "hints": {
+        "lead": "每一張都 new 出來，直接印。",
+        "plain": "每一張草圖的格式都寫在 `toString()` 裡，`println` 只要把物件交出去，就會照那個格式印。"
+      },
+      "afterText": ""
+    }
+  ]
+}

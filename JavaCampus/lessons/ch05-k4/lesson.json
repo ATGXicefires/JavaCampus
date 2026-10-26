@@ -1,0 +1,54 @@
+{
+  "id": "ch05-k4",
+  "title": "三十幾分到六十二分",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["max-min", "test-data"],
+  "vars": [
+    { "name": "myScores", "type": "int[]", "value": "{34, 41, 62}" }
+  ],
+  "steps": [
+    {
+      "id": "max",
+      "title": "最高分",
+      "goal": "寫 `static int max(int[] a)`。",
+      "instructions": "先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n會用 `{-3, -7}` 測：從 0 開始比的話，0 會贏過每一個人。",
+      "expectedShape": "static int max(int[] a) {\n    int best = …;\n    for (…) {\n        …\n    }\n    return best;\n}",
+      "check": { "type": "values", "exprs": ["max(new int[]{34, 41, 62})", "max(new int[]{62, 41, 34})", "max(new int[]{-3, -7})", "max(new int[]{5})"] },
+      "hints": {
+        "lead": "先把第一格當最大。",
+        "plain": "`best` 一開始放 `a[0]`，從第二格開始比：`a[i]` 比 `best` 大，就把 `best` 換成它。不要從 0 開始，全部是負數時 0 會冒充最大。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "min",
+      "title": "最低分",
+      "goal": "寫 `static int min(int[] a)`。",
+      "instructions": "和 `max` 反過來。會用 `{90, 95}` 測：從 0 開始比的話，0 會比每個人都小。",
+      "expectedShape": "static int min(int[] a) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["min(new int[]{34, 41, 62})", "min(new int[]{90, 95})", "min(new int[]{5})"] },
+      "hints": {
+        "lead": "和 max 一樣，比的方向相反。",
+        "plain": "一樣先把第一格當成目前最小，遇到更小的就換掉。只要把 `>` 換成 `<`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "gap",
+      "title": "差了幾分",
+      "goal": "印出 `最高和最低差了 28 分`。",
+      "instructions": "用自己寫的 `max` 和 `min` 算 `myScores`。按「完成」時會換一組分數再跑一次。",
+      "expectedShape": "System.out.println(\"最高和最低差了 \" + (…) + \" 分\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "myScores": "{50, 90}" } ]
+      },
+      "hints": {
+        "lead": "用自己寫的 max 和 min。",
+        "plain": "`max(myScores) - min(myScores)` 就是差距。放進字串中間要加括號，不然 `-` 會碰到字串。"
+      },
+      "afterText": ""
+    }
+  ]
+}

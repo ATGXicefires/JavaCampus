@@ -1,0 +1,38 @@
+{
+  "id": "ch12-k2",
+  "title": "製作團隊",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["full-program"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "credits",
+      "title": "名單",
+      "goal": "寫 `class Credit`：欄位 `role`、`name` 和建構子，覆寫 `toString()` 交回 `介面設計 梁亭瑄` 這樣的一行（中間一個半形空白）。在 `main` 裡用 `ArrayList<Credit>` 放進 `介面設計`／`梁亭瑄` 和 `程式`／`吳二弘`，用 for-each 印在 `== 製作團隊 ==` 下面。",
+      "instructions": "`Credit` 可以按「＋」放在自己的檔案。",
+      "expectedShape": "public String toString() {\n    return role + \" \" + name;\n}\n…\nfor (Credit c : credits) {\n    System.out.println(c);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "toString 決定每一行的樣子。",
+        "plain": "每一位成員都是一個 `Credit`，印出來的樣子寫在 `toString()` 裡。名單排進清單，迴圈一行一行印。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "thanks",
+      "title": "特別感謝",
+      "goal": "用 `HashMap<String, String>` 記每個人要謝什麼：`阿嬤` → `每天的菜`、`燕韋芸` → `478 次的統計`、`李有成` → `偷拍的照片`、`王葉聖老師` → `那一次抽籤`。照這個順序，在名單下面印出 `特別感謝 阿嬤（每天的菜）` 這樣的四行。",
+      "instructions": "`HashMap` 不保證順序。要照順序印，另外用一個陣列排好名字，再去對照表查。",
+      "expectedShape": "String[] order = {\"阿嬤\", …};\nfor (String who : order) {\n    System.out.println(\"特別感謝 \" + who + \"（\" + thanks.get(who) + \"）\");\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "順序另外排，內容去對照表查。",
+        "plain": "對照表只管「誰要謝什麼」，不管誰先誰後；直接走過對照表，順序會亂掉。名字的順序自己排一份，照著一個一個去查。"
+      },
+      "afterText": ""
+    }
+  ]
+}

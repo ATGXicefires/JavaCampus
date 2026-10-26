@@ -1,0 +1,42 @@
+{
+  "id": "ch04-s5",
+  "title": "雞蛋糕評分",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["return", "else-if"],
+  "vars": [
+    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}" },
+    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}" }
+  ],
+  "steps": [
+    {
+      "id": "review",
+      "title": "一句話評語",
+      "goal": "寫 `static String review(int sweetness)`：1～2 交回 `可以。`，3～4 交回 `甜。`，5 交回 `太甜。`。",
+      "instructions": "甜度從 1 到 5。",
+      "expectedShape": "static String review(int sweetness) {\n    if (…) {\n        return \"可以。\";\n    } else if (…) {\n        …\n    }\n    …\n}",
+      "check": { "type": "values", "exprs": ["review(1)", "review(2)", "review(3)", "review(4)", "review(5)"] },
+      "hints": {
+        "lead": "回傳 `String` 的方法，配合 `if`／`else if` 分段⋯⋯",
+        "plain": "⋯⋯白話：從低到高問：2 以下、4 以下、其他，各交回一句評語。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "list",
+      "title": "附在排行榜上",
+      "goal": "每種口味印一行，例如 `芋頭：甜。`。",
+      "instructions": "按「完成」時會換一組甜度再跑一次。",
+      "expectedShape": "for (…) {\n    System.out.println(flavors[i] + \"：\" + …);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "sweet": "{5, 5, 5, 5, 5}" } ]
+      },
+      "hints": {
+        "lead": "在迴圈裡呼叫回傳 `String` 的方法並串接⋯⋯",
+        "plain": "⋯⋯白話：每種口味印一行：名字、`：`、再接上 `review` 交回來的那句話。"
+      },
+      "afterText": ""
+    }
+  ]
+}

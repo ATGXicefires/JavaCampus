@@ -1,0 +1,36 @@
+{
+  "id": "ch08-s1",
+  "title": "題目的種類",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["extends", "override"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "choice",
+      "title": "選擇題",
+      "goal": "在 `ChoiceQuestion` 裡覆寫 `check`：打選項代號（例如 `B`）或完整答案都算對。",
+      "instructions": "`q` 是起始碼裡 `new` 好的選擇題。正確的代號存在 `letter`，完整答案存在父類別的 `answer`。",
+      "expectedShape": "boolean check(String typed) {\n    return … || …;\n}",
+      "check": { "type": "values", "exprs": ["q.check(\"B\")", "q.check(\"吃滷肉飯\")", "q.check(\"A\")"] },
+      "hints": {
+        "lead": "子類別以相同簽章重新定義方法，取代父類別的實作⋯⋯",
+        "plain": "⋯⋯白話：選擇題的對錯規則不一樣，就在 `ChoiceQuestion` 寫一個同名、同參數的 `check`。代號對或答案對，其中一個成立就交回 `true`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hint",
+      "title": "不用重寫的",
+      "goal": "在 `Question` 裡加上 `String hint()`，交回 `答案有 4 個字` 這種提示（字數用 `answer.length()`）。`ChoiceQuestion` 不用改，`q.hint()` 就能用。",
+      "instructions": "提示是每一種題目都一樣的，寫在父類別一次就好。",
+      "expectedShape": "String hint() {\n    return \"答案有 \" + … + \" 個字\";\n}",
+      "check": { "type": "values", "exprs": ["q.hint()", "new Question(\"if-else 像什麼？\", \"選午餐\").hint()"] },
+      "hints": {
+        "lead": "子類別自動繼承父類別新增的方法⋯⋯",
+        "plain": "⋯⋯白話：`hint()` 寫在 `Question` 裡，所有題型都直接有。`ChoiceQuestion` 一個字都沒改，也能叫 `q.hint()`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

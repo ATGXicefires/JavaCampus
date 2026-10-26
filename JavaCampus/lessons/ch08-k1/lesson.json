@@ -1,0 +1,36 @@
+{
+  "id": "ch08-k1",
+  "title": "爸媽版本的計畫",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["extends", "override"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "extends",
+      "title": "繼承",
+      "goal": "寫 `class MyPlan extends ParentsPlan`，裡面先什麼都不寫。",
+      "instructions": "`ParentsPlan` 是起始碼給的父類別。`MyPlan` 裡面什麼都沒寫，也拿得到它的 `future()` 和 `hobby()`。",
+      "expectedShape": "class MyPlan extends … {\n}",
+      "check": { "type": "values", "exprs": ["new MyPlan().future()", "new MyPlan().hobby()"] },
+      "hints": {
+        "lead": "extends 後面接父類別。",
+        "plain": "`extends` 像是把爸媽的計畫整份抄過來：父類別寫好的方法，子類別一個字都沒寫，也直接就有。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "hobby",
+      "title": "自己的版本",
+      "goal": "在 `MyPlan` 裡覆寫 `hobby()`，交回 `畫畫不只是興趣`。`future()` 不動。",
+      "instructions": "覆寫就是寫一個同名、同參數的方法，換成自己的版本。",
+      "expectedShape": "class MyPlan extends ParentsPlan {\n    String hobby() {\n        …\n    }\n}",
+      "check": { "type": "values", "exprs": ["new MyPlan().hobby()", "new MyPlan().future()"] },
+      "hints": {
+        "lead": "同名的方法，換成自己的版本。",
+        "plain": "抄來的計畫，想改哪一行就重寫那一行。`MyPlan` 自己寫了 `hobby()`，就用自己的；沒寫的 `future()`，照樣用爸媽的。"
+      },
+      "afterText": ""
+    }
+  ]
+}

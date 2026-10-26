@@ -1,0 +1,36 @@
+{
+  "id": "ch04-s3",
+  "title": "== 不是那個等於",
+  "route": "學長",
+  "partner": "阿成",
+  "notes": ["equals", "string-methods"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "space",
+      "title": "多打了空白",
+      "goal": "修到前後多打的空白不算錯。",
+      "instructions": "試玩的人打了 `吃滷肉飯 `，後面多一個空白，就被判成答錯。",
+      "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")", "isCorrect(\" 小白\", \"小白\")", "isCorrect(\"小黑\", \"小白\")"] },
+      "hints": {
+        "lead": "`==` 比較的是參考；`trim()` 回傳新的 `String` 物件⋯⋯",
+        "plain": "⋯⋯白話：`==` 問的是「是不是同一個盒子」。`trim()` 做出來的是新盒子，字再像也不是同一個。去掉空白之後，要用 `equals` 比。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "both",
+      "title": "答案也有空白",
+      "goal": "題庫裡的答案也可能多了空白，兩邊都要處理。",
+      "instructions": "例如題庫裡的答案是 `小白 `，玩家打 `小白`，也要算對。",
+      "expectedShape": "return typed.trim().equals(…);",
+      "check": { "type": "values", "exprs": ["isCorrect(\"小白\", \"小白 \")", "isCorrect(\" 小白 \", \" 小白\")"] },
+      "hints": {
+        "lead": "兩邊都正規化之後再比較⋯⋯",
+        "plain": "⋯⋯白話：題庫的答案也先 `trim()`，兩邊都去掉前後空白再比。"
+      },
+      "afterText": ""
+    }
+  ]
+}

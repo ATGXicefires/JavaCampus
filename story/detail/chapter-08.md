@@ -125,6 +125,7 @@
 | 2 建構子的 super | 起始碼的父類別改成有建構子 `ParentsPlan(String name)`。`MyPlan` 的建構子用 `super(name)` 把名字交給它。 | 數值 `new MyPlan("梁亭瑄").name`、`new MyPlan("梁亭瑄").future()` |
 
 - 只教 `super(name)` 的寫法，不說「一定要寫在第一行」（JDK 25 已經放寬，見 README 的引擎需求）。
+- 做題目時發現：第 2 步的起始碼少了建構子，紅字底下原本沒有說明（JShell 把這種錯當成之後還能補救）。引擎補上了，現在會說呼叫 `ParentsPlan` 時給的參數不對。
 - 解鎖筆記：`super`
 
 ### ch08-k3「兩條路」
@@ -139,6 +140,7 @@
 | 2 打錯字的那一條 | 起始碼裡第三條路 `StayPath` 寫成了 `descripe()`，上面還有 `@Override`，紅字。修好，讓它交回 `留下來：先試試看`。 | 數值 `new StayPath().describe()` |
 
 - 第 2 步就是 `@Override` 的用處：沒有它，打錯字也照樣能跑，只是悄悄用了父類別的版本。
+- 做題目時，`Path` 的建構子要名字，所以每個子類別的建構子用 `super("廣設科")` 這樣交出名字（順便複習 k2），`describe()` 用 `name` 接上後面的字。
 - 解鎖筆記：`override-annotation`
 
 ### ch08-k4「印出來看得懂」
@@ -150,7 +152,8 @@
 | 1 看不懂的印法 | `System.out.println(plan)` 印出一串看不懂的東西。覆寫 `toString()`，讓它印出 `梁亭瑄的計畫：資訊科，繼續畫畫`。 | 輸出 |
 | 2 每一張草圖 | 寫 `class Sketch`（欄位 `month`、`title`），覆寫 `toString()` 交回 `9月：提案簡報的插圖`。用 for 把每一張印出來。 | 輸出；換成各一筆的陣列 |
 
-- 第 1 步看不懂的那串（`MyPlan@1b6d3586`）每次都不一樣，所以只比對修好之後的輸出。
+- 第 1 步看不懂的那串（`MyPlan@1b6d3586`）每次都不一樣，所以只比對修好之後的輸出。遊戲裡印出來是 `REPL.$JShell$3$MyPlan@7a07c5b4` 這種，前面多一段 JShell 的名稱。
+- 做題目時，第 2 步換一份只有註解的起始碼，`plan` 那一行才不會混進草圖的輸出。
 - 解鎖筆記：`tostring`
 
 ### ch08-s1「題目的種類」
@@ -165,6 +168,8 @@
 | 2 不用重寫的 | 呼叫 `q.hint()`：`ChoiceQuestion` 沒寫，直接用父類別的。 | 數值 `q.hint()` |
 
 - `super(...)` 在起始碼裡已經寫好，s3 才正式教。
+- 做題目時，選擇題的代號存在 `ChoiceQuestion` 的欄位 `letter`。
+- 做題目時，起始碼的 `Question` 先不給 `hint()`，第 2 步改成在 `Question` 裡加上 `hint()`（交回 `答案有 4 個字`），`ChoiceQuestion` 不用改，`q.hint()` 就能用。照原本的寫法，第 2 步不用改程式就能過關。
 - 她難得一句話都沒說，所以搭檔是他自己的 OS。
 - 解鎖筆記：`extends`、`override`
 
@@ -180,6 +185,7 @@
 | 2 toSting | 她的 `toSting()` 也沒覆寫到。一樣先加 `@Override` 再修，讓它印出 `填空題：選午餐`。 | 輸出 |
 
 - 第 1 步：沒有覆寫到的時候程式照樣能跑，只是一直用父類別的 `check`。`@Override` 讓編譯器直接指出來。
+- 做題目時，起始碼最後就印出 `q`：第 1 步就看得到那串看不懂的字，第 2 步接著修。
 - 解鎖筆記：`override-annotation`
 
 ### ch08-s3「數字題的 super」

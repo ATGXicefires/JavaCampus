@@ -1,0 +1,44 @@
+{
+  "id": "ch05-s3",
+  "title": "術科練習：九九乘法表",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["nested"],
+  "vars": [
+    { "name": "n", "type": "int", "value": "9" }
+  ],
+  "steps": [
+    {
+      "id": "row",
+      "title": "一列",
+      "goal": "印出 2 的那一列：`2x1=2 2x2=4 ⋯ 2x9=18`，用一個空格隔開。",
+      "instructions": "乘到 `n` 為止。行尾多一個空格沒關係。按「完成」時會把 `n` 換成 3 再跑一次。",
+      "expectedShape": "String line = \"\";\nfor (int j = 1; j <= n; j++) {\n    line += …;\n}\nSystem.out.println(line);",
+      "check": {
+        "type": "output",
+        "variants": [ { "n": "3" } ]
+      },
+      "hints": {
+        "lead": "用字串累加組出一列，行尾的空白不影響比對⋯⋯",
+        "plain": "⋯⋯白話：準備一個空字串，每一圈接上一個 `2x1=2 `，最後整列印一次。乘法會比 `+` 先算。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "table",
+      "title": "整張表",
+      "goal": "用巢狀迴圈印出 1 到 `n` 的整張表，每個數字一列。",
+      "instructions": "第一列是 1 的，第二列是 2 的⋯⋯按「完成」時會把 `n` 換成 3 再跑一次。",
+      "expectedShape": "for (int i = 1; i <= n; i++) {\n    …\n    for (int j = 1; j <= n; j++) {\n        …\n    }\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "n": "3" } ]
+      },
+      "hints": {
+        "lead": "巢狀迴圈：外層控制列，內層控制欄⋯⋯",
+        "plain": "⋯⋯白話：上一步把 2 寫死了。外面再包一個迴圈，讓 2 變成從 1 數到 `n` 的 `i`，就是整張表。"
+      },
+      "afterText": ""
+    }
+  ]
+}

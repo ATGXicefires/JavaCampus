@@ -1,0 +1,24 @@
+{
+  "id": "ch12-sb",
+  "title": "謝謝",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["println"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "thanks",
+      "title": "就這麼簡單",
+      "goal": "照她的建議。",
+      "instructions": "建議寫在最上面的註解裡。",
+      "expectedShape": "System.out.println(\"…\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`System.out.println` 輸出字串⋯⋯",
+        "plain": "⋯⋯白話：她連程式碼都幫你寫好了。"
+      },
+      "afterText": ""
+    }
+  ]
+}
