@@ -54,7 +54,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** 程式題：左邊是步驟和題目，中間寫程式和看結果，右邊是筆記、可用資料和搭檔的反應。三區各自是一張卡片。 */
+/** 程式題：左邊是步驟、題目和題目給的變數，中間寫程式和看結果，右邊是筆記和搭檔的反應。三區各自是一張卡片。 */
 final class LessonView extends StackPane {
 
     // 完整程式的檔案清單另外存一份，玩家新增的檔案下次才找得回來；檔名裡不會有「#」，不會跟檔案的鍵撞在一起
@@ -222,9 +222,6 @@ final class LessonView extends StackPane {
         List<Handbook.Entry> notes = lesson.notes().stream()
                 .map(id -> game.lessons.handbook().entry(id).orElseThrow()).toList();
         TabPane tabs = new TabPane(new Tab("筆記", new NoteList(notes, peekLayer)));
-        if (!lesson.vars().isEmpty()) {
-            tabs.getTabs().add(new Tab("可用資料", dataPane()));
-        }
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         tabs.getStyleClass().add("zone");
         VBox.setVgrow(tabs, Priority.ALWAYS);
@@ -251,25 +248,6 @@ final class LessonView extends StackPane {
         box.setPrefWidth(330);
         box.setMinWidth(330);
         return box;
-    }
-
-    private Node dataPane() {
-        VBox box = new VBox(12);
-        box.setPadding(new Insets(16));
-        for (SetupVar v : lesson.vars()) {
-            Label type = new Label(v.type());
-            type.getStyleClass().add("var-type");
-            Label name = new Label(v.name());
-            name.getStyleClass().add("var-name");
-            Label value = new Label(v.value());
-            value.getStyleClass().add("var-value");
-            VBox row = new VBox(4, new HBox(8, type, name), value);
-            row.getStyleClass().add("hint-tier");
-            box.getChildren().add(row);
-        }
-        ScrollPane scroll = new ScrollPane(box);
-        scroll.setFitToWidth(true);
-        return scroll;
     }
 
     private void react(Reactions.Kind kind) {
@@ -449,7 +427,7 @@ final class LessonView extends StackPane {
         }
     }
 
-    /** 先給這一步要做的事和預期的樣子，背景和完整寫法收在「完整說明」裡。 */
+    /** 先給這一步要做的事和預期的樣子，題目給的變數夾在中間，背景和完整寫法收在「完整說明」裡。 */
     private void refreshDetail() {
         Label title = new Label(current.title());
         title.getStyleClass().add("detail-title");
@@ -460,7 +438,11 @@ final class LessonView extends StackPane {
         shapeText.getStyleClass().add("shape-text");
         TextFlow shape = new TextFlow(shapeText);
         shape.getStyleClass().add("shape-box");
-        detail.getChildren().setAll(title, goal, shape);
+        detail.getChildren().setAll(title, goal);
+        if (!lesson.vars().isEmpty()) {
+            detail.getChildren().add(givenBox());
+        }
+        detail.getChildren().add(shape);
         if (!current.instructions().isBlank()) {
             detail.getChildren().add(moreDetail(current.instructions()));
         }
@@ -469,6 +451,27 @@ final class LessonView extends StackPane {
             after.getStyleClass().add("after-text");
             detail.getChildren().add(after);
         }
+    }
+
+    /** 題目先放進執行環境的變數，一行一個寫成宣告；實線框，跟虛線的「預期的樣子」分得出來。 */
+    private Node givenBox() {
+        TextFlow box = new TextFlow();
+        for (SetupVar v : lesson.vars()) {
+            if (!box.getChildren().isEmpty()) {
+                box.getChildren().add(codeText("\n", "given-text"));
+            }
+            box.getChildren().addAll(codeText(v.type(), "var-type"), codeText(" ", "given-text"),
+                    codeText(v.name(), "var-name"), codeText(" = ", "given-text"),
+                    codeText(v.value(), "var-value"), codeText(";", "given-text"));
+        }
+        box.getStyleClass().add("given-box");
+        return box;
+    }
+
+    private static Text codeText(String text, String styleClass) {
+        Text t = new Text(text);
+        t.getStyleClass().add(styleClass);
+        return t;
     }
 
     private Node moreDetail(String markdown) {

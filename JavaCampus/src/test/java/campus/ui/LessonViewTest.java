@@ -10,7 +10,11 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +23,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -26,8 +31,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LessonViewTest {
@@ -93,6 +101,48 @@ class LessonViewTest {
         runFx(back::fire);
         assertTrue(left.get());
         runner.shutdownNow();
+    }
+
+    @Test
+    void givenVariablesSitUnderTheGoal(@TempDir Path dir) throws Exception {
+        ExecutorService runner = Executors.newSingleThreadExecutor();
+        // 第 1 步過了，一進來就停在第 2 步「掛勾」，它的重點用到題目給的 gacha
+        LessonView hooks = open(dir, runner, "ch02-k1", "boxes");
+        Node given = onFx(() -> hooks.lookup(".given-box"));
+        assertEquals("int gacha = 8;", onFx(() -> ((TextFlow) given).getChildren().stream()
+                .map(n -> ((Text) n).getText()).collect(Collectors.joining())));
+        List<Node> detail = onFx(() -> List.copyOf(given.getParent().getChildrenUnmodifiable()));
+        Node goal = onFx(() -> hooks.lookup(".step-goal"));
+        assertEquals(detail.indexOf(goal) + 1, detail.indexOf(given));
+        assertEquals(List.of("筆記"), onFx(() -> tabNames(hooks)));
+
+        LessonView plain = open(dir, runner, "ch01-k1");
+        assertNull(onFx(() -> plain.lookup(".given-box")));
+        assertEquals(List.of("筆記"), onFx(() -> tabNames(plain)));
+        runner.shutdownNow();
+    }
+
+    private static LessonView open(Path dir, ExecutorService runner, String lessonId, String... solved)
+            throws Exception {
+        return onFx(() -> {
+            StackPane root = new StackPane();
+            Game game = new Game(null, LessonLibrary.load(Path.of("lessons")), null, new Progress(),
+                    new SaveStore(dir.resolve("progress.json")), sfx, null, sandbox, runner, root, new Stage(),
+                    new Viewport(root));
+            Progress.LessonRecord record = game.progress.practiceLessons();
+            for (String step : solved) {
+                record.markSolved(lessonId, step);
+            }
+            LessonView v = new LessonView(game, game.lessons.lesson(lessonId), record, true, () -> {
+            });
+            // 左邊的說明在 ScrollPane 裡，同樣要長出外觀才找得到
+            new Scene(v).getRoot().applyCss();
+            return v;
+        });
+    }
+
+    private static List<String> tabNames(Node root) {
+        return ((TabPane) root.lookup(".tab-pane")).getTabs().stream().map(Tab::getText).toList();
     }
 
     private static Button button(Node root, String text) {

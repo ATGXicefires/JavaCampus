@@ -1305,6 +1305,18 @@
     -fx-fill: l-code-ink;
 }
 
+.given-box {
+    -fx-font-family: "Maple Mono NF CN";
+    -fx-font-size: 15px;
+    -fx-background-color: c-code-bg;
+    -fx-border-color: l-dash;
+    -fx-padding: 10 12;
+}
+
+.given-text {
+    -fx-fill: l-code-ink;
+}
+
 .selectable TextFlow {
     -fx-cursor: text;
 }
@@ -1415,20 +1427,15 @@
 }
 
 .var-name {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 15px;
-    -fx-text-fill: l-code-accent;
+    -fx-fill: l-code-accent;
 }
 
 .var-type {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-text-fill: l-var-type;
+    -fx-fill: l-var-type;
 }
 
 .var-value {
-    -fx-font-family: "Maple Mono NF CN";
-    -fx-font-size: 15px;
-    -fx-text-fill: l-var-value;
+    -fx-fill: l-var-value;
 }
 
 .hint-drawer {
