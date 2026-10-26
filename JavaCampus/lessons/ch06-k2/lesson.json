@@ -25,7 +25,7 @@
       "id": "family",
       "title": "扭蛋全家福",
       "goal": "題目給了 `names`，是扭蛋的名字（現在是 `麻糬`、`黑糖`、`珍奶`）。用 `for` 把每個名字都 `new` 成種類是 `扭蛋` 的 `Item`，放進 `Item[] bag`，再一個一行印出來：`麻糬（扭蛋）`、`黑糖（扭蛋）`、`珍奶（扭蛋）`。",
-      "instructions": "`names` 題目已經做好了，右邊「可用資料」看得到，直接拿來用。\n\n`new Item[names.length]` 會做出一排可以放 `Item` 的格子，格數和 `names` 一樣多，格子一開始是空的。用 `for` 把每個名字都 `new` 成扭蛋放進去，再印出來。\n\n按「完成」時，會把 `names` 改成只有 `仙草` 一個再檢查一次（只印一行 `仙草（扭蛋）`），所以要照 `names` 來做，不能直接寫三個名字。",
+      "instructions": "`names` 題目已經做好了，直接拿來用。\n\n`new Item[names.length]` 會做出一排可以放 `Item` 的格子，格數和 `names` 一樣多，格子一開始是空的。用 `for` 把每個名字都 `new` 成扭蛋放進去，再印出來。\n\n按「完成」時，會把 `names` 改成只有 `仙草` 一個再檢查一次（只印一行 `仙草（扭蛋）`），所以要照 `names` 來做，不能直接寫三個名字。",
       "expectedShape": "Item[] bag = new Item[names.length];\nfor (…) {\n    bag[i] = new Item(…);\n}\n…",
       "check": {
         "type": "output",

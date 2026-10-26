@@ -12,7 +12,7 @@
       "id": "size",
       "title": "盒子的尺寸",
       "goal": "題目給了 `gacha`，是扭蛋的數量（現在是 8）。用 `gacha` 和 `+` 印出 `int 盒子：扭蛋有 8 個`。",
-      "instructions": "白板上的第一個例子。`gacha` 是題目已經宣告好的變數，右邊「可用資料」看得到。\n\n`8` 要從 `gacha` 拿出來，不要直接寫在引號裡：按「完成」時，會把 `gacha` 改成 10 再檢查一次，那時要印出 `int 盒子：扭蛋有 10 個`。",
+      "instructions": "白板上的第一個例子。`gacha` 是題目已經宣告好的變數。\n\n`8` 要從 `gacha` 拿出來，不要直接寫在引號裡：按「完成」時，會把 `gacha` 改成 10 再檢查一次，那時要印出 `int 盒子：扭蛋有 10 個`。",
       "expectedShape": "System.out.println(\"int 盒子：扭蛋有 \" + … + \" 個\");",
       "check": {
         "type": "output",

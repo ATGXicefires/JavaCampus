@@ -14,7 +14,7 @@
       "id": "equal",
       "title": "又是全形",
       "goal": "題目給了分數 `score`（現在是 60）。修到 `score` 剛好 60 時印 `剛好及格`，其他分數什麼都不印。",
-      "instructions": "這一份有兩個紅字。`score` 是題目給的變數，右邊「可用資料」看得到。\n\n按「完成」時，會把 `score` 改成 59 再檢查一次，那時什麼都不印。",
+      "instructions": "這一份有兩個紅字。`score` 是題目給的變數。\n\n按「完成」時，會把 `score` 改成 59 再檢查一次，那時什麼都不印。",
       "expectedShape": "if (score … 60) {\n    System.out.println(\"剛好及格\");\n}",
       "check": {
         "type": "output",

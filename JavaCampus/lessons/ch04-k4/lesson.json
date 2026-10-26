@@ -13,7 +13,7 @@
       "id": "sum",
       "title": "總共幾顆星",
       "goal": "題目給了 `stars`，是五種口味雞蛋糕各得到幾顆星（`{3, 4, 5, 2, 4}`）。用起始碼裡寫好的方法 `total` 算出總共幾顆星，存進 `int sum`。",
-      "instructions": "`stars` 和口味名稱 `flavors` 題目已經做好了，右邊「可用資料」看得到。\n\n`total(int[] counts)` 的意思是：給它一排整數，它交回總和。不用看它裡面怎麼寫。\n\n按「完成」時，會把 `stars` 改成 `{1, 1, 1, 1, 1}` 再檢查一次，所以要用 `total` 來算，不能直接寫 `18`。",
+      "instructions": "`stars` 和口味名稱 `flavors` 題目已經做好了。\n\n`total(int[] counts)` 的意思是：給它一排整數，它交回總和。不用看它裡面怎麼寫。\n\n按「完成」時，會把 `stars` 改成 `{1, 1, 1, 1, 1}` 再檢查一次，所以要用 `total` 來算，不能直接寫 `18`。",
       "expectedShape": "int sum = …;",
       "check": {
         "type": "values",

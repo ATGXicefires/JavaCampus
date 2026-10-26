@@ -26,7 +26,7 @@
       "id": "list",
       "title": "附在排行榜上",
       "goal": "題目給了口味名稱 `flavors` 和每種口味的甜度 `sweet`。照順序每種口味印一行：名字、`：`、`review` 交回的評語，例如 `芋頭：甜。`。",
-      "instructions": "`flavors` 和 `sweet` 是題目給的陣列，右邊「可用資料」看得到，同一格是同一種口味。`：` 是全形，可以從重點複製。\n\n按「完成」時，會把 `sweet` 改成 `{5, 5, 5, 5, 5}` 再檢查一次，所以評語要用 `review` 算，不能直接寫。",
+      "instructions": "`flavors` 和 `sweet` 是題目給的陣列，同一格是同一種口味。`：` 是全形，可以從重點複製。\n\n按「完成」時，會把 `sweet` 改成 `{5, 5, 5, 5, 5}` 再檢查一次，所以評語要用 `review` 算，不能直接寫。",
       "expectedShape": "for (…) {\n    System.out.println(flavors[i] + \"：\" + …);\n}",
       "check": {
         "type": "output",

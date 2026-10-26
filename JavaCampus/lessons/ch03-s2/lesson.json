@@ -12,7 +12,7 @@
       "id": "crash",
       "title": "跑一半掛掉",
       "goal": "這是成績頁的程式：用題目給的 `scores`（五個分數）算加總、平均和等第，跑到一半就跌倒。看例外訊息，修到 `sum` 算得出總和（這組分數加起來是 324）。",
-      "instructions": "先按「執行」看它停在哪一行。`scores` 是題目給的陣列，右邊「可用資料」看得到。\n\n這一步只檢查 `sum`，平均和等第的錯後面兩步再修。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次。",
+      "instructions": "先按「執行」看它停在哪一行。`scores` 是題目給的陣列。\n\n這一步只檢查 `sum`，平均和等第的錯後面兩步再修。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次。",
       "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
       "check": {
         "type": "values",

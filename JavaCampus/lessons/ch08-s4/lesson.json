@@ -26,7 +26,7 @@
       "id": "folder",
       "title": "資料夾的目錄",
       "goal": "題目給了 `months` 和 `titles`，是資料夾裡每張草圖的月份和標題（現在有 6 張），`months[i]` 和 `titles[i]` 是同一張。用 `for` 把每一張 `new` 出來，`System.out.println(sketch)` 印出整個目錄。",
-      "instructions": "兩個陣列題目已經做好了，右邊「可用資料」看得到。\n\n按「完成」時，會把兩個陣列改成只有兩張（`9月` 的 `提案簡報的插圖`、`2月` 的 `貼紙系統的草稿`）再印一次，所以要用 `months` 和 `titles` 來跑，不能直接寫答案。",
+      "instructions": "兩個陣列題目已經做好了。\n\n按「完成」時，會把兩個陣列改成只有兩張（`9月` 的 `提案簡報的插圖`、`2月` 的 `貼紙系統的草稿`）再印一次，所以要用 `months` 和 `titles` 來跑，不能直接寫答案。",
       "expectedShape": "for (…) {\n    Sketch sketch = new Sketch(…);\n    System.out.println(sketch);\n}",
       "check": {
         "type": "output",

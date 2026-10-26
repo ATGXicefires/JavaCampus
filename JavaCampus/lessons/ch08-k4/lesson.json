@@ -26,7 +26,7 @@
       "id": "sketches",
       "title": "每一張草圖",
       "goal": "題目給了 `months` 和 `titles`，是每張草圖的月份和名稱（現在有 3 張）。寫 `class Sketch`：欄位 `month`、`title` 和建構子，覆寫 `toString()` 交回 `9月：提案簡報的插圖` 這種格式；再用 `for` 把每一張 `new` 出來，一張印一行。",
-      "instructions": "`months` 和 `titles` 題目已經做好了，右邊「可用資料」看得到。`months[i]` 和 `titles[i]` 是同一張草圖。\n\n按「完成」時，會把兩個陣列改成只有一張（`1月` 的 `小老師的類別圖`）再印一次，所以要用 `months` 和 `titles` 來跑，不能直接寫答案。",
+      "instructions": "`months` 和 `titles` 題目已經做好了。`months[i]` 和 `titles[i]` 是同一張草圖。\n\n按「完成」時，會把兩個陣列改成只有一張（`1月` 的 `小老師的類別圖`）再印一次，所以要用 `months` 和 `titles` 來跑，不能直接寫答案。",
       "expectedShape": "class Sketch {\n    …\n\n    @Override\n    public String toString() {\n        …\n    }\n}\n\nfor (…) {\n    System.out.println(new Sketch(…));\n}",
       "check": {
         "type": "output",

@@ -25,7 +25,7 @@
       "id": "triangle",
       "title": "第二題：迴圈",
       "goal": "題目給了 `n`（現在是 4）。用巢狀迴圈印出 `n` 層的星星三角形：第 1 層 1 顆 `*`，第 2 層 2 顆，一直到第 `n` 層 `n` 顆，星星之間不空格。",
-      "instructions": "`n` 題目已經做好了，右邊「可用資料」看得到。`n` 是 4 時要印出：\n\n```\n*\n**\n***\n****\n```\n\n按「完成」時，會把 `n` 改成 2 再檢查一次，所以要用 `n` 來畫，不能直接印四行。",
+      "instructions": "`n` 題目已經做好了。`n` 是 4 時要印出：\n\n```\n*\n**\n***\n****\n```\n\n按「完成」時，會把 `n` 改成 2 再檢查一次，所以要用 `n` 來畫，不能直接印四行。",
       "expectedShape": "for (int i = 1; i <= n; i++) {\n    String row = \"\";\n    for (…) {\n        row += \"*\";\n    }\n    System.out.println(row);\n}",
       "check": {
         "type": "output",

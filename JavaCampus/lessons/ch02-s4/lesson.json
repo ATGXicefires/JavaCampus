@@ -12,7 +12,7 @@
       "id": "weeks",
       "title": "W1 到 W16",
       "goal": "題目給了 `weeks`，是時程表的總週數（現在是 16）。用 `for` 從 `W1` 印到第 `weeks` 週（現在是 `W16`），一行一個。",
-      "instructions": "提案的時程表。`weeks` 是題目已經宣告好的變數，右邊「可用資料」看得到。\n\n按「完成」時，會把 `weeks` 改成 12 再檢查一次，那時要印到 `W12`，所以要用 `weeks` 來數，不能直接寫 `16`。",
+      "instructions": "提案的時程表。`weeks` 是題目已經宣告好的變數。\n\n按「完成」時，會把 `weeks` 改成 12 再檢查一次，那時要印到 `W12`，所以要用 `weeks` 來數，不能直接寫 `16`。",
       "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"W\" + …);\n}",
       "check": {
         "type": "output",

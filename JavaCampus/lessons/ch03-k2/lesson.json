@@ -12,7 +12,7 @@
       "id": "ends",
       "title": "第一格和最後一格",
       "goal": "題目給了 `scores`，是一排五個小考分數 `{72, 58, 65, 80, 49}`。印出第一格和最後一格的分數，一個一行（現在是 `72` 和 `49`）。",
-      "instructions": "`scores` 是一個陣列，像一排置物櫃，每一格放一個分數。題目已經做好了，右邊「可用資料」看得到。\n\n置物櫃的編號從 0 開始，第一格是 `scores[0]`。最後一格的編號是「格數減一」，格數是 `scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 和 `{60}` 再檢查兩次。格數不一樣，所以最後一格不能直接寫 `scores[4]`。",
+      "instructions": "`scores` 是一個陣列，像一排置物櫃，每一格放一個分數。題目已經做好了。\n\n置物櫃的編號從 0 開始，第一格是 `scores[0]`。最後一格的編號是「格數減一」，格數是 `scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 和 `{60}` 再檢查兩次。格數不一樣，所以最後一格不能直接寫 `scores[4]`。",
       "expectedShape": "System.out.println(scores[…]);\nSystem.out.println(scores[…]);",
       "check": {
         "type": "output",

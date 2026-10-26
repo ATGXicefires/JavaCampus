@@ -13,7 +13,7 @@
       "id": "avg",
       "title": "五科平均",
       "goal": "題目給了 `total`，是段考 5 科的總分（現在是 312）。算出 5 科的平均，要留下小數（現在是 62.4），存進 `double avg`。",
-      "instructions": "`total` 這個盒子題目已經做好了，右邊「可用資料」看得到，直接拿來用。\n\n按「完成」時，會把 `total` 改成 300 再檢查一次，所以要用 `total` 來算，不能直接寫 `62.4`。",
+      "instructions": "`total` 這個盒子題目已經做好了，直接拿來用。\n\n按「完成」時，會把 `total` 改成 300 再檢查一次，所以要用 `total` 來算，不能直接寫 `62.4`。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",
@@ -46,7 +46,7 @@
       "id": "countdown",
       "title": "倒數",
       "goal": "題目給了 `days`，是離段考還有幾天（現在是 7）。用 `for` 從 `days` 倒數到 1，一天印一行：`段考倒數 7 天`、`段考倒數 6 天`⋯⋯最後是 `段考倒數 1 天`。",
-      "instructions": "`days` 也是題目做好的盒子，右邊「可用資料」看得到。\n\n倒數就是從大數到小：從 `days` 開始，每一圈減一。`i--` 是 `i++` 的反方向。\n\n按「完成」時，會把 `days` 改成 3 再檢查一次，所以要從 `days` 開始數，不能直接寫 7。",
+      "instructions": "`days` 也是題目做好的盒子。\n\n倒數就是從大數到小：從 `days` 開始，每一圈減一。`i--` 是 `i++` 的反方向。\n\n按「完成」時，會把 `days` 改成 3 再檢查一次，所以要從 `days` 開始數，不能直接寫 7。",
       "expectedShape": "for (int i = days; …; i--) {\n    System.out.println(\"段考倒數 \" + i + \" 天\");\n}",
       "check": {
         "type": "output",

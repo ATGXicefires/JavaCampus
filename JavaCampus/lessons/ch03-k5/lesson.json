@@ -14,7 +14,7 @@
       "id": "parse",
       "title": "字變成數字",
       "goal": "題目給了 `input`，是答題框收到的字串（現在是 `\"85\"`）。用 `Integer.parseInt` 把它變成數字，存進 `int score`。",
-      "instructions": "`input` 這個盒子題目已經做好了，右邊「可用資料」看得到。\n\n答題框拿到的東西都是字串，就算長得像數字也一樣，不能直接拿來算。`Integer.parseInt(…)` 會把字串換成 int。\n\n按「完成」時，會把 `input` 改成 `\"62\"` 再檢查一次，所以要用 `input` 來換，不能直接寫 `85`。",
+      "instructions": "`input` 這個盒子題目已經做好了。\n\n答題框拿到的東西都是字串，就算長得像數字也一樣，不能直接拿來算。`Integer.parseInt(…)` 會把字串換成 int。\n\n按「完成」時，會把 `input` 改成 `\"62\"` 再檢查一次，所以要用 `input` 來換，不能直接寫 `85`。",
       "expectedShape": "int score = …;",
       "check": {
         "type": "values",

@@ -25,7 +25,7 @@
       "id": "week",
       "title": "約定不變，內容可以換",
       "goal": "題目給了 `days`，是 `星期一` 到 `星期五` 五個字串。用 `Lunch[] week` 照順序放五天的午餐：滷肉飯、控肉飯、滷肉飯、控肉飯、滷肉飯，再用迴圈印出 `星期一：吃滷肉飯` 這樣的五行。",
-      "instructions": "`days` 題目已經做好了，右邊「可用資料」看得到，直接拿來用；`days[i]` 和 `week[i]` 是同一天。\n\n冒號是全形的 `：`，可以從目標複製。",
+      "instructions": "`days` 題目已經做好了，直接拿來用；`days[i]` 和 `week[i]` 是同一天。\n\n冒號是全形的 `：`，可以從目標複製。",
       "expectedShape": "Lunch[] week = {new LuRouFan(), …};\nfor (…) {\n    System.out.println(days[i] + \"：\" + week[i].eat());\n}",
       "check": { "type": "output" },
       "hints": {

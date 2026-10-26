@@ -14,7 +14,7 @@
       "id": "call",
       "title": "照約定呼叫",
       "goal": "題目給了每一課的課名 `units`、完成數 `done`、總數 `total`。修好起始碼底下的迴圈，讓每一課印一行，例如 `讓電腦說話 ■■■ 3/3`，進度條要用學妹寫好的 `bar`。",
-      "instructions": "起始碼上面是學妹寫好的 `bar` 和 `say`，不用改；底下的迴圈是之前的草稿，執行就跌倒。`bar` 的簽章是 `bar(int done, int total)`。\n\n題目給的 `done` 和 `total` 是陣列，右邊「可用資料」看得到，同一格是同一課；`bar` 括號裡的 `done`、`total` 是它自己的參數，只是剛好同名。\n\n按「完成」時，會把 `done` 改成 `{0, 4}` 再檢查一次。",
+      "instructions": "起始碼上面是學妹寫好的 `bar` 和 `say`，不用改；底下的迴圈是之前的草稿，執行就跌倒。`bar` 的簽章是 `bar(int done, int total)`。\n\n題目給的 `done` 和 `total` 是陣列，同一格是同一課；`bar` 括號裡的 `done`、`total` 是它自己的參數，只是剛好同名。\n\n按「完成」時，會把 `done` 改成 `{0, 4}` 再檢查一次。",
       "expectedShape": "System.out.println(units[i] + \" \" + bar(…) + \" \" + done[i] + \"/\" + total[i]);",
       "check": {
         "type": "output",

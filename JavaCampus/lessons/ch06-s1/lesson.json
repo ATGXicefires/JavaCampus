@@ -25,7 +25,7 @@
       "id": "eight",
       "title": "一張設計圖，八個扭蛋",
       "goal": "題目給了 `names`，是 8 個扭蛋的名字（`麻糬`、`黑糖`、`珍奶`⋯⋯）。用 `for` 照 `names` 一個一個 `new` 出 `Gacha`，每個印一行：`第 1 個：麻糬`、`第 2 個：黑糖`，一直到 `第 8 個：愛玉`。",
-      "instructions": "`names` 題目已經做好了，右邊「可用資料」看得到。編號從 1 開始。\n\n按「完成」時，會把 `names` 改成 `{\"麻糬\", \"黑糖\"}` 再檢查一次（只印兩行），所以要照 `names` 跑，不能直接寫八行。",
+      "instructions": "`names` 題目已經做好了。編號從 1 開始。\n\n按「完成」時，會把 `names` 改成 `{\"麻糬\", \"黑糖\"}` 再檢查一次（只印兩行），所以要照 `names` 跑，不能直接寫八行。",
       "expectedShape": "for (…) {\n    Gacha g = new Gacha();\n    g.name = …;\n    System.out.println(\"第 \" + (…) + \" 個：\" + g.name);\n}",
       "check": {
         "type": "output",
