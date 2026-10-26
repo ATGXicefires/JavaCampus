@@ -300,6 +300,41 @@
       "title": "null 是空盒子",
       "summary": "還沒放東西的欄位是 `null`，先檢查再用。",
       "body": "物件的欄位還沒放東西的時候是 `null`，意思是「什麼都沒有」。\n\n```\nif (m.name == null) {\n    System.out.println(\"還沒取名\");\n} else {\n    System.out.println(m.name.length());\n}\n```\n\n對 `null` 呼叫方法，例如 `name.length()`，程式會跌倒（`NullPointerException`）。先用 `== null` 檢查。"
+    },
+    {
+      "id": "private",
+      "chapter": 7,
+      "title": "private 是只有自己能開的抽屜",
+      "summary": "`private` 欄位只有類別自己能碰。",
+      "body": "在欄位前面加 `private`，它就變成只有這個類別自己能開的抽屜。\n\n```\nclass GachaBag {\n    private int count;\n}\n```\n\n外面寫 `bag.count = 99;` 會被編譯器擋下來。外面想看、想改，都要透過類別自己開放的方法。"
+    },
+    {
+      "id": "getter-setter",
+      "chapter": 7,
+      "title": "getter 和 setter",
+      "summary": "用方法開放：讓人看，或照規矩改。",
+      "body": "`private` 的欄位，用方法決定要開放什麼。\n\n```\nint getCount() {\n    return count;\n}\n\nvoid add() {\n    count++;\n}\n```\n\n`getCount()` 讓外面看數量，這種方法叫 getter；`add()` 讓外面照規矩改，一次只能加一個。開放什麼、怎麼開放，類別自己決定。"
+    },
+    {
+      "id": "guard",
+      "chapter": 7,
+      "title": "在方法裡把關",
+      "summary": "規則寫在方法裡，誰都繞不過去。",
+      "body": "欄位是 `private` 的，外面只能透過方法改它。所以把規則寫在方法裡，誰都繞不過去。\n\n```\nboolean deposit(int amount) {\n    if (amount <= 0) {\n        return false;\n    }\n    balance += amount;\n    return true;\n}\n```\n\n錢不能存負數、扭蛋不能超過上限，都在方法裡把關。"
+    },
+    {
+      "id": "static-field",
+      "chapter": 7,
+      "title": "static 是大家共用的",
+      "summary": "`static` 欄位整個類別只有一份。",
+      "body": "一般的欄位每個物件各一份；`static` 欄位屬於整個類別，大家共用同一份。\n\n```\nclass Table {\n    static int todayTotal;\n    private int amount;\n}\n```\n\n`amount` 每一桌各算各的，`Table.todayTotal` 整家店只有一個。第四章照寫的 `static` 就是這個意思：屬於類別，不屬於哪一個物件。"
+    },
+    {
+      "id": "final",
+      "chapter": 7,
+      "title": "final 是寫死的",
+      "summary": "`final` 設定一次就不能再改。",
+      "body": "加了 `final` 的變數，設定一次就不能再改。\n\n```\nstatic final int MAX = 12;\n```\n\n`static final` 常拿來當常數：大家共用，而且不會變。常數的名字習慣全部大寫，單字之間用 `_` 隔開，例如 `NEW_YEAR_SET`。"
     }
   ]
 }

@@ -1,0 +1,49 @@
+{
+  "id": "ch07-k2",
+  "title": "最多十二個",
+  "route": "學妹",
+  "partner": "亭瑄OS",
+  "notes": ["guard", "final"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "max",
+      "title": "掛不下了",
+      "goal": "加上常數 `static final int MAX = 12;` 和建構子 `GachaBag(int count)`。`add()` 改成交回 `boolean`：還沒滿就加一個、交回 `true`；滿了就不加、交回 `false`。",
+      "instructions": "規則寫在 `add()` 裡，誰都繞不過去。",
+      "expectedShape": "static final int MAX = 12;\n…\nboolean add() {\n    if (…) {\n        return false;\n    }\n    …\n}",
+      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()"] },
+      "hints": {
+        "lead": "滿了就不加。",
+        "plain": "`add()` 先問一句：已經到 `MAX` 了嗎？到了就交回 `false`，什麼都不做；還沒滿才加一個，交回 `true`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "start",
+      "title": "一開始就太多",
+      "goal": "建構子收到超過 `MAX` 的數量時只放 `MAX` 個，收到負數就放 0。",
+      "instructions": "`new` 的時候給的數量也可能不合理，在建構子裡先檢查。",
+      "expectedShape": "GachaBag(int count) {\n    if (count > MAX) {\n        …\n    } else if (…) {\n        …\n    } else {\n        …\n    }\n}",
+      "check": { "type": "values", "exprs": ["new GachaBag(20).getCount()", "new GachaBag(-3).getCount()", "new GachaBag(5).getCount()"] },
+      "hints": {
+        "lead": "建構子也要把關。",
+        "plain": "太多就只放 `MAX` 個，負數就放 0，其他照給的放。三種情況用 `if`／`else if`／`else` 分開。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "final",
+      "title": "改不了的上限",
+      "goal": "起始碼的最後一行寫了 `GachaBag.MAX = 20;`，紅字說 `final` 不能改。刪掉，改成印出 `最多 12 個`。",
+      "instructions": "`MAX` 是 `static final`：大家共用，而且不能改。",
+      "expectedShape": "System.out.println(\"最多 \" + … + \" 個\");",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "final 只能讀，不能改。",
+        "plain": "`final` 是寫死的：設定一次就不能再改。要用它，直接讀 `GachaBag.MAX` 就好。"
+      },
+      "afterText": ""
+    }
+  ]
+}
