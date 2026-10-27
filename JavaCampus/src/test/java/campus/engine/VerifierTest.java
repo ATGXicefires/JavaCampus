@@ -164,6 +164,39 @@ class VerifierTest {
                 "`isLate(2113)`", "false");
     }
 
+    @Test
+    void outputCheckAlsoComparesExprs() {
+        Check check = new Check(Check.Mode.OUTPUT, List.of("gacha"), null);
+        String solution = "int gacha = 7;\nSystem.out.println(gacha);\ngacha = 8;\nSystem.out.println(gacha);";
+        assertTrue(verifier.verify("b1", SNIPPET, List.of(), check, solution, solution).passed());
+        assertFails(verifier.verify("b1", SNIPPET, List.of(), check, solution,
+                "int gacha = 7;\nSystem.out.println(gacha);\nSystem.out.println(8);"), "`gacha` 的值不對", "7");
+        assertFails(verifier.verify("b1", SNIPPET, List.of(), check, solution, "int gacha = 7;\ngacha = 8;"), "沒有印出任何東西");
+    }
+
+    @Test
+    void voidCallIsJudgedByWhatItPrints() {
+        Check check = new Check(Check.Mode.OUTPUT, List.of("say(\"阿成\", \"OH！\")"), null);
+        String solution = "static void say(String who, String line) {\n    System.out.println(who + \"：「\" + line + \"」\");\n}\n\n"
+                + "say(\"滷肉\", \"加油\");";
+        assertTrue(verifier.verify("b2", SNIPPET, List.of(), check, solution,
+                "static void say(String w, String l) { System.out.println(w + \"：「\" + l + \"」\"); }\nsay(\"滷肉\", \"加油\");").passed());
+        assertFails(verifier.verify("b2", SNIPPET, List.of(), check, solution, "System.out.println(\"滷肉：「加油」\");"),
+                "沒辦法執行 `say(\"阿成\", \"OH！\")`");
+        assertFails(verifier.verify("b2", SNIPPET, List.of(), check, solution,
+                "static void say(String who, String line) {}\nSystem.out.println(\"滷肉：「加油」\");"),
+                "應該印出「阿成：「OH！」」", "什麼都沒印");
+    }
+
+    @Test
+    void variantVoidCallNamesWhatItPrinted() {
+        Check check = new Check(Check.Mode.VALUES, List.of("remind()"), List.of(Map.of("callHour", "9")));
+        String solution = "static void remind() {\n    System.out.println(\"還有 \" + (21 - callHour) + \" 小時\");\n}";
+        assertTrue(verifier.verify("b3", SNIPPET, HOUR, check, solution, solution).passed());
+        assertFails(verifier.verify("b3", SNIPPET, HOUR, check, solution, "static void remind() { System.out.println(\"還有 1 小時\"); }"),
+                "`callHour` 改成 9", "應該印出「還有␣12␣小時」", "你的印出「還有␣1␣小時」");
+    }
+
     private static final String LEAVE_SOLUTION = """
             public class Main {
                 static int leaveTime(int hour, int minute, int drive) {

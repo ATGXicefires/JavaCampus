@@ -28,8 +28,17 @@ public record RunResult(Outcome outcome, String output, boolean truncated, List<
         }
     }
 
-    /** {@code error} 不為 null 時代表這個運算式沒辦法求值，{@code type} 與 {@code value} 為 null。 */
-    public record Probe(String expr, String type, String value, String error) {}
+    /**
+     * {@code error} 不為 null 時代表這個運算式沒辦法求值，{@code type} 與 {@code value} 為 null。
+     *
+     * @param output 求值時印出來的字；回傳 {@code void} 的呼叫沒有值，比的就是它
+     */
+    public record Probe(String expr, String type, String value, String error, String output) {
+
+        public Probe(String expr, String type, String value, String error) {
+            this(expr, type, value, error, "");
+        }
+    }
 
     public RunResult {
         problems = List.copyOf(problems);

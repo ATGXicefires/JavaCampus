@@ -661,7 +661,9 @@ public final class Sandbox implements AutoCloseable {
         ScheduledFuture<?> dog = arm(js);
         try {
             for (String expr : probes) {
-                out.add(probe(js, expr));
+                output.reset();
+                Probe p = probe(js, expr);
+                out.add(new Probe(p.expr(), p.type(), p.value(), p.error(), output.text()));
             }
         } finally {
             dog.cancel(false);
