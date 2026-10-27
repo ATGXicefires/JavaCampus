@@ -33,7 +33,7 @@
       "check": {
         "type": "values",
         "exprs": ["retry"],
-        "variants": [ { "scores": "{60, 59, 0}" } ]
+        "variants": [ { "scores": "{60, 59, 0}" }, { "scores": "{100, 90}" } ]
       },
       "hints": {
         "lead": "計數器：條件成立時遞增⋯⋯",
