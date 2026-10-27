@@ -12,7 +12,7 @@
       "goal": "`new Glasses().view()` 要交回 `世界霧霧的`：剛做出來的眼鏡還沒擦過。\n\n寫 `class Glasses`：欄位 `boolean clean`（乾不乾淨），方法 `String view()` 在 `clean` 是 `true` 時交回 `世界很清楚`，否則交回 `世界霧霧的`。",
       "instructions": "這一題不用寫建構子：沒寫建構子的類別，一樣可以用 `new Glasses()` 做出來。沒設定過的欄位有預設值：`boolean` 是 `false`，`int` 是 0，`String` 是 `null`，所以剛做出來的眼鏡 `clean` 是 `false`。\n\n`view()` 不加 `static`，是每副眼鏡自己的方法，看的是自己的 `clean`。",
       "expectedShape": "class Glasses {\n    boolean clean;\n\n    String view() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Glasses().view()"] },
+      "check": { "type": "values", "exprs": ["new Glasses().view()", "new Glasses() {{ clean = true; }}.view()"] },
       "hints": {
         "lead": "`boolean` 欄位的預設值是 `false`⋯⋯",
         "plain": "⋯⋯白話：還沒擦的眼鏡，`clean` 一開始就是 `false`。`view()` 看 `clean` 決定交回哪一句。"

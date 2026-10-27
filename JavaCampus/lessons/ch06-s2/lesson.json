@@ -12,7 +12,7 @@
       "goal": "`new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 做出來的卡片，`to` 要是 `梁亭瑄`，`from` 要是 `吳二弘`，`message` 要是 `嗨`。\n\n寫 `class Gift`：三個 `String` 欄位 `to`、`from`、`message`，和建構子 `Gift(String to, String from, String message)`（`new` 的那一刻第一個執行的方法），用 `this` 把傳進來的值放進欄位。",
       "instructions": "建構子的名字和類別一樣，前面不寫回傳型別。`new Gift(…)` 括號裡的三個值，會照順序交給參數 `to`、`from`、`message`。\n\n參數和欄位同名的時候，`this.to` 是這張卡片自己的欄位，`to` 是傳進來的參數。所以 `this.to = to;` 就是把傳進來的值放進自己的欄位。",
       "expectedShape": "class Gift {\n    …\n    Gift(String to, String from, String message) {\n        this.to = to;\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").message"] },
+      "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").message", "new Gift(\"小明\", \"小華\", \"生日快樂\").to", "new Gift(\"小明\", \"小華\", \"生日快樂\").from", "new Gift(\"小明\", \"小華\", \"生日快樂\").message"] },
       "hints": {
         "lead": "建構子以 `this.欄位 = 參數` 初始化同名欄位⋯⋯",
         "plain": "⋯⋯白話：三個欄位，建構子收三個參數，用 `this.to = to;` 這樣一個一個放好。"

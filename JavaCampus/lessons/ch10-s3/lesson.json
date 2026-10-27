@@ -27,7 +27,7 @@
       "instructions": "`units[i]` 和 `scores[i]` 是同一筆：`units[0]` 是 `第1課`、`scores[0]` 是 `60`，就是第 1 課記了 60 分。沒有紀錄的課，跟 `bestOf` 一樣交回 0。\n\n這一步只看 `bestAfter` 交回什麼，`main` 不用改。",
       "expectedShape": "static int bestAfter(String[] units, int[] scores, String unit) {\n    Records r = new Records();\n    for (…) {\n        …\n    }\n    return r.bestOf(unit);\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.bestAfter(new String[]{\"第1課\", \"第1課\"}, new int[]{60, 45}, \"第1課\")", "Main.bestAfter(new String[]{}, new int[]{}, \"第2課\")"] },
+      "check": { "type": "values", "exprs": ["Main.bestAfter(new String[]{\"第1課\", \"第1課\"}, new int[]{60, 45}, \"第1課\")", "Main.bestAfter(new String[]{}, new int[]{}, \"第2課\")", "Main.bestAfter(new String[]{\"第1課\", \"第2課\", \"第1課\"}, new int[]{45, 90, 60}, \"第1課\")"] },
       "hints": {
         "lead": "以靜態方法包裝流程，便於以參數驗證⋯⋯",
         "plain": "⋯⋯白話：把「記幾筆、查一課」包成一個方法，測試的人就能直接丟各種資料進來試，不用每次改 `main`。"

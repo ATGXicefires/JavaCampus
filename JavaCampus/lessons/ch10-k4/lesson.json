@@ -41,7 +41,7 @@
       "instructions": "這裡的 `needs` 是方法的參數，是一張清單，和 `main` 裡的對照表 `needs` 沒有關係。\n\n先 `new` 一個空的清單，用 for-each 走過 `needs`，`have` 裡沒有的就 `add` 進去，最後交回這張清單。全部都找得到的話，交回的就是空的清單 `[]`。\n\n這一步只看 `missing` 交回什麼，`main` 不用改。",
       "expectedShape": "static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have) {\n    ArrayList<String> out = new ArrayList<>();\n    for (…) {\n        …\n    }\n    return out;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.missing(new java.util.ArrayList<>(java.util.List.of(\"計分\", \"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))", "Main.missing(new java.util.ArrayList<>(java.util.List.of(\"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))"] },
+      "check": { "type": "values", "exprs": ["Main.missing(new java.util.ArrayList<>(java.util.List.of(\"計分\", \"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))", "Main.missing(new java.util.ArrayList<>(java.util.List.of(\"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))", "Main.missing(new java.util.ArrayList<>(java.util.List.of(\"登入\", \"貼紙\", \"課程\")), new java.util.ArrayList<>(java.util.List.of(\"課程\")))"] },
       "hints": {
         "lead": "沒有的才 add 進去。",
         "plain": "準備一個空袋子，把需要的一個一個拿出來比對：對方清單裡沒有的，丟進袋子。比完，袋子裡就是缺的那些。"

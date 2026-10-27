@@ -27,7 +27,7 @@
       "instructions": "作答一樣先 `trim` 再和 `answer` 比。答對了可以直接 `return` 是第幾次，後面的不用再看。\n\n這一步只看 `triesNeeded` 交回的數，`main` 不用改。",
       "expectedShape": "static int triesNeeded(String[] tries, String answer, int limit) {\n    for (…) {\n        …\n    }\n    return -1;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 3)"] },
+      "check": { "type": "values", "exprs": ["Main.triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"錯\"}, \"吃滷肉飯\", 3)"] },
       "hints": {
         "lead": "迴圈條件同時限制陣列長度與次數上限⋯⋯",
         "plain": "⋯⋯白話：最多只看前 `limit` 次，作答不夠也要停。答對了馬上交回是第幾次，全部看完都沒對，就交回 -1。"

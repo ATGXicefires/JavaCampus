@@ -25,7 +25,7 @@
       "goal": "`isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 要交回 `true`：玩家打的 `typed` 前後多了空白不算錯，字不一樣才交回 `false`。\n\n寫一個方法 `static boolean isCorrect(String typed, String answer)`：先用 `trim()`（去掉前後的空白）處理 `typed`，再用 `equals`（比兩個字串的字一不一樣）和 `answer` 比。",
       "instructions": "新生打字常常前後多一個空白。`trim()` 會交回去掉前後空白的字串，例如 `\" 小白 \".trim()` 是 `\"小白\"`。\n\n比字串要用 `a.equals(b)`：`a` 和 `b` 的字一樣就是 `true`。不要用 `==`：`trim()` 做出來的是新的字串，用 `==` 比會是 `false`。\n\n名字前面的 `boolean` 是說這個方法交回 `true` 或 `false`。`equals` 比出來的答案本身就是 `true` 或 `false`，可以直接交回去。",
       "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃控肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")"] },
+      "check": { "type": "values", "exprs": ["isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃控肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")", "isCorrect(\"不吃滷肉飯\", \"吃滷肉飯\")"] },
       "hints": {
         "lead": "先 trim，再 equals。",
         "plain": "`==` 比的是是不是同一個盒子，`equals` 比的是裡面的字一不一樣。`trim()` 交回的是一個新盒子，字一樣也沒用，所以一定要用 `equals`。"

@@ -41,7 +41,7 @@
       "instructions": "角括號裡只能放類別。`int` 不是類別，要寫成它的包裝類別 `Integer`；`double` 也一樣，要寫 `Double`。放進去、拿出來的時候，Java 會自動轉換，所以 for-each 可以直接用 `int` 接：`for (int t : taps)`。\n\n這一步只看 `totalTaps` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
       "expectedShape": "static int totalTaps(ArrayList<Integer> taps) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())"] },
+      "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())", "Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(5, 20)))"] },
       "hints": {
         "lead": "ArrayList<Integer>，不是 <int>。",
         "plain": "清單只裝得下物件，`int` 要換成它的包裝 `Integer` 才放得進去。拿出來加的時候，Java 會自動拆開來算。"
