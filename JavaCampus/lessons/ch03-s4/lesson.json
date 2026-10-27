@@ -13,7 +13,7 @@
     {
       "id": "parse",
       "title": "字串變數字",
-      "goal": "`input` 是答題框收到的字串，現在是 `\"85\"`，要印出 `85 分，再加 5 分是 90 分`。可是起始碼那一行現在印的是 `85 分，再加 5 分是 855 分`：字串接上 5，只是把 5 黏在後面。\n\n先用 `Integer.parseInt`（把字串換成 `int`）把 `input` 換成數字，存進 `int score`，再用它印出這一句。",
+      "goal": "`input` 是答題框收到的字串，現在是 `\"85\"`，要印出 `85 分，再加 5 分是 90 分`。起始碼卻印出 `85 分，再加 5 分是 855 分`。\n\n先用 `Integer.parseInt`（把字串換成 `int`）把 `input` 換成數字，存進 `int score`，再用它印出這一句。",
       "instructions": "編輯器最上面三行 `String input = \"85\";`、`int total = 240;` 和 `int count = 3;` 是題目先寫好的，你的程式可以直接用 `input`、`total` 和 `count`。\n\n`\"85\"` 是「8」和「5」兩個字，不是數字。`Integer.parseInt(…)` 會讀括號裡的字串，換成真正的數字，例如 `Integer.parseInt(\"7\") + 1` 是 8。\n\n數字的加法放進字串中間時要加括號，不然 `+` 會把它當成接起來：`\"共 \" + (3 + 4)` 是 `共 7`。",
       "expectedShape": "int score = …;\nSystem.out.println(score + \" 分，再加 5 分是 \" + (…) + \" 分\");",
       "check": {
