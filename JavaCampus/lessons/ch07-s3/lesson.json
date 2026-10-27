@@ -5,7 +5,7 @@
   "partner": "阿嬤",
   "notes": ["static-field"],
   "vars": [
-    { "name": "orders", "type": "int[]", "value": "{80, 35, 120, 60}" }
+    { "name": "orders", "type": "int[]", "value": "{80, 35, 120, 60}", "note": "今天每一筆訂單的金額" }
   ],
   "steps": [
     {

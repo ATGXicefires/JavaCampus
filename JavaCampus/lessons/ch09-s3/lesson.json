@@ -5,7 +5,7 @@
   "partner": "二弘OS",
   "notes": ["interface", "polymorphism"],
   "vars": [
-    { "name": "days", "type": "String[]", "value": "{\"星期一\", \"星期二\", \"星期三\", \"星期四\", \"星期五\"}" }
+    { "name": "days", "type": "String[]", "value": "{\"星期一\", \"星期二\", \"星期三\", \"星期四\", \"星期五\"}", "note": "要排午餐的五天" }
   ],
   "steps": [
     {

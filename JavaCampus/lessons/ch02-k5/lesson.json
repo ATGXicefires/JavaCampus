@@ -5,7 +5,7 @@
   "partner": "二弘",
   "notes": ["cast", "for"],
   "vars": [
-    { "name": "slides", "type": "int", "value": "7" }
+    { "name": "slides", "type": "int", "value": "7", "note": "投影片的張數" }
   ],
   "steps": [
     {

@@ -5,8 +5,8 @@
   "partner": "亭瑄OS",
   "notes": ["tostring"],
   "vars": [
-    { "name": "months", "type": "String[]", "value": "{\"9月\", \"11月\", \"2月\"}" },
-    { "name": "titles", "type": "String[]", "value": "{\"提案簡報的插圖\", \"校慶版的介面\", \"貼紙系統的草稿\"}" }
+    { "name": "months", "type": "String[]", "value": "{\"9月\", \"11月\", \"2月\"}", "note": "每張草圖的月份" },
+    { "name": "titles", "type": "String[]", "value": "{\"提案簡報的插圖\", \"校慶版的介面\", \"貼紙系統的草稿\"}", "note": "每張草圖的名稱" }
   ],
   "steps": [
     {

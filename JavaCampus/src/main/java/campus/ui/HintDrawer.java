@@ -14,7 +14,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
@@ -129,11 +128,10 @@ final class HintDrawer extends VBox {
         return box;
     }
 
-    /** 用 TextFlow 而不是 Label，骨架和答案才選取得到。 */
+    /** 用 TextFlow 而不是 Label，骨架和答案才選取得到；字串引號裡的空格跟題目一樣畫成看得見的。 */
     private static TextFlow codeBlock(String source) {
-        Text text = new Text(source.strip());
-        text.getStyleClass().add("hint-code-text");
-        TextFlow flow = new TextFlow(text);
+        TextFlow flow = new TextFlow();
+        flow.getChildren().addAll(MiniMarkdown.texts(MiniMarkdown.visibleSpaces(source.strip(), false), "hint-code-text"));
         flow.getStyleClass().add("hint-code");
         return flow;
     }

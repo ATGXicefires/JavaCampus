@@ -5,7 +5,7 @@
   "partner": "二弘OS",
   "notes": ["compare", "arith", "for"],
   "vars": [
-    { "name": "weeks", "type": "int", "value": "16" }
+    { "name": "weeks", "type": "int", "value": "16", "note": "時程表的總週數" }
   ],
   "steps": [
     {

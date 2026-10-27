@@ -5,7 +5,7 @@
   "partner": "亭瑄",
   "notes": ["types", "arith", "concat"],
   "vars": [
-    { "name": "gacha", "type": "int", "value": "8" }
+    { "name": "gacha", "type": "int", "value": "8", "note": "扭蛋的數量" }
   ],
   "steps": [
     {

@@ -5,7 +5,7 @@
   "partner": "二弘",
   "notes": ["max-min", "test-data"],
   "vars": [
-    { "name": "myScores", "type": "int[]", "value": "{34, 41, 62}" }
+    { "name": "myScores", "type": "int[]", "value": "{34, 41, 62}", "note": "幾次考試的分數" }
   ],
   "steps": [
     {

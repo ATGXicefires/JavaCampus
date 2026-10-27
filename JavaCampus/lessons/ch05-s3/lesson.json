@@ -5,7 +5,7 @@
   "partner": "二弘OS",
   "notes": ["nested"],
   "vars": [
-    { "name": "n", "type": "int", "value": "9" }
+    { "name": "n", "type": "int", "value": "9", "note": "要乘到幾" }
   ],
   "steps": [
     {

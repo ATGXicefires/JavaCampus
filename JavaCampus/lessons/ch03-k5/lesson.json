@@ -5,9 +5,9 @@
   "partner": "小芸",
   "notes": ["parse-int", "try-catch"],
   "vars": [
-    { "name": "input", "type": "String", "value": "\"85\"" },
-    { "name": "total", "type": "int", "value": "240" },
-    { "name": "count", "type": "int", "value": "3" }
+    { "name": "input", "type": "String", "value": "\"85\"", "note": "答題框收到的字串" },
+    { "name": "total", "type": "int", "value": "240", "note": "成績的總分" },
+    { "name": "count", "type": "int", "value": "3", "note": "成績的筆數" }
   ],
   "steps": [
     {

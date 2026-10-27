@@ -5,8 +5,8 @@
   "partner": "亭瑄OS",
   "notes": ["arith", "compare"],
   "vars": [
-    { "name": "perDay", "type": "int", "value": "3" },
-    { "name": "days", "type": "int", "value": "5" }
+    { "name": "perDay", "type": "int", "value": "3", "note": "每天吃幾個飯糰" },
+    { "name": "days", "type": "int", "value": "5", "note": "一週上學幾天" }
   ],
   "steps": [
     {

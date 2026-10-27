@@ -5,8 +5,8 @@
   "partner": "二弘OS",
   "notes": ["array", "index", "else-if"],
   "vars": [
-    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" },
-    { "name": "score", "type": "int", "value": "85" }
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" },
+    { "name": "score", "type": "int", "value": "85", "note": "要換成等第的分數" }
   ],
   "steps": [
     {

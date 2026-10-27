@@ -5,8 +5,8 @@
   "partner": "亭瑄OS",
   "notes": ["int-div", "cast", "compare", "for"],
   "vars": [
-    { "name": "total", "type": "int", "value": "312" },
-    { "name": "days", "type": "int", "value": "7" }
+    { "name": "total", "type": "int", "value": "312", "note": "段考 5 科的總分" },
+    { "name": "days", "type": "int", "value": "7", "note": "離段考還有幾天" }
   ],
   "steps": [
     {

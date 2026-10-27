@@ -5,7 +5,7 @@
   "partner": "小芸",
   "notes": ["static-field"],
   "vars": [
-    { "name": "daily", "type": "int[]", "value": "{3, 5, 4, 8, 7, 9, 12}" }
+    { "name": "daily", "type": "int[]", "value": "{3, 5, 4, 8, 7, 9, 12}", "note": "寒假每天提到「學長」的次數" }
   ],
   "steps": [
     {

@@ -5,7 +5,7 @@
   "partner": "二弘",
   "notes": ["concat", "inc", "for"],
   "vars": [
-    { "name": "spins", "type": "int", "value": "3" }
+    { "name": "spins", "type": "int", "value": "3", "note": "要轉幾圈" }
   ],
   "steps": [
     {

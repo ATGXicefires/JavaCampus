@@ -5,8 +5,8 @@
   "partner": "小芸",
   "notes": ["while"],
   "vars": [
-    { "name": "price", "type": "int", "value": "50" },
-    { "name": "perDay", "type": "int", "value": "15" }
+    { "name": "price", "type": "int", "value": "50", "note": "扭蛋一次多少錢" },
+    { "name": "perDay", "type": "int", "value": "15", "note": "每天存多少錢" }
   ],
   "steps": [
     {

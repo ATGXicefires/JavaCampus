@@ -5,7 +5,7 @@
   "partner": "亭瑄",
   "notes": ["else-if", "array-loop"],
   "vars": [
-    { "name": "scores", "type": "int[]", "value": "{95, 72, 58}" }
+    { "name": "scores", "type": "int[]", "value": "{95, 72, 58}", "note": "一排分數" }
   ],
   "steps": [
     {

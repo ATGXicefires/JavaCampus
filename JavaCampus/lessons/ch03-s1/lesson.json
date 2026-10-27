@@ -5,9 +5,9 @@
   "partner": "二弘OS",
   "notes": ["compare", "int-div", "for"],
   "vars": [
-    { "name": "score", "type": "int", "value": "60" },
-    { "name": "total", "type": "int", "value": "312" },
-    { "name": "days", "type": "int", "value": "7" }
+    { "name": "score", "type": "int", "value": "60", "note": "要判斷的分數" },
+    { "name": "total", "type": "int", "value": "312", "note": "5 科的總分" },
+    { "name": "days", "type": "int", "value": "7", "note": "要印幾天" }
   ],
   "steps": [
     {

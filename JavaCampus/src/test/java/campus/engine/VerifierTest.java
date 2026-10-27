@@ -21,7 +21,7 @@ class VerifierTest {
     private static Verifier verifier;
 
     private static final Check OUTPUT = new Check(Check.Mode.OUTPUT, null, null);
-    private static final List<SetupVar> HOUR = List.of(new SetupVar("callHour", "int", "20"));
+    private static final List<SetupVar> HOUR = List.of(new SetupVar("callHour", "int", "20", null));
 
     @BeforeAll
     static void start() {
@@ -128,7 +128,7 @@ class VerifierTest {
 
     @Test
     void variantCountsTheLinesAProgramDidNotFollow() {
-        List<SetupVar> times = List.of(new SetupVar("times", "int", "5"));
+        List<SetupVar> times = List.of(new SetupVar("times", "int", "5", null));
         Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("times", "100")));
         String solution = "for (int i = 1; i <= times; i++) {\n    System.out.println(\"罰寫\");\n}";
         String fixed = "for (int i = 0; i < 5; i++) {\n    System.out.println(\"罰寫\");\n}";

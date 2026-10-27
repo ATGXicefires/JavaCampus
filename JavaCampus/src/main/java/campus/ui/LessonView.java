@@ -13,7 +13,6 @@ import campus.lesson.Check;
 import campus.lesson.Handbook;
 import campus.lesson.Lesson;
 import campus.lesson.Reactions;
-import campus.lesson.SetupVar;
 import campus.lesson.SourceFile;
 import campus.lesson.Step;
 import campus.progress.Progress;
@@ -42,7 +41,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
@@ -54,7 +52,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** 程式題：左邊是步驟、題目和題目給的變數，中間寫程式和看結果，右邊是筆記和搭檔的反應。三區各自是一張卡片。 */
+/** 程式題：左邊是步驟和題目，中間寫程式和看結果，右邊是筆記和搭檔的反應。三區各自是一張卡片。 */
 final class LessonView extends StackPane {
 
     // 完整程式的檔案清單另外存一份，玩家新增的檔案下次才找得回來；檔名裡不會有「#」，不會跟檔案的鍵撞在一起
@@ -427,22 +425,17 @@ final class LessonView extends StackPane {
         }
     }
 
-    /** 先給這一步要做的事和預期的樣子，題目給的變數夾在中間，背景和完整寫法收在「完整說明」裡。 */
+    /** 先給這一步要做的事和預期的樣子，背景和完整寫法收在「完整說明」裡；題目給的變數寫在編輯器最上面。 */
     private void refreshDetail() {
         Label title = new Label(current.title());
         title.getStyleClass().add("detail-title");
         title.setWrapText(true);
         TextFlow goal = MiniMarkdown.inline(current.goal());
         goal.getStyleClass().add("step-goal");
-        Text shapeText = new Text(current.expectedShape());
-        shapeText.getStyleClass().add("shape-text");
-        TextFlow shape = new TextFlow(shapeText);
+        TextFlow shape = new TextFlow();
+        shape.getChildren().addAll(MiniMarkdown.texts(MiniMarkdown.visibleSpaces(current.expectedShape(), false), "shape-text"));
         shape.getStyleClass().add("shape-box");
-        detail.getChildren().setAll(title, goal);
-        if (!lesson.vars().isEmpty()) {
-            detail.getChildren().add(givenBox());
-        }
-        detail.getChildren().add(shape);
+        detail.getChildren().setAll(title, goal, shape);
         if (!current.instructions().isBlank()) {
             detail.getChildren().add(moreDetail(current.instructions()));
         }
@@ -451,27 +444,6 @@ final class LessonView extends StackPane {
             after.getStyleClass().add("after-text");
             detail.getChildren().add(after);
         }
-    }
-
-    /** 題目先放進執行環境的變數，一行一個寫成宣告；實線框，跟虛線的「預期的樣子」分得出來。 */
-    private Node givenBox() {
-        TextFlow box = new TextFlow();
-        for (SetupVar v : lesson.vars()) {
-            if (!box.getChildren().isEmpty()) {
-                box.getChildren().add(codeText("\n", "given-text"));
-            }
-            box.getChildren().addAll(codeText(v.type(), "var-type"), codeText(" ", "given-text"),
-                    codeText(v.name(), "var-name"), codeText(" = ", "given-text"),
-                    codeText(v.value(), "var-value"), codeText(";", "given-text"));
-        }
-        box.getStyleClass().add("given-box");
-        return box;
-    }
-
-    private static Text codeText(String text, String styleClass) {
-        Text t = new Text(text);
-        t.getStyleClass().add(styleClass);
-        return t;
     }
 
     private Node moreDetail(String markdown) {

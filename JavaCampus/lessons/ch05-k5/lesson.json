@@ -5,9 +5,9 @@
   "partner": "亭瑄OS",
   "notes": ["logic", "nested"],
   "vars": [
-    { "name": "rows", "type": "int", "value": "2" },
-    { "name": "cols", "type": "int", "value": "5" },
-    { "name": "done", "type": "int", "value": "7" }
+    { "name": "rows", "type": "int", "value": "2", "note": "格子有幾列" },
+    { "name": "cols", "type": "int", "value": "5", "note": "每列有幾格" },
+    { "name": "done", "type": "int", "value": "7", "note": "完成了幾課" }
   ],
   "steps": [
     {

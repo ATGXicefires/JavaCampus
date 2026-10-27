@@ -5,7 +5,7 @@
   "partner": "二弘",
   "notes": ["if-else"],
   "vars": [
-    { "name": "hasLuRouFan", "type": "boolean", "value": "true" }
+    { "name": "hasLuRouFan", "type": "boolean", "value": "true", "note": "有沒有滷肉飯" }
   ],
   "steps": [
     {

@@ -5,8 +5,8 @@
   "partner": "亭瑄",
   "notes": ["return", "else-if"],
   "vars": [
-    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}" },
-    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}" }
+    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}", "note": "口味的名字" },
+    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}", "note": "各口味的甜度" }
   ],
   "steps": [
     {

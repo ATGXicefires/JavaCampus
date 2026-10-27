@@ -5,7 +5,7 @@
   "partner": "二弘",
   "notes": ["types", "arith", "int-div", "cast"],
   "vars": [
-    { "name": "gacha", "type": "int", "value": "8" }
+    { "name": "gacha", "type": "int", "value": "8", "note": "書包上的扭蛋數" }
   ],
   "steps": [
     {

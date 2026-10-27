@@ -65,6 +65,14 @@ class LessonContentTest {
         assertTrue(step.expectedShape().contains("…"), "預期的樣子直接寫出答案，玩家要寫的地方要換成 …");
     }
 
+    /** 題目變數寫在編輯器最上面，行尾註解說它裝的是什麼。 */
+    @TestFactory
+    List<DynamicTest> everyGivenVariableSaysWhatItHolds() {
+        return library.lessons().values().stream().flatMap(l -> l.vars().stream()
+                .map(v -> DynamicTest.dynamicTest(l.id() + "/" + v.name(),
+                        () -> assertFalse(v.note() == null || v.note().isBlank(), "缺少 note")))).toList();
+    }
+
     /** 筆記欄平常只顯示這一句，太長就失去「先看重點」的意思了。 */
     @TestFactory
     List<DynamicTest> everyNoteHasShortSummary() {

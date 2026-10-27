@@ -5,7 +5,7 @@
   "partner": "二弘",
   "notes": ["array-loop", "nested", "constructor"],
   "vars": [
-    { "name": "n", "type": "int", "value": "4" }
+    { "name": "n", "type": "int", "value": "4", "note": "三角形的層數" }
   ],
   "steps": [
     {

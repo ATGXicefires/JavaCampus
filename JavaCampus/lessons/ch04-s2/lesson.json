@@ -5,9 +5,9 @@
   "partner": "亭瑄",
   "notes": ["signature"],
   "vars": [
-    { "name": "units", "type": "String[]", "value": "{\"讓電腦說話\", \"型別與重複\"}" },
-    { "name": "done", "type": "int[]", "value": "{3, 1}" },
-    { "name": "total", "type": "int[]", "value": "{3, 4}" }
+    { "name": "units", "type": "String[]", "value": "{\"讓電腦說話\", \"型別與重複\"}", "note": "課名" },
+    { "name": "done", "type": "int[]", "value": "{3, 1}", "note": "每課完成了幾個" },
+    { "name": "total", "type": "int[]", "value": "{3, 4}", "note": "每課總共幾個" }
   ],
   "steps": [
     {

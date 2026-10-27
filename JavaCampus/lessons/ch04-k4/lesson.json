@@ -5,8 +5,8 @@
   "partner": "亭瑄OS",
   "notes": ["signature"],
   "vars": [
-    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}" },
-    { "name": "stars", "type": "int[]", "value": "{3, 4, 5, 2, 4}" }
+    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}", "note": "口味的名字" },
+    { "name": "stars", "type": "int[]", "value": "{3, 4, 5, 2, 4}", "note": "各口味的星數" }
   ],
   "steps": [
     {
