@@ -34,7 +34,7 @@
       "expectedShape": "if (avg … 60) {\n    System.out.println(\"及格\");\n} else {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "total": "250" }, { "total": "300" }, { "total": "0" } ]
+        "variants": [ { "total": "250" }, { "total": "300" }, { "total": "0" }, { "total": "298" } ]
       },
       "hints": {
         "lead": "60 以上，包含 60。",

@@ -50,7 +50,7 @@
       "expectedShape": "if (s >= 90) {\n    System.out.println(s + \" A\");\n} else if (…) {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{95, 85, 75, 65, 55}" } ]
+        "variants": [ { "scores": "{95, 85, 75, 65, 55}" }, { "scores": "{90, 89, 80, 79, 70, 69, 60, 59}" } ]
       },
       "hints": {
         "lead": "`else if` 由上而下求值，第一個為真的分支執行完就跳出⋯⋯",
