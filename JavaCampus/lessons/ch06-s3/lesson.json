@@ -9,8 +9,8 @@
     {
       "id": "this",
       "title": "null 說了 null",
-      "goal": "修好後要印出 `滷肉：「沒關係，再跑一次！」`。\n\n現在印出來的是 `null：「null」`：名字和台詞明明傳進建構子了，欄位卻還是 `null`（空的，什麼都沒放）。問題出在建構子裡 `name = name;` 和 `line = line;` 這兩行。",
-      "instructions": "欄位還沒放東西的時候是 `null`，意思是「什麼都沒有」，印出來就是 `null`。\n\n參數和欄位同名的時候，在建構子裡寫 `name`，指的是傳進來的參數，不是欄位。`name = name;` 只是把參數放回參數自己，欄位一直沒放到東西。要指物件自己的欄位，得寫 `this.name`（`this` 是「我自己的」）。",
+      "goal": "修好後要印出 `滷肉：「沒關係，再跑一次！」`。\n\n現在印出來的是 `null：「null」`：名字和台詞明明傳進建構子了，欄位卻還是 `null`（空的，什麼都沒放）。",
+      "instructions": "欄位還沒放東西的時候是 `null`，意思是「什麼都沒有」，印出來就是 `null`。\n\n參數和欄位同名的時候，在建構子裡寫那個名字，指的是傳進來的參數，不是欄位。例如欄位和參數都叫 `price`，`price = price;` 只是把參數放回參數自己，欄位一直沒放到東西。要指物件自己的欄位，得寫 `this.price`（`this` 是「我自己的」）。",
       "expectedShape": "Mascot(String name, String line) {\n    … = name;\n    … = line;\n}",
       "check": { "type": "output" },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "length",
       "title": "還沒取名的",
-      "goal": "`new Mascot(null, \"嗨\").nameLength()` 要交回 0，`new Mascot(\"滷肉\", \"嗨\").nameLength()` 要交回 2。\n\n起始碼新加的 `int nameLength()` 會交回名字有幾個字，可是名字是 `null`（空的）的時候，`return name.length();` 那一行就跌倒。在它前面先判斷：名字是 `null` 就交回 0。",
-      "instructions": "`nameLength()` 是畫名牌底線要用的。\n\n對 `null` 呼叫 `length()`，程式會跌倒，紅字是 `NullPointerException`。先用 `name == null` 問名字是不是空的；是的話馬上 `return`，方法就到這裡結束，不會走到量長度那一行。",
+      "goal": "修好後，`new Mascot(null, \"嗨\").nameLength()` 要交回 0，`new Mascot(\"滷肉\", \"嗨\").nameLength()` 要交回 2。\n\n起始碼新加的 `int nameLength()` 會交回名字有幾個字，可是名字是 `null`（空的）的小老師一呼叫就跌倒。",
+      "instructions": "`nameLength()` 是畫名牌底線要用的。\n\n對 `null` 呼叫方法，例如 `length()`，程式會跌倒，紅字是 `NullPointerException`。可以先用 `== null` 問它是不是空的。方法裡一 `return`，就在那裡結束，後面的程式不會再跑。",
       "expectedShape": "int nameLength() {\n    if (…) {\n        return 0;\n    }\n    return name.length();\n}",
       "check": { "type": "values", "exprs": ["new Mascot(null, \"嗨\").nameLength()", "new Mascot(\"滷肉\", \"嗨\").nameLength()"] },
       "hints": {

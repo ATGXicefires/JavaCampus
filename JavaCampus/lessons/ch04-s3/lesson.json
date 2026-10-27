@@ -9,7 +9,7 @@
     {
       "id": "space",
       "title": "多打了空白",
-      "goal": "現在 `return typed == answer;` 這一行讓 `isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")` 交回 `false`：玩家打的 `typed` 後面多一個空白，就被判成答錯。修好後要交回 `true`；字不一樣的，還是交回 `false`。\n\n修好這一行：先用 `trim()`（去掉前後的空白）處理 `typed`，再和答案 `answer` 比。",
+      "goal": "`isCorrect(typed, answer)` 判斷玩家打的 `typed` 是不是答案 `answer`。修好後，`isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")` 要交回 `true`；字不一樣的，例如 `isCorrect(\"小黑\", \"小白\")`，還是交回 `false`。\n\n現在 `typed` 前後多打一個空白，就被判成答錯。",
       "instructions": "`\" 小白 \".trim()` 會交回去掉前後空白的新字串 `\"小白\"`，中間的空白不會動。\n\n比兩個字串的字一不一樣，要用 `a.equals(b)`，不要用 `==`：`==` 比的是「是不是同一個盒子」，`trim()` 做出來的是新盒子，字再像，用 `==` 比也是 `false`。",
       "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")", "isCorrect(\" 小白\", \"小白\")", "isCorrect(\"小黑\", \"小白\")"] },
@@ -22,7 +22,7 @@
     {
       "id": "both",
       "title": "答案也有空白",
-      "goal": "題庫裡的答案 `answer` 也可能前後多了空白。現在 `isCorrect(\"小白\", \"小白 \")` 交回 `false`，修好後要交回 `true`。\n\n改好 `return` 那一行，`typed` 和 `answer` 兩邊都去掉前後的空白再比。",
+      "goal": "題庫裡的答案 `answer` 也可能前後多了空白。修好後，`isCorrect(\"小白\", \"小白 \")` 也要交回 `true`，現在卻交回 `false`。",
       "instructions": "`trim()` 交回的是新的字串，可以直接接著用，也可以放進 `equals` 的括號裡。",
       "expectedShape": "return typed.trim().equals(…);",
       "check": { "type": "values", "exprs": ["isCorrect(\"小白\", \"小白 \")", "isCorrect(\" 小白 \", \" 小白\")"] },
