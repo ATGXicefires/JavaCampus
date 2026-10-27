@@ -13,7 +13,7 @@
       "instructions": "`versions`、`months`、`notes` 三個陣列，同一格是同一個版本。\n\n`System.out.println(r)` 印一個物件時，印的是它的 `toString()`；沒覆寫的話，印出來是類別名稱加一串數字。`toString()` 原本就是 `public`，覆寫的時候前面也要寫 `public`。\n\n`Release` 可以按「＋」放在自己的檔案；`Main.java` 要 `import java.util.ArrayList;`。`（）` 是全形的，可以從目標複製。",
       "expectedShape": "public String toString() {\n    return version + \"（\" + month + \"）\" + note;\n}\n…\nfor (Release r : releases) {\n    System.out.println(r);\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["public String toString()"] },
       "hints": {
         "lead": "覆寫 `toString` 定義每筆紀錄的格式⋯⋯",
         "plain": "⋯⋯白話：每一版的樣子寫在 `toString()` 裡，清單從 v0.1 排到 v1.0，迴圈一行一行印。"

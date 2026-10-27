@@ -197,6 +197,29 @@ class VerifierTest {
                 "`callHour` 改成 9", "應該印出「還有␣12␣小時」", "你的印出「還有␣1␣小時」");
     }
 
+    @Test
+    void usesIsCheckedOnceTheResultIsRight() {
+        Check check = new Check(Check.Mode.VALUES, List.of("count"), null, List.of("while"));
+        String solution = "int count = 0;\nwhile (count < 3) {\n    count++;\n}";
+        assertTrue(verifier.verify("u1", SNIPPET, List.of(), check, solution, solution).passed());
+        assertFails(verifier.verify("u1", SNIPPET, List.of(), check, solution,
+                "int count = 0;\nfor (int i = 0; i < 3; i++) {\n    count++;\n}"), "結果都對了", "`while`");
+        assertFails(verifier.verify("u1", SNIPPET, List.of(), check, solution, "int count = 2;"), "`count` 的值不對");
+    }
+
+    @Test
+    void usesSkipsCommentsAndStringsButNotSpacing() {
+        Check check = new Check(Check.Mode.OUTPUT, null, null, List.of("private int count"));
+        String solution = "class Bag {\n    private int count = 2;\n\n    int count() {\n        return count;\n    }\n}\n\n"
+                + "System.out.println(new Bag().count());";
+        String spaced = "class Bag {\n    private   int\n        count = 2;\n    int count() { return count; }\n}\n"
+                + "System.out.println(new Bag().count());";
+        assertTrue(verifier.verify("u2", SNIPPET, List.of(), check, solution, spaced).passed());
+        String commented = "// private int count\nclass Bag {\n    int count = 2;\n    int count() { return count; }\n}\n"
+                + "String note = \"private int count\";\nSystem.out.println(new Bag().count());";
+        assertFails(verifier.verify("u2", SNIPPET, List.of(), check, solution, commented), "`private int count`");
+    }
+
     private static final String LEAVE_SOLUTION = """
             public class Main {
                 static int leaveTime(int hour, int minute, int drive) {

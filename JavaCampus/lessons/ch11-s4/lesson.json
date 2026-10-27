@@ -13,7 +13,7 @@
       "instructions": "`static final` 做出一個常數：`final` 是設定一次就不能再改，`static` 讓它屬於整個 `Memory` 類別，別的檔案用 `Memory.FIRST_LINE` 就拿得到。常數的名字習慣全部大寫，單字之間用 `_` 隔開。\n\n那句話的逗號和問號是全形的，可以從目標複製。",
       "expectedShape": "// Memory.java\npublic class Memory {\n    static final String FIRST_LINE = \"…\";\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["static final String FIRST_LINE"] },
       "hints": {
         "lead": "`static final` 宣告常數⋯⋯",
         "plain": "⋯⋯白話：那句話寫死在 `Memory` 裡，誰都改不了。別的檔案用 `Memory.FIRST_LINE` 拿得到。"

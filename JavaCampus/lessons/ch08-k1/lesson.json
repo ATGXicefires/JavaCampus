@@ -12,7 +12,7 @@
       "goal": "`MyPlan` 裡什麼都不寫，`new MyPlan().hobby()` 也要交回 `ParentsPlan` 寫好的 `畫畫當興趣就好`。\n\n寫 `class MyPlan extends ParentsPlan`（`extends` 是繼承：父類別有的，子類別直接就有），裡面先什麼都不寫。",
       "instructions": "`ParentsPlan` 是起始碼給的類別。`class MyPlan extends ParentsPlan` 的意思是 `MyPlan` 繼承 `ParentsPlan`：`ParentsPlan` 叫父類別，`MyPlan` 叫子類別。父類別寫好的欄位和方法，子類別一個字都不用寫，直接就有，所以 `MyPlan` 也拿得到 `future()` 和 `hobby()`。\n\n例如 `class Puppy extends Dog { }`：`Dog` 會 `bark()`，`new Puppy().bark()` 也叫得出來。",
       "expectedShape": "class MyPlan extends … {\n}",
-      "check": { "type": "values", "exprs": ["new MyPlan().future()", "new MyPlan().hobby()"] },
+      "check": { "type": "values", "exprs": ["new MyPlan().future()", "new MyPlan().hobby()"], "uses": ["class MyPlan extends ParentsPlan"] },
       "hints": {
         "lead": "extends 後面接父類別。",
         "plain": "`extends` 像是把爸媽的計畫整份抄過來：父類別寫好的方法，子類別一個字都沒寫，也直接就有。"

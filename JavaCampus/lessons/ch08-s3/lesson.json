@@ -12,7 +12,7 @@
       "goal": "`new NumberQuestion(\"剩幾個？\", \"2\").answer` 要是 `\"2\"`：題目和答案都交給父類別 `Question` 存起來。\n\n寫 `class NumberQuestion extends Question` 和建構子 `NumberQuestion(String text, String answer)`，用 `super(text, answer)`（呼叫父類別的建構子）把題目和答案交給父類別。",
       "instructions": "新的題型，答案是一個數字，例如「8 個扭蛋平分到 3 個掛勾上，分完剩幾個？」答案是 `2`。\n\n`Question` 的建構子要兩個值，子類別得在自己的建構子裡交給它，不然沒辦法建立。`super(…)` 就是呼叫父類別的建構子，把收到的值原封不動交上去：題目和答案怎麼存，`Question` 已經寫好了，不用再寫一次。存好以後，`answer` 是 `NumberQuestion` 繼承來的欄位，讀得到。",
       "expectedShape": "class NumberQuestion extends Question {\n    NumberQuestion(String text, String answer) {\n        super(…);\n    }\n}",
-      "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").answer"] },
+      "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").answer"], "uses": ["class NumberQuestion extends Question", "super("] },
       "hints": {
         "lead": "子類別建構子以 `super(...)` 呼叫父類別建構子⋯⋯",
         "plain": "⋯⋯白話：題目和答案怎麼存，`Question` 已經寫好了。`NumberQuestion` 收到以後，用 `super(text, answer)` 整包交給它。"
@@ -25,7 +25,7 @@
       "goal": "答案是 `\"2\"` 的數字題，`check(\" 2 \")` 要交回 `true`，前後多打空白也算對；`check(\"二\")` 和 `check(\"3\")` 要交回 `false`。\n\n覆寫 `boolean check(String typed)`：先 `trim()` 去掉前後的空白，再用 `Integer.parseInt` 確認是數字，不是數字就交回 `false`（用 try-catch）；是數字才把去掉空白的字交給 `super.check(…)`（父類別原本的 `check`）判斷。",
       "instructions": "`parseInt` 不吃前後的空白，要先 `trim()`：`\" 7 \".trim()` 是 `\"7\"`。`Integer.parseInt` 收到不是數字的字，會丟出 `NumberFormatException`；用 try-catch 接住，在 `catch` 裡交回 `false`。\n\n`super.check(…)` 呼叫的是父類別 `Question` 原本的 `check`。",
       "expectedShape": "@Override\nboolean check(String typed) {\n    String trimmed = typed.trim();\n    try {\n        …\n    } catch (NumberFormatException e) {\n        return false;\n    }\n    return super.check(…);\n}",
-      "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").check(\" 2 \")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"二\")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"3\")"] },
+      "check": { "type": "values", "exprs": ["new NumberQuestion(\"剩幾個？\", \"2\").check(\" 2 \")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"二\")", "new NumberQuestion(\"剩幾個？\", \"2\").check(\"3\")"], "uses": ["super.check("] },
       "hints": {
         "lead": "先驗證輸入，再以 `super.check` 沿用父類別的判斷⋯⋯",
         "plain": "⋯⋯白話：數字題只多一道檢查：不是數字就直接算錯。是數字的話，對不對還是交給 `Question` 原本的 `check` 判斷，不用重寫一次。"

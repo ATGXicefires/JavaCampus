@@ -12,7 +12,7 @@
       "goal": "三個畫面印出來，每個都是標題列 `== 小白學程式 ==`、自己的內容、頁尾 `—— 滷肉和分號陪你寫 ——` 三行。\n\n起始碼的三個畫面各自印一次標題列和頁尾，複製貼上的第三份已經打錯：`StickerScreen` 印成了 `== 小白學程試 ==`。寫 `abstract class Screen`（抽象類別：共用的寫在這裡）：`void show()` 印標題列、呼叫 `body()`、印頁尾，`body()` 寫成 `abstract`（沒有內容，留給子類別寫）。三個畫面改成 `extends Screen`，只寫自己的 `body()`。",
       "instructions": "`abstract class Screen` 是抽象類別：大家共用的標題列和頁尾，寫在它的 `show()` 裡一次就好；每個畫面不一樣的內容寫成 `abstract void body();`，只有名字，沒有大括號，直接用分號結尾，留給子類別寫。\n\n三個畫面改成 `extends Screen`，就直接有 `show()`，只要寫自己的 `body()`。`show()` 呼叫 `body()` 的時候，用的是那個畫面自己寫的版本。\n\n起始碼最後三行呼叫 `show()` 的地方不用改。",
       "expectedShape": "abstract class Screen {\n    void show() {\n        …\n        body();\n        …\n    }\n\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() {\n        …\n    }\n}\n…",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["abstract class Screen", "abstract void body()", "class LessonScreen extends Screen", "class QuizScreen extends Screen", "class StickerScreen extends Screen"] },
       "hints": {
         "lead": "以抽象類別抽出共用流程，差異留給抽象方法⋯⋯",
         "plain": "⋯⋯白話：三份複製貼上的程式，第三份已經悄悄打錯字了。標題列和頁尾收進 `Screen` 只寫一次，每個畫面只留自己的內容。"
@@ -25,7 +25,7 @@
       "goal": "最後多一個成績畫面：標題列和頁尾照舊，中間印 `答對 4 題，共 5 題`。\n\n寫 `class ResultScreen extends Screen`，只寫 `body()` 印出中間那一行，再在最後 `new` 一個 `ResultScreen` 呼叫 `show()`。",
       "instructions": "標題列和頁尾，`Screen` 會幫它印。",
       "expectedShape": "class ResultScreen extends Screen {\n    void body() {\n        …\n    }\n}\n\n…\nnew ResultScreen().show();",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["class ResultScreen extends Screen"] },
       "hints": {
         "lead": "新增子類別只需實作抽象方法⋯⋯",
         "plain": "⋯⋯白話：共用的部分已經收好了，新畫面只要寫它自己的那一行內容。"
