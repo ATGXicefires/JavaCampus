@@ -9,13 +9,14 @@ import campus.engine.RunResult.Probe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-/** 跑參考解答與玩家程式，比對兩者的結果。原始資料與每一組替換資料都要對。 */
+/** 跑參考解答與玩家程式，比對兩者的結果。原始資料與每一組替換資料都要對，最後再看有沒有用到這一步要練的寫法。 */
 public final class Verifier {
 
     private final Sandbox sandbox;
@@ -63,7 +64,22 @@ public final class Verifier {
                 return Verdict.fail(problem.get(), actual, overrides);
             }
         }
+        Optional<String> missing = check.uses().stream().filter(u -> !uses(source, u)).findFirst();
+        if (missing.isPresent()) {
+            return Verdict.fail("結果都對了，不過這一步要用到 `" + missing.get() + "`。", first, Map.of());
+        }
         return Verdict.pass(first);
+    }
+
+    /** 程式碼裡有沒有這串寫法：一個詞一個詞比，略過註解，空白和換行不算；字串整個算一個詞，引號裡的字不算寫出來。 */
+    static boolean uses(List<SourceFile> files, String use) {
+        List<String> want = words(use);
+        return files.stream().anyMatch(f -> Collections.indexOfSubList(words(f.text()), want) >= 0);
+    }
+
+    private static List<String> words(String code) {
+        return JavaTokens.tokenize(code).stream().filter(t -> t.kind() != JavaTokens.Kind.COMMENT)
+                .map(JavaTokens.Token::text).toList();
     }
 
     private static Optional<String> problem(Check check, RunResult expected, RunResult actual) {

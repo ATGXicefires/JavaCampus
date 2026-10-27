@@ -12,7 +12,7 @@
       "goal": "`q` 是答案為 `選午餐` 的填空題。修好後，`q.check(\"選 午 餐\")` 要交回 `true`，`q.check(\"選晚餐\")` 還是 `false`。\n\n起始碼的 `FillQuestion` 想覆寫 `check`，讓中間多打空白也算對，卻一直沒有作用，現在 `q.check(\"選 午 餐\")` 交回的是 `false`。先在那個方法上面加一行 `@Override`（請編譯器確認父類別真的有這個方法），看紅字說什麼，再修好。",
       "instructions": "名字、大小寫、參數只要有一點不一樣，就不算覆寫，只是多了一個新方法。這時候程式照樣能跑，只是 `q.check(…)` 一直用父類別的版本。加了 `@Override`，編譯器會直接說沒覆寫到。\n\n`typed.replace(\" \", \"\")` 會把打的字裡所有空白換成空字串，也就是全部拿掉，再拿去和答案比。",
       "expectedShape": "@Override\nboolean check(String typed) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選 午 餐\")", "new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選晚餐\")"] },
+      "check": { "type": "values", "exprs": ["new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選 午 餐\")", "new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選晚餐\")"], "uses": ["@Override"] },
       "hints": {
         "lead": "`method does not override or implement a method from a supertype`⋯⋯",
         "plain": "⋯⋯白話：`Check` 和 `check` 在 Java 是兩個不同的名字，所以它只是多了一個新方法。改成小寫，才是覆寫父類別的 `check`。"
@@ -25,7 +25,7 @@
       "goal": "修好後，`System.out.println(q)` 要印出 `填空題：選午餐`。\n\n現在印出來的是類別名稱加一串數字，看不懂，因為 `toSting()` 也沒覆寫到 `toString()`。一樣先在那個方法上面加 `@Override` 看紅字，再修好。",
       "instructions": "每個類別本來就有一個 `toString()`，交回類別名稱加一串數字。名字差一個字母，就只是多了一個新方法，`println` 用的還是原本那個。\n\n`toString()` 原本是 `public`（誰都能用），覆寫時前面也要寫 `public`，不然會紅字。",
       "expectedShape": "@Override\npublic String toString() {\n    …\n}",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["@Override public String toString()"] },
       "hints": {
         "lead": "`println` 會呼叫 `toString()`；覆寫時存取權限不得更封閉⋯⋯",
         "plain": "⋯⋯白話：少一個 r，`println` 就找不到這個版本。改成 `toString`，前面加上 `public`。"

@@ -12,7 +12,7 @@
       "goal": "`new ExactChecker(\"選午餐\").check(\" 選午餐\")` 交回 `true`，前面多打的空白不算；`new OptionChecker(\"B\").check(\"A\")` 交回 `false`。\n\n寫 `interface Checker`（約定：只規定要有 `check`，不管怎麼判斷），裡面只有 `boolean check(String typed);`，`typed` 是使用者打的答案。再寫兩個類別實作它：填空題的 `ExactChecker(String answer)`，`typed` 去掉前後空白後和 `answer` 完全一樣才對；選擇題的 `OptionChecker(String letter)`，`typed` 和選項代號 `letter` 一樣就對。",
       "instructions": "`interface` 是一張約定，只寫方法的名字、參數和回傳型別，不寫內容。類別寫 `implements Checker`，就是答應照約定做：要寫出自己的 `check`，前面加 `public`。\n\n兩個類別都用建構子收下正確答案，存在欄位裡給 `check` 用；`trim()` 會去掉字串前後的空白。這一步不用印出來，只看 `check` 交回 `true` 還是 `false`。\n\n字串要用 `equals` 比，不能用 `==`：`==` 比的是兩邊是不是同一個盒子，字一樣、盒子不同的時候，也會交回 `false`。",
       "expectedShape": "interface Checker {\n    boolean check(String typed);\n}\n\nclass ExactChecker implements Checker {\n    …\n    public boolean check(String typed) {\n        …\n    }\n}\n\nclass OptionChecker implements Checker {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new ExactChecker(\"選午餐\").check(\" 選午餐\")", "new OptionChecker(\"B\").check(\"B\")", "new OptionChecker(\"B\").check(\"A\")", "new ExactChecker(\"選午餐\").check(\"選晚餐\")", "new OptionChecker(\"B\").check(new String(\"B\"))"] },
+      "check": { "type": "values", "exprs": ["new ExactChecker(\"選午餐\").check(\" 選午餐\")", "new OptionChecker(\"B\").check(\"B\")", "new OptionChecker(\"B\").check(\"A\")", "new ExactChecker(\"選午餐\").check(\"選晚餐\")", "new OptionChecker(\"B\").check(new String(\"B\"))"], "uses": ["interface Checker", "class ExactChecker implements Checker", "class OptionChecker implements Checker"] },
       "hints": {
         "lead": "以介面定義行為，由不同類別提供實作⋯⋯",
         "plain": "⋯⋯白話：「怎麼判斷對錯」先講好，叫 `check`。填空題和選擇題各寫各的判斷，但對外都長得一樣。"

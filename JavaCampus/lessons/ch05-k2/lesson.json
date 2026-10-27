@@ -18,7 +18,8 @@
       "check": {
         "type": "values",
         "exprs": ["days"],
-        "variants": [ { "price": "100" }, { "perDay": "20" } ]
+        "variants": [ { "price": "100" }, { "perDay": "20" } ],
+        "uses": ["while"]
       },
       "hints": {
         "lead": "錢還不夠，就再存一天。",

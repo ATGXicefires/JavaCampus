@@ -12,7 +12,7 @@
       "goal": "依序畫出三個元件，一個一行（滷肉是 App 裡的小老師）：\n`[ 開始學習 ]`\n`■■■□□`\n`滷肉：「歡迎回來！」`\n\n再寫小老師的元件 `class MascotView implements Drawable`，`draw()` 印出最後那一行。把按鈕、進度條 `new ProgressBar(3, 5)`、小老師依序放進 `Drawable[] screen`（型別寫介面，答應了 `Drawable` 的都裝得進去），用 `for` 一個一個呼叫 `draw()`。",
       "instructions": "陣列的型別寫成介面 `Drawable[]`：按鈕、進度條、小老師是不同的類別，但都答應了 `Drawable` 這張約定，所以能放進同一排。\n\n迴圈裡都是同一句 `screen[i].draw()`，輪到誰就照誰自己的寫法畫：輪到按鈕畫按鈕，輪到進度條畫進度條。同一句話、各做各的，這叫多型。\n\n`：`、`「`、`」` 都是全形，可以從目標複製。",
       "expectedShape": "Drawable[] screen = {new Button(), …};\nfor (…) {\n    screen[i].draw();\n}",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["class MascotView implements Drawable", "Drawable[] screen"] },
       "hints": {
         "lead": "同一句 draw()，各自畫各自的。",
         "plain": "三種元件都答應了同一張約定，所以可以排在同一排。迴圈只管說「畫」，按鈕畫按鈕，進度條畫進度條。"
@@ -25,7 +25,7 @@
       "goal": "畫面最上面多一行標題 `== 小白學程式 ==`，下面照舊是按鈕、進度條和小老師。\n\n加一個 `class Title implements Drawable`，`draw()` 印出標題這一行，再把 `new Title()` 放在 `screen` 陣列的最前面。迴圈不用改。",
       "instructions": "多了一種元件，畫的那段程式一個字都不用動。",
       "expectedShape": "class Title implements Drawable {\n    …\n}\n\nDrawable[] screen = {new Title(), …};",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["class Title implements Drawable"] },
       "hints": {
         "lead": "新元件也照約定，迴圈不用動。",
         "plain": "只要新的元件也答應了 `Drawable` 這張約定，放進陣列就會被畫出來。要改的只有陣列裡放了什麼。"

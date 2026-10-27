@@ -15,7 +15,7 @@
       "goal": "`new Sketch(\"9月\", \"提案簡報的插圖\").toString()` 要交回 `9月：提案簡報的插圖`。\n\n寫 `class Sketch`：欄位 `month`、`title`，建構子 `Sketch(String month, String title)`，再覆寫 `public String toString()`（`println` 印物件時，印的就是它交回的字），交回「月份：標題」。",
       "instructions": "編輯器最上面兩行是題目先寫好的 `months` 和 `titles`，這一步還用不到，下一步才用。\n\n建構子收到的兩個值，存進同名的欄位：`this.month` 是欄位，`month` 是參數。\n\n每個類別本來就有一個 `toString()`，交回類別名稱加一串數字。覆寫它，就決定這個物件印出來的樣子。它原本就是 `public`（誰都能用），覆寫時前面也要寫 `public`。",
       "expectedShape": "class Sketch {\n    String month;\n    String title;\n\n    Sketch(String month, String title) {\n        …\n    }\n\n    @Override\n    public String toString() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Sketch(\"9月\", \"提案簡報的插圖\").toString()"] },
+      "check": { "type": "values", "exprs": ["new Sketch(\"9月\", \"提案簡報的插圖\").toString()"], "uses": ["public String toString()"] },
       "hints": {
         "lead": "覆寫 `Object.toString()`，定義物件的字串表示⋯⋯",
         "plain": "⋯⋯白話：每一張草圖要怎麼被叫出名字，寫在 `toString()` 裡。月份、冒號、標題接起來交回去。"

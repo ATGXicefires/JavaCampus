@@ -12,7 +12,7 @@
       "goal": "最多裝 12 個。一開始有 11 個，`new GachaBag(11).add()` 還放得下，要交回 `true`；一開始就有 12 個，`new GachaBag(12).add()` 要交回 `false`。\n\n加上 `static final int MAX = 12;`（整個類別共用、設定好就不能再改的常數），和建構子 `GachaBag(int count)` 把一開始有幾個存進欄位 `count`。`add()` 改成交回 `boolean`：還不到 `MAX` 個就加一個、交回 `true`；已經有 `MAX` 個就不加、交回 `false`。",
       "instructions": "`static final` 是兩個字合在一起：`static` 是整個類別共用一份，`final` 是設定一次就不能再改。常數的名字習慣全部大寫，例如 `static final int SEATS = 30;`，類別裡的方法直接寫 `SEATS` 就能用。\n\n`new GachaBag(11)` 會把 11 交給建構子。建構子的參數和欄位都叫 `count`，存進欄位要寫成 `this.count`。\n\n規則寫在 `add()` 裡，外面想加扭蛋只能叫 `add()`，誰都繞不過去。`return` 會馬上離開方法：已經滿了就先 `return false;`，後面加一個的那行就不會做到，數量停在 `MAX`。",
       "expectedShape": "static final int MAX = 12;\n…\nboolean add() {\n    if (…) {\n        return false;\n    }\n    …\n}",
-      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()", "GachaBag bag = null;", "(bag = new GachaBag(11)).add()", "bag.getCount()", "bag.add()", "bag.getCount()"] },
+      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()", "GachaBag bag = null;", "(bag = new GachaBag(11)).add()", "bag.getCount()", "bag.add()", "bag.getCount()"], "uses": ["static final int MAX"] },
       "hints": {
         "lead": "滿了就不加。",
         "plain": "`add()` 先問一句：已經到 `MAX` 了嗎？到了就交回 `false`，什麼都不做；還沒滿才加一個，交回 `true`。"
@@ -38,7 +38,7 @@
       "goal": "最後一行 `GachaBag.MAX = 20;` 想把上限改成 20，可是 `MAX` 是 `final`（設定一次就不能再改），現在是紅字。修好後要印出 `最多 12 個`。\n\n刪掉這一行，改成讀 `GachaBag.MAX`，把上限印出來。",
       "instructions": "`MAX` 是 `static final`，屬於整個 `GachaBag` 類別：從外面用類別的名字加 `.` 來讀，寫成 `GachaBag.MAX`，不用先 `new` 一個扭蛋包。\n\n`final` 只能讀，不能改，紅字說的就是這件事。",
       "expectedShape": "System.out.println(\"最多 \" + … + \" 個\");",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["static final int MAX", "GachaBag.MAX"] },
       "hints": {
         "lead": "final 只能讀，不能改。",
         "plain": "`final` 是寫死的：設定一次就不能再改。要用它，直接讀 `GachaBag.MAX` 就好。"

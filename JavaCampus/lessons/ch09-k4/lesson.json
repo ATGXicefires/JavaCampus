@@ -12,7 +12,7 @@
       "goal": "印出三行，依序是標題列、內容、頁尾：\n`== 小白學程式 ==`\n`今天的課：for 迴圈`\n`—— 滷肉和分號陪你寫 ——`\n\n寫 `abstract class Screen`（抽象類別：共用的寫在這裡）：`void show()` 先印標題列，再呼叫 `body()`，最後印頁尾；`body()` 寫成 `abstract`（沒有內容，留給子類別寫）。再寫 `class LessonScreen extends Screen`，`body()` 印出內容那一行。最後 `new` 一個 `LessonScreen` 呼叫 `show()`。",
       "instructions": "每個畫面的標題列和頁尾都一樣，寫在 `Screen` 的 `show()` 裡一次就好。中間的內容每個畫面不同，先寫成 `abstract void body();`：只有名字，沒有大括號，直接用分號結尾。\n\n`LessonScreen extends Screen` 繼承了 `Screen`，直接就有寫好的 `show()`，只要補上自己的 `body()`。`show()` 裡呼叫 `body()` 的時候，用的就是 `LessonScreen` 寫的那一個。\n\n`——` 可以從目標複製。",
       "expectedShape": "abstract class Screen {\n    void show() {\n        …\n        body();\n        …\n    }\n\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() {\n        …\n    }\n}\n\n…",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["abstract class Screen", "abstract void body()", "class LessonScreen extends Screen"] },
       "hints": {
         "lead": "共用的寫一次，不同的留給子類別。",
         "plain": "每個畫面的標題列和頁尾都一樣，寫在 `Screen` 一次就好。中間的內容每個畫面不同，先空著寫成 `abstract`，等子類別來填。"

@@ -13,7 +13,7 @@
       "instructions": "`do-while` 先做大括號裡的事，做完才看 `while` 括號裡的條件：成立就回去再做一次，不成立就停。所以不管條件怎樣，至少會做一次。\n\n```\nint n = 0;\ndo {\n    n++;\n    System.out.println(\"第 \" + n + \" 圈\");\n} while (n < 2);\n```\n\n這段會印 `第 1 圈` 和 `第 2 圈`。最後的 `while (…);` 要加分號。\n\n記第幾次的 `round` 和這次對不對的 `right`，要宣告在 `do` 前面，`while (…)` 才看得到。",
       "expectedShape": "do {\n    right = tries[round].trim().equals(answer);\n    round++;\n    …\n} while (!right);\nSystem.out.println(\"第 \" + round + \" 次答對了！\");",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["do"] },
       "hints": {
         "lead": "`do-while` 先執行迴圈本體，再判斷條件⋯⋯",
         "plain": "⋯⋯白話：至少要先答一次，才知道對不對。`trim` 只去掉前後的空白，「吃 滷肉飯」中間那一格還在，所以第二次還是錯的。"
