@@ -9,8 +9,8 @@
     {
       "id": "hint",
       "title": "提示的第一個字",
-      "goal": "`hint(\"吃滷肉飯\")` 交回 `吃＿＿＿`，`hint(\"小白\")` 交回 `小＿`。\n\n寫一個方法 `static String hint(String answer)`，只露出答案的第一個字，其他每個字換成一個 `＿`。",
-      "instructions": "`answer.substring(0, 1)` 會切出第一個字。剩下幾個字，就重複幾次 `＿`。\n\n`＿` 可以從這裡複製。",
+      "goal": "`hint(\"吃滷肉飯\")` 要交回 `吃＿＿＿`：只露出 `answer` 的第一個字，其他每個字換成一個 `＿`。\n\n寫一個方法 `static String hint(String answer)` 做出這樣的提示。第一個字用 `substring`（從字串切出一段）切出來，剩下幾個字，就用 `repeat` 重複幾次 `＿`。",
+      "instructions": "`substring(開始, 結束)` 會切出一段字：從編號「開始」那個字，切到編號「結束」那個字之前，編號從 0 開始。例如 `\"小白貓\".substring(1, 3)` 是 `白貓`。\n\n剩下的字數是全部的字數減一，全部的字數用 `length()` 量。`＿` 可以從這裡複製。",
       "expectedShape": "static String hint(String answer) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "correct",
       "title": "多打的空白",
-      "goal": "`isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 交回 `true`，`isCorrect(\"吃控肉飯\", \"吃滷肉飯\")` 交回 `false`：前後多打的空白不算錯。\n\n寫一個方法 `static boolean isCorrect(String typed, String answer)`，判斷玩家打的 `typed` 是不是答案 `answer`：先用 `trim()` 去掉 `typed` 前後的空白，再用 `equals` 比，一樣交回 `true`，不一樣交回 `false`。",
-      "instructions": "新生打字常常前後多一個空白。`trim()` 會交回去掉前後空白的字串，例如 `\" 小白 \".trim()` 是 `\"小白\"`。\n\n比字串要用 `a.equals(b)`：`a` 和 `b` 的字一樣就是 `true`。不要用 `==`：`trim()` 做出來的是新的字串，用 `==` 比會是 `false`。\n\n名字前面的 `boolean` 是說這個方法交回 `true` 或 `false`。按「完成」時，會呼叫 `isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 這幾句，檢查交回的值。",
+      "goal": "`isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 要交回 `true`：玩家打的 `typed` 前後多了空白不算錯，字不一樣才交回 `false`。\n\n寫一個方法 `static boolean isCorrect(String typed, String answer)`：先用 `trim()`（去掉前後的空白）處理 `typed`，再用 `equals`（比兩個字串的字一不一樣）和 `answer` 比。",
+      "instructions": "新生打字常常前後多一個空白。`trim()` 會交回去掉前後空白的字串，例如 `\" 小白 \".trim()` 是 `\"小白\"`。\n\n比字串要用 `a.equals(b)`：`a` 和 `b` 的字一樣就是 `true`。不要用 `==`：`trim()` 做出來的是新的字串，用 `==` 比會是 `false`。\n\n名字前面的 `boolean` 是說這個方法交回 `true` 或 `false`。`equals` 比出來的答案本身就是 `true` 或 `false`，可以直接交回去。",
       "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃控肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")"] },
       "hints": {

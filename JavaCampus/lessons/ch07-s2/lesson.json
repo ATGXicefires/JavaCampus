@@ -9,8 +9,8 @@
     {
       "id": "positive",
       "title": "不能存負數",
-      "goal": "`new Ledger().deposit(350)` 交回 `true`；`new Ledger().deposit(0)` 交回 `false`，錢也不會存進去。\n\n把 `deposit` 改成交回 `boolean`：收到 0 或負數就不存、交回 `false`；大於 0 才存進去、交回 `true`。",
-      "instructions": "錢櫃的門只有 `deposit` 一扇，就在門口檢查。\n\n按「完成」時，除了看交回的 `true`／`false`，還會在同一本帳先存 350、再試著存 -50，看 `getBalance()` 是不是 350：交回 `true` 的時候，錢要真的存進去。",
+      "goal": "`new Ledger().deposit(350)` 要交回 `true`；`new Ledger().deposit(0)` 要交回 `false`，錢也不會存進去。\n\n在 `deposit` 裡把關（規則寫在方法裡，誰都繞不過去）：把它改成交回 `boolean`，收到 0 或負數就不存、交回 `false`；大於 0 才存進去、交回 `true`。",
+      "instructions": "`balance` 是 `private`，外面要動錢，只能走 `deposit` 這一扇門。所以就在門口檢查：規則寫在 `deposit` 裡，誰都繞不過去。\n\n`return` 會馬上離開方法。不合規則就先 `return false;`，後面存錢的那一行就不會做到；合規則的話，錢要真的存進 `balance`，再交回 `true`。",
       "expectedShape": "boolean deposit(int amount) {\n    if (…) {\n        return false;\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger().deposit(-350)", "new Ledger().deposit(0)", "new Ledger().deposit(350)", "Ledger book = null;", "(book = new Ledger()).deposit(350)", "book.deposit(-50)", "book.getBalance()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "withdraw",
       "title": "領錢",
-      "goal": "`new Ledger(100).withdraw(100)` 交回 `true`，剛好領完；`new Ledger(100).withdraw(150)` 交回 `false`，不夠領。\n\n加上建構子 `Ledger(int start)`（`start` 是一開始的餘額）和 `boolean withdraw(int amount)`：餘額夠就扣掉、交回 `true`，剛好領完也算夠；不夠就不領、交回 `false`。",
-      "instructions": "`withdraw` 和 `deposit` 一樣在方法裡把關，讓餘額永遠不會變成負的。\n\n按「完成」時，會用 `new Ledger(100)` 開一本有 100 元的帳，分別試著領 150、30、100；還會從同一本帳先領 30，看 `getBalance()` 是不是剩 70，再領 100 要交回 `false`、餘額不變。",
+      "goal": "`new Ledger(100).withdraw(100)` 要交回 `true`，剛好領完；`new Ledger(100).withdraw(150)` 要交回 `false`，不夠領。\n\n加上建構子 `Ledger(int start)`（`start` 是一開始的餘額）和 `boolean withdraw(int amount)`：餘額夠就扣掉、交回 `true`，剛好領完也算夠；不夠就不領、交回 `false`。",
+      "instructions": "`withdraw` 和 `deposit` 一樣在方法裡把關，讓餘額永遠不會變成負的。\n\n`new Ledger(100)` 會把 100 交給建構子的 `start`，存進 `balance`，這本帳一開始就有 100 元。領錢時拿 `amount` 和 `balance` 比：比餘額多就不給領，餘額不變；夠的話扣掉。`balance -= amount` 跟 `balance = balance - amount` 一樣。",
       "expectedShape": "Ledger(int start) {\n    …\n}\n\nboolean withdraw(int amount) {\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger(100).withdraw(150)", "new Ledger(100).withdraw(30)", "new Ledger(100).withdraw(100)", "Ledger book = null;", "(book = new Ledger(100)).withdraw(30)", "book.getBalance()", "book.withdraw(100)", "book.getBalance()"] },
       "hints": {
@@ -35,8 +35,8 @@
     {
       "id": "typo",
       "title": "差點算錯",
-      "goal": "`book.deposit(-350)` 被擋下來時，要印出 `金額不對：-350`。\n\n起始碼最後一行手一滑打成 `book.deposit(-350)`，`deposit` 交回了 `false`，畫面上卻什麼都沒說。用 `if` 接住這個 `false`，印出這一行。",
-      "instructions": "`deposit` 交回 `false`，就是沒存進去。",
+      "goal": "最後一行 `book.deposit(-350);` 手一滑打成負數，`deposit` 擋了下來、交回 `false`，畫面上卻什麼都沒印。存不進去的時候，要印出 `金額不對：-350`。\n\n用 `if` 接住 `deposit` 交回的 `false`，印出這個提醒。",
+      "instructions": "`deposit` 交回 `false`，就是沒存進去。方法交回的 `boolean` 可以直接放進 `if` 的括號；`!` 是「不是」，`!false` 是 `true`，所以 `if (!…)` 就是「沒成功的話」。\n\n金額先放進一個盒子 `amount`，存的時候和印的時候都用它，兩邊就不會打成不一樣的數字。",
       "expectedShape": "int amount = -350;\nif (…) {\n    System.out.println(\"金額不對：\" + amount);\n}",
       "check": { "type": "output" },
       "hints": {

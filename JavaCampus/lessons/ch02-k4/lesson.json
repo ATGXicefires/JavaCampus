@@ -12,8 +12,8 @@
     {
       "id": "week",
       "title": "一週幾個",
-      "goal": "每天吃 3 個飯糰、一週上學 5 天，一週總共吃 15 個。\n\n用題目給的 `perDay`（每天吃幾個）和 `days`（一週上學幾天）算出這個數，存進 `int perWeek`。",
-      "instructions": "`perDay` 和 `days` 這兩個盒子題目已經做好了，直接拿來用。乘法用 `*`，例如 `2 * 4` 是 `8`。\n\n按「完成」時，會把 `perDay` 改成 2、`days` 改成 4 各檢查一次，所以要用 `perDay` 和 `days` 來算，不能直接寫 `15`。",
+      "goal": "每天吃 `perDay` 個飯糰、一週上學 `days` 天。現在 `perDay` 是 3、`days` 是 5，一週總共吃 15 個。\n\n用 `perDay` 和 `days` 算出一週吃幾個，存進 `int perWeek`。乘法寫成 `*`。",
+      "instructions": "編輯器最上面兩行 `int perDay = 3;` 和 `int days = 5;` 是題目先寫好的，你的程式可以直接用 `perDay` 和 `days`。\n\n`int perWeek = …;` 是做一個叫 `perWeek`、裝整數（`int`）的盒子，把 `=` 右邊算出來的數放進去。乘法用 `*`，例如 `2 * 4` 是 `8`。\n\n用盒子的名字來算，`perDay` 或 `days` 變了，`perWeek` 也會跟著變。",
       "expectedShape": "int perWeek = …;",
       "check": {
         "type": "values",
@@ -29,8 +29,8 @@
     {
       "id": "too-many",
       "title": "太多了嗎",
-      "goal": "一週吃 15 個，到了 10 個以上就算太多，所以 `tooMany` 是 `true`。\n\n把 `perWeek` 和 10 比一比，結果存進 `boolean tooMany`：大於等於 10 是 `true`，否則是 `false`。",
-      "instructions": "`>=` 是「大於等於」。比較的答案本身就是 `true` 或 `false`，不用寫 `if`，直接放進 `boolean` 盒子。\n\n按「完成」時會把 `perDay` 換成 1 再算一次。",
+      "goal": "一週吃 10 個以上就算太多。現在一週吃 15 個，太多了，所以 `tooMany` 是 `true`；不到 10 個的話是 `false`。\n\n`boolean` 是只裝 `true`（是）或 `false`（不是）的盒子。用 `>=`（大於等於）比較 `perWeek` 和 10，把結果存進 `boolean tooMany`。",
+      "instructions": "比大小的答案只會是 `true` 或 `false`，所以可以直接放進 `boolean` 盒子，不用寫 `if`。例如 `boolean hot = temp >= 30;`：`temp` 是 33.5 時，`hot` 就是 `true`。\n\n其他比大小的寫法：`>` 大於、`<` 小於、`<=` 小於等於、`==` 等於。「等於」要寫兩個等號，只寫一個 `=` 是「放進盒子」。",
       "expectedShape": "int perWeek = …;\nboolean tooMany = …;",
       "check": {
         "type": "values",
@@ -46,8 +46,8 @@
     {
       "id": "tell",
       "title": "跟媽媽說",
-      "goal": "太多就印 `媽，明天便當多做一份。`，否則印 `再觀察一週。`。",
-      "instructions": "用第一章的 `if`／`else`，括號裡放 `tooMany`。按「完成」時會把 `perDay` 換成 1 再跑一次，兩句都要印對。",
+      "goal": "現在 `tooMany` 是 `true`，要印 `媽，明天便當多做一份。`；`tooMany` 是 `false` 的時候，要印 `再觀察一週。`\n\n用 `if`／`else` 照 `tooMany` 決定印哪一句。",
+      "instructions": "`if` 的括號裡放一個 `boolean`：是 `true` 就做第一對大括號裡的事，是 `false` 就做 `else` 後面那一對。兩對只會做其中一對。\n\n`tooMany` 本身就是 `boolean`，直接放進括號就好。兩句都要一字不差，連最後的「。」也要印。",
       "expectedShape": "if (…) {\n    System.out.println(\"…\");\n} else {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",

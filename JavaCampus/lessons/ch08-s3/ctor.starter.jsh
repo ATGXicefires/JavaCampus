@@ -12,5 +12,5 @@ class Question {
     }
 }
 
-// class NumberQuestion 繼承 Question
-// 建構子 NumberQuestion(String text, String answer)：用 super(text, answer) 交給父類別
+// 寫 class NumberQuestion，繼承 Question
+// 建構子 NumberQuestion(String text, String answer) 用 super(text, answer) 把題目和答案交給父類別

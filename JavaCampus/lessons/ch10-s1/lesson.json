@@ -9,8 +9,8 @@
     {
       "id": "main",
       "title": "放進 main",
-      "goal": "修好後印出一行 `小白學程式 v0.9`。\n\n起始碼還是片段的寫法，敘述直接寫在最外層，跑起來是紅字。把這幾行搬進 `public class Main` 的 `main` 裡。",
-      "instructions": "完整的程式裡，class 外面只能寫 `import` 和類別。",
+      "goal": "修好後印出一行 `小白學程式 v0.9`。\n\n起始碼還是片段的寫法：三行敘述直接寫在最外層，跑起來是紅字。寫 `public class Main`，裡面放 `public static void main(String[] args)`（完整程式從這裡開始跑），把這三行搬進 `main` 的大括號裡。",
+      "instructions": "完整的 Java 程式從 `Main` 類別裡的 `main` 方法開始執行。class 外面只能寫 `import` 和類別，敘述都要放進方法裡。\n\n`public static void main(String[] args)` 這一行先照抄，一個字都不能少。",
       "expectedShape": "public class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "split",
       "title": "一個類別一個分頁",
-      "goal": "修好後印出兩行：\n`小白學程式 v0.9`\n`if-else 像什麼？ true`\n\n起始碼把 `Checker` 和 `Question` 搬到了自己的分頁 `Checker.java`、`Question.java`，跑起來卻是紅字，說名字重複。修到 `Main.java` 裡只剩 `Main` 一個類別。",
-      "instructions": "同一個名字的類別，整個程式只能有一個。",
+      "goal": "修好後印出兩行：\n`小白學程式 v0.9`\n`if-else 像什麼？ true`\n\n起始碼把 `Checker` 和 `Question` 搬到了自己的分頁 `Checker.java`、`Question.java`，`Main.java` 上面卻還留著舊的那兩份，跑起來是紅字，說名字重複。把 `Main.java` 裡的 `Checker` 和 `Question` 刪掉，只留 `Main`。",
+      "instructions": "程式變大以後，一個類別放一個檔案：`Checker` 放在 `Checker.java`，`Question` 放在 `Question.java`。寫了 `public` 的類別，名字一定要和檔名一樣。\n\n同一個名字的類別，整個程式只能有一個。同一個程式裡的檔案互相叫得到，`Main` 不用 `import`，就能直接用 `Question`。",
       "expectedShape": "// Main.java\npublic class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
       "check": { "type": "output" },

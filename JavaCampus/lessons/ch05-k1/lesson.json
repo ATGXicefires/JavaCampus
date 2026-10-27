@@ -9,8 +9,8 @@
     {
       "id": "pass",
       "title": "及格線",
-      "goal": "`isPass(60)` 交回 `true`，`isPass(59)` 交回 `false`：剛好 60 分也算及格。\n\n寫一個方法 `static boolean isPass(int score)`，60 分以上交回 `true`，不到 60 交回 `false`。",
-      "instructions": "交回 `true` 或 `false` 的方法，回傳型別寫 `boolean`。比較的答案本身就是 `boolean`，可以直接 `return`。\n\n會用 59、60、61 測，另外還有 0 和 100：邊界上的錯最容易漏。",
+      "goal": "`isPass(60)` 要交回 `true`，`isPass(59)` 要交回 `false`：剛好 60 分也算及格。\n\n寫一個方法 `static boolean isPass(int score)`（`boolean` 表示只交回 `true` 或 `false`）：`score` 60 分以上交回 `true`，不到 60 交回 `false`。",
+      "instructions": "名字前面寫 `boolean` 的方法，只回答一個是非題，例如「及格了嗎？」。這種方法的名字常用 `is` 開頭，一看就知道在問什麼。\n\n比大小的答案本身就是 `true` 或 `false`，可以直接交回去，不用寫 `if`。例如 `return age >= 18;`：`age` 是 20 時交回 `true`，是 15 時交回 `false`。\n\n60 分剛好在及格和不及格的分界上，叫做**邊界**。bug 最喜歡躲在邊界：`>=` 寫成 `>`，就只有剛好 60 分會錯。寫好以後，可以印出 `isPass(59)`、`isPass(60)`、`isPass(61)` 看看對不對。",
       "expectedShape": "static boolean isPass(int score) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["isPass(59)", "isPass(60)", "isPass(61)", "isPass(0)", "isPass(100)"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "valid",
       "title": "不合理的分數",
-      "goal": "`isValid(100)` 交回 `true`，`isValid(101)` 交回 `false`：剛好 0 或 100 分都還算合理。\n\n寫一個方法 `static boolean isValid(int score)`，分數在 0 到 100 之間交回 `true`；小於 0 或大於 100 是打錯了，交回 `false`。",
-      "instructions": "合理的分數要同時滿足兩個條件：不小於 0，也不大於 100。",
+      "goal": "`isValid(100)` 要交回 `true`，`isValid(101)` 要交回 `false`：剛好 0 或 100 分都還算合理。\n\n寫一個方法 `static boolean isValid(int score)`：`score` 在 0 到 100 之間交回 `true`；小於 0 或大於 100 是打錯了，交回 `false`。兩個條件都要成立，用 `&&`（而且）接起來。",
+      "instructions": "合理的分數要同時滿足兩個條件：不小於 0，也不大於 100。\n\n`a && b` 要 `a` 和 `b` 兩邊都是 `true`，答案才是 `true`；只要有一邊是 `false`，答案就是 `false`。例如 `temp >= 20 && temp <= 28` 是在問「溫度在 20 到 28 度之間嗎？」：`temp` 是 25 時是 `true`，是 30 時是 `false`。",
       "expectedShape": "static boolean isValid(int score) {\n    return … && …;\n}",
       "check": { "type": "values", "exprs": ["isValid(-1)", "isValid(0)", "isValid(100)", "isValid(101)"] },
       "hints": {
@@ -35,8 +35,8 @@
     {
       "id": "judge",
       "title": "提早交回",
-      "goal": "`judge(-5)` 交回 `分數打錯了`，`judge(60)` 交回 `及格`，`judge(59)` 交回 `不及格`。\n\n寫一個方法 `static String judge(int score)`：分數不合理（`isValid` 是 `false`）就先交回 `分數打錯了`；合理的話，及格交回 `及格`，不及格交回 `不及格`。",
-      "instructions": "先把不合理的分數擋掉：一碰到就 `return`，後面的判斷都不用做了。再用 `isPass` 判斷及格或不及格。\n\n`!` 會把答案反過來，例如 `isPass(50)` 是 `false`，`!isPass(50)` 就是 `true`。",
+      "goal": "`judge(-5)` 要交回 `分數打錯了`，`judge(60)` 要交回 `及格`，`judge(59)` 要交回 `不及格`。\n\n寫一個方法 `static String judge(int score)`：分數不合理（`isValid` 交回 `false`）就馬上交回 `分數打錯了`；合理的話，再用 `isPass` 決定交回 `及格` 還是 `不及格`。`return` 一執行，方法就結束了。",
+      "instructions": "先把不合理的分數擋掉，一碰到就 `return`，這叫提早 `return`。走得到下面的，一定是合理的分數，接下來只要分及格和不及格。\n\n`!` 會把答案反過來，例如 `isPass(50)` 是 `false`，`!isPass(50)` 就是 `true`。",
       "expectedShape": "static String judge(int score) {\n    if (…) {\n        return \"分數打錯了\";\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["judge(-5)", "judge(101)", "judge(60)", "judge(59)"] },
       "hints": {

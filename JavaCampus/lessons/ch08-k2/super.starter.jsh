@@ -13,5 +13,5 @@ class MyPlan extends ParentsPlan {
         return "畫畫不只是興趣";
     }
 
-    // 覆寫 future()：用 super.future() 留下爸媽的那一部分，後面接上「，而且是我喜歡的那一種」
+    // 覆寫 future()：用 super.future() 拿到爸媽原本那一句，後面接上「，而且是我喜歡的那一種」
 }

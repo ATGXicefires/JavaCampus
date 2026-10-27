@@ -11,6 +11,7 @@ class Mascot {
         System.out.println(name + "：「" + line + "」");
     }
 
+    // 交回名字有幾個字；名字是 null 就交回 0
     int nameLength() {
         return name.length();
     }

@@ -17,4 +17,5 @@ static boolean showBadge(int done, int total, int score) {
     return done == total && score >= 60;
 }
 
-// check(actual, expected)：一樣交回 PASS，不一樣交回 FAIL
+// 寫一個方法 static String check(boolean actual, boolean expected)
+// actual 和 expected 一樣就交回 PASS，不一樣就交回 FAIL

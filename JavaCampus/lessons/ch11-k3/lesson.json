@@ -9,8 +9,8 @@
     {
       "id": "short",
       "title": "寫不下",
-      "goal": "草稿裡第一句不超過 15 個字的是 `謝謝你把外星語翻成人話。`，只印出這一句。\n\n用迴圈從頭看 `main` 裡的 `drafts`（畢業紀念冊留言的草稿），找到第一句字數不超過 15 的就印出來，再用 `break` 停下。",
-      "instructions": "字數用 `length()` 算，標點和空白也各算一個字；剛好 15 個字也算。只印第一句符合的，後面就算還有更短的也不印。",
+      "goal": "`main` 裡的 `drafts` 是畢業紀念冊留言的草稿，第一句不超過 15 個字的是 `謝謝你把外星語翻成人話。`，所以只印出這一句。\n\n用迴圈從頭看 `drafts`，找到第一句字數不超過 15 的就印出來，再用 `break`（直接跳出迴圈）停下。",
+      "instructions": "`break` 會直接跳出它所在的迴圈，後面還沒看的都不看了：\n\n```\nfor (int i = 1; i <= 10; i++) {\n    if (i * i > 20) {\n        System.out.println(i);\n        break;\n    }\n}\n```\n\n這段只印 `5`：找到第一個平方超過 20 的數就停。\n\n字數用 `length()` 算，標點和空白也各算一個字；剛好 15 個字也算。後面就算還有更短的草稿，也不印。",
       "expectedShape": "for (String d : drafts) {\n    if (d.length() <= 15) {\n        …\n        break;\n    }\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "method",
       "title": "寫成方法",
-      "goal": "草稿是 `太長太長太長` 和 `好`、上限 3 個字時，`firstShort` 交回 `好`；一句都不夠短時，交回 `（空白）`。\n\n寫一個方法 `static String firstShort(String[] drafts, int max)`，交回第一句字數不超過 `max`（字數上限）的草稿，找不到就交回 `（空白）`。",
-      "instructions": "`（空白）` 的括號是全形的，可以從目標複製。\n\n按「完成」時會直接呼叫 `firstShort` 測試，`main` 不會執行。",
+      "goal": "`firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)` 要交回 `\"好\"`：第一句超過 3 個字，第二句沒有。\n\n寫一個方法 `static String firstShort(String[] drafts, int max)`，交回 `drafts` 裡第一句字數不超過 `max` 的草稿；一句都找不到，就交回 `\"（空白）\"`。",
+      "instructions": "`（空白）` 的括號是全形的，可以從目標複製。\n\n這一步只看 `firstShort` 交回什麼，`main` 不用改。",
       "expectedShape": "static String firstShort(String[] drafts, int max) {\n    String found = \"（空白）\";\n    for (…) {\n        …\n    }\n    return found;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)", "Main.firstShort(new String[]{\"太長了\"}, 2)"] },

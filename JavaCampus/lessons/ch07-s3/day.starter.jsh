@@ -12,5 +12,4 @@ class Table {
     }
 }
 
-// 題目給了 orders：今天每一筆訂單的金額
-// 用 for 把 orders 每一筆都點在一桌新的客人上
+// 用 for 照 orders 一筆一筆來：每一筆都 new 一桌，再用 order 點那一筆

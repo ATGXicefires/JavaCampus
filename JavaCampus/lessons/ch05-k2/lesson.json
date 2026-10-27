@@ -12,8 +12,8 @@
     {
       "id": "days",
       "title": "要存幾天",
-      "goal": "扭蛋一次 50 元，每天存 15 元，要存 4 天才夠買一次。\n\n用 `while` 和題目給的 `price`（扭蛋價錢）、`perDay`（每天存的錢）算出要存幾天，存進 `days`。存的錢剛好等於價錢也算夠。",
-      "instructions": "`price` 和 `perDay` 這兩個盒子題目已經做好了，直接拿來用。\n\n不知道要存幾天，就用 `while`：錢還不夠，就再存一天。\n\n```\nwhile (條件) {\n    條件還成立時，重複做的事\n}\n```\n\n現在每天存 15 元：存 3 天是 45 元，還不夠；存 4 天是 60 元，夠買 50 元的扭蛋了，所以 `days` 是 4。\n\n按「完成」時，會把 `price` 改成 100 再檢查一次，再把 `perDay` 改成 20 檢查一次，所以要用 `price` 和 `perDay` 來算，不能直接寫 `4`。",
+      "goal": "扭蛋一次 `price` 元，每天存 `perDay` 元。現在 `price` 是 50、`perDay` 是 15，要存 4 天才夠買。\n\n用 `while`（條件還成立，就再做一次）一天一天存，算出要存幾天，存進 `days`。存的錢剛好等於價錢也算夠。",
+      "instructions": "編輯器最上面兩行 `int price = 50;` 和 `int perDay = 15;` 是題目先寫好的，你的程式可以直接用 `price` 和 `perDay`。\n\n不知道要做幾次的時候，用 `while`：括號裡的條件還成立，就把大括號裡的事再做一次；條件不成立了，就停下來。\n\n```\nwhile (條件) {\n    條件還成立時，重複做的事\n}\n```\n\n這一題的條件是「存的錢還不夠買」：存 3 天是 45 元，還不夠；存 4 天是 60 元，夠了，迴圈就停在 4 天。",
       "expectedShape": "while (…) {\n    saved += perDay;\n    days++;\n}",
       "check": {
         "type": "values",
@@ -29,8 +29,8 @@
     {
       "id": "method",
       "title": "寫成方法",
-      "goal": "`daysToSave(50, 15)` 交回 4：扭蛋 50 元、每天存 15 元，要存 4 天。\n\n寫一個方法 `static int daysToSave(int price, int perDay)`，用上一步的算法算出要存幾天才夠買，交回天數。",
-      "instructions": "把上一步的算法包成方法：價錢和每天存多少，改成由參數給。\n\n`daysToSave(0, 10)` 要交回 0：條件一開始就不成立，`while` 一次都不會跑。",
+      "goal": "`daysToSave(50, 15)` 要交回 4：`price` 是 50、`perDay` 是 15 時，要存 4 天。\n\n寫一個方法 `static int daysToSave(int price, int perDay)`，把上一步的算法搬進去，交回要存幾天。",
+      "instructions": "把上一步的算法包成方法，價錢和每天存多少改成由參數給。方法裡的 `price` 和 `perDay` 是參數：呼叫 `daysToSave(80, 20)` 時，`price` 就是 80、`perDay` 就是 20，跟最上面那兩行的值無關。\n\n價錢是 0 的話，條件一開始就不成立，`while` 一次都不會跑，交回 0 天。",
       "expectedShape": "static int daysToSave(int price, int perDay) {\n    …\n    return days;\n}",
       "check": { "type": "values", "exprs": ["daysToSave(50, 15)", "daysToSave(30, 30)", "daysToSave(0, 10)"] },
       "hints": {

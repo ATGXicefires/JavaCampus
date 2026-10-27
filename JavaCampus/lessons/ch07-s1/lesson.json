@@ -9,8 +9,8 @@
     {
       "id": "ledger",
       "title": "改寫成 Java",
-      "goal": "存入 350 和 120 之後，`book.getBalance()` 交回 `470`。\n\n寫 `class Ledger`：`private int balance`、`void deposit(int amount)` 存入、`int getBalance()` 交回餘額。再 `new` 一本帳 `book`，存入這兩筆。",
-      "instructions": "起始碼的註解是國中寫的 Python 版本，`balance` 誰都能改。改寫成 Java 時，把它鎖起來。",
+      "goal": "`new` 一本帳 `book`、存入 350 和 120 之後，`book.getBalance()` 要交回 `470`。\n\n寫 `class Ledger`：欄位 `private int balance`（`private`：只有這個類別自己能開的抽屜），方法 `void deposit(int amount)` 存入、`int getBalance()` 交回餘額。再 `new` 一本帳 `book`，存入這兩筆。",
+      "instructions": "起始碼的註解是國中寫的 Python 版本，`balance` 誰都能改。改寫成 Java 時，把它鎖起來。\n\n欄位前面加了 `private`，就只有這個類別自己的方法能讀、能改，外面碰不到。外面想看、想改，都要透過類別開放的方法：`getBalance()` 把餘額交出去讓外面看，這種方法叫 getter；`deposit` 讓外面照規矩存錢。\n\n```\nclass Score {\n    private int points = 60;\n\n    int getPoints() {\n        return points;\n    }\n}\n```\n\n`new` 一個 `Score` 以後，外面讀 `points` 會被擋下來，要問 `getPoints()`。",
       "expectedShape": "class Ledger {\n    private int balance;\n    …\n}\n\nLedger book = new Ledger();\nbook.deposit(…);\n…",
       "check": { "type": "values", "exprs": ["book.getBalance()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "outside",
       "title": "從外面偷改",
-      "goal": "修好後，`book.getBalance()` 交回 `550`：原本的 470 再存入 80。\n\n起始碼最後一行照 Python 的習慣，從外面寫了 `book.balance = 0;`，紅字。刪掉它，改成用 `deposit` 再存入 80。",
-      "instructions": "Java 的 `private` 不准從外面直接改。",
+      "goal": "最後一行 `book.balance = 0;` 照 Python 的習慣從外面直接改餘額，現在是紅字：`balance` 是 `private`，外面碰不到。修好後，`book.getBalance()` 要交回 `550`：原本的 470 再存入 80。\n\n刪掉這一行，改成用 `deposit` 再存入 80。",
+      "instructions": "`private` 的欄位，外面連讀都不行，更不能直接改。紅字的意思是：`balance` 只有 `Ledger` 自己的程式能用。\n\n外面想動餘額，只能照 `Ledger` 開放的方法來：存錢就叫 `deposit`。",
       "expectedShape": "book.deposit(…);",
       "check": { "type": "values", "exprs": ["book.getBalance()"] },
       "hints": {

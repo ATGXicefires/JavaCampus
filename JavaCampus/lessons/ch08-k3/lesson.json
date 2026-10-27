@@ -9,8 +9,8 @@
     {
       "id": "paths",
       "title": "兩個子類別",
-      "goal": "`new DesignPath().describe()` 交回 `廣設科：畫我喜歡的東西`，`new CodePath().describe()` 交回 `資訊科：把我畫的東西變成會動的`。\n\n寫 `DesignPath` 和 `CodePath`，都繼承起始碼的 `Path`。建構子 `DesignPath()` 用 `super(\"廣設科\")`、`CodePath()` 用 `super(\"資訊科\")` 交出名字，再用 `@Override` 覆寫 `describe()`，交回上面那兩句。",
-      "instructions": "`@Override` 寫在覆寫的方法上面一行。",
+      "goal": "`new DesignPath().describe()` 要交回 `廣設科：畫我喜歡的東西`，`new CodePath().describe()` 要交回 `資訊科：把我畫的東西變成會動的`。\n\n寫 `DesignPath` 和 `CodePath`，都繼承起始碼的 `Path`。建構子 `DesignPath()` 用 `super(\"廣設科\")`、`CodePath()` 用 `super(\"資訊科\")` 交出名字，再覆寫 `describe()` 交回上面那兩句，方法上面加一行 `@Override`（請編譯器確認父類別真的有這個方法）。",
+      "instructions": "`@Override` 寫在覆寫的方法上面一行，等於請編譯器幫你確認：父類別真的有這個方法，名字和參數都對得上。對得上就照常執行；對不上，編譯器會直接紅字。\n\n```\n@Override\nString bark() {\n    return \"嗚汪\";\n}\n```\n\n`Path` 的建構子要一個名字，所以子類別的建構子用 `super(…)` 把自己的名字交上去。",
       "expectedShape": "class DesignPath extends Path {\n    DesignPath() {\n        super(\"廣設科\");\n    }\n\n    @Override\n    String describe() {\n        …\n    }\n}\n\nclass CodePath extends Path {\n    …\n}",
       "check": { "type": "values", "exprs": ["new DesignPath().describe()", "new CodePath().describe()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "typo",
       "title": "打錯字的那一條",
-      "goal": "修好後，`new StayPath().describe()` 要交回 `留下來：先試試看`。\n\n起始碼多了第三條路 `StayPath`，方法名稱寫成了 `descripe()`，上面的 `@Override` 是紅字。",
-      "instructions": "紅字說它沒有覆寫到任何方法。",
+      "goal": "起始碼多了第三條路 `StayPath`，方法名稱打成了 `descripe()`，上面的 `@Override` 現在是紅字。修好後，`new StayPath().describe()` 要交回 `留下來：先試試看`。\n\n改好這個方法，讓 `@Override` 真的覆寫到父類別的 `describe()`。",
+      "instructions": "紅字說：加了 `@Override`，父類別裡卻找不到一模一樣的方法可以覆寫。名字差一個字母、大小寫不一樣、參數不一樣，都只是多了一個新方法。\n\n沒有 `@Override` 的話，打錯字的程式照樣能跑，只是 `describe()` 悄悄用了父類別的 `還不知道`；加了它，編譯器才會直接說出來。",
       "expectedShape": "@Override\nString describe() {\n    …\n}",
       "check": { "type": "values", "exprs": ["new StayPath().describe()"] },
       "hints": {

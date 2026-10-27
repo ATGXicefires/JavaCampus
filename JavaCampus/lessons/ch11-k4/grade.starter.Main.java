@@ -12,7 +12,7 @@ public class Main {
             System.out.println("第 " + (i + 1) + " 題：" + quiz.get(i).text);
         }
         String[] typed = {" println", "int", "while", "equals ", "if"};
-        // 逐題算分：先 trim 再 equals，印出 答對 4 題
+        // 逐題把 typed 和那一題的答案比（先 trim 再用 equals），印出 答對 4 題 這樣的一行
         // 答對 3 題以上算及格，再印一行 ★ 完成
     }
 }

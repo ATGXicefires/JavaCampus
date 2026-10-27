@@ -9,8 +9,8 @@
     {
       "id": "integer",
       "title": "int 放不進去",
-      "goal": "修好後，清單裝得下 `72`、`58`、`65` 三個分數，印出 `平均：65.0`。\n\n起始碼想把分數放進清單 `scores`，跑起來卻是紅字。",
-      "instructions": "角括號裡只能放類別。",
+      "goal": "修好後，清單 `scores` 裝得下 `72`、`58`、`65` 三個分數，印出 `平均：65.0`。\n\n起始碼 `main` 的第一行 `ArrayList<int> scores = new ArrayList<>();` 跑起來是紅字：角括號裡只能放類別，`int` 不是類別。",
+      "instructions": "角括號寫清楚清單裝什麼，裡面只能放類別。`int`、`double` 不是類別，各有一個包裝類別：`int` 的是 `Integer`，`double` 的是 `Double`。\n\n放進去、拿出來的時候，Java 會自動在 `int` 和 `Integer` 之間轉換，所以 `scores.add(72)` 和 `sum += scores.get(i)` 都不用改。",
       "expectedShape": "ArrayList<…> scores = new ArrayList<>();",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "raw",
       "title": "沒寫型別的清單",
-      "goal": "修好後，`平均：65.0` 下面只印出三個名字：\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n起始碼的名字清單 `names` 沒寫型別，混進了一個數字也不會紅字。把它寫成 `ArrayList<String>`，讓編譯器擋下那個數字，再修到只剩三個名字。",
-      "instructions": "沒寫型別的清單什麼都裝得進去，出錯也不會有紅字。",
+      "goal": "修好後，`平均：65.0` 下面只印出三個名字：\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n起始碼的 `ArrayList names = new ArrayList();` 沒寫型別，`names.add(72);` 混進了一個數字也不會紅字，現在名字中間多印了一行 `72`。把它寫成 `ArrayList<String>`，讓編譯器擋下那個數字，再修到只剩三個名字。",
+      "instructions": "沒寫角括號的清單什麼都裝得進去，放錯了也不會有紅字，要等執行的時候才發現怪怪的。寫成 `ArrayList<String>`，這張清單就只裝字串，放數字進去，編譯器馬上擋下來。\n\n右邊寫成 `new ArrayList<>()` 就好：右邊的角括號空著，Java 會照左邊寫的型別。",
       "expectedShape": "ArrayList<String> names = new ArrayList<>();\nnames.add(…);",
       "form": "program",
       "check": { "type": "output" },
@@ -37,8 +37,8 @@
     {
       "id": "total",
       "title": "for-each 加總",
-      "goal": "清單是 `72, 58, 65` 時，`total` 交回 `195`；空的清單交回 `0`。\n\n在 `Main` 裡寫一個方法 `static int total(ArrayList<Integer> list)`，用 for-each 把清單裡的數加起來交回。",
-      "instructions": "按「完成」時會直接呼叫 `total`，換幾組清單測試，`main` 不會執行。例如清單是 `72, 58, 65` 時交回 `195`，空的清單交回 `0`。",
+      "goal": "`list` 裡是 `72`、`58`、`65` 時，`total(list)` 交回 `195`。\n\n在 `Main` 裡寫一個方法 `static int total(ArrayList<Integer> list)`，用 for-each（不用索引，把清單裡的每一個輪流拿出來）把 `list` 裡的數加起來交回。",
+      "instructions": "for-each 的冒號唸成「裡面的每一個」：`for (String s : names)` 就是 `names` 裡面的每一個，輪流放進 `s`，每放一次就做一次大括號裡的事。不用管第幾個，也不用寫 `i`。`ArrayList<Integer>` 拿出來的數，可以直接用 `int` 接。\n\n這一步只看 `total` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
       "expectedShape": "static int total(ArrayList<Integer> list) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())"] },

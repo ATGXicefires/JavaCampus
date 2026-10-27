@@ -9,7 +9,7 @@
     {
       "id": "for",
       "title": "用 for 數",
-      "goal": "小芸一整年的聊天紀錄（1000 則訊息）裡，有 478 則提到 `學長`，所以要印出 `478 次`。\n\n在 `Main` 裡寫一個方法 `static int count(String[] log, String word)`，用 `for` 數出 `log` 裡有幾則訊息包含 `word`，交回這個數。再讓 `main` 用它數 `log`（`ChatLog.load()` 交回的聊天紀錄）裡的 `學長`，印出這一行。",
+      "goal": "`main` 裡的 `log` 是小芸一整年的聊天紀錄（1000 則訊息），裡面有 478 則提到 `學長`，所以要印出 `478 次`。\n\n在 `Main` 裡寫一個方法 `static int count(String[] log, String word)`，用 `for` 數出 `log` 裡有幾則訊息包含 `word`，交回這個數。再在 `main` 裡用它數 `log` 裡的 `學長`，印出這一行。",
       "instructions": "聊天紀錄寫在 `ChatLog.java` 分頁，`main` 第一行已經用 `ChatLog.load()` 把它放進 `log` 了，一格是一則訊息。\n\n字串的 `contains(…)` 問裡面有沒有這幾個字，例如 `\"學長早\".contains(\"學長\")` 是 `true`。",
       "expectedShape": "static int count(String[] log, String word) {\n    int n = 0;\n    for (…) {\n        if (log[i].contains(word)) {\n            …\n        }\n    }\n    return n;\n}",
       "form": "program",
@@ -23,8 +23,8 @@
     {
       "id": "while",
       "title": "改成 while",
-      "goal": "三則訊息 `學長早`、`便當`、`學長！` 裡有 2 則包含 `學長`，`countWhile` 要交回 `2`；一則訊息都沒有時交回 `0`。\n\n再寫一個方法 `static int countWhile(String[] log, String word)`，和 `count` 一樣數出有幾則包含 `word`、交回這個數，這次改用 `while`。",
-      "instructions": "按「完成」時會直接呼叫 `countWhile`，換幾組訊息測試，`main` 不會執行。",
+      "goal": "`countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")` 要交回 `2`：三則訊息裡有兩則包含 `學長`。\n\n再寫一個方法 `static int countWhile(String[] log, String word)`，跟 `count` 一樣數出 `log` 裡有幾則訊息包含 `word`、交回這個數，但這次用 `while` 來數。",
+      "instructions": "`while` 只要條件還成立，就再做一次。它不像 `for` 會自己把 `i` 往下一格：`i` 要在 `while` 前面先做好，每一圈的最後自己寫 `i++`。\n\n```\nint i = 0;\nwhile (i < 3) {\n    System.out.println(i);\n    i++;\n}\n```\n\n這段會印 0、1、2。忘了 `i++` 的話，`i` 永遠是 0，條件永遠成立，迴圈就停不下來，這叫無限迴圈；程式跑超過 3 秒會被強制停止。\n\n這一步只看 `countWhile` 交回的數，`main` 不用改。",
       "expectedShape": "static int countWhile(String[] log, String word) {\n    int n = 0;\n    int i = 0;\n    while (i < log.length) {\n        …\n        i++;\n    }\n    return n;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")", "Main.countWhile(new String[]{}, \"學長\")"] },
@@ -37,8 +37,8 @@
     {
       "id": "again",
       "title": "再統計一次？",
-      "goal": "三次的回答是 `好`、`好`、`不要` 時，要印出三行：\n`第 1 次：478 次`\n`第 2 次：478 次`\n`第 3 次：478 次`\n\n用 `do-while` 先統計一次、印一行，再看 `main` 裡的 `answers`（每次被問「再統計一次？」的回答）：回答是 `好` 就再來一次。",
-      "instructions": "第 1 次統計完的回答是 `answers[0]`，第 2 次是 `answers[1]`，也就是 `answers[第幾次 - 1]`。比字串的內容用 `equals`。\n\n在 `{ }` 裡面做的盒子，出了 `}` 就用不到了。所以 `round` 和 `answer` 要在 `do` 前面先做好，`while (…)` 才看得到 `answer`。最後的 `while (…);` 要加分號。",
+      "goal": "`main` 裡的 `answers` 是每次統計完被問「再統計一次？」的回答，現在是 `好`、`好`、`不要`，所以要統計 3 次，印出三行：\n`第 1 次：478 次`\n`第 2 次：478 次`\n`第 3 次：478 次`\n\n用 `do-while`（先做一次，做完才問要不要再來）：每次用 `count` 統計、印一行，再看這次的回答，是 `好` 就再來一次。",
+      "instructions": "`do-while` 先做大括號裡的事，做完才看 `while` 括號裡的條件：成立就回去再做一次，不成立就停。所以不管條件怎樣，至少會做一次。\n\n```\nint n = 0;\ndo {\n    n++;\n    System.out.println(\"第 \" + n + \" 圈\");\n} while (n < 2);\n```\n\n這段會印 `第 1 圈` 和 `第 2 圈`。最後的 `while (…);` 要加分號。\n\n第 1 次統計完的回答是 `answers[0]`，第 2 次是 `answers[1]`：第幾次減 1，就是要看的那一格。比字串的內容用 `equals`。\n\n在 `{ }` 裡面做的盒子，出了 `}` 就用不到了。所以 `round` 和 `answer` 要在 `do` 前面先做好，`while (…)` 才看得到 `answer`。",
       "expectedShape": "do {\n    round++;\n    System.out.println(\"第 \" + round + \" 次：\" + … + \" 次\");\n    answer = answers[round - 1];\n} while (…);",
       "form": "program",
       "check": { "type": "output" },

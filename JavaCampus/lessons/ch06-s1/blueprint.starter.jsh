@@ -1,2 +1,2 @@
-// 範例：class Gacha，欄位 name、color
-// new 出兩個：麻糬（白色）、黑糖（咖啡色）
+// 範例：寫設計圖 class Gacha，欄位有 name 和 color
+// 再用 new 做出兩顆扭蛋，麻糬是白色、黑糖是咖啡色，各印一行

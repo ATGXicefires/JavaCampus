@@ -9,8 +9,8 @@
     {
       "id": "main",
       "title": "從 main 開始",
-      "goal": "寫 `public class Main`，裡面放 `public static void main(String[] args)`，在 `main` 裡印出 `小白學程式 v0.9`。",
-      "instructions": "完整的程式從 `main` 開始執行。以前寫在最外層的敘述，現在都要放進 `main` 的大括號裡。",
+      "goal": "印出一行 `小白學程式 v0.9`。\n\n這次要寫完整的程式：寫 `public class Main`，裡面放 `public static void main(String[] args)`（完整程式從這裡開始跑），在 `main` 的大括號裡印出這一行。",
+      "instructions": "完整的 Java 程式，從 `Main` 類別裡的 `main` 方法開始執行。以前直接寫在最外層的敘述，現在都要放進 `main` 的大括號裡；class 外面只能寫 `import` 和類別。\n\n`public static void main(String[] args)` 這一行先照抄，一個字都不能少。`main` 的大括號在 `Main` 的大括號裡面，兩對都要關好。",
       "expectedShape": "public class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "screen",
       "title": "另一個檔案",
-      "goal": "版本那一行下面，再印出兩個畫面的標題：\n`== 首頁 ==`\n`== 課程列表 ==`\n\n按分頁列右邊的「＋」新增 `Screen.java`，寫 `class Screen`：欄位 `String title`，建構子 `Screen(String title)`，`void show()` 照這個樣子印出 `title`。在 `main` 裡 `new` 兩個畫面 `首頁` 和 `課程列表`，各 `show()` 一次。",
-      "instructions": "新增的檔案會先寫好 `public class Screen`，在大括號裡接著寫。版本那一行留著。",
+      "goal": "版本那一行下面，再印出兩個畫面的標題：\n`== 首頁 ==`\n`== 課程列表 ==`\n\n按分頁列右邊的「＋」新增 `Screen.java`（一個類別放一個檔案），寫 `class Screen`：欄位 `String title`，建構子 `Screen(String title)`，`void show()` 印出標題，`title` 是 `首頁` 時印 `== 首頁 ==`。在 `main` 裡 `new` 兩個畫面 `首頁` 和 `課程列表`，各 `show()` 一次。",
+      "instructions": "程式變大以後，每個類別放在自己的檔案：`Screen` 放在 `Screen.java`，`Main` 放在 `Main.java`。寫了 `public` 的類別，名字一定要和檔名一樣。同一個程式裡的檔案互相叫得到，`Main` 裡直接 `new Screen(…)` 就好。\n\n新增的檔案會先寫好 `public class Screen`，在大括號裡接著寫。`Main.java` 裡版本那一行留著。",
       "expectedShape": "// Screen.java\npublic class Screen {\n    String title;\n    …\n}\n\n// Main.java\nScreen home = new Screen(\"首頁\");\n…",
       "form": "program",
       "check": { "type": "output" },

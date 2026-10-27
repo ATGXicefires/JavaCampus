@@ -9,8 +9,8 @@
     {
       "id": "skip",
       "title": "跳過收回的",
-      "goal": "三則訊息 `二弘早`、`（已收回）二弘`、`學長` 裡數 `二弘`，`countName` 交回 `1`：收回的那則不算。\n\n寫一個方法 `static int countName(String[] log, String name)`，數出 `log` 裡有幾則訊息包含 `name`，交回這個數。開頭是 `（已收回）` 的訊息用 `continue` 跳過。",
-      "instructions": "字串的 `startsWith(…)` 問開頭是不是這幾個字，例如 `\"（已收回）二弘\".startsWith(\"（已收回）\")` 是 `true`。`（已收回）` 的括號是全形的，可以從目標複製。\n\n按「完成」時會直接呼叫 `countName` 測試。",
+      "goal": "`countName(new String[]{\"二弘早\", \"（已收回）二弘\", \"學長\"}, \"二弘\")` 要交回 `1`：收回的那則不算。\n\n寫一個方法 `static int countName(String[] log, String name)`，數出 `log` 裡有幾則訊息包含 `name`，交回這個數。開頭是 `（已收回）` 的訊息，用 `continue`（跳過這一圈剩下的部分，直接下一圈）跳過，不算。",
+      "instructions": "`continue` 會跳過這一圈剩下的部分，直接進入下一圈，迴圈本身照樣繼續：\n\n```\nfor (int i = 1; i <= 4; i++) {\n    if (i == 2) {\n        continue;\n    }\n    System.out.println(i);\n}\n```\n\n這段會印 1、3、4：`i` 是 2 的那一圈，下面的 `println` 沒有做。\n\n字串的 `startsWith(…)` 問開頭是不是這幾個字，例如 `\"（已收回）二弘\".startsWith(\"（已收回）\")` 是 `true`。`（已收回）` 的括號是全形的，可以從目標複製。\n\n這一步只看 `countName` 交回的數，`main` 可以空著。",
       "expectedShape": "for (String line : log) {\n    if (line.startsWith(\"（已收回）\")) {\n        continue;\n    }\n    …\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.countName(new String[]{\"二弘早\", \"（已收回）二弘\", \"學長\"}, \"二弘\")", "Main.countName(new String[]{\"（已收回）二弘\"}, \"二弘\")"] },
@@ -23,7 +23,7 @@
     {
       "id": "claim",
       "title": "她的主張",
-      "goal": "五則訊息裡，沒收回又包含 `二弘` 的有 2 則，要印出 `叫了「二弘」2 次（收回的不算）`。\n\n用 `countName` 數 `main` 裡的 `log`（幾則訊息）有幾則叫了 `二弘`，接成這一行印出來。",
+      "goal": "`main` 裡的 `log` 有五則訊息，沒收回又包含 `二弘` 的有 2 則，所以要印出 `叫了「二弘」2 次（收回的不算）`。\n\n用 `countName` 數出 `log` 裡有幾則叫了 `二弘`，把次數接進這一行印出來。",
       "instructions": "`「」` 和 `（）` 都是全形的，可以從目標複製。",
       "expectedShape": "System.out.println(\"叫了「二弘」\" + countName(…) + \" 次（收回的不算）\");",
       "form": "program",

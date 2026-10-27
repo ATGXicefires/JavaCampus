@@ -9,8 +9,8 @@
     {
       "id": "cheer",
       "title": "還是有 bug",
-      "goal": "修好後，最後一行 `new Me().say();` 要印出 `學長面試加油！你一定可以！`。\n\n起始碼的 `Me` 答應了 `Cheer` 的約定，跑起來卻是紅字。",
-      "instructions": "一次修一個紅字。",
+      "goal": "修好後，最後一行 `new Me().say();` 要印出 `學長面試加油！你一定可以！`。\n\n起始碼的 `Me` 答應了 `Cheer` 的約定（`implements Cheer`），跑起來卻是紅字：`Me` 裡的方法沒有照約定寫。",
+      "instructions": "`implements Cheer` 是答應照 `Cheer` 這張約定做：約定裡的方法要照一樣的名字寫出來，前面還要加 `public`。名字打錯一個字，就等於沒寫。\n\n一次修一個紅字。",
       "expectedShape": "class Me implements Cheer {\n    public void say() {\n        …\n    }\n}",
       "check": { "type": "output" },
       "hints": {

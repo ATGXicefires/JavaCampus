@@ -8,6 +8,6 @@ public class Main {
         screens.add("答題");
         screens.add("成績");
         ArrayList<String> features = Features.list();
-        // 印出 畫面 4 個，功能 5 個
+        // 用 screens 和 features 的 size() 印出 畫面 4 個，功能 5 個
     }
 }

@@ -11,8 +11,8 @@
     {
       "id": "if",
       "title": "如果有滷肉飯",
-      "goal": "`hasLuRouFan` 是 `true` 時印出 `吃滷肉飯`，是 `false` 時什麼都不印。\n\n先只寫 `if`，用題目給的 `hasLuRouFan`（有沒有滷肉飯）決定要不要印。",
-      "instructions": "「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。`hasLuRouFan` 是題目已經宣告好的變數，直接拿來用。\n\n按「完成」時，會把 `hasLuRouFan` 改成 `false` 再檢查一次，那時什麼都不能印，所以要用 `if` 來判斷，不能直接印。",
+      "goal": "`hasLuRouFan` 代表有沒有滷肉飯，現在是 `true`（有），所以要印出 `吃滷肉飯`；是 `false`（沒有）的時候，什麼都不印。\n\n先只寫 `if`（如果⋯⋯就⋯⋯），照 `hasLuRouFan` 決定要不要印。",
+      "instructions": "編輯器最上面那行 `boolean hasLuRouFan = true;` 是題目先寫好的，你的程式可以直接用 `hasLuRouFan`。\n\n「程式基礎教學筆記」第 3 頁要講條件判斷，用午餐舉例。`boolean` 是只裝 `true`（是）或 `false`（不是）的盒子。`if` 的括號裡放一個 `boolean`：是 `true` 就做大括號裡的事，是 `false` 就整段跳過。\n\n```\nboolean raining = true;\nif (raining) {\n    System.out.println(\"帶傘\");\n}\n```\n\n`raining` 是 `true`，所以會印出 `帶傘`；如果是 `false`，就什麼都不印。",
       "expectedShape": "if (hasLuRouFan) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
@@ -20,15 +20,15 @@
       },
       "hints": {
         "lead": "`if` 敘述對括號內的 boolean 運算式求值，結果為 `true` 才執行後面的區塊⋯⋯",
-        "plain": "⋯⋯她聽不懂。重寫：**如果**有滷肉飯，就吃滷肉飯。括號裡放 `hasLuRouFan`，大括號裡放要做的事。"
+        "plain": "⋯⋯白話：**如果**有滷肉飯，就吃滷肉飯。括號裡放 `hasLuRouFan`，大括號裡放要做的事。"
       },
       "afterText": "二弘（心想）：「舉例用午餐。人類理解食物的速度最快。」"
     },
     {
       "id": "else",
       "title": "否則吃控肉飯",
-      "goal": "補上 `else`：沒有滷肉飯的時候印出 `吃控肉飯`。",
-      "instructions": "按「完成」時會把 `hasLuRouFan` 換成 `false` 再跑一次，兩種午餐都要印對。",
+      "goal": "現在 `hasLuRouFan` 是 `true`，要印 `吃滷肉飯`；`hasLuRouFan` 是 `false` 的時候，要印 `吃控肉飯`。\n\n補上 `else`（否則）：接在 `}` 後面，在它的大括號裡印出 `吃控肉飯`。",
+      "instructions": "`else` 就是「否則」，負責 `if` 條件不成立的情況：括號裡是 `true` 就做 `if` 那一對大括號，是 `false` 就做 `else` 那一對。兩對只會做其中一對，`else` 後面不用再寫括號和條件。\n\n```\nboolean raining = false;\nif (raining) {\n    System.out.println(\"帶傘\");\n} else {\n    System.out.println(\"戴帽子\");\n}\n```\n\n`raining` 是 `false`，所以印出 `戴帽子`。",
       "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",

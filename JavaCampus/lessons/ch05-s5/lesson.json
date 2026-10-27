@@ -9,8 +9,8 @@
     {
       "id": "check",
       "title": "比對",
-      "goal": "`check(true, true)` 和 `check(false, false)` 交回 `PASS`，`check(true, false)` 交回 `FAIL`。\n\n寫一個方法 `static String check(boolean actual, boolean expected)`，`actual`（實際結果）和 `expected`（預期結果）一樣就交回 `PASS`，不一樣交回 `FAIL`。",
-      "instructions": "起始碼上面是別人寫好的 `isPass`、`max`、`showBadge`，都是對的；這一題要幫它們做測試。先寫一個比對用的小工具：`actual` 是實際算出來的結果，`expected` 是預期的結果。",
+      "goal": "`check(true, true)` 和 `check(false, false)` 要交回 `PASS`，`check(true, false)` 要交回 `FAIL`。\n\n寫一個方法 `static String check(boolean actual, boolean expected)`：`actual`（實際算出來的結果）和 `expected`（預期的結果）一樣就交回 `PASS`，不一樣就交回 `FAIL`。",
+      "instructions": "起始碼上面是她寫好的 `isPass`、`max`、`showBadge`，都是對的；這一題要幫它們做測試。\n\n測試就是拿一組資料給程式算，再把算出來的結果和應該得到的結果比一比：一樣是 PASS，不一樣是 FAIL。拿來測程式的資料叫**測資**；`check` 就是負責「比一比」的小工具。",
       "expectedShape": "static String check(boolean actual, boolean expected) {\n    …\n}",
       "check": { "type": "values", "exprs": ["check(true, true)", "check(true, false)", "check(false, false)"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "boundary",
       "title": "邊界全部測一遍",
-      "goal": "測資 `{59, 60, 61, 0, 100}` 要印出 5 行：`isPass(59) PASS`、`isPass(60) PASS`，一直到 `isPass(100) PASS`。\n\n把這些測資放進陣列，預期結果（60 分以上及格）放進另一個 `boolean[]`，再用迴圈和 `check` 每組印出一行。",
-      "instructions": "測資放一個陣列，預期的答案放另一個 `boolean[]`，同一個 `i` 對同一組。起始碼的 `isPass` 是對的，預期結果填對的話，五行都會是 PASS。",
+      "goal": "拿 `{59, 60, 61, 0, 100}` 這五個分數當測資（拿來測程式的資料），每個都測一次，要印出 5 行：\n`isPass(59) PASS`\n`isPass(60) PASS`\n`isPass(61) PASS`\n`isPass(0) PASS`\n`isPass(100) PASS`\n\n把測資放進 `int[] tests`，每個分數預期的結果（60 分以上是 `true`）放進 `boolean[] expected`，再用迴圈把每一組交給 `isPass` 和 `check`，各印一行。",
+      "instructions": "60 分剛好在及格和不及格的分界上，叫做**邊界**。bug 最喜歡躲在邊界：`>=` 寫成 `>`，就只有剛好 60 分會錯。所以要測 59、60、61 這種貼著邊界的分數，再加上最低的 0 和最高的 100。\n\n兩個陣列一樣長，同一個 `i` 對同一組：`tests[i]` 是分數，`expected[i]` 是它預期的結果。上面她寫的 `isPass` 是對的，預期結果填對的話，五行都會是 PASS。",
       "expectedShape": "int[] tests = {59, 60, 61, 0, 100};\nboolean[] expected = {…};\nfor (…) {\n    System.out.println(\"isPass(\" + tests[i] + \") \" + check(…));\n}",
       "check": { "type": "output" },
       "hints": {
@@ -35,8 +35,8 @@
     {
       "id": "my-max",
       "title": "自己寫一份對照",
-      "goal": "接在上一步的 5 行後面，再印出 3 行：\n`第 1 組 PASS`\n`第 2 組 PASS`\n`第 3 組 PASS`\n\n寫一個方法 `static int myMax(int[] a)`，用三組刁鑽的測資 `{-3, -7}`、`{5}`、`{62, 41, 34}` 比對它和起始碼的 `max`：兩邊算的一樣就是 PASS，每組印一行。",
-      "instructions": "三組測資：全部是負數的 `{-3, -7}`、只有一個的 `{5}`、最大的在最前面的 `{62, 41, 34}`。兩邊算出來一樣就是 PASS。",
+      "goal": "接在上一步的 5 行後面，再印出 3 行：\n`第 1 組 PASS`\n`第 2 組 PASS`\n`第 3 組 PASS`\n\n自己寫一個找最大值的方法 `static int myMax(int[] a)`，拿三組測資 `{-3, -7}`、`{5}`、`{62, 41, 34}` 給 `max` 和 `myMax` 各算一次，用 `check` 比對兩邊交回的數一不一樣，每組印一行。",
+      "instructions": "這三組測資都很刁鑽：全部是負數、只有一格、最大的在最前面。找最大值的程式寫錯的話，最容易在這種地方露出馬腳。\n\n`myMax` 的找法：先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n`check` 收的是兩個 `boolean`，所以先用 `==` 比出兩邊一不一樣，再交給 `check`，預期的結果是 `true`。",
       "expectedShape": "static int myMax(int[] a) {\n    …\n}\n\nint[] t1 = {-3, -7};\n…\nSystem.out.println(\"第 1 組 \" + check(max(t1) == myMax(t1), true));",
       "check": { "type": "output" },
       "hints": {

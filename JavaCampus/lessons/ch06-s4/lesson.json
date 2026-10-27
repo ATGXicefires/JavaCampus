@@ -9,8 +9,8 @@
     {
       "id": "view",
       "title": "眼鏡",
-      "goal": "`new Glasses().view()` 交回 `世界霧霧的`：剛做出來的眼鏡還沒擦過。\n\n寫 `class Glasses`：欄位 `boolean clean`（乾不乾淨），方法 `String view()` 在 `clean` 是 `true` 時交回 `世界很清楚`，否則交回 `世界霧霧的`。",
-      "instructions": "不用寫建構子：會用 `new Glasses().view()` 檢查。剛做出來的眼鏡還沒擦過，要交回 `世界霧霧的`。",
+      "goal": "`new Glasses().view()` 要交回 `世界霧霧的`：剛做出來的眼鏡還沒擦過。\n\n寫 `class Glasses`：欄位 `boolean clean`（乾不乾淨），方法 `String view()` 在 `clean` 是 `true` 時交回 `世界很清楚`，否則交回 `世界霧霧的`。",
+      "instructions": "這一題不用寫建構子：沒寫建構子的類別，一樣可以用 `new Glasses()` 做出來。沒設定過的欄位有預設值：`boolean` 是 `false`，`int` 是 0，`String` 是 `null`，所以剛做出來的眼鏡 `clean` 是 `false`。\n\n`view()` 不加 `static`，是每副眼鏡自己的方法，看的是自己的 `clean`。",
       "expectedShape": "class Glasses {\n    boolean clean;\n\n    String view() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Glasses().view()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "wipe",
       "title": "擦一擦",
-      "goal": "印出兩行：擦之前是 `世界霧霧的`，擦之後是 `世界很清楚`。\n\n幫 `Glasses` 加上方法 `void wipe()`，把 `clean` 設成 `true`。再 `new` 一副眼鏡，擦之前和擦之後各印一次 `view()`。",
-      "instructions": "輸出是兩行：擦之前一行，擦之後一行。",
+      "goal": "要印出兩行：\n`世界霧霧的`\n`世界很清楚`\n\n幫 `Glasses` 加上方法 `void wipe()`，把自己的 `clean` 設成 `true`。再 `new` 一副眼鏡：先印一次 `view()`，呼叫 `wipe()` 擦一擦，再印一次 `view()`。",
+      "instructions": "物件的方法可以改自己的欄位。`g.wipe()` 改的是 `g` 這副眼鏡自己的 `clean`；改完以後再呼叫 `g.view()`，看到的就是擦過的樣子。",
       "expectedShape": "void wipe() {\n    …\n}\n…\nGlasses g = new Glasses();\nSystem.out.println(g.view());\ng.wipe();\nSystem.out.println(g.view());",
       "check": { "type": "output" },
       "hints": {

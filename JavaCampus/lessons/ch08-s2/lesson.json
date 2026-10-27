@@ -9,8 +9,8 @@
     {
       "id": "check",
       "title": "寫了卻沒用",
-      "goal": "修好後，答案是 `選午餐` 時，`check(\"選 午 餐\")` 交回 `true`，`check(\"選晚餐\")` 交回 `false`。\n\n起始碼的 `FillQuestion` 想覆寫 `check`，讓中間多打空白也算對，卻一直沒有作用。先在那個方法上加 `@Override`，看紅字說什麼，再修好。",
-      "instructions": "沒有覆寫到的時候程式照樣能跑，只是一直用父類別的 `check`。\n\n`typed.replace(\" \", \"\")` 會把打的字裡所有空白換成空字串，也就是全部拿掉，再拿去和答案比。",
+      "goal": "`q` 是答案為 `選午餐` 的填空題。註解「中間多打了空白也算對」底下的方法，本來要讓 `q.check(\"選 午 餐\")` 交回 `true`，可是它沒有覆寫到父類別的 `check`，現在交回的是 `false`。`q.check(\"選晚餐\")` 要維持 `false`。\n\n先在那個方法上面加一行 `@Override`（請編譯器確認父類別真的有這個方法），看紅字說什麼，再修好。",
+      "instructions": "名字、大小寫、參數只要有一點不一樣，就不算覆寫，只是多了一個新方法。這時候程式照樣能跑，只是 `q.check(…)` 一直用父類別的版本。加了 `@Override`，編譯器會直接說沒覆寫到。\n\n`typed.replace(\" \", \"\")` 會把打的字裡所有空白換成空字串，也就是全部拿掉，再拿去和答案比。",
       "expectedShape": "@Override\nboolean check(String typed) {\n    …\n}",
       "check": { "type": "values", "exprs": ["new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選 午 餐\")", "new FillQuestion(\"if-else 像什麼？\", \"選午餐\").check(\"選晚餐\")"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "tostring",
       "title": "toSting",
-      "goal": "修好後，`System.out.println(q)` 要印出 `填空題：選午餐`。\n\n現在印出來的是一串看不懂的東西，因為 `toSting()` 也沒覆寫到。一樣先加 `@Override` 看紅字，再修好。",
-      "instructions": "`toString()` 原本是 `public`，覆寫時前面也要寫 `public`。",
+      "goal": "最後一行 `System.out.println(q)` 現在印出類別名稱加一串數字，看不懂：`toSting()` 也沒覆寫到 `toString()`（`println` 印物件時，印的是它交回的字）。修好後要印出 `填空題：選午餐`。\n\n一樣先在那個方法上面加 `@Override` 看紅字，再修好。",
+      "instructions": "每個類別本來就有一個 `toString()`，交回類別名稱加一串數字。名字差一個字母，就只是多了一個新方法，`println` 用的還是原本那個。\n\n`toString()` 原本是 `public`（誰都能用），覆寫時前面也要寫 `public`，不然會紅字。",
       "expectedShape": "@Override\npublic String toString() {\n    …\n}",
       "check": { "type": "output" },
       "hints": {

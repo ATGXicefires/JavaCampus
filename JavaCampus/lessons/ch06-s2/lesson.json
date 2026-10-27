@@ -9,8 +9,8 @@
     {
       "id": "blueprint",
       "title": "禮物的設計圖",
-      "goal": "`new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 做出來，`to` 是 `梁亭瑄`，`from` 是 `吳二弘`，`message` 是 `嗨`。\n\n寫 `class Gift`：三個 `String` 欄位 `to`、`from`、`message`，建構子 `Gift(String to, String from, String message)` 用 `this` 把傳進來的值放進欄位。",
-      "instructions": "三個欄位都是 `String`，建構子照順序收 `to`、`from`、`message`。\n\n按「完成」時，會用 `new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 檢查三個欄位有沒有都放好。",
+      "goal": "`new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 做出來的卡片，`to` 要是 `梁亭瑄`，`from` 要是 `吳二弘`，`message` 要是 `嗨`。\n\n寫 `class Gift`：三個 `String` 欄位 `to`、`from`、`message`，和建構子 `Gift(String to, String from, String message)`（`new` 的那一刻第一個執行的方法），用 `this` 把傳進來的值放進欄位。",
+      "instructions": "建構子的名字和類別一樣，前面不寫回傳型別。`new Gift(…)` 括號裡的三個值，會照順序交給參數 `to`、`from`、`message`。\n\n參數和欄位同名的時候，`this.to` 是這張卡片自己的欄位，`to` 是傳進來的參數。所以 `this.to = to;` 就是把傳進來的值放進自己的欄位。",
       "expectedShape": "class Gift {\n    …\n    Gift(String to, String from, String message) {\n        this.to = to;\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").message"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "open",
       "title": "打開卡片",
-      "goal": "打開卡片要印出三行：\n`給 梁亭瑄`\n卡片內容\n`—— 吳二弘`\n\n幫 `Gift` 加上方法 `void open()` 印出這三行。再 `new` 一張 `to` 是 `梁亭瑄`、`from` 是 `吳二弘` 的卡片，呼叫它的 `open()`。卡片內容是：`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`",
-      "instructions": "`open()` 是卡片自己的方法，用的是自己的 `to`、`message`、`from`。寫好以後，`new` 一張卡片，再呼叫它的 `open()`。\n\n卡片內容和 `——` 可以從這裡複製。",
+      "goal": "打開卡片要印出三行：\n`給 梁亭瑄`\n`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`\n`—— 吳二弘`\n\n幫 `Gift` 加上方法 `void open()`，照順序印出給誰、卡片內容、誰寫的這三行。再 `new` 一張 `to` 是 `梁亭瑄`、`from` 是 `吳二弘`、`message` 是上面那段內容的卡片，呼叫它的 `open()`。",
+      "instructions": "不加 `static` 的方法屬於物件：`card.open()` 用的是 `card` 自己的 `to`、`message`、`from`，所以 `open()` 不用參數。\n\n卡片內容和 `——` 可以從目標複製。",
       "expectedShape": "void open() {\n    System.out.println(\"給 \" + to);\n    …\n}\n\nGift card = new Gift(\"梁亭瑄\", \"吳二弘\", \"…\");\ncard.open();",
       "check": { "type": "output" },
       "hints": {
@@ -36,7 +36,7 @@
       "id": "flip",
       "title": "背面的小字",
       "goal": "卡片的三行後面，要再多印一行：`P.S. 木瓜牛奶換成冬天的話，熱可可也可以。`\n\n幫 `Gift` 加上欄位 `ps`（背面的小字）和方法 `void flip()`，印出這一行；在 `open()` 之後呼叫 `flip()`。",
-      "instructions": "`ps` 在 `new` 好卡片以後再設定：`card.ps = \"…\";`。",
+      "instructions": "`ps` 不放進建構子，`new` 好卡片以後再設定：`card.ps = \"…\";`。`flip()` 印的是這張卡片自己的 `ps`，前面接上 `P.S.` 和一個空格。\n\n那句小字裡的逗號是全形的，可以從目標複製。",
       "expectedShape": "void flip() {\n    System.out.println(\"P.S. \" + ps);\n}\n…\ncard.ps = \"…\";\ncard.open();\ncard.flip();",
       "check": { "type": "output" },
       "hints": {

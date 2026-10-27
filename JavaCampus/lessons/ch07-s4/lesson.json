@@ -9,8 +9,8 @@
     {
       "id": "menu",
       "title": "價目表",
-      "goal": "印出三行價目表：\n`滷肉飯 35 元`\n`虱目魚湯 60 元`\n`年菜套餐 880 元`\n\n寫 `class Menu`，用 `static final` 定好這三個價錢，再用這些常數印出價目表，一行一道。",
-      "instructions": "常數的名字全部大寫，例如 `NEW_YEAR_SET`。",
+      "goal": "印出三行價目表：\n`滷肉飯 35 元`\n`虱目魚湯 60 元`\n`年菜套餐 880 元`\n\n寫 `class Menu`，用 `static final`（整個類別共用、設定好就不能再改）把這三個價錢定成常數，再用這些常數印出價目表，一行一道。",
+      "instructions": "`static final` 是兩個字合在一起：`static` 是整個類別共用一份，`final` 是設定一次就不能再改。合起來就是常數，例如 `static final int SEATS = 30;`。從類別外面讀，寫成類別名字加 `.`，像 `Menu.LU_ROU_FAN`。\n\n常數的名字習慣全部大寫，單字之間用 `_` 隔開，例如 `NEW_YEAR_SET`。",
       "expectedShape": "class Menu {\n    static final int LU_ROU_FAN = 35;\n    …\n}\n\nSystem.out.println(\"滷肉飯 \" + Menu.LU_ROU_FAN + \" 元\");\n…",
       "check": { "type": "output" },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "raise",
       "title": "有人想漲價",
-      "goal": "價目表後面要多印一行 `年菜套餐（今年）980 元`：年菜今年漲 100 元。\n\n起始碼最後一行想用 `Menu.NEW_YEAR_SET = 980;` 直接改價錢，紅字。刪掉它，改成用常數另外算出今年的價錢。",
-      "instructions": "常數不能改，但可以拿來算：今年漲 100 元。\n\n括號 `（）` 是全形的，可以從這裡複製。",
+      "goal": "最後一行 `Menu.NEW_YEAR_SET = 980;` 想直接改年菜的價錢，現在是紅字：`NEW_YEAR_SET` 是 `final`，不能改。年菜今年漲 100 元，價目表後面要多印一行 `年菜套餐（今年）980 元`。\n\n刪掉這一行，改成用 `Menu.NEW_YEAR_SET` 另外算出今年的價錢，印出來。",
+      "instructions": "常數不能改，但可以拿來算：用它加上漲的錢，算出來的是另一個新的數字，常數本身還是 880。\n\n算式放在字串中間要加括號，例如 `\"共 \" + (3 + 4) + \" 個\"` 印出 `共 7 個`；不加括號會先接成字串，變成 `共 34 個`。括號 `（）` 是全形的，可以從這裡複製。",
       "expectedShape": "System.out.println(\"年菜套餐（今年）\" + (…) + \" 元\");",
       "check": { "type": "output" },
       "hints": {

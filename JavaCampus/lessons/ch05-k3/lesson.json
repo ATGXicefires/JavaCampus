@@ -9,8 +9,8 @@
     {
       "id": "average",
       "title": "平均",
-      "goal": "分數是 `{90, 85}` 時，`average` 交回 `87.5`；`{72, 58, 65, 80, 49}` 交回 `64.8`。\n\n寫一個方法 `static double average(int[] a)`，交回陣列 `a` 裡所有分數的平均，要留小數。",
-      "instructions": "第三章的陣列，用第四章的方法再寫一次。平均要有小數。",
+      "goal": "`a` 是 `{90, 85}` 時，`average(a)` 要交回 `87.5`；是 `{72, 58, 65, 80, 49}` 時，要交回 `64.8`。\n\n寫一個方法 `static double average(int[] a)`，交回 `a` 裡所有分數的平均，要留小數。",
+      "instructions": "`a.length` 是陣列 `a` 有幾格。用 `for` 走過每一格，把分數加起來，再除以格數，就是平均。\n\n兩個 `int` 相除，小數會直接丟掉：`7 / 2` 是 `3`。除之前先用 `(double)` 把其中一邊換成小數，才留得住小數：`(double) 7 / 2` 是 `3.5`。",
       "expectedShape": "static double average(int[] a) {\n    …\n    return …;\n}",
       "check": { "type": "values", "exprs": ["average(new int[]{72, 58, 65, 80, 49})", "average(new int[]{90, 85})"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "pass-count",
       "title": "幾個及格",
-      "goal": "分數是 `{72, 58, 65}` 時，`passCount` 交回 2：72 和 65 及格。\n\n寫一個方法 `static int passCount(int[] a)`，數出陣列 `a` 裡有幾個分數及格（60 分以上，剛好 60 也算），交回這個數。",
-      "instructions": "60 分也算及格。",
+      "goal": "`a` 是 `{72, 58, 65}` 時，`passCount(a)` 要交回 2：72 和 65 及格。\n\n寫一個方法 `static int passCount(int[] a)`，數出 `a` 裡有幾個分數及格（60 分以上，剛好 60 也算），交回這個數。",
+      "instructions": "數數的方法：準備一個從 0 開始的盒子，走過每一格，遇到及格的就加一。走完以後，盒子裡的數就是答案。",
       "expectedShape": "static int passCount(int[] a) {\n    …\n}",
       "check": { "type": "values", "exprs": ["passCount(new int[]{72, 58, 65})", "passCount(new int[]{59})", "passCount(new int[]{60})"] },
       "hints": {
@@ -35,8 +35,8 @@
     {
       "id": "to-score",
       "title": "打錯字也不會倒",
-      "goal": "`toScore(\"80\")` 交回 80，`toScore(\"八十\")` 交回 -1。\n\n寫一個方法 `static int toScore(String s)`，把文字 `s` 轉成分數交回；用 `try`／`catch`，`s` 不是數字就交回 -1。",
-      "instructions": "`Integer.parseInt(s)` 會把 `\"80\"` 這種文字變成數字 80；遇到 `\"八十\"` 這種不是數字的文字，會丟出 `NumberFormatException`，程式就跌倒了。`catch` 要接的就是它。",
+      "goal": "`toScore(\"80\")` 要交回 80，`toScore(\"八十\")` 要交回 -1。\n\n寫一個方法 `static int toScore(String s)`，用 `Integer.parseInt` 把文字 `s` 轉成數字交回；`s` 不是數字時會跌倒，用 `try`／`catch` 接住，改交回 -1。",
+      "instructions": "`Integer.parseInt(s)` 會把 `\"80\"` 這種文字變成數字 80；遇到 `\"八十\"` 這種不是數字的文字，會丟出 `NumberFormatException`，程式就跌倒了。\n\n把會跌倒的那一句放進 `try` 的大括號。`try` 裡跌倒了，程式不會停，會跳到 `catch` 的大括號繼續做。`catch` 的括號裡寫要接的是哪一種跌倒，這裡就是 `NumberFormatException`。",
       "expectedShape": "static int toScore(String s) {\n    try {\n        …\n    } catch (…) {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["toScore(\"80\")", "toScore(\"八十\")"] },
       "hints": {

@@ -9,8 +9,8 @@
     {
       "id": "prime",
       "title": "有沒有因數",
-      "goal": "`isPrime(97)` 交回 `true`，`isPrime(91)` 交回 `false`：91 = 7 × 13，不是質數。\n\n寫一個方法 `static boolean isPrime(int n)`，`n` 是質數就交回 `true`，不是就交回 `false`；1 不是質數。用 `while` 從 2 開始試除，找到因數就提早 `return false`。",
-      "instructions": "質數是大於 1、只能被 1 和自己整除的整數。會用 2、97、91（= 7 × 13）、1 測。",
+      "goal": "`isPrime(97)` 要交回 `true`，`isPrime(91)` 要交回 `false`：91 = 7 × 13，不是質數。\n\n寫一個方法 `static boolean isPrime(int n)`：`n` 是質數就交回 `true`，不是就交回 `false`；1 不是質數。用 `while`（條件還成立，就再做一次）從 2 開始一個一個試除，找到能整除的就提早 `return false`（交回以後，方法就結束了）。",
+      "instructions": "質數是大於 1、只能被 1 和自己整除的整數。試除法就是拿 2、3、4⋯⋯一個一個去除 `n`，有一個能整除，`n` 就不是質數。\n\n`while` 不用先知道要做幾次，括號裡的條件還成立，就再做一次。例如 `x` 從 1 開始，`while (x < 100) { x = x * 2; }` 會一直把 `x` 乘 2，到 128 才停。\n\n`return` 一執行，方法就結束，迴圈也不會再跑。所以找到一個因數就能馬上交回 `false`；整個迴圈跑完都沒找到，才交回 `true`。",
       "expectedShape": "static boolean isPrime(int n) {\n    …\n    while (…) {\n        …\n    }\n    return true;\n}",
       "check": { "type": "values", "exprs": ["isPrime(2)", "isPrime(97)", "isPrime(91)", "isPrime(1)"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "count",
       "title": "幾個質數",
-      "goal": "`countPrimes(10)` 交回 4：2 到 10 之間有 2、3、5、7 四個質數。\n\n寫一個方法 `static int countPrimes(int limit)`，數出 2 到 `limit`（包含 `limit`）之間有幾個質數，交回這個數。",
-      "instructions": "用剛剛寫好的 `isPrime`。",
+      "goal": "`countPrimes(10)` 要交回 4：2 到 10 之間有 2、3、5、7 四個質數。\n\n寫一個方法 `static int countPrimes(int limit)`，數出 2 到 `limit`（包含 `limit`）之間有幾個質數，交回這個數。",
+      "instructions": "用剛剛寫好的 `isPrime` 判斷每個數是不是質數：方法裡也可以呼叫別的方法。",
       "expectedShape": "static int countPrimes(int limit) {\n    …\n}",
       "check": { "type": "values", "exprs": ["countPrimes(10)", "countPrimes(100)"] },
       "hints": {

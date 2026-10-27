@@ -11,8 +11,8 @@
     {
       "id": "per-slide",
       "title": "每張講幾秒",
-      "goal": "報告 5 分鐘是 300 秒，平分給 7 張投影片，每張講 42 秒（只留整數）。\n\n算出這兩個數，分別存進 `seconds` 和 `perSlide`。算 `perSlide` 時要用題目給的 `slides`（投影片張數）。",
-      "instructions": "`slides` 這個盒子題目已經做好了，直接拿來用。\n\n1 分鐘是 60 秒。`perSlide` 用整數除法就好，除不盡的小數直接丟掉：7 張是 42 秒。\n\n按「完成」時，會把 `slides` 改成 6 和 10 各檢查一次，所以要用 `slides` 來算，不能直接寫 `42`。",
+      "goal": "報告有 5 分鐘，平分給 `slides` 張投影片。現在 `slides` 是 7，每張講 42 秒。\n\n先算出總共幾秒，存進 `int seconds`；再用 `/`（除法）平分給 `slides` 張，存進 `int perSlide`。兩個 `int` 相除，小數會直接丟掉，所以是 42，不是 42.8⋯。",
+      "instructions": "編輯器最上面那行 `int slides = 7;` 是題目先寫好的，你的程式可以直接用 `slides`。\n\n1 分鐘是 60 秒，5 分鐘可以寫成 `5 * 60`，讓電腦去算。\n\n`/` 是除法。兩個 `int`（整數）相除，答案也是整數：小數點後面直接丟掉，不會四捨五入。例如 `7 / 2` 是 `3`。",
       "expectedShape": "int seconds = …;\nint perSlide = …;",
       "check": {
         "type": "values",
@@ -28,8 +28,8 @@
     {
       "id": "exact",
       "title": "精確一點",
-      "goal": "300 秒平分給 7 張投影片，平均每張講 42.857⋯ 秒，小數要留下來。\n\n用 `seconds` 和 `slides` 算出這個平均，存進 `double exact`。",
-      "instructions": "起始碼的 `exact` 算出來是 `42.0`，小數又不見了。括號裡的東西會先算，想想看括號裡先算了什麼。\n\n按「完成」時會把 `slides` 換成 6 再算一次。",
+      "goal": "最後一行想算出每張平均講幾秒，但現在 `exact` 算出來是 42.0，小數不見了。`slides` 是 7 時，`exact` 應該是 42.857⋯。\n\n改好這一行，讓 `exact` 留下小數。`double` 是裝小數的盒子，`(double)` 會把緊接在它後面的東西換成小數。",
+      "instructions": "括號裡的東西會先算。`(double) (seconds / slides)` 先算括號裡的 `seconds / slides`：兩個 `int` 相除，小數已經丟掉，剩下 42，之後才換成小數，只會是 42.0。\n\n要在除之前，就先把其中一邊換成小數。只要有一邊是小數，除出來就會留下小數：`7 / 2` 是 `3`，`7.0 / 2` 是 `3.5`。",
       "expectedShape": "int seconds = …;\nint perSlide = …;\ndouble exact = …;",
       "check": {
         "type": "values",
@@ -45,8 +45,8 @@
     {
       "id": "timeline",
       "title": "從第幾秒開始",
-      "goal": "7 張投影片、每張講 42 秒，要印出 7 行：`第 1 張：0 秒`、`第 2 張：42 秒`，一直到 `第 7 張：252 秒`。\n\n用 `for` 照題目給的 `slides`（投影片張數）一張印一行，算出那一張從第幾秒開始講。",
-      "instructions": "第 1 張從 0 秒開始。輪到第 `i` 張的時候，前面已經講完 `i - 1` 張，每張講 `perSlide` 秒。\n\n按「完成」時會把 `slides` 換成 10 再跑一次。",
+      "goal": "`slides` 是 7、`perSlide` 是 42 時，要印出 7 行：\n`第 1 張：0 秒`\n`第 2 張：42 秒`\n⋯⋯\n`第 7 張：252 秒`\n\n用 `for` 一張印一行，印到第 `slides` 張；每一行算出那一張從第幾秒開始講。",
+      "instructions": "第 1 張從 0 秒開始。輪到第 `i` 張的時候，前面已經講完 `i - 1` 張，每張講 `perSlide` 秒。\n\n`for (int i = 1; i <= slides; i++)` 會讓 `i` 從 1 數到 `slides`，一張跑一圈。",
       "expectedShape": "for (int i = 1; i <= slides; i++) {\n    System.out.println(\"第 \" + i + \" 張：\" + … + \" 秒\");\n}",
       "check": {
         "type": "output",

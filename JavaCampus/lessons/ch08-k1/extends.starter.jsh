@@ -8,4 +8,4 @@ class ParentsPlan {
     }
 }
 
-// class MyPlan 繼承 ParentsPlan，裡面先什麼都不寫
+// 寫 class MyPlan，繼承 ParentsPlan

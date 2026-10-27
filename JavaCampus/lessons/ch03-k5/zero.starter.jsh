@@ -1,2 +1,2 @@
-// 題目給了 total（總分，現在是 240）和 count（成績的筆數，現在是 3）
-// 平均是 total / count；count 是 0 的時候會除以零
+// 用 total / count 算出平均印出來，例如 平均：80
+// count 是 0 時這個除法會跌倒：用 try／catch 接住，改印 還沒有成績

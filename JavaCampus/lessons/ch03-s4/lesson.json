@@ -13,8 +13,8 @@
     {
       "id": "parse",
       "title": "字串變數字",
-      "goal": "`input` 是 `\"85\"` 時，要印出 `85 分，再加 5 分是 90 分`。\n\n用 `Integer.parseInt` 把題目給的 `input`（一個字串）變成數字，加上 5 之後印出這一句。",
-      "instructions": "現在印出來的是 `85 分，再加 5 分是 855 分`：字串接上 5，只是把 5 黏在後面。\n\n按「完成」時，會把 `input` 改成 `\"62\"` 再檢查一次，那時要印 `62 分，再加 5 分是 67 分`。",
+      "goal": "`input` 是答題框收到的字串，現在是 `\"85\"`，要印出 `85 分，再加 5 分是 90 分`。可是起始碼那一行現在印的是 `85 分，再加 5 分是 855 分`：字串接上 5，只是把 5 黏在後面。\n\n先用 `Integer.parseInt`（把字串換成 `int`）把 `input` 換成數字，存進 `int score`，再用它印出這一句。",
+      "instructions": "編輯器最上面三行 `String input = \"85\";`、`int total = 240;` 和 `int count = 3;` 是題目先寫好的，你的程式可以直接用 `input`、`total` 和 `count`。\n\n`\"85\"` 是「8」和「5」兩個字，不是數字。`Integer.parseInt(…)` 會讀括號裡的字串，換成真正的數字，例如 `Integer.parseInt(\"7\") + 1` 是 8。\n\n數字的加法放進字串中間時要加括號，不然 `+` 會把它當成接起來：`\"共 \" + (3 + 4)` 是 `共 7`。",
       "expectedShape": "int score = …;\nSystem.out.println(score + \" 分，再加 5 分是 \" + (…) + \" 分\");",
       "check": {
         "type": "output",
@@ -29,8 +29,8 @@
     {
       "id": "catch",
       "title": "先準備好接住",
-      "goal": "`input` 是 `\"八十\"` 時要印出 `要輸入數字喔，例如 80`；是 `\"85\"` 時照樣印 `85 分，再加 5 分是 90 分`。\n\n用 `try`／`catch` 接住不是數字的 `input`，改印那句提示；是數字時照樣印上一步那一句。",
-      "instructions": "按「完成」時，會用原本的 `\"85\"` 和換成的 `\"八十\"` 各檢查一次。",
+      "goal": "現在 `input` 是 `\"85\"`，照樣印出 `85 分，再加 5 分是 90 分`；`input` 換不成數字的時候（例如 `八十`），改印 `要輸入數字喔，例如 80`。\n\n用 `try`／`catch`（先試試看，跌倒了就改做備案）接住換不成數字的情況。",
+      "instructions": "`Integer.parseInt` 看不懂的字串，會讓程式跌倒，丟出 `NumberFormatException` 這個例外。\n\n把可能跌倒的程式放進 `try` 的大括號，`catch (NumberFormatException e)` 的大括號裡寫跌倒時要做的事。`try` 裡跌倒了，程式不會停掉，會直接跳到 `catch`；沒跌倒，`catch` 裡的事就不做。",
       "expectedShape": "try {\n    …\n} catch (… e) {\n    System.out.println(\"要輸入數字喔，例如 80\");\n}",
       "check": {
         "type": "output",
@@ -45,8 +45,8 @@
     {
       "id": "zero",
       "title": "除以零",
-      "goal": "總分 240、共 3 筆成績時印出 `平均：80`；筆數是 0 時改印 `還沒有成績`。\n\n用題目給的 `total`（總分）和 `count`（成績筆數）算出平均印出來；`count` 是 0 時不能除，改印 `還沒有成績`。",
-      "instructions": "平均直接用整數算 `total / count`，不用小數。按「完成」時，會把 `count` 改成 0 再檢查一次。",
+      "goal": "`total` 是成績的總分、`count` 是成績的筆數。現在 `total` 是 240、`count` 是 3，要印出 `平均：80`；`count` 是 0 的時候，改印 `還沒有成績`。\n\n用 `total / count` 算出平均印出來；`count` 是 0 時不能除，除之前先用 `if` 檢查。",
+      "instructions": "平均直接用整數算就好，不用小數。\n\n整數除以 0 會跌倒，丟出 `ArithmeticException`。與其跌倒了再接住，不如除之前先問一句：`count` 是不是 0？「等不等於」寫成 `==`。用上一步的 `try`／`catch` 接住也可以。",
       "expectedShape": "if (count == 0) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",

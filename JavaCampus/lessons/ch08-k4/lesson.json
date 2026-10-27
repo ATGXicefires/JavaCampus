@@ -12,8 +12,8 @@
     {
       "id": "plan",
       "title": "看不懂的印法",
-      "goal": "`System.out.println(plan)` 要印出 `梁亭瑄的計畫：資訊科，繼續畫畫`，現在印的是一串看不懂的東西。\n\n在 `MyPlan` 裡覆寫 `public String toString()`，用欄位 `name`、`department`、`hobby` 交回這一句。",
-      "instructions": "`println` 印物件時，印的是它的 `toString()`。每個類別本來就有一個 `toString()`，印出來就是那串看不懂的東西；在 `MyPlan` 裡寫一個同名的，就換成自己的版本。\n\n`toString()` 原本是 `public`，覆寫時前面也要寫 `public`。",
+      "goal": "最後一行 `System.out.println(plan)` 現在印出類別名稱加一串數字，看不懂。要改成印出 `梁亭瑄的計畫：資訊科，繼續畫畫`。\n\n在 `MyPlan` 裡覆寫 `public String toString()`（`println` 印物件時，印的就是它交回的字），用欄位 `name`、`department`、`hobby` 交回這一句。",
+      "instructions": "編輯器最上面兩行是題目先寫好的 `months` 和 `titles`，這一步還用不到，下一步才用。\n\n每個類別本來就有一個 `toString()`，交回類別名稱加一串數字，就是現在印出來的那串。在 `MyPlan` 裡覆寫它，`println(plan)` 就改印你交回的字。\n\n`toString()` 原本就是 `public`（誰都能用），覆寫時前面也要寫 `public`，不然會紅字。",
       "expectedShape": "@Override\npublic String toString() {\n    return name + \"的計畫：\" + …;\n}",
       "check": { "type": "output" },
       "hints": {
@@ -25,8 +25,8 @@
     {
       "id": "sketches",
       "title": "每一張草圖",
-      "goal": "3 張草圖印成 3 行：\n`9月：提案簡報的插圖`\n`11月：校慶版的介面`\n`2月：貼紙系統的草稿`\n\n寫 `class Sketch`：欄位 `month`、`title` 和建構子，覆寫 `public String toString()` 交回「月份：名稱」。再用 `for` 照題目給的 `months` 和 `titles`（每張草圖的月份和名稱）把每一張 `new` 出來，一張印一行。",
-      "instructions": "`months` 和 `titles` 題目已經做好了。`months[i]` 和 `titles[i]` 是同一張草圖。\n\n按「完成」時，會把兩個陣列改成只有一張（`1月` 的 `小老師的類別圖`）再印一次，所以要用 `months` 和 `titles` 來跑，不能直接寫答案。",
+      "goal": "`months` 和 `titles` 是每張草圖的月份和名稱，現在有 3 張，要印出 3 行：\n`9月：提案簡報的插圖`\n`11月：校慶版的介面`\n`2月：貼紙系統的草稿`\n\n寫 `class Sketch`：欄位 `month`、`title` 和建構子，覆寫 `public String toString()` 交回「月份：名稱」。再用 `for` 照 `months` 和 `titles` 把每一張 `new` 出來，一張印一行。",
+      "instructions": "編輯器最上面兩行 `String[] months = {\"9月\", \"11月\", \"2月\"};` 和 `String[] titles = {\"提案簡報的插圖\", \"校慶版的介面\", \"貼紙系統的草稿\"};` 是題目先寫好的，你的程式可以直接用 `months` 和 `titles`。`months[i]` 和 `titles[i]` 是同一張草圖。",
       "expectedShape": "class Sketch {\n    …\n\n    @Override\n    public String toString() {\n        …\n    }\n}\n\nfor (…) {\n    System.out.println(new Sketch(…));\n}",
       "check": {
         "type": "output",

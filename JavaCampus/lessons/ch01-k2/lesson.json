@@ -9,8 +9,8 @@
     {
       "id": "laptop",
       "title": "小白",
-      "goal": "做一個 `String` 盒子叫 `laptop`，裡面放 `\"小白\"`。",
-      "instructions": "PDF 第 2 頁：**變數就像一個有名字的盒子**。\n\n寫法是：盒子的種類、名字、`=`、內容，最後加分號。",
+      "goal": "做一個叫 `laptop` 的 `String` 盒子，裡面放 `\"小白\"`。\n\n盒子就是變數：有名字、可以裝東西；`String` 是裝文字的盒子。",
+      "instructions": "PDF 第 2 頁：**變數就像一個有名字的盒子**。先做一個盒子、外面貼上名字，再把東西放進去；之後寫盒子的名字，就能拿出裡面的東西。\n\n做盒子的寫法是：盒子的種類、名字、`=`、內容，最後加分號。`=` 的意思是「把右邊的東西放進左邊的盒子」；文字要用半形雙引號 `\"` 包起來。\n\n例如 `String drink = \"紅茶\";` 是做一個叫 `drink` 的 `String` 盒子，裡面放「紅茶」。",
       "expectedShape": "String laptop = \"…\";",
       "check": { "type": "values", "exprs": ["laptop"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "gacha",
       "title": "扭蛋有幾個",
-      "goal": "做一個 `int` 盒子叫 `gacha`，放進 `7`，再把它印出來。",
-      "instructions": "PDF 的下一個例子是扭蛋。印的時候括號裡寫盒子的名字，不加引號。\n\n`int` 是裝整數的盒子，數字也不用加引號。",
+      "goal": "要印出 `7`。\n\n做一個叫 `gacha` 的 `int` 盒子，放進 `7`，再把它印出來。`int` 是裝整數的盒子。",
+      "instructions": "PDF 的下一個例子是扭蛋。`int` 盒子的寫法跟 `String` 一樣：種類、名字、`=`、內容、分號。數字不用加引號：`7` 是可以拿來算的數字，`\"7\"` 是長得像 7 的文字。\n\n要印出盒子裡的東西，`println` 的括號裡寫盒子的名字，不加引號。例如做好 `int age = 16;` 之後，`System.out.println(age);` 會印出 `16`；寫成 `System.out.println(\"age\");` 只會印出 `age` 這三個字母。",
       "expectedShape": "int gacha = …;\nSystem.out.println(…);",
       "check": { "type": "values", "exprs": ["gacha"] },
       "hints": {
@@ -35,8 +35,8 @@
     {
       "id": "again",
       "title": "又抽到一個",
-      "goal": "原本的程式留著，在下面把 `gacha` 換成 `8`，再印一次。輸出會是 `7` 和 `8` 兩行。",
-      "instructions": "又抽到一個了。寫盒子的名字、`=`、新的值，就會把盒子裡的 7 換掉。\n\n盒子已經做好了，這次前面**不用再寫** `int`。\n\n程式從上往下跑。第一次印的時候盒子裡還是 7，換成 8 以後再印一次，才會印出 8。",
+      "goal": "要印出兩行：\n`7`\n`8`\n\n原本的程式留著，在下面用 `=`（把右邊的東西放進盒子）把 `gacha` 換成 `8`，再印一次。",
+      "instructions": "又抽到一個了。盒子做好以後，寫盒子的名字、`=`、新的值，就會把盒子裡原本的東西換掉。例如 `int age = 16;` 之後寫 `age = 17;`，`age` 裡就從 16 換成 17。\n\n盒子已經做好了，這次前面**不用再寫** `int`。\n\n程式從上往下跑。第一次印的時候盒子裡還是 7，換成 8 以後再印一次，才會印出 8。",
       "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);\n… = …;\nSystem.out.println(…);",
       "check": { "type": "output" },
       "hints": {

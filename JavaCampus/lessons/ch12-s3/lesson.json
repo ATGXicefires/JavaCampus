@@ -9,8 +9,8 @@
     {
       "id": "empty",
       "title": "第 12 課還沒有題目",
-      "goal": "修好後，總覽頁要印出三行：\n`第 10 課：75%`\n`第 11 課：80%`\n`第 12 課：—`\n\n現在跑到第 12 課（題數 `count` 是 0）就除以零，出現紅字。修到題數是 0 的課顯示 `—`，其他課照常顯示答對率。",
-      "instructions": "`—` 可以從目標複製。題數是 0 的課不要呼叫 `percent`。",
+      "goal": "修好後，總覽頁要印出三行：\n`第 10 課：75%`\n`第 11 課：80%`\n`第 12 課：—`\n\n`count` 是每一課的題數，第 12 課還沒有題目，是 0。現在迴圈跑到第 12 課，`percent` 拿 0 去除就出錯了。在迴圈裡先判斷：題數是 0 的課印 `—`，其他課照常印答對率。",
+      "instructions": "整數不能除以 0，一除程式就會出錯（`ArithmeticException`）。0 題、剛好滿、只有一個這種邊界，最容易藏 bug。\n\n題數是 0 的課不要呼叫 `percent`。`—` 可以從目標複製。",
       "expectedShape": "if (count[i] == 0) {\n    System.out.println(units[i] + \"：—\");\n} else {\n    …\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "guard",
       "title": "隱藏測資",
-      "goal": "`percent(3, 4)` 交回 `75`，`percent(0, 0)` 交回 `0`，不會出錯。\n\n改 `static int percent(int correct, int count)`：`count`（題數）是 0 時交回 0，其他照原本的算法。",
-      "instructions": "按「完成」時會直接呼叫 `percent` 測試，`main` 不會執行。",
+      "goal": "`percent(0, 0)` 現在會除以零出錯，應該交回 `0`。\n\n改 `static int percent(int correct, int count)`：在方法裡把關，`count`（題數）是 0 時先交回 0，其他照原本的算法。",
+      "instructions": "上一步在 `main` 裡擋住了，可是別的地方呼叫 `percent` 時，題數是 0 一樣會出錯。檢查寫在 `percent` 自己裡面，誰呼叫都不會出錯。\n\n這一步只看 `percent` 交回的數，`main` 不用改。",
       "expectedShape": "static int percent(int correct, int count) {\n    if (count == 0) {\n        return 0;\n    }\n    …\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.percent(3, 4)", "Main.percent(0, 0)"] },

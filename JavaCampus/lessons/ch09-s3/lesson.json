@@ -11,8 +11,8 @@
     {
       "id": "lunch",
       "title": "午餐的約定",
-      "goal": "`new LuRouFan().eat()` 交回 `吃滷肉飯`，`new KongRouFan().eat()` 交回 `吃控肉飯`。\n\n寫 `interface Lunch`，裡面只有 `String eat();`。再寫 `LuRouFan` 和 `KongRouFan` 兩個類別實作它，`eat()` 各自交回上面那句。",
-      "instructions": "約定只說「中午要吃」，吃什麼由實作決定。\n\n按「完成」時，會直接問 `new LuRouFan().eat()`、`new KongRouFan().eat()` 交回什麼，不用印出來。",
+      "goal": "`new LuRouFan().eat()` 交回 `吃滷肉飯`，`new KongRouFan().eat()` 交回 `吃控肉飯`。\n\n寫 `interface Lunch`（約定：只說中午要吃，不管吃什麼），裡面只有 `String eat();`。再寫 `LuRouFan` 和 `KongRouFan` 兩個類別實作它，`eat()` 各自交回上面那句。",
+      "instructions": "編輯器最上面那行 `String[] days = {\"星期一\", \"星期二\", \"星期三\", \"星期四\", \"星期五\"};` 是題目先寫好的，下一步才會用到。\n\n`interface Lunch` 是一張約定，只說「中午要吃」：`String eat();` 只有名字和回傳型別，直接用分號結尾。吃什麼由答應這張約定的類別決定：寫了 `implements Lunch`，就要寫出自己的 `public String eat()`，用 `return` 交回要吃的東西。\n\n`new LuRouFan().eat()` 是做出一個 `LuRouFan`，馬上問它的 `eat()`。這一步不用印出來，只看 `eat()` 交回什麼。",
       "expectedShape": "interface Lunch {\n    String eat();\n}\n\nclass LuRouFan implements Lunch {\n    public String eat() {\n        …\n    }\n}\n\nclass KongRouFan implements Lunch {\n    …\n}",
       "check": { "type": "values", "exprs": ["new LuRouFan().eat()", "new KongRouFan().eat()"] },
       "hints": {
@@ -24,8 +24,8 @@
     {
       "id": "week",
       "title": "約定不變，內容可以換",
-      "goal": "印出五行，從 `星期一：吃滷肉飯`、`星期二：吃控肉飯` 開始，滷肉飯和控肉飯輪流，最後是 `星期五：吃滷肉飯`。\n\n把五天的午餐依序放進 `Lunch[] week`，再用迴圈配上題目給的 `days`（`星期一` 到 `星期五` 五個字串），一天印一行。",
-      "instructions": "`days` 題目已經做好了，直接拿來用；`days[i]` 和 `week[i]` 是同一天。\n\n冒號是全形的 `：`，可以從目標複製。",
+      "goal": "`days` 裡是 `星期一` 到 `星期五`，要印出五行，滷肉飯和控肉飯輪流：\n`星期一：吃滷肉飯`\n`星期二：吃控肉飯`\n`星期三：吃滷肉飯`\n`星期四：吃控肉飯`\n`星期五：吃滷肉飯`\n\n把五天的午餐依序放進 `Lunch[] week`（型別寫介面，兩種午餐都裝得進去），再用 `for` 配上 `days`，一天印一行。",
+      "instructions": "陣列的型別寫介面 `Lunch[]`，答應了 `Lunch` 的類別都放得進去。迴圈裡都是同一句 `week[i].eat()`，那天放的是滷肉飯就交回 `吃滷肉飯`，放的是控肉飯就交回 `吃控肉飯`。\n\n`days[i]` 和 `week[i]` 是同一天。冒號是全形的 `：`，可以從目標複製。",
       "expectedShape": "Lunch[] week = {new LuRouFan(), …};\nfor (…) {\n    System.out.println(days[i] + \"：\" + week[i].eat());\n}",
       "check": { "type": "output" },
       "hints": {

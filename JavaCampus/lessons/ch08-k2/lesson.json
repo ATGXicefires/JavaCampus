@@ -9,8 +9,8 @@
     {
       "id": "super",
       "title": "super",
-      "goal": "`new MyPlan().future()` 交回 `學一技之長，找一份穩定的工作，而且是我喜歡的那一種`：前半句是爸媽原本的版本。\n\n在 `MyPlan` 裡覆寫 `String future()`：用 `super.future()` 拿到父類別 `ParentsPlan` 原本那一句，後面接上 `，而且是我喜歡的那一種`。",
-      "instructions": "`super.future()` 呼叫的是父類別原本的 `future()`。",
+      "goal": "`new MyPlan().future()` 要交回 `學一技之長，找一份穩定的工作，而且是我喜歡的那一種`：前半句是爸媽原本的版本。\n\n在 `MyPlan` 裡覆寫 `String future()`：用 `super.future()`（`super` 指的是父類別）拿到 `ParentsPlan` 原本那一句，後面接上 `，而且是我喜歡的那一種`。",
+      "instructions": "子類別裡寫 `super.`，指的是父類別的那一份。`MyPlan` 自己覆寫了 `future()`，在裡面直接寫 `future()` 會叫到自己，一直叫下去停不下來；寫 `super.future()`，才是 `ParentsPlan` 原本的 `future()`。\n\n拿到原本那一句，再用 `+` 接上自己的話：留下一部分，改寫一部分。例如 `return super.bark() + \"！\";`，交回父類別的叫聲再多一個驚嘆號。",
       "expectedShape": "String future() {\n    return super.future() + \"…\";\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().future()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "name",
       "title": "建構子的 super",
-      "goal": "修好後，`new MyPlan(\"梁亭瑄\").name` 是 `梁亭瑄`。\n\n父類別多了建構子 `ParentsPlan(String name)`，`MyPlan` 跟著紅字。幫 `MyPlan` 寫建構子 `MyPlan(String name)`，用 `super(name)` 把名字交給父類別。",
-      "instructions": "子類別的建構子要先把父類別需要的東西交給它。",
+      "goal": "父類別多了建構子 `ParentsPlan(String name)`，要先拿到名字才能建立，所以 `MyPlan` 現在是紅字。修好後，`new MyPlan(\"梁亭瑄\").name` 要是 `梁亭瑄`。\n\n幫 `MyPlan` 寫建構子 `MyPlan(String name)`，用 `super(name)` 把名字交給父類別的建構子。",
+      "instructions": "`new MyPlan(…)` 的時候，父類別 `ParentsPlan` 那一部分也要跟著建立。`ParentsPlan` 的建構子要一個名字，`MyPlan` 就得在自己的建構子裡把名字交給它。\n\n`super(…)` 就是呼叫父類別的建構子，括號裡放要交給它的東西。名字交上去以後存在父類別的欄位 `name` 裡，`MyPlan` 繼承了這個欄位，也讀得到。",
       "expectedShape": "MyPlan(String name) {\n    super(…);\n}",
       "check": { "type": "values", "exprs": ["new MyPlan(\"梁亭瑄\").name", "new MyPlan(\"梁亭瑄\").future()"] },
       "hints": {

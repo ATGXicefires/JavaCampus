@@ -13,8 +13,8 @@
     {
       "id": "badge",
       "title": "完成徽章",
-      "goal": "`showBadge(5, 5, 60)` 交回 `true`：5 課都完成、又剛好及格；`showBadge(4, 5, 100)` 交回 `false`：還差一課。\n\n寫一個方法 `static boolean showBadge(int done, int total, int score)`：完成的課數 `done` 等於總課數 `total`，而且分數 `score` 及格（60 分以上，剛好 60 也算），才交回 `true`；否則交回 `false`。",
-      "instructions": "「全部完成」是完成數等於總數；「及格」是 60 分以上。",
+      "goal": "`showBadge(5, 5, 60)` 要交回 `true`：5 課都完成、又剛好及格；`showBadge(4, 5, 100)` 要交回 `false`：還差一課。\n\n寫一個方法 `static boolean showBadge(int done, int total, int score)`：完成的課數 `done` 等於總課數 `total`，而且分數 `score` 及格（60 分以上，剛好 60 也算），才交回 `true`；否則交回 `false`。「而且」用 `&&` 寫。",
+      "instructions": "編輯器最上面三行 `int rows = 2;`、`int cols = 5;`、`int done = 7;` 是題目先寫好的，最後一步畫格子時才會用到。這一步方法裡的 `done` 是參數，呼叫時給什麼就是什麼：`showBadge(4, 5, 100)` 裡的 `done` 是 4，不是 7。\n\n`a && b` 是「而且」：兩邊都是 `true`，答案才是 `true`。例如 `hungry && hasMoney` 是「肚子餓，而且有錢」。\n\n「等於」要寫兩個等號 `==`，只寫一個 `=` 是「放進盒子」。",
       "expectedShape": "static boolean showBadge(int done, int total, int score) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["showBadge(5, 5, 60)", "showBadge(5, 5, 59)", "showBadge(4, 5, 100)"] },
       "hints": {
@@ -26,8 +26,8 @@
     {
       "id": "hint",
       "title": "要不要給提示",
-      "goal": "`showHint(true, false)` 交回 `true`：試過兩次還沒過，就給提示；`showHint(true, true)` 交回 `false`：已經過了。\n\n寫一個方法 `static boolean showHint(boolean triedTwice, boolean passed)`（`triedTwice` 是試過兩次了沒，`passed` 是過了沒）：試過兩次、而且還沒過，才交回 `true`；否則交回 `false`。",
-      "instructions": "`!` 會把 `true` 和 `false` 反過來：`!true` 是 `false`，`!false` 是 `true`。",
+      "goal": "`showHint(true, false)` 要交回 `true`：試過兩次還沒過，就給提示；`showHint(true, true)` 要交回 `false`：已經過了。\n\n寫一個方法 `static boolean showHint(boolean triedTwice, boolean passed)`（`triedTwice` 是試過兩次了沒，`passed` 是過了沒）：試過兩次、而且還沒過，才交回 `true`；否則交回 `false`。「還沒過」可以用 `!`（把答案反過來）寫。",
+      "instructions": "參數也可以是 `boolean`：呼叫 `showHint(true, false)` 時，`triedTwice` 是 `true`，`passed` 是 `false`。\n\n`!` 會把 `true` 和 `false` 反過來：`!true` 是 `false`，`!false` 是 `true`。例如 `raining` 是「在下雨」，`!raining` 就是「沒在下雨」。",
       "expectedShape": "static boolean showHint(boolean triedTwice, boolean passed) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["showHint(true, false)", "showHint(true, true)", "showHint(false, false)"] },
       "hints": {
@@ -39,8 +39,8 @@
     {
       "id": "grid",
       "title": "課程格子",
-      "goal": "2 列、每列 5 格，完成了 7 課，要印出兩行：\n`■■■■■`\n`■■□□□`\n\n用巢狀迴圈和題目給的 `rows`（幾列）、`cols`（每列幾格）、`done`（完成幾課）畫出課程格子：從第一列開始數，完成幾課就畫幾格 `■`，其他畫 `□`，格子之間不空格。",
-      "instructions": "`rows`、`cols`、`done` 這三個盒子題目已經做好了。\n\n外面的迴圈跑一列，裡面的迴圈畫那一列的每一格。記住畫到第幾格了（整張一起數，換列不會重來）：前 `done` 格畫 `■`，其他畫 `□`。\n\n`■` 和 `□` 可以從這裡複製。\n\n按「完成」時，會把 `done` 改成 3 再檢查一次，再把 `rows` 改成 3 檢查一次，所以要用這三個盒子來畫，不能直接印。",
+      "goal": "`rows` 列、每列 `cols` 格的課程格子，完成了 `done` 課。現在 `rows` 是 2、`cols` 是 5、`done` 是 7，要印出：\n`■■■■■`\n`■■□□□`\n\n用巢狀迴圈（迴圈裡再放一個迴圈）一列一列畫：從第一格開始數，前 `done` 格畫 `■`，其他畫 `□`，格子之間不空格。",
+      "instructions": "編輯器最上面三行 `int rows = 2;`、`int cols = 5;`、`int done = 7;` 是題目先寫好的，你的程式可以直接用這三個盒子。\n\n外面的迴圈跑一列，裡面的迴圈畫那一列的每一格。例如這樣會畫出 2 列、每列 3 格的 `□`：\n\n```\nfor (int r = 1; r <= 2; r++) {\n    String row = \"\";\n    for (int c = 1; c <= 3; c++) {\n        row += \"□\";\n    }\n    System.out.println(row);\n}\n```\n\n這一題還要另外記住畫到第幾格了（整張一起數，換列不會重來），才知道這一格該畫 `■` 還是 `□`。`■` 和 `□` 可以從這裡複製。",
       "expectedShape": "for (int r = 0; r < rows; r++) {\n    String line = \"\";\n    for (int c = 0; c < cols; c++) {\n        …\n    }\n    System.out.println(line);\n}",
       "check": {
         "type": "output",

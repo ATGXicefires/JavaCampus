@@ -12,8 +12,8 @@
     {
       "id": "sum",
       "title": "總共幾顆星",
-      "goal": "五種口味的雞蛋糕各得到 `{3, 4, 5, 2, 4}` 顆星，總共是 18 顆。\n\n把題目給的 `stars`（各口味的星數）交給起始碼裡寫好的方法 `total`，算出總星數，存進 `int sum`。",
-      "instructions": "`stars` 和口味名稱 `flavors` 題目已經做好了。\n\n`total(int[] counts)` 的意思是：給它一排整數，它交回總和。不用看它裡面怎麼寫。\n\n按「完成」時，會把 `stars` 改成 `{1, 1, 1, 1, 1}` 再檢查一次，所以要用 `total` 來算，不能直接寫 `18`。",
+      "goal": "`stars` 是各口味得到幾顆星，現在是 `{3, 4, 5, 2, 4}`，總共是 18 顆。\n\n呼叫起始碼裡寫好的 `total`，把 `stars` 交給它，交回來的總和存進 `int sum`。`total` 的方法簽章（名字、要給什麼、交回什麼）是 `static int total(int[] counts)`。",
+      "instructions": "編輯器最上面兩行 `String[] flavors = {\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"};` 和 `int[] stars = {3, 4, 5, 2, 4};` 是題目先寫好的，你的程式可以直接用 `flavors` 和 `stars`。\n\n`static int total(int[] counts)` 像一份約定：名字是 `total`，要給它一個 `int[]`（一排整數），它交回一個 `int`，也就是總和。照約定給對東西就能用，不用看它裡面怎麼寫。\n\n呼叫時寫名字，把要給的東西放進括號，交回來的值可以直接放進盒子，例如 `int p = percent(3, 4);`。",
       "expectedShape": "int sum = …;",
       "check": {
         "type": "values",
@@ -29,8 +29,8 @@
     {
       "id": "rank",
       "title": "排行榜",
-      "goal": "原味 3 顆星，要印出 `原味 ★★★ 16%`；芋頭 5 顆星，要印出 `芋頭 ★★★★★ 27%`。\n\n照題目給的 `flavors`（口味名稱）的順序，每種口味印一行：名字、星星、占總星數的百分比，中間用空格隔開。星星用 `repeat`，百分比用寫好的 `percent(stars[i], sum)`。",
-      "instructions": "`flavors[i]` 是第 i 種口味的名字，`stars[i]` 是它的星數。照原本的順序印就好，不用排名次。\n\n`percent(int part, int whole)` 交回 `part` 占 `whole` 的百分之幾，是整數，後面自己接上 `%`。`★` 可以從這裡複製。\n\n按「完成」時，會把 `stars` 改成 `{5, 5, 5, 5, 5}` 再檢查一次。",
+      "goal": "`flavors` 和 `stars` 同一格是同一種口味。現在 `stars` 是 `{3, 4, 5, 2, 4}`，要印出 5 行：\n`原味 ★★★ 16%`\n`巧克力 ★★★★ 22%`\n`芋頭 ★★★★★ 27%`\n`花生 ★★ 11%`\n`黑糖 ★★★★ 22%`\n\n用 `for` 照 `flavors` 的順序，每種口味印一行：名字、星星、占總星數的百分比，中間用空格隔開。星星用 `repeat`，百分比用寫好的 `percent(stars[i], sum)`。",
+      "instructions": "`flavors[i]` 是第 i 種口味的名字，`stars[i]` 是它的星數。照原本的順序印就好，不用排名次。\n\n`percent(int part, int whole)` 交回 `part` 占 `whole` 的百分之幾，是整數，後面自己接上 `%`。`★` 可以從這裡複製。",
       "expectedShape": "for (int i = 0; i < flavors.length; i++) {\n    System.out.println(flavors[i] + \" \" + … + \" \" + … + \"%\");\n}",
       "check": {
         "type": "output",

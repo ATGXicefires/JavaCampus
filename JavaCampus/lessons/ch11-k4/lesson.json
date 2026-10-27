@@ -9,8 +9,8 @@
     {
       "id": "list",
       "title": "題目清單",
-      "goal": "印出 5 行題目清單，從 `第 1 題：印出一行字要用哪個方法？` 到 `第 5 題：二選一用什麼？`。\n\n按「＋」新增 `Question.java`，寫 `class Question`：欄位 `text`、`answer`，建構子 `Question(String text, String answer)`。在 `main` 裡把 `texts`、`answers`（5 題的題目和答案）照順序做成 `Question`，放進 `ArrayList<Question>`，再從清單印出這 5 行。",
-      "instructions": "5 題的題目和答案，`main` 裡的 `texts` 和 `answers` 已經寫好了：`texts[0]` 和 `answers[0]` 是第 1 題的題目和答案，以此類推。\n\n建構子收題目和答案兩個參數，存進 `text` 和 `answer`。",
+      "goal": "`main` 裡的 `texts`、`answers` 是 5 題的題目和答案。把它們做成題目清單，再從清單印出 5 行：\n`第 1 題：印出一行字要用哪個方法？`\n`第 2 題：整數的型別是什麼？`\n⋯⋯\n`第 5 題：二選一用什麼？`\n\n按「＋」新增 `Question.java`，寫 `class Question`：欄位 `text`、`answer`，建構子 `Question(String text, String answer)`。在 `main` 裡把每一題做成 `Question`，照順序放進 `ArrayList<Question>`（會變長的清單），再從清單印出來。",
+      "instructions": "`texts[0]` 和 `answers[0]` 是第 1 題的題目和答案，以此類推。建構子收題目和答案兩個參數，存進 `text` 和 `answer`。\n\n`ArrayList<Question>` 是只裝 `Question` 的清單：`add(…)` 放一個進去，`get(i)` 拿出第 `i` 個（從 0 開始數），`size()` 是有幾個。\n\n```\nArrayList<String> names = new ArrayList<>();\nnames.add(\"滷肉\");\nnames.add(\"分號\");\nnames.get(1)    // \"分號\"\nnames.size()    // 2\n```",
       "expectedShape": "ArrayList<Question> quiz = new ArrayList<>();\nfor (…) {\n    quiz.add(new Question(…));\n}\nfor (…) {\n    System.out.println(\"第 \" + (i + 1) + \" 題：\" + …);\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "grade",
       "title": "自動作答",
-      "goal": "這組作答答對 4 題，題目清單下面要接著印出兩行：\n`答對 4 題`\n`★ 完成`\n\n照 `main` 裡的 `typed`（5 題的作答）逐題算分：作答先 `trim` 再用 `equals` 和那一題的答案比，印出答對的題數；答對 3 題以上算及格，再印一行 `★ 完成`。",
-      "instructions": "`typed[0]` 是第 1 題的作答，要和第 1 題的答案 `quiz.get(0).answer` 比，以此類推。上一步印的題目清單照樣留著。`★` 可以從目標複製。",
+      "goal": "`main` 裡的 `typed` 是 5 題的作答，現在答對 4 題，及格了，所以題目清單下面要接著印出兩行：\n`答對 4 題`\n`★ 完成`\n\n逐題把 `typed` 和那一題的答案比，印出答對幾題；答對 3 題以上算及格，再印一行 `★ 完成`。作答先用 `trim()`（去掉前後的空白）再用 `equals` 比。",
+      "instructions": "`typed[0]` 是第 1 題的作答，要和第 1 題的答案 `quiz.get(0).answer` 比，以此類推。\n\n`trim()` 會做出一個去掉前後空白的新字串，中間的空白不會去掉：`\" 小白 \".trim()` 是 `\"小白\"`。所以第 1 題的 `\" println\"` 去掉空白就對了；第 3 題的 `\"while\"` 不是 `for`，算錯。\n\n上一步印的題目清單照樣留著。`★` 可以從目標複製。",
       "expectedShape": "int correct = 0;\nfor (…) {\n    if (typed[i].trim().equals(…)) {\n        correct++;\n    }\n}\nSystem.out.println(\"答對 \" + correct + \" 題\");\n…",
       "form": "program",
       "check": { "type": "output" },
@@ -37,8 +37,8 @@
     {
       "id": "score",
       "title": "計分方法",
-      "goal": "答案是 `\"a\"`、`\"b\"`，作答是 `\" a\"`、`\"c\"` 時，`score` 交回 `1`：`\" a\"` 去掉前後空白就對了。沒有題目時交回 `0`。\n\n寫一個方法 `static int score(String[] answers, String[] typed)`，`answers` 和 `typed` 的同一格是同一題的答案和作答。作答先 `trim` 再和答案比，交回答對的題數。",
-      "instructions": "按「完成」時會直接呼叫 `score` 測試，`main` 不會執行。",
+      "goal": "`score(new String[]{\"a\", \"b\"}, new String[]{\" a\", \"c\"})` 要交回 `1`：`\" a\"` 去掉前後空白就對了，`\"c\"` 不對。\n\n寫一個方法 `static int score(String[] answers, String[] typed)`：`answers` 和 `typed` 的同一格是同一題的答案和作答。作答先 `trim` 再和答案比，交回答對的題數。",
+      "instructions": "跟上一步算分一樣，只是答案和作答改從參數拿：`answers[i]` 和 `typed[i]` 是同一題，最後用 `return` 交回答對的題數。\n\n這一步只看 `score` 交回的數，`main` 不用改。",
       "expectedShape": "static int score(String[] answers, String[] typed) {\n    int correct = 0;\n    for (…) {\n        …\n    }\n    return correct;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.score(new String[]{\"a\", \"b\"}, new String[]{\" a\", \"c\"})", "Main.score(new String[]{}, new String[]{})"] },
