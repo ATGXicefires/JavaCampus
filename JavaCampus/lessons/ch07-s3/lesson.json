@@ -14,7 +14,7 @@
       "goal": "`t1` 點 80 和 35、`t2` 點 120 之後，`t1.getAmount()` 要交回 `115`，`t2.getAmount()` 要交回 `120`，`Table.todayTotal` 要是 `235`。\n\n寫 `class Table`：`private int amount` 是這一桌的帳，`static int todayTotal` 是整家店今天的帳（`static` 的欄位整個類別只有一份）；`void order(int price)` 把價錢同時記進兩個帳，`int getAmount()` 交回這一桌的帳。再 `new` 兩桌 `t1`、`t2`，照上面點菜。",
       "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 是題目先寫好的，這一步還用不到，下一步才用。\n\n一般的欄位每個物件各一份：`t1` 和 `t2` 各有自己的 `amount`，各算各的。`static` 的欄位屬於整個類別，不管 `new` 幾桌都只有一份，大家共用；從外面用類別的名字讀，寫成 `Table.todayTotal`。例如：\n\n```\nclass Student {\n    static int classSize;\n    String name;\n}\n```\n\n每個 `Student` 有自己的 `name`，`Student.classSize` 全班只有一個。",
       "expectedShape": "class Table {\n    static int todayTotal;\n    private int amount;\n    …\n}\n\nTable t1 = new Table();\n…",
-      "check": { "type": "values", "exprs": ["t1.getAmount()", "t2.getAmount()", "Table.todayTotal"] },
+      "check": { "type": "values", "exprs": ["t1.getAmount()", "t2.getAmount()", "Table.todayTotal"], "uses": ["private int amount", "static int todayTotal"] },
       "hints": {
         "lead": "實例欄位每個物件一份；`static` 欄位屬於類別⋯⋯",
         "plain": "⋯⋯白話：`amount` 每一桌各算各的，`todayTotal` 整家店只有一個。`order` 同時加進兩個地方。"

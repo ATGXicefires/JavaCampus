@@ -27,7 +27,7 @@
       "instructions": "`while` 只要條件還成立，就再做一次。它不像 `for` 會自己把 `i` 往下一格：`i` 要在 `while` 前面先做好，每一圈的最後自己寫 `i++`。\n\n```\nint i = 0;\nwhile (i < 3) {\n    System.out.println(i);\n    i++;\n}\n```\n\n這段會印 0、1、2。忘了 `i++` 的話，`i` 永遠是 0，條件永遠成立，迴圈就停不下來，這叫無限迴圈；程式跑超過 3 秒會被強制停止。\n\n這一步只看 `countWhile` 交回的數，`main` 不用改。",
       "expectedShape": "static int countWhile(String[] log, String word) {\n    int n = 0;\n    int i = 0;\n    while (i < log.length) {\n        …\n        i++;\n    }\n    return n;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")", "Main.countWhile(new String[]{}, \"學長\")"] },
+      "check": { "type": "values", "exprs": ["Main.countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")", "Main.countWhile(new String[]{}, \"學長\")"], "uses": ["while"] },
       "hints": {
         "lead": "while 要自己 i++。",
         "plain": "`for` 會自己往下一格，`while` 不會。忘了 `i++`，`i` 永遠是 0，迴圈就停不下來，跑超過 3 秒會被強制停止。"
@@ -41,7 +41,7 @@
       "instructions": "`do-while` 先做大括號裡的事，做完才看 `while` 括號裡的條件：成立就回去再做一次，不成立就停。所以不管條件怎樣，至少會做一次。\n\n```\nint n = 0;\ndo {\n    n++;\n    System.out.println(\"第 \" + n + \" 圈\");\n} while (n < 2);\n```\n\n這段會印 `第 1 圈` 和 `第 2 圈`。最後的 `while (…);` 要加分號。\n\n第 1 次統計完的回答是 `answers[0]`，第 2 次是 `answers[1]`：第幾次減 1，就是要看的那一格。比字串的內容用 `equals`。\n\n在 `{ }` 裡面做的盒子，出了 `}` 就用不到了。所以 `round` 和 `answer` 要在 `do` 前面先做好，`while (…)` 才看得到 `answer`。",
       "expectedShape": "do {\n    round++;\n    System.out.println(\"第 \" + round + \" 次：\" + … + \" 次\");\n    answer = answers[round - 1];\n} while (…);",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["do"] },
       "hints": {
         "lead": "先做再問。",
         "plain": "`do-while` 是先統計一次，做完才問「再來嗎？」。不管回答什麼，第一次一定會做。"
