@@ -18,7 +18,7 @@
       "expectedShape": "if (score … 60) {\n    System.out.println(\"剛好及格\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "59" } ]
+        "variants": [ { "score": "59" }, { "score": "0" }, { "score": "100" } ]
       },
       "hints": {
         "lead": "`incompatible types: int cannot be converted to boolean`，還有 `illegal character: '\\uff1b'`⋯⋯",
