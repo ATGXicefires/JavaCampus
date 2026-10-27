@@ -35,7 +35,7 @@
       "check": {
         "type": "values",
         "exprs": ["tooMany"],
-        "variants": [ { "perDay": "1" } ]
+        "variants": [ { "perDay": "1" }, { "perDay": "2" }, { "days": "3" }, { "days": "2" } ]
       },
       "hints": {
         "lead": "比較的答案就是 boolean。",

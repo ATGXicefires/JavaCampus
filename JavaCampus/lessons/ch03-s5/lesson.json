@@ -16,7 +16,7 @@
       "expectedShape": "for (…) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" 分 滷肉：「…」\");\n    } else if (…) {\n        …\n    }\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{60, 59}" }, { "scores": "{90}" } ]
+        "variants": [ { "scores": "{60, 59}" }, { "scores": "{90}" }, { "scores": "{89}" } ]
       },
       "hints": {
         "lead": "用 for 走訪陣列，迴圈裡做三段式分支⋯⋯",

@@ -50,7 +50,7 @@
       "expectedShape": "if (count == 0) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "count": "0" } ]
+        "variants": [ { "count": "0" }, { "count": "1" } ]
       },
       "hints": {
         "lead": "整數除以零會丟出 `ArithmeticException`；先檢查除數就不會發生⋯⋯",

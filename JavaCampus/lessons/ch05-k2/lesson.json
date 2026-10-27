@@ -18,7 +18,7 @@
       "check": {
         "type": "values",
         "exprs": ["days"],
-        "variants": [ { "price": "100" }, { "perDay": "20" } ],
+        "variants": [ { "price": "100" }, { "perDay": "20" }, { "price": "60" } ],
         "uses": ["while"]
       },
       "hints": {
