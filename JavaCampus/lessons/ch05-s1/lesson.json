@@ -12,7 +12,7 @@
       "goal": "`isLeap(2024)` 要交回 `true`，`isLeap(2023)` 要交回 `false`：2024 年是閏年，2023 年不是。\n\n寫一個方法 `static boolean isLeap(int year)`（`boolean` 表示只交回 `true` 或 `false`）：`year` 能被 4 整除就是閏年，交回 `true`；不能就交回 `false`。",
       "instructions": "名字前面寫 `boolean` 的方法，只回答一個是非題。比較的答案本身就是 `true` 或 `false`，可以直接 `return`，例如 `return n > 0;`。\n\n「能被 4 整除」就是除以 4 沒有餘數。`%` 是取餘數：`7 % 3` 是 `1`，`9 % 3` 是 `0`。",
       "expectedShape": "static boolean isLeap(int year) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isLeap(2024)", "isLeap(2023)"] },
+      "check": { "type": "values", "exprs": ["isLeap(2024)", "isLeap(2023)", "isLeap(2028)", "isLeap(2026)"] },
       "hints": {
         "lead": "整除即餘數為 0：`year % 4 == 0`⋯⋯",
         "plain": "⋯⋯白話：「能被 4 整除」就是除以 4 剛好沒有剩：`year % 4 == 0`。"

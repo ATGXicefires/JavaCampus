@@ -43,7 +43,7 @@
       "goal": "`new Student(\"亭瑄\", 62).pass()` 要交回 `true`，`new Student(\"阿成\", 59).pass()` 要交回 `false`。\n\n寫 `class Student`：欄位 `String name`、`int score`，建構子 `Student(String name, int score)`，方法 `boolean pass()` 在 `score` 60 分以上（剛好 60 也算）交回 `true`，不到 60 交回 `false`。",
       "instructions": "`new Student(\"亭瑄\", 62)` 照設計圖做出一個學生，建構子把 `\"亭瑄\"` 和 62 放進這個學生自己的 `name` 和 `score`；接著 `.pass()` 問的就是這個學生及格了沒。\n\n`pass()` 不加 `static`，用的是物件自己的 `score`，所以不用再傳參數。",
       "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(String name, int score) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()"] },
+      "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()", "new Student(\"小明\", 60).pass()"] },
       "hints": {
         "lead": "設計圖、建構子、方法。",
         "plain": "照第六章的寫法：兩個欄位、一個用 `this` 的建構子，`pass()` 交回 `score >= 60`。"

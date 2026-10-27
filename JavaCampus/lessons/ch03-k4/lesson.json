@@ -17,7 +17,7 @@
       "expectedShape": "if (score >= 90) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "95" }, { "score": "72" }, { "score": "60" }, { "score": "59" } ]
+        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "72" }, { "score": "70" }, { "score": "60" }, { "score": "59" } ]
       },
       "hints": {
         "lead": "從高分往低分問。",

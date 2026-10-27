@@ -27,7 +27,7 @@
       "instructions": "`（空白）` 的括號是全形的，可以從目標複製。\n\n這一步只看 `firstShort` 交回什麼，`main` 不用改。",
       "expectedShape": "static String firstShort(String[] drafts, int max) {\n    String found = \"（空白）\";\n    for (…) {\n        …\n    }\n    return found;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)", "Main.firstShort(new String[]{\"太長了\"}, 2)"] },
+      "check": { "type": "values", "exprs": ["Main.firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)", "Main.firstShort(new String[]{\"太長了\"}, 2)", "Main.firstShort(new String[]{\"好\", \"嗯\"}, 3)"] },
       "hints": {
         "lead": "先放好找不到時的答案。",
         "plain": "先準備好「（空白）」當預設，迴圈裡找到了才換掉，然後馬上停。一句都不合，交回的就是預設的那一個。"

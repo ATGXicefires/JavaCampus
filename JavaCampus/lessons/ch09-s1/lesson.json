@@ -25,7 +25,7 @@
       "goal": "`judge(new ExactChecker(\"選午餐\"), \"選午餐\")` 交回 `答對了`，`judge(new OptionChecker(\"B\"), \"A\")` 交回 `再試一次`。\n\n寫一個方法 `static String judge(Checker c, String typed)`：`c` 判斷 `typed` 是對的就交回 `答對了`，錯的就交回 `再試一次`。參數 `c` 的型別寫介面 `Checker`，哪一種判斷都傳得進來。",
       "instructions": "參數的型別寫介面 `Checker`，不寫哪一種實作：答應了 `Checker` 這張約定的，`ExactChecker`、`OptionChecker` 都能傳進來，以後多了新題型也一樣。\n\n`judge` 裡只要叫 `c.check(typed)`，傳進來的是哪一種，就用哪一種自己的判斷。同一句話、各做各的，這叫多型。這一步不用印出來，只看 `judge` 交回什麼。",
       "expectedShape": "static String judge(Checker c, String typed) {\n    if (c.check(typed)) {\n        …\n    }\n    …\n}",
-      "check": { "type": "values", "exprs": ["judge(new ExactChecker(\"選午餐\"), \"選午餐\")", "judge(new OptionChecker(\"B\"), \"A\")"] },
+      "check": { "type": "values", "exprs": ["judge(new ExactChecker(\"選午餐\"), \"選午餐\")", "judge(new OptionChecker(\"B\"), \"A\")", "judge(new OptionChecker(\"B\"), \"B\")"] },
       "hints": {
         "lead": "依賴介面而非實作，呼叫端不受實作替換影響⋯⋯",
         "plain": "⋯⋯白話：`judge` 只認得 `Checker` 這張約定，不管是哪一種題目。之後多了新題型，`judge` 一行都不用改。"

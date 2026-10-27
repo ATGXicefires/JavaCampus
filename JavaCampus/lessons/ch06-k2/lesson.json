@@ -14,7 +14,7 @@
       "goal": "`new Item(\"小白\", \"筆電\")` 做出來的 `Item`，`name` 要是 `小白`，`kind` 要是 `筆電`。\n\n幫 `Item` 加上建構子 `Item(String name, String kind)`（`new` 的那一刻第一個執行的方法），把傳進來的名字和種類放進欄位。",
       "instructions": "編輯器最上面那行 `String[] names = {\"麻糬\", \"黑糖\", \"珍奶\"};` 是題目先寫好的，下一步才會用到。\n\n建構子的名字和類別一樣，前面不寫回傳型別。`new Item(\"小白\", \"筆電\")` 的時候，建構子會先執行，`\"小白\"` 和 `\"筆電\"` 照順序交給參數 `name` 和 `kind`。名字和種類在出生的那一刻就決定好，不用 `new` 完再一個一個設定。\n\n參數和欄位同名的時候，`this.name` 是物件自己的欄位，`name` 是傳進來的參數：\n\n```\nthis.name = name;\n```",
       "expectedShape": "Item(String name, String kind) {\n    this.name = …;\n    …\n}",
-      "check": { "type": "values", "exprs": ["new Item(\"小白\", \"筆電\").name", "new Item(\"阿隨\", \"USB\").kind"] },
+      "check": { "type": "values", "exprs": ["new Item(\"小白\", \"筆電\").name", "new Item(\"阿隨\", \"USB\").kind", "new Item(\"阿隨\", \"USB\").name", "new Item(\"小白\", \"筆電\").kind"] },
       "hints": {
         "lead": "左邊 this.name，右邊 name。",
         "plain": "建構子就像出生登記：`new Item(\"小白\", \"筆電\")` 一做出來，就把名字和種類填好。`this.name` 是「我自己的名字」，等號右邊的 `name` 是別人交給你的那一個。"

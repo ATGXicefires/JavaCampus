@@ -41,7 +41,7 @@
       "instructions": "for-each 的冒號唸成「裡面的每一個」：`for (String s : names)` 就是 `names` 裡面的每一個，輪流放進 `s`，每放一次就做一次大括號裡的事。不用管第幾個，也不用寫 `i`。`ArrayList<Integer>` 拿出來的數，可以直接用 `int` 接。\n\n這一步只看 `total` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
       "expectedShape": "static int total(ArrayList<Integer> list) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())"] },
+      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())", "Main.total(new java.util.ArrayList<>(java.util.List.of(80, 49)))"] },
       "hints": {
         "lead": "增強型 for 迴圈走訪集合⋯⋯",
         "plain": "⋯⋯白話：不用索引，`for (int n : list)` 每一個都拿出來加一次。空的清單一次都不會進迴圈，交回 0。"
