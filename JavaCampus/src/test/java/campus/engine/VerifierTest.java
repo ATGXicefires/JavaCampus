@@ -155,6 +155,76 @@ class VerifierTest {
         assertTrue(verifier.verify("v6", SNIPPET, HOUR, check, solution, solution).passed());
     }
 
+    private static final List<SetupVar> SCORE = List.of(new SetupVar("score", "int", "85", null));
+
+    /** ch03-k4 的等第，{@code %s} 是判斷 90 分的比較。 */
+    private static final String GRADE = """
+            if (score %s 90) {
+                System.out.println("A");
+            } else if (score >= 80) {
+                System.out.println("B");
+            } else if (score >= 70) {
+                System.out.println("C");
+            } else if (score >= 60) {
+                System.out.println("D");
+            } else {
+                System.out.println("F");
+            }
+            """;
+
+    @Test
+    void variantTellsABoundaryMistakeFromAHardcodedAnswer() {
+        Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("score", "95"), Map.of("score", "90"),
+                Map.of("score", "80"), Map.of("score", "72"), Map.of("score", "70"), Map.of("score", "60"),
+                Map.of("score", "59")));
+        String solution = GRADE.formatted(">=");
+        assertFails(verifier.verify("g1", SNIPPET, SCORE, check, solution, GRADE.formatted(">")),
+                "`score` 改成 90 再跑一次，第 1 行應該是「A」，你印的是「B」。");
+        assertFails(verifier.verify("g1", SNIPPET, SCORE, check, solution, "System.out.println(\"B\");"),
+                "`score` 改成 95 再跑一次，第 1 行應該是「A」，你印的還是「B」，沒有跟著 `score` 變。");
+    }
+
+    @Test
+    void variantLooksAtTheLaterValuesBeforeSayingItDidNotFollow() {
+        List<SetupVar> gacha = List.of(new SetupVar("gacha", "int", "8", null));
+        Check check = new Check(Check.Mode.VALUES, List.of("perHook"), List.of(Map.of("gacha", "10"), Map.of("gacha", "12")));
+        // 除以 4 在 10 個時剛好也是 2，換成 12 個才看得出有跟著 gacha 變
+        assertFails(verifier.verify("h1", SNIPPET, gacha, check, "int perHook = gacha / 3;", "int perHook = gacha / 4;"),
+                "`gacha` 改成 10 再算一次，`perHook` 應該是 3，你的是 2。");
+    }
+
+    @Test
+    void variantOnlyComparesRunsThatChangedTheSameVariable() {
+        List<SetupVar> week = List.of(new SetupVar("perDay", "int", "3", null), new SetupVar("days", "int", "5", null));
+        Check check = new Check(Check.Mode.VALUES, List.of("perWeek"), List.of(Map.of("perDay", "2"), Map.of("days", "4")));
+        assertFails(verifier.verify("w1", SNIPPET, week, check, "int perWeek = perDay * days;", "int perWeek = perDay * 5;"),
+                "`days` 改成 4 再算一次，`perWeek` 應該是 12，你的還是 15，沒有跟著 `days` 變。");
+    }
+
+    @Test
+    void wrongBranchIsNotCalledATypo() {
+        Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("score", "90"), Map.of("score", "60")));
+        String solution = """
+                if (score >= 90) {
+                    System.out.println(score + " 分是 A");
+                } else if (score >= 80) {
+                    System.out.println(score + " 分是 B");
+                } else if (score >= 70) {
+                    System.out.println(score + " 分是 C");
+                } else if (score >= 60) {
+                    System.out.println(score + " 分是 D");
+                } else {
+                    System.out.println(score + " 分是 F");
+                }
+                """;
+        assertFails(verifier.verify("g3", SNIPPET, SCORE, check, solution, solution.replace(">= 90", "> 90")),
+                "`score` 改成 90 再跑一次，第 1 行應該是「90␣分是␣A」，你印的是「90␣分是␣B」。");
+        assertFails(verifier.verify("g3", SNIPPET, SCORE, check, solution,
+                "if (score >= 60) {\n    System.out.println(score + \" 分是 D\");\n}"), "第 1 行不對：你印的是「85␣分是␣D」。");
+        assertFails(verifier.verify("g3", SNIPPET, SCORE, check, solution, solution.replace(" 分是 A", " 分是 Ａ")),
+                "第 1 行把半形的「A」打成了全形的「Ａ」");
+    }
+
     @Test
     void methodCallsAsHiddenTests() {
         Check check = new Check(Check.Mode.VALUES, List.of("isLate(2058)", "isLate(2113)"), null);
