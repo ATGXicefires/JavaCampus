@@ -70,7 +70,18 @@ class VerifierTest {
     void revealsExpectedWhenOneCharacterOff() {
         Verdict v = verifier.verify("o5", SNIPPET, List.of(), OUTPUT, "System.out.println(\"證人：林雅婷\");",
                 "System.out.println(\"證人:林雅婷\");");
-        assertFails(v, "差了 1 個字", "證人：林雅婷");
+        assertFails(v, "把全形的「：」打成了半形的「:」", "應該是「證人：林雅婷」");
+    }
+
+    @Test
+    void namesTheSpaceThatIsMissingOrExtra() {
+        String solution = "System.out.println(\"第 1 遍：罰寫\");";
+        assertFails(verifier.verify("o7", SNIPPET, List.of(), OUTPUT, solution, "System.out.println(\"第 1遍：罰寫\");"),
+                "第 1 行在「1」後面少了一個空格", "應該是「第␣1␣遍：罰寫」", "你印的是「第␣1遍：罰寫」");
+        assertFails(verifier.verify("o7", SNIPPET, List.of(), OUTPUT, solution, "System.out.println(\" 第 1 遍：罰寫\");"),
+                "第 1 行開頭多了一個空格");
+        assertFails(verifier.verify("o7", SNIPPET, List.of(), OUTPUT, solution, "System.out.println(\"第1遍：罰寫\");"),
+                "第 1 行有 2 個地方不一樣：在「第」後面少了一個空格，在「1」後面少了一個空格。");
     }
 
     @Test
@@ -111,8 +122,28 @@ class VerifierTest {
     void variantCatchesHardcodedAnswer() {
         Check check = new Check(Check.Mode.VALUES, List.of("total"), List.of(Map.of("callHour", "9")));
         Verdict v = verifier.verify("v5", SNIPPET, HOUR, check, "int total = callHour * 60;", "int total = 1200;");
-        assertFails(v, "換一組資料", "callHour = 9");
+        assertFails(v, "`callHour` 改成 9 再算一次", "`total` 應該是 540", "你的還是 1200，沒有跟著 `callHour` 變");
         assertTrue(v.variant().containsKey("callHour"));
+    }
+
+    @Test
+    void variantCountsTheLinesAProgramDidNotFollow() {
+        List<SetupVar> times = List.of(new SetupVar("times", "int", "5"));
+        Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("times", "100")));
+        String solution = "for (int i = 1; i <= times; i++) {\n    System.out.println(\"罰寫\");\n}";
+        String fixed = "for (int i = 0; i < 5; i++) {\n    System.out.println(\"罰寫\");\n}";
+        assertFails(verifier.verify("v7", SNIPPET, times, check, solution, fixed),
+                "`times` 改成 100 再跑一次，應該印 100 行，你的程式還是印 5 行，沒有跟著 `times` 變。");
+    }
+
+    @Test
+    void variantTypoLeadsWithTheTypo() {
+        Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("callHour", "9")));
+        String solution = "if (callHour > 12) {\n    System.out.println(\"晚上好\");\n} else {\n    System.out.println(\"早上好\");\n}";
+        String typo = "if (callHour > 12) {\n    System.out.println(\"晚上好\");\n} else {\n    System.out.println(\" 早上好\");\n}";
+        Verdict v = verifier.verify("v8", SNIPPET, HOUR, check, solution, typo);
+        assertFails(v, "第 1 行開頭多了一個空格", "你印的是「␣早上好」", "這一行是 `callHour` 改成 9 再跑一次時印出來的。");
+        assertTrue(v.message().startsWith("第 1 行"), v.message());
     }
 
     @Test
@@ -120,7 +151,7 @@ class VerifierTest {
         Check check = new Check(Check.Mode.OUTPUT, null, List.of(Map.of("callHour", "9")));
         String solution = "if (callHour > 12) {\n    System.out.println(\"晚上\");\n} else {\n    System.out.println(\"早上\");\n}";
         Verdict v = verifier.verify("v6", SNIPPET, HOUR, check, solution, "System.out.println(\"晚上\");");
-        assertFails(v, "換一組資料");
+        assertFails(v, "`callHour` 改成 9 再跑一次", "第 1 行應該是「早上」", "你印的還是「晚上」");
         assertTrue(verifier.verify("v6", SNIPPET, HOUR, check, solution, solution).passed());
     }
 
