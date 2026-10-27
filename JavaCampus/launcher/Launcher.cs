@@ -21,7 +21,7 @@ namespace JavaCampus.Launcher
     public static class Program
     {
         // 核心應用程式版本常數，決定隔離快取目錄路徑
-        private const string AppVersion = "0.2.0";
+        private const string AppVersion = "0.2.1";
 
         // 內嵌封裝資源名稱與檔案命名常數
         private const string ResourcePayloadName = "JavaCampus.Payload";
