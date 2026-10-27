@@ -9,8 +9,8 @@
     {
       "id": "flow",
       "title": "畫面的順序",
-      "goal": "依序畫出四個畫面，印出四行：\n`== 首頁 ==`\n`== 課程 ==`\n`== 答題 ==`\n`== 成績 ==`\n\n在 `Main.java` 最上面寫 `import java.util.ArrayList;`，用 `ArrayList<Drawable>` 依序放進這四個畫面（`new Screen(\"首頁\")` 這樣），再用 for-each 一個一個呼叫 `draw()` 畫出來。",
-      "instructions": "`Screen` 照 `Drawable` 的約定寫好了，在另一個分頁。畫一個畫面就是呼叫它的 `draw()`，會印出 `== 首頁 ==` 這樣的一行。",
+      "goal": "依序畫出四個畫面，印出四行：\n`== 首頁 ==`\n`== 課程 ==`\n`== 答題 ==`\n`== 成績 ==`\n\n在 `Main.java` 最上面寫 `import java.util.ArrayList;`（要用 `java.util` 裡的 `ArrayList`，得先寫這一行），用 `ArrayList<Drawable>` 依序放進這四個畫面（`new Screen(\"首頁\")` 這樣），再用 for-each 一個一個呼叫 `draw()` 畫出來。",
+      "instructions": "`Screen` 照 `Drawable` 的約定寫好了，在另一個分頁。畫一個畫面就是呼叫它的 `draw()`，會印出 `== 首頁 ==` 這樣的一行。\n\n`ArrayList`、`HashMap` 放在 Java 的 `java.util` 裡，要用就得先在檔案最上面 `import`，寫在 `public class Main` 的外面。`String`、`System` 在 `java.lang` 裡，不用 import。`import` 只對寫它的那個檔案有效。",
       "expectedShape": "import java.util.ArrayList;\n…\nArrayList<Drawable> flow = new ArrayList<>();\nflow.add(new Screen(\"首頁\"));\n…\nfor (Drawable d : flow) {\n    d.draw();\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "newcomer",
       "title": "模擬一位新生",
-      "goal": "新生第一次答錯、第二次答對，畫面下面要接著印出兩行：\n`滷肉：「沒關係，再跑一次！」`\n`分號：「⋯⋯恭喜。」`\n\n用 `checker.check(…)` 判斷 `main` 裡的 `typed`（新生的兩次作答）每一次對不對：答錯印常數 `RETRY`，答對印常數 `PASS`，不加引號。",
-      "instructions": "`RETRY` 和 `PASS` 是 `Main` 最上面寫好的兩句台詞，是 App 裡的兩個小老師滷肉和分號說的話。不加引號，印出來的是盒子裡裝的台詞，例如 `滷肉：「沒關係，再跑一次！」`；加了引號，就只會印出 `RETRY` 這幾個字母。\n\n`checker.check(作答)` 會交回 `true`（答對）或 `false`（答錯）。",
+      "goal": "`main` 裡的 `typed` 是新生的兩次作答：`\"選晚餐\"` 答錯，`\" 選午餐\"` 答對。畫面下面要接著印出兩行：\n`滷肉：「沒關係，再跑一次！」`\n`分號：「⋯⋯恭喜。」`\n\n用 `checker.check(…)` 一個一個判斷 `typed` 的作答：答錯印常數 `RETRY`，答對印常數 `PASS`，不加引號。",
+      "instructions": "`RETRY` 和 `PASS` 是 `Main` 最上面寫好的兩句台詞，是 App 裡的兩個小老師滷肉和分號說的話。不加引號，印出來的是盒子裡裝的那句台詞；加了引號，就只會印出 `RETRY` 這幾個字母。\n\n`checker.check(作答)` 會交回 `true`（答對）或 `false`（答錯）。`ExactChecker` 會先把作答 `trim` 再比，所以 `\" 選午餐\"` 也算對。",
       "expectedShape": "for (String t : typed) {\n    if (checker.check(t)) {\n        System.out.println(PASS);\n    } else {\n        …\n    }\n}",
       "form": "program",
       "check": { "type": "output" },

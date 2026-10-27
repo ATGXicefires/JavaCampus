@@ -9,8 +9,8 @@
     {
       "id": "crash",
       "title": "跌倒了",
-      "goal": "修好後要印出三行：\n`滷肉：2 個字`\n`分號：2 個字`\n`還沒取名`\n\n起始碼的第三個小老師還沒取名，名字是 `null`，跑到一半就跌倒了。加上判斷：名字是 `null` 就印 `還沒取名`，其他照常印出字數。",
-      "instructions": "起始碼會印出每個小老師（`Mascot`）名字的字數。第三個還沒取名，跑到一半就跌倒了。\n\n還沒放東西的盒子是 `null`，裡面什麼都沒有；對 `null` 呼叫 `length()` 就會跌倒，紅字是 `NullPointerException`。用 `==` 可以問一個盒子是不是 `null`。",
+      "goal": "修好後要印出三行：\n`滷肉：2 個字`\n`分號：2 個字`\n`還沒取名`\n\n現在跑到第三個小老師就跌倒了：它還沒取名，名字是 `null`（空的，什麼都沒有），`for` 裡那行對 `null` 呼叫 `length()` 就跌倒。加上判斷：名字是 `null` 就印 `還沒取名`，不是才印出字數。",
+      "instructions": "起始碼會印出每個小老師（`Mascot`）名字的字數，`name.length()` 是名字有幾個字。\n\n還沒放東西的盒子是 `null`。對 `null` 呼叫 `length()`，就像去量空盒子裡的名字有多長，程式會跌倒，紅字是 `NullPointerException`。\n\n用 `==` 可以問一個盒子是不是 `null`，例如 `if (x == null)`。",
       "expectedShape": "if (mascots[i].name == null) {\n    …\n} else {\n    …\n}",
       "check": { "type": "output" },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "default",
       "title": "先給一個名字",
-      "goal": "`new Mascot(null, \"嗨\")` 的 `name` 要是 `新同學`，第三行就會印出 `新同學：3 個字`。\n\n改在建構子裡處理：傳進來的名字是 `null`，欄位 `name` 就先放 `新同學`；不是 `null` 就照常放傳進來的名字。",
-      "instructions": "建構子是出生的那一刻。在那裡先檢查一次，之後就不用每次都擔心名字是空的。",
+      "goal": "現在 `new Mascot(null, \"嗨\")` 的 `name` 還是 `null`，要改成 `新同學`；這樣第三行就會印出 `新同學：3 個字`。\n\n改建構子：傳進來的名字是 `null`，欄位 `name` 就放 `新同學`；不是 `null` 就照常放傳進來的名字。",
+      "instructions": "建構子是物件出生的那一刻。在那裡先把空的名字補好，之後用到 `name` 的地方，就不用每次都擔心它是 `null`。\n\n建構子裡也可以寫 `if`：先看參數 `name` 是不是 `null`，再決定 `this.name` 要放什麼。",
       "expectedShape": "Mascot(String name, String line) {\n    if (name == null) {\n        …\n    } else {\n        …\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["new Mascot(null, \"嗨\").name", "new Mascot(\"滷肉\", \"嗨\").name"] },
       "hints": {

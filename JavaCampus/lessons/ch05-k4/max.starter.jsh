@@ -1,1 +1,1 @@
-// max(a)：交回最大的那一個
+// 寫一個方法 static int max(int[] a)：交回 a 裡最大的數字

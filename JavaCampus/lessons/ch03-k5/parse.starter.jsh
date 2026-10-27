@@ -1,2 +1,1 @@
-// 題目給了 input：答題框收到的字串（現在是 "85"）
-// 把它變成數字，存進 score
+// 用 Integer.parseInt 把 input 變成數字，存進 score

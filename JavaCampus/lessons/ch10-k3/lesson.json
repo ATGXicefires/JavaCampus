@@ -9,8 +9,8 @@
     {
       "id": "table",
       "title": "縮寫對照表",
-      "goal": "用縮寫 `yc` 查對照表，印出 `yc 是 李有成`。\n\n在檔案最上面寫 `import java.util.HashMap;`。在 `main` 裡做一個 `HashMap<String, String> initials`，放入 `yc` → `李有成`、`ys` → `王葉聖`、`wy` → `燕韋芸`、`eh` → `吳二弘`，再用 `get` 查出 `yc` 的名字，印出這一行。",
-      "instructions": "對照表左邊的縮寫叫「鍵」，右邊的名字叫「值」：`put(鍵, 值)` 放進一組，`get(鍵)` 查出值。\n\n四組縮寫都已經給好了（名字後兩個字的拼音字首），照著放進去就好。",
+      "goal": "用縮寫 `yc` 查對照表，印出 `yc 是 李有成`。\n\n在檔案最上面寫 `import java.util.HashMap;`。在 `main` 裡做一個 `HashMap<String, String> initials`（對照表：用縮寫查名字），用 `put` 放入 `yc` → `李有成`、`ys` → `王葉聖`、`wy` → `燕韋芸`、`eh` → `吳二弘`，再用 `get` 查出 `yc` 的名字，印出這一行。",
+      "instructions": "`HashMap` 是一張對照表：左邊的縮寫叫「鍵」，右邊的名字叫「值」。`put` 放進一組鍵和值，`get` 用鍵查出值。角括號裡先寫鍵的型別，再寫值的型別。它也是 Java 寫好的，要先在檔案最上面 `import` 才能用。例如：\n\n```\nHashMap<String, String> menu = new HashMap<>();\nmenu.put(\"A\", \"滷肉飯\");\nmenu.get(\"A\")   // \"滷肉飯\"\n```\n\n四組縮寫都已經給好了（名字後兩個字的拼音字首），照著放進去就好。",
       "expectedShape": "HashMap<String, String> initials = new HashMap<>();\ninitials.put(\"yc\", \"李有成\");\n…\nSystem.out.println(\"yc 是 \" + initials.get(\"yc\"));",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "lookup",
       "title": "查到自己",
-      "goal": "`yc 是 李有成` 下面再印兩行，一個查得到、一個查不到：\n`tx 是 梁亭瑄`\n`zz 查無此人`\n\n再放入 `tx` → `梁亭瑄`。依序查 `tx` 和 `zz`：先用 `containsKey` 問有沒有，有就用 `get` 查出名字，再照上面的樣子各印一行。",
-      "instructions": "`yc` 那一行留著。查不到的縮寫，`get` 會交回 `null`，所以先用 `containsKey` 問有沒有。",
+      "goal": "`yc 是 李有成` 下面再印兩行，一個查得到、一個查不到：\n`tx 是 梁亭瑄`\n`zz 查無此人`\n\n再放入 `tx` → `梁亭瑄`。依序查 `tx` 和 `zz`：先用 `containsKey`（對照表裡有沒有這個鍵）問有沒有，有就用 `get` 查出名字，照上面的樣子各印一行。",
+      "instructions": "`yc` 那一行留著。\n\n查不到的鍵，`get` 會交回 `null`（什麼都沒有），接進字串就會印出 `null`。所以先用 `containsKey` 問：有就交回 `true`，沒有就交回 `false`，正好放進 `if` 的括號裡。",
       "expectedShape": "if (initials.containsKey(…)) {\n    …\n} else {\n    System.out.println(… + \" 查無此人\");\n}",
       "form": "program",
       "check": { "type": "output" },

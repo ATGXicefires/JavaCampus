@@ -5,14 +5,14 @@
   "partner": "二弘",
   "notes": ["types", "arith", "int-div", "cast"],
   "vars": [
-    { "name": "gacha", "type": "int", "value": "8" }
+    { "name": "gacha", "type": "int", "value": "8", "note": "書包上的扭蛋數" }
   ],
   "steps": [
     {
       "id": "boxes",
       "title": "三種新盒子",
-      "goal": "做三個盒子：`double temp` 放 `33.5`、`boolean hot` 放 `true`、`String city` 放 `\"臺南\"`。",
-      "instructions": "第一章做過 `int` 和 `String` 的盒子，這次多兩種：`double` 裝有小數點的數字，`boolean` 只裝 `true` 或 `false`。\n\n寫法一樣是：盒子的種類、名字、`=`、內容，最後加分號。",
+      "goal": "做三個盒子：`double temp` 放 `33.5`、`boolean hot` 放 `true`、`String city` 放 `\"臺南\"`。\n\n`double` 是裝小數的盒子，`boolean` 是只裝 `true`（是）或 `false`（不是）的盒子。",
+      "instructions": "編輯器最上面那行 `int gacha = 8;` 是題目先寫好的，後面的步驟才會用到 `gacha`。\n\n盒子有分種類：`int` 裝整數、`String` 裝文字，再加上這次的 `double` 和 `boolean`。要放什麼，就選那一種盒子。寫法一樣是：盒子的種類、名字、`=`、內容，最後加分號。\n\n`true` 和 `false` 不用加引號，加了引號就變成文字了。例如 `double price = 12.5;`、`boolean open = false;`。",
       "expectedShape": "double temp = …;\nboolean hot = …;\nString city = \"…\";",
       "check": { "type": "values", "exprs": ["temp", "hot", "city"] },
       "hints": {
@@ -24,8 +24,8 @@
     {
       "id": "hooks",
       "title": "掛勾",
-      "goal": "8 個扭蛋平分給 3 個掛勾，每個掛勾分到 2 個，還剩 2 個。\n\n用題目給的 `gacha`（扭蛋數）算出這兩個數，分別存進 `perHook` 和 `left`。",
-      "instructions": "`gacha` 這個盒子題目已經做好了，直接拿來用。\n\n`/` 是除法，整數除以整數只留整數；`%` 算的是除完剩下多少。例如 `7 / 2` 是 `3`，`7 % 2` 是 `1`。\n\n按「完成」時，會把 `gacha` 改成 10 和 12 各檢查一次，所以要用 `gacha` 來算，不能直接寫 `2`。",
+      "goal": "`gacha` 是書包上的扭蛋數，現在是 8：平分給 3 個掛勾，每個掛勾分到 2 個，還剩 2 個。\n\n用 `gacha` 算出這兩個數：每個分到幾個用 `/`（除法），存進 `int perHook`；還剩幾個用 `%`（除完剩下多少），存進 `int left`。",
+      "instructions": "兩個 `int`（整數）相除，答案也是整數：小數點後面直接丟掉，不會四捨五入。`%` 算的是除完剩下多少。\n\n例如 `7 / 2` 是 `3`，`7 % 2` 是 `1`：7 顆糖分給 2 個人，每人 3 顆，還剩 1 顆。",
       "expectedShape": "int perHook = …;\nint left = …;",
       "check": {
         "type": "values",
@@ -41,8 +41,8 @@
     {
       "id": "average",
       "title": "除不盡",
-      "goal": "8 個扭蛋平分給 3 個掛勾，平均每個掛勾是 2.666⋯ 個，小數要留下來。\n\n用 `gacha` 算出這個平均，存進 `double avg`。",
-      "instructions": "起始碼的 `avg` 算出來是 `2.0`，小數不見了：兩個整數相除，小數會直接丟掉，放進 `double` 盒子也找不回來。\n\n按「完成」時，會把 `gacha` 改成 10 再檢查一次。",
+      "goal": "`double avg = gacha / 3;` 想算出每個掛勾平均掛幾個，但現在 `avg` 是 2.0，小數不見了。`gacha` 是 8 時，`avg` 應該是 2.666⋯。\n\n改好這一行，讓 `avg` 留下小數。`gacha` 和 `3` 都是 `int`（整數），兩個 `int` 相除，小數會直接丟掉。",
+      "instructions": "`=` 右邊先算完，才放進盒子：`gacha / 3` 先算出 2，放進 `double`（裝小數的盒子）時只會變成 2.0，丟掉的小數找不回來。\n\n要在除之前，就讓其中一邊變成小數。只要有一邊是小數，除出來就會留下小數：`7 / 2` 是 `3`，`7 / 2.0` 是 `3.5`。也可以在數字或盒子前面加 `(double)`，把它先換成小數：`(double) 7 / 2` 也是 `3.5`。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",

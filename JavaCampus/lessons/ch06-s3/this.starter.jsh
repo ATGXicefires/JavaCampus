@@ -3,6 +3,7 @@ class Mascot {
     String line;
 
     Mascot(String name, String line) {
+        // 把傳進來的名字和台詞放進欄位
         name = name;
         line = line;
     }

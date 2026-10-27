@@ -5,14 +5,14 @@
   "partner": "二弘OS",
   "notes": ["array", "index", "array-loop", "exception", "else-if"],
   "vars": [
-    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" }
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" }
   ],
   "steps": [
     {
       "id": "crash",
       "title": "跑一半掛掉",
-      "goal": "修好後，`sum` 要算出五個分數的總和 324。\n\n起始碼是成績頁，用題目給的 `scores`（一排分數）算加總、平均和等第，跑到一半就跌倒。看例外訊息把它修好。",
-      "instructions": "先按「執行」看它停在哪一行。`scores` 是題目給的陣列。\n\n這一步只檢查 `sum`，平均和等第的錯後面兩步再修。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次。",
+      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`，修好後 `sum` 要是五個分數的總和 324。\n\n起始碼一執行，加總的 `for` 就跌倒了（例外：程式跑到一半出錯停下來）。看例外訊息找出原因，修好 `for` 那一行。",
+      "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n先按「執行」，看例外訊息停在哪一行、說了什麼。`scores` 是陣列（一排置物櫃），格子的編號叫索引，從 0 開始：5 格的索引是 0 到 4。\n\n這一步只看 `sum`，平均和等第的錯後面兩步再修。",
       "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
       "check": {
         "type": "values",
@@ -28,8 +28,8 @@
     {
       "id": "average",
       "title": "平均",
-      "goal": "修到 `avg` 是 `64.8`。",
-      "instructions": "現在印出來的是 `平均：64.0`。按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，那時 `avg` 要是 `87.5`。",
+      "goal": "算 `avg` 的那一行（`double avg = sum / scores.length;`）把小數弄丟了，現在印出 `平均：64.0`。`scores` 是 `{72, 58, 65, 80, 49}` 時，`avg` 應該是 64.8。\n\n修好這一行，讓 `avg` 留下小數。",
+      "instructions": "`sum` 和 `scores.length` 都是 `int`，兩個 `int` 相除會先把小數丟掉，放進 `double` 也救不回來。\n\n只要有一邊先換成小數，除出來就會留下小數。`(double)` 會把緊接在它後面的東西換成小數：`(double) 7 / 2` 是 `3.5`。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",
@@ -45,8 +45,8 @@
     {
       "id": "order",
       "title": "等第全是 D",
-      "goal": "修好後，五個分數要印出 `72 C`、`58 F`、`65 D`、`80 B`、`49 F`。\n\n等第是 90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F，現在卻把 60 分以上全部印成 D。",
-      "instructions": "現在 60 分以上全部印成 D，也沒有 A。每個分數一行的格式照舊，例如 `72 C`。\n\n按「完成」時，會把 `scores` 改成 `{95, 85, 75, 65, 55}` 再檢查一次。",
+      "goal": "`scores` 是 `{72, 58, 65, 80, 49}` 時，修好後要印出：\n`平均：64.8`\n`72 C`\n`58 F`\n`65 D`\n`80 B`\n`49 F`\n\n等第是 90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。可是印等第的那一串 `if`／`else if` 第一個就問 `s >= 60`，現在 60 分以上全部印成 D，也沒有 A。修好條件的順序。",
+      "instructions": "`else if` 是從上往下一個一個問，第一個成立的就做，後面的都不問了。例如 `temp` 是 33 時，先問 `temp >= 20` 就停在那裡，輪不到後面的 `temp >= 30`。\n\n每個分數一行的格式照舊，例如 `72 C`。",
       "expectedShape": "if (s >= 90) {\n    System.out.println(s + \" A\");\n} else if (…) {\n    …\n}",
       "check": {
         "type": "output",

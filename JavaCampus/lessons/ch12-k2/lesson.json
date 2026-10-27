@@ -9,8 +9,8 @@
     {
       "id": "credits",
       "title": "名單",
-      "goal": "在 `== 製作團隊 ==` 下面印出兩行，中間是一個半形空白：\n`介面設計 梁亭瑄`\n`程式 吳二弘`\n\n寫 `class Credit`：欄位 `role`、`name`，建構子 `Credit(String role, String name)`，覆寫 `toString()` 交回職位、一個半形空白、名字接成的一行。在 `main` 裡用 `ArrayList<Credit>` 放進這兩個人，用 for-each 印出來。",
-      "instructions": "`Credit` 可以按「＋」放在自己的檔案。用到 `ArrayList`，`Main.java` 最上面要寫 `import java.util.ArrayList;`。",
+      "goal": "在 `== 製作團隊 ==` 下面印出兩行：\n`介面設計 梁亭瑄`\n`程式 吳二弘`\n\n寫 `class Credit`：欄位 `role`、`name`，建構子 `Credit(String role, String name)`，再覆寫 `toString()`（決定物件印出來的樣子），交回職位、一個半形空白、名字接成的一行。在 `main` 裡用 `ArrayList<Credit>` 放進這兩個人，用 for-each 印出來。",
+      "instructions": "`System.out.println(c)` 印一個物件時，印的是它的 `toString()`。`toString()` 是每個類別都有的方法，本來就是 `public`，覆寫的時候前面也要寫 `public`。\n\n`Credit` 可以按「＋」放在自己的檔案：完整的專題就是這樣好幾個檔案一起合作，從 `Main` 的 `main` 開始跑。`Main.java` 用到 `ArrayList`，最上面要寫 `import java.util.ArrayList;`。",
       "expectedShape": "public String toString() {\n    return role + \" \" + name;\n}\n…\nfor (Credit c : credits) {\n    System.out.println(c);\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "thanks",
       "title": "特別感謝",
-      "goal": "名單下面接著印出四行，從 `特別感謝 阿嬤（每天的菜）` 到 `特別感謝 王葉聖老師（那一次抽籤）`。\n\n用 `HashMap<String, String>` 記每個人要謝什麼：`阿嬤` → `每天的菜`、`燕韋芸` → `478 次的統計`、`李有成` → `偷拍的照片`、`王葉聖老師` → `那一次抽籤`。照這個順序從對照表查出來，印出這四行。",
-      "instructions": "`HashMap` 不保證順序。要照順序印，另外用一個陣列排好名字，再去對照表查。\n\n`HashMap` 也要 import：`import java.util.HashMap;`。`（）` 是全形的，可以從目標複製。",
+      "goal": "名單下面接著印出四行：\n`特別感謝 阿嬤（每天的菜）`\n`特別感謝 燕韋芸（478 次的統計）`\n`特別感謝 李有成（偷拍的照片）`\n`特別感謝 王葉聖老師（那一次抽籤）`\n\n用 `HashMap<String, String>`（對照表：用一個字串查出另一個字串）記每個人要謝什麼，再照上面的順序一個一個查出來印。",
+      "instructions": "`HashMap` 用 `put` 放進一組對照，用 `get` 查出來：\n\n```\nHashMap<String, String> fav = new HashMap<>();\nfav.put(\"滷肉\", \"滷肉飯\");\nfav.get(\"滷肉\")   // \"滷肉飯\"\n```\n\n`HashMap` 不保證順序，直接走過對照表，順序會亂掉。要照順序印，另外用一個陣列排好名字，再一個一個去對照表查。\n\n`HashMap` 也要 import：`import java.util.HashMap;`。`（）` 是全形的，可以從目標複製。",
       "expectedShape": "String[] order = {\"阿嬤\", …};\nfor (String who : order) {\n    System.out.println(\"特別感謝 \" + who + \"（\" + thanks.get(who) + \"）\");\n}",
       "form": "program",
       "check": { "type": "output" },

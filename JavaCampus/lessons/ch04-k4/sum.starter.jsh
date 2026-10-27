@@ -14,4 +14,4 @@ static int percent(int part, int whole) {
     return part * 100 / whole;
 }
 
-// 總共幾顆星？存進 sum
+// 呼叫 total，把 stars 交給它，算出總共幾顆星，存進 sum

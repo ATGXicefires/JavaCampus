@@ -63,6 +63,18 @@ class LessonContentTest {
         assertFalse(step.hints().plain().isBlank(), "缺少白話提示");
         assertFalse(step.goal().isBlank(), "缺少這一步要做的事");
         assertTrue(step.expectedShape().contains("…"), "預期的樣子直接寫出答案，玩家要寫的地方要換成 …");
+        // 換資料再跑的事交給沒過時的訊息說明，題目先講只會讓人以為要對付檢查
+        for (String text : List.of(step.goal(), step.instructions())) {
+            assertFalse(text.contains("按「完成」"), "題目文字預告了隱藏測資：" + text);
+        }
+    }
+
+    /** 題目變數寫在編輯器最上面，行尾註解說它裝的是什麼。 */
+    @TestFactory
+    List<DynamicTest> everyGivenVariableSaysWhatItHolds() {
+        return library.lessons().values().stream().flatMap(l -> l.vars().stream()
+                .map(v -> DynamicTest.dynamicTest(l.id() + "/" + v.name(),
+                        () -> assertFalse(v.note() == null || v.note().isBlank(), "缺少 note")))).toList();
     }
 
     /** 筆記欄平常只顯示這一句，太長就失去「先看重點」的意思了。 */

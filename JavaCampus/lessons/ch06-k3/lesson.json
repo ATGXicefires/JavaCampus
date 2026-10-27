@@ -9,8 +9,8 @@
     {
       "id": "speak",
       "title": "小老師的設計圖",
-      "goal": "印出兩行（滷肉和分號是 App 裡的兩個小老師）：\n`滷肉：「沒關係，再跑一次！」`\n`分號：「分號。」`\n\n寫 `class Mascot`：欄位 `name`、`line`，建構子 `Mascot(String name, String line)`，方法 `void speak()` 印出自己那一行。再 `new` 出兩個小老師，各呼叫一次 `speak()`。",
-      "instructions": "`line` 放的是小老師的台詞：滷肉是 `沒關係，再跑一次！`，分號是 `分號。`。建構子用 `this.name = name;` 這種寫法，把傳進來的值放進欄位。\n\n`speak()` 不加 `static`，它就是每個小老師自己的方法，印出 `名字：「台詞」`。\n\n`：` 和 `「」` 是全形，可以從這裡複製。",
+      "goal": "印出兩行（滷肉和分號是 App 裡的兩個小老師）：\n`滷肉：「沒關係，再跑一次！」`\n`分號：「分號。」`\n\n寫 `class Mascot`：欄位 `name`、`line`，建構子 `Mascot(String name, String line)`，還有方法 `void speak()` 印出自己那一行（不加 `static`，是每個小老師自己的方法）。再 `new` 出兩個小老師，各呼叫一次 `speak()`。",
+      "instructions": "`line` 放的是小老師的台詞，就是 `「」` 裡面那一句。建構子用 `this.name = name;` 這種寫法，把傳進來的值放進欄位。\n\n不加 `static` 的方法屬於物件：誰呼叫，就用誰自己的欄位。`roufan.speak()` 印的是滷肉的 `name` 和 `line`；換分號呼叫，印的就是分號的。\n\n`：` 和 `「」` 是全形，可以從這裡複製。",
       "expectedShape": "class Mascot {\n    String name;\n    String line;\n\n    Mascot(String name, String line) {\n        …\n    }\n\n    void speak() {\n        System.out.println(…);\n    }\n}\n\nMascot roufan = new Mascot(…);\n…\nroufan.speak();\n…",
       "check": { "type": "output" },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "greet",
       "title": "交回一句話",
-      "goal": "滷肉的 `greet(\"梁亭瑄\")` 交回 `滷肉：「梁亭瑄，歡迎回來！」`，分號的 `greet(\"新同學\")` 交回 `分號：「新同學，歡迎回來！」`。\n\n幫 `Mascot` 加上方法 `String greet(String user)`，交回這個小老師對 `user` 說的歡迎詞。",
-      "instructions": "這次不印，交回來。說話的是哪個小老師，用它自己的 `name`。",
+      "goal": "滷肉的 `greet(\"梁亭瑄\")` 要交回 `滷肉：「梁亭瑄，歡迎回來！」`，分號的 `greet(\"新同學\")` 要交回 `分號：「新同學，歡迎回來！」`。\n\n幫 `Mascot` 加上方法 `String greet(String user)`，交回這個小老師對 `user` 說的歡迎詞。",
+      "instructions": "這次不印，用 `return` 交回來。說話的是哪個小老師，就用它自己的 `name`。\n\n句子裡的 `，` 和 `！` 也是全形，可以從目標複製。",
       "expectedShape": "String greet(String user) {\n    return …;\n}",
       "check": { "type": "values", "exprs": ["new Mascot(\"滷肉\", \"沒關係，再跑一次！\").greet(\"梁亭瑄\")", "new Mascot(\"分號\", \"分號。\").greet(\"新同學\")"] },
       "hints": {

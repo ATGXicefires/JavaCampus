@@ -5,15 +5,15 @@
   "partner": "亭瑄OS",
   "notes": ["int-div", "cast", "compare", "for"],
   "vars": [
-    { "name": "total", "type": "int", "value": "312" },
-    { "name": "days", "type": "int", "value": "7" }
+    { "name": "total", "type": "int", "value": "312", "note": "段考 5 科的總分" },
+    { "name": "days", "type": "int", "value": "7", "note": "離段考還有幾天" }
   ],
   "steps": [
     {
       "id": "avg",
       "title": "五科平均",
-      "goal": "5 科總分 312 分，平均是 62.4 分，小數要留下來。\n\n用題目給的 `total`（5 科總分）算出平均，存進 `double avg`。",
-      "instructions": "`total` 這個盒子題目已經做好了，直接拿來用。\n\n按「完成」時，會把 `total` 改成 300 再檢查一次，所以要用 `total` 來算，不能直接寫 `62.4`。",
+      "goal": "`total` 是段考 5 科的總分，現在是 312，5 科平均是 62.4 分。\n\n用 `total` 算出 5 科的平均，存進 `double avg`（`double` 是裝小數的盒子），小數要留下來。",
+      "instructions": "編輯器最上面兩行 `int total = 312;` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接用 `total` 和 `days`。\n\n平均是總分除以 5，除法寫成 `/`。兩個 `int`（整數）相除，答案也是整數，小數點後面直接丟掉：`7 / 2` 是 `3`。就算放進 `double` 盒子，也只會是 `3.0`，因為放進去之前就已經除完了。\n\n只要有一邊是小數，除出來就會留下小數：`7 / 2.0` 是 `3.5`。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",
@@ -29,8 +29,8 @@
     {
       "id": "pass",
       "title": "及格嗎",
-      "goal": "平均 62.4 分要印出 `及格`：剛好 60 分也算及格。\n\n用上一步算好的 `avg` 判斷，60 以上印 `及格`，不到 60 印 `再加油`。",
-      "instructions": "這一步接著上一步的程式寫，`avg` 已經算好了。\n\n按「完成」時，會把 `total` 改成 250 和 300 再檢查兩次。總分 300 時平均剛好是 60，要印 `及格`。",
+      "goal": "現在 `avg` 是 62.4，要印出 `及格`；`avg` 不到 60 的時候，要印 `再加油`。剛好 60 分也算及格。\n\n用 `if`／`else` 判斷上一步算好的 `avg`，比大小用 `>=`（大於等於）。",
+      "instructions": "這一步接著上一步的程式寫，`avg` 已經算好了。\n\n`>=` 是「大於等於」：`temp >= 30` 在 `temp` 是 30 或比 30 大的時候是 `true`，剛好 30 也算。只寫 `>` 是「大於」，剛好 30 就不算了。",
       "expectedShape": "if (avg … 60) {\n    System.out.println(\"及格\");\n} else {\n    …\n}",
       "check": {
         "type": "output",
@@ -45,8 +45,8 @@
     {
       "id": "countdown",
       "title": "倒數",
-      "goal": "離段考還有 7 天時，要印出 `段考倒數 7 天`、`段考倒數 6 天`⋯⋯一直到 `段考倒數 1 天`，一天一行。\n\n用 `for` 從題目給的 `days`（離段考的天數）倒數到 1，印出這幾行。",
-      "instructions": "`days` 也是題目做好的盒子。\n\n倒數就是從大數到小：從 `days` 開始，每一圈減一。`i--` 是 `i++` 的反方向。\n\n按「完成」時，會把 `days` 改成 3 再檢查一次，所以要從 `days` 開始數，不能直接寫 7。",
+      "goal": "`days` 是離段考還有幾天，現在是 7，所以要印出 7 行：\n`段考倒數 7 天`\n`段考倒數 6 天`\n⋯⋯\n`段考倒數 1 天`\n\n用 `for` 從 `days` 倒數到 1，一天印一行；每一圈用 `i--`（減一）。",
+      "instructions": "`for` 也可以倒著數：從大的數開始，每做完一次就減一。`i--` 是 `i++` 的反方向，和 `i = i - 1` 一樣。\n\n```\nfor (int i = 10; i >= 8; i--) {\n    System.out.println(i);\n}\n```\n\n這段會依序印出 10、9、8：`i` 從 10 開始，`i >= 8` 還成立就繼續，每一圈減一。",
       "expectedShape": "for (int i = days; …; i--) {\n    System.out.println(\"段考倒數 \" + i + \" 天\");\n}",
       "check": {
         "type": "output",

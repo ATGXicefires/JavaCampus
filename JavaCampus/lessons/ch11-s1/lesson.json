@@ -9,8 +9,8 @@
     {
       "id": "countdown",
       "title": "倒數",
-      "goal": "今天星期三，從 `還有 10 天` 倒數到 `還有 1 天`，週末的 `還有 7 天` 和 `還有 6 天` 不印，一共印出 8 行。\n\n起始碼每天印一行，第一圈（`i` 是 0）是今天。加上 `continue`：算出每一圈是星期幾，遇到星期六、日就跳過不印。",
-      "instructions": "星期用數字表示：0 是星期日，1 是星期一⋯⋯6 是星期六，所以 `today` 是 3。第 `i` 圈是星期 `(today + i) % 7`，例如 `i` 是 3 時是 `6 % 7`，也就是 6，星期六，那一圈的 `還有 7 天` 就不印。",
+      "goal": "`today` 是今天星期幾，現在是 3（星期三）。倒數的 10 天裡週末不印，所以要印出 8 行：\n`還有 10 天`\n`還有 9 天`\n`還有 8 天`\n`還有 5 天`\n⋯⋯\n`還有 1 天`\n\n起始碼現在每天都印，印了 10 行。在迴圈裡算出每一圈是星期幾，遇到星期六、日就用 `continue`（跳過這一圈剩下的部分，直接下一圈）跳過不印。",
+      "instructions": "星期用數字表示：0 是星期日，1 是星期一⋯⋯6 是星期六。第 `i` 圈是星期 `(today + i) % 7`：`%` 是除完剩下的餘數，加到 7 就繞回 0。例如 `i` 是 3 時是 `6 % 7`，也就是 6，星期六，那一圈的 `還有 7 天` 不印；`i` 是 4 時是 `7 % 7`，也就是 0，星期日。\n\n`continue` 會跳過這一圈剩下的部分，直接進入下一圈，迴圈照樣繼續：\n\n```\nfor (int i = 1; i <= 5; i++) {\n    if (i % 2 == 0) {\n        continue;\n    }\n    System.out.println(i);\n}\n```\n\n這段會印 1、3、5：`i` 是雙數的那幾圈，下面的 `println` 沒有做。",
       "expectedShape": "int weekday = (today + i) % 7;\nif (…) {\n    continue;\n}\nSystem.out.println(\"還有 \" + (10 - i) + \" 天\");",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "school",
       "title": "上學的日子",
-      "goal": "`schoolDays(7, 1)` 交回 `5`：從星期一開始的 7 天裡，星期一到五要上學。`schoolDays(10, 3)` 交回 `8`。\n\n寫一個方法 `static int schoolDays(int days, int startWeekday)`：`days` 是天數，`startWeekday` 是第一天星期幾（0 是星期日，6 是星期六）。數出這幾天裡不是星期六、日的有幾天，第一天也算在內，交回這個數。",
-      "instructions": "例如 `schoolDays(7, 1)` 是從星期一開始的 7 天，星期一到星期五要上學，交回 5。\n\n按「完成」時會直接呼叫 `schoolDays` 測試，`main` 不會執行。",
+      "goal": "`schoolDays(7, 1)` 要交回 `5`：從星期一開始的 7 天裡，星期一到五要上學。\n\n寫一個方法 `static int schoolDays(int days, int startWeekday)`：`days` 是天數，`startWeekday` 是第一天星期幾（0 是星期日，6 是星期六）。數出這幾天裡有幾天不是星期六、日，第一天也算在內，交回這個數。",
+      "instructions": "第 `i` 天（第一天是 0）是星期 `(startWeekday + i) % 7`，跟上一步算星期幾的方法一樣。\n\n這一步只看 `schoolDays` 交回的數，`main` 不用改。",
       "expectedShape": "static int schoolDays(int days, int startWeekday) {\n    int n = 0;\n    for (…) {\n        …\n    }\n    return n;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.schoolDays(7, 1)", "Main.schoolDays(10, 3)", "Main.schoolDays(0, 1)"] },

@@ -9,8 +9,8 @@
     {
       "id": "blueprint",
       "title": "設計圖",
-      "goal": "印出一行 `小白（筆電）`：前面是名字，括號裡是種類。\n\n寫 `class Item`：欄位 `String name`（名字）和 `String kind`（種類）。再 `new` 一個 `Item`，名字設成 `小白`、種類設成 `筆電`，照這個格式印出來。",
-      "instructions": "`class` 是設計圖：說好一個 `Item` 有名字和種類。設計圖寫好以後，用 `new Item()` 照著做出一個，再用 `.` 設定它的欄位。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n括號 `（）` 是全形的，可以從這裡複製。",
+      "goal": "印出一行 `小白（筆電）`：前面是名字，括號裡是種類。\n\n寫 `class Item`（`Item` 的設計圖），欄位（每個 `Item` 自己的盒子）有 `String name` 和 `String kind`。再用 `new` 照設計圖做出一個 `Item`，名字設成 `小白`、種類設成 `筆電`，照這個格式印出來。",
+      "instructions": "`class` 是一張設計圖：說好一個 `Item` 有哪些欄位。欄位是設計圖裡的盒子，照設計圖做出來的每個東西都各有一份。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n設計圖還不是真的東西。`Item laptop = new Item();` 才是照著設計圖做出一個真的 `Item`（叫做**物件**），放進 `laptop` 這個盒子。用 `.` 拿它自己的欄位：`laptop.name = \"…\";` 是把名字放進它的 `name`。\n\n括號 `（）` 是全形的，可以從這裡複製。",
       "expectedShape": "class Item {\n    …\n}\n\nItem laptop = new Item();\nlaptop.name = \"…\";\n…\nSystem.out.println(…);",
       "check": { "type": "output" },
       "hints": {

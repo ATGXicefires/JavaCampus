@@ -5,14 +5,14 @@
   "partner": "小芸",
   "notes": ["static-field"],
   "vars": [
-    { "name": "daily", "type": "int[]", "value": "{3, 5, 4, 8, 7, 9, 12}" }
+    { "name": "daily", "type": "int[]", "value": "{3, 5, 4, 8, 7, 9, 12}", "note": "寒假每天提到「學長」的次數" }
   ],
   "steps": [
     {
       "id": "total",
       "title": "每一天各自算",
-      "goal": "寒假每天提到「學長」的次數是 `{3, 5, 4, 8, 7, 9, 12}` 時，`Day.total` 是全部加起來的 `48`。\n\n寫 `class Day`：欄位 `int mentions`、建構子 `Day(int mentions)`，和一個 `static int total`：每 `new` 一天，就把那天的次數加進 `total`。再用 `for` 照題目給的 `daily`（每天提到的次數）把每一天都 `new` 出來。",
-      "instructions": "`daily` 這個陣列題目已經做好了，`daily[0]` 是第 1 天。\n\n`mentions` 每一天各一份，`Day.total` 是大家共用的一份。每次執行都從乾淨的狀態開始，`total` 不會跨次累加。\n\n按「完成」時，會把 `daily` 改成 `{1, 1}` 再檢查一次 `Day.total`，所以要用 `daily` 來跑，不能直接寫答案。",
+      "goal": "`daily` 是寒假每天提到「學長」的次數，現在是 `{3, 5, 4, 8, 7, 9, 12}`。每一天都 `new` 出來以後，`Day.total` 要是全部加起來的 `48`。\n\n寫 `class Day`：欄位 `int mentions`、建構子 `Day(int mentions)`，和一個 `static int total`（`static` 的欄位整個類別只有一份）。每 `new` 一天，就把那天的次數加進 `total`。再用 `for` 照 `daily` 把每一天都 `new` 出來。",
+      "instructions": "編輯器最上面那行 `int[] daily = {3, 5, 4, 8, 7, 9, 12};` 是題目先寫好的，你的程式可以直接用 `daily`。`daily[0]` 是第 1 天。\n\n一般的欄位每個物件各一份；`static` 的欄位屬於整個類別，大家共用同一份。例如：\n\n```\nclass Visitor {\n    static int count;\n\n    Visitor() {\n        count++;\n    }\n}\n```\n\n`new Visitor()` 三次，三個訪客都加進同一個 `count`，從外面讀 `Visitor.count` 是 3。`Day` 也一樣：`mentions` 每一天各一份，`total` 只有一份。每次執行都從乾淨的狀態開始，`total` 不會跨次累加。",
       "expectedShape": "class Day {\n    static int total;\n    int mentions;\n\n    Day(int mentions) {\n        …\n    }\n}\n\nfor (…) {\n    new Day(…);\n}",
       "check": {
         "type": "values",
@@ -28,8 +28,8 @@
     {
       "id": "running",
       "title": "每天的累計",
-      "goal": "印出 7 行，前兩行是：\n`第 1 天：3 次，累計 3 次`\n`第 2 天：5 次，累計 8 次`\n\n在 `for` 裡每 `new` 一天，就印出一行：第幾天、那天的次數、到那天為止的累計。",
-      "instructions": "這一步接著用上一步的程式，改 `for` 裡面就好。\n\n按「完成」時，會把 `daily` 改成 `{1, 2}` 再檢查一次，所以要用 `daily` 來跑，不能直接寫答案。",
+      "goal": "`daily` 現在有 7 天，要印出 7 行：\n`第 1 天：3 次，累計 3 次`\n`第 2 天：5 次，累計 8 次`\n⋯⋯\n`第 7 天：12 次，累計 48 次`\n\n在 `for` 裡每 `new` 一天，就印出一行：第幾天、那天的次數、到那天為止的累計。",
+      "instructions": "這一步接著用上一步的程式，改 `for` 裡面就好。\n\n`d.mentions` 是 `d` 那一天自己的次數。`Day.total` 是大家共用的那一份：每 `new` 一天，建構子就把那天的次數加進去，所以剛 `new` 完讀 `Day.total`，就是到那天為止的累計。",
       "expectedShape": "Day d = new Day(…);\nSystem.out.println(\"第 \" + (…) + \" 天：\" + d.mentions + \" 次，累計 \" + … + \" 次\");",
       "check": {
         "type": "output",

@@ -9,8 +9,8 @@
     {
       "id": "heart",
       "title": "真心話放在 private",
-      "goal": "不管心裡在想什麼，`new Heart().status()` 都只交回 `沒事`，`new Heart().whatAreYouDoing()` 只交回 `在幹嘛`。\n\n寫 `class Heart`：`private String real` 放你真正想說的話，方法 `String status()` 和 `String whatAreYouDoing()` 只交回上面這兩句。",
-      "instructions": "`real` 放什麼都可以，自己打。它是 `private`，永遠不會被印出來，外面只看得到這兩個方法交回的話。",
+      "goal": "不管心裡在想什麼，`new Heart().status()` 都只交回 `沒事`，`new Heart().whatAreYouDoing()` 只交回 `在幹嘛`。\n\n寫 `class Heart`：欄位 `private String real` 放你真正想說的話（`private`：只有這個類別自己能開的抽屜），方法 `String status()` 和 `String whatAreYouDoing()` 各交回上面那一句。",
+      "instructions": "`real` 放什麼都可以，自己打一句。它是 `private`，外面讀不到，也不會被印出來。\n\n外面只能透過你開放的方法認識 `Heart`：方法交回什麼，別人就只看到什麼。",
       "expectedShape": "class Heart {\n    private String real = \"…\";\n\n    String status() {\n        …\n    }\n\n    String whatAreYouDoing() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new Heart().status()", "new Heart().whatAreYouDoing()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "draft",
       "title": "打了又刪",
-      "goal": "打了 `學長`、清空、再打 `新年快樂` 之後，`draft.preview()` 交回 `新年快樂`。\n\n寫 `class Draft`：`private String text`（一開始是空字串）、`void type(String s)` 接在後面、`void clear()` 清空、`String preview()` 交回目前的內容。再 `new` 一個 `draft`，照這個順序呼叫。",
-      "instructions": "照順序呼叫：`type`、`clear`、`type`。",
+      "goal": "打了 `學長`、清空、再打 `新年快樂` 之後，`draft.preview()` 要交回 `新年快樂`。\n\n寫 `class Draft`：`private String text`（一開始是空字串）、`void type(String s)` 接在後面、`void clear()` 清空、`String preview()` 交回目前的內容。再 `new` 一個 `draft`，照這個順序呼叫。",
+      "instructions": "照順序呼叫：`type(\"學長\")`、`clear()`、`type(\"新年快樂\")`。\n\n空字串 `\"\"` 是一對引號，中間什麼都沒有。字串也能用 `+=` 接在後面：`a += \"好\";` 跟 `a = a + \"好\";` 一樣。清空就是把空字串放回去。",
       "expectedShape": "class Draft {\n    private String text = \"\";\n    …\n}\n\nDraft draft = new Draft();\ndraft.type(\"學長\");\n…",
       "check": { "type": "values", "exprs": ["draft.preview()"] },
       "hints": {

@@ -55,7 +55,7 @@ public final class Game {
     /** 程式題的配色掛在最外層，各畫面的樣式用 {@code .app-root:code-dark} 切換，不用各自監聽設定。 */
     private static final PseudoClass CODE_DARK = PseudoClass.getPseudoClass("code-dark");
     private static final String CODE_SELECTORS = Stream.of(".code-area", ".code-font", ".md-code", ".md-pre",
-            ".lineno", ".console-out", ".shape-box", ".given-box", ".hint-code", ".probe-line", ".raw",
+            ".lineno", ".console-out", ".shape-box", ".given-lines", ".hint-code", ".probe-line", ".raw",
             ".term").map(c -> ".app-root " + c).collect(Collectors.joining(", "));
 
     /** 想自己處理按鍵的畫面（劇情、選視角）實作這個介面；Esc 和 F11 由 {@link Game} 統一處理。 */
@@ -228,7 +228,7 @@ public final class Game {
      */
     private void setCodeFont(double size, String family) {
         String css = String.format(Locale.ROOT,
-                ".app-root .code-area, .app-root .term { -fx-font-size: %.0fpx; } .app-root .lineno, .app-root .console-out { -fx-font-size: %.0fpx; } "
+                ".app-root .code-area, .app-root .given-lines, .app-root .term { -fx-font-size: %.0fpx; } .app-root .lineno, .app-root .console-out { -fx-font-size: %.0fpx; } "
                         + "%s { -fx-font-family: \"%s\"; }",
                 size, size - 2, CODE_SELECTORS, family.replace("\"", ""));
         String url = "data:text/css;base64," + Base64.getEncoder().encodeToString(css.getBytes(StandardCharsets.UTF_8));

@@ -9,8 +9,8 @@
     {
       "id": "again",
       "title": "至少問一次",
-      "goal": "作答依序是 `吃控肉飯`、`吃 滷肉飯`、`吃滷肉飯` 時，要印出三行：\n`第 1 次：再試一次`\n`第 2 次：再試一次`\n`第 3 次答對了！`\n\n用 `do-while` 照順序拿 `tries`（依序的作答）一次一個和 `answer`（正確答案）比：答錯就印一行再試一次、換下一個；答對就停下，印出第幾次答對了。",
-      "instructions": "作答先 `trim` 再和 `answer` 比。記第幾次的 `round` 和這次對不對的 `right`，要宣告在 `do` 前面，`while (…)` 才看得到。",
+      "goal": "`main` 裡的 `tries` 是依序的作答，現在是 `吃控肉飯`、`吃 滷肉飯`、`吃滷肉飯`；`answer` 是正確答案 `吃滷肉飯`。要印出三行：\n`第 1 次：再試一次`\n`第 2 次：再試一次`\n`第 3 次答對了！`\n\n用 `do-while`（先做一次，做完才問要不要再來）照順序拿 `tries` 的作答，先 `trim` 再和 `answer` 比：答錯就印一行再試一次、換下一個；答對就停下，印出第幾次答對了。",
+      "instructions": "`do-while` 先做大括號裡的事，做完才看 `while` 括號裡的條件：成立就回去再做一次，不成立就停。所以不管條件怎樣，至少會做一次。\n\n```\nint n = 0;\ndo {\n    n++;\n    System.out.println(\"第 \" + n + \" 圈\");\n} while (n < 2);\n```\n\n這段會印 `第 1 圈` 和 `第 2 圈`。最後的 `while (…);` 要加分號。\n\n記第幾次的 `round` 和這次對不對的 `right`，要宣告在 `do` 前面，`while (…)` 才看得到。",
       "expectedShape": "do {\n    right = tries[round].trim().equals(answer);\n    round++;\n    …\n} while (!right);\nSystem.out.println(\"第 \" + round + \" 次答對了！\");",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "limit",
       "title": "最多三次",
-      "goal": "作答是 `錯`、`錯`、`錯`、`吃滷肉飯`、最多答 3 次時，前 3 次都沒對，交回 `-1`；第一個作答就對時，交回 `1`。\n\n寫一個方法 `static int triesNeeded(String[] tries, String answer, int limit)`，交回第幾次答對（第一個作答算第 1 次）。`limit` 是最多能答幾次：答滿這個次數還沒對，或作答用完了還沒對，都交回 `-1`。",
-      "instructions": "作答一樣先 `trim`。按「完成」時會直接呼叫 `triesNeeded` 測試，`main` 不會執行。",
+      "goal": "`triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)` 要交回 `-1`：最多只能答 3 次，第 4 個作答才對，來不及了。\n\n寫一個方法 `static int triesNeeded(String[] tries, String answer, int limit)`，交回第幾次答對（第一個作答算第 1 次）。`limit` 是最多能答幾次：答滿這個次數還沒對，或作答用完了還沒對，都交回 `-1`。",
+      "instructions": "作答一樣先 `trim` 再和 `answer` 比。答對了可以直接 `return` 是第幾次，後面的不用再看。\n\n這一步只看 `triesNeeded` 交回的數，`main` 不用改。",
       "expectedShape": "static int triesNeeded(String[] tries, String answer, int limit) {\n    for (…) {\n        …\n    }\n    return -1;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 3)"] },

@@ -5,15 +5,15 @@
   "partner": "小芸",
   "notes": ["else-if"],
   "vars": [
-    { "name": "score", "type": "int", "value": "85" },
-    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" }
+    { "name": "score", "type": "int", "value": "85", "note": "要換成等第的分數" },
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" }
   ],
   "steps": [
     {
       "id": "grade",
       "title": "五個等第",
-      "goal": "85 分要印出 `B`，剛好 60 分要印出 `D`。\n\n用 `if`／`else if`／`else` 判斷題目給的 `score`（一個分數），印出它的等第，只印字母：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
-      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個。\n\n```\nif (score >= 90) {\n    …\n} else if (score >= 80) {\n    …\n} else {\n    …\n}\n```\n\n按「完成」時，會把 `score` 改成 95、72、60、59 再檢查幾次，所以要用 `score` 來判斷，不能直接印 `B`。剛好 60 分是 D。",
+      "goal": "`score` 是要換成等第的分數，現在是 85，所以要印出 `B`。\n\n用 `if`／`else if`／`else`（從上往下一個一個問，第一個成立的就做）把 `score` 換成等第，只印字母：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
+      "instructions": "編輯器最上面兩行 `int score = 85;` 和 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `score` 和 `scores`。\n\n`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。\n\n```\nif (temp >= 30) {\n    System.out.println(\"熱\");\n} else if (temp >= 20) {\n    System.out.println(\"舒服\");\n} else {\n    System.out.println(\"冷\");\n}\n```\n\n`temp` 是 33 時，第一個問題就成立，印出 `熱`，後面都不問了。所以要從高的往低的問。「以上」包含剛好那個數：剛好 60 分是 D。",
       "expectedShape": "if (score >= 90) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
       "check": {
         "type": "output",
@@ -28,8 +28,8 @@
     {
       "id": "all",
       "title": "整排都換",
-      "goal": "分數是 `{72, 58, 65, 80, 49}` 時，要印出 `72 C`、`58 F`、`65 D`、`80 B`、`49 F`，一個一行。\n\n用 `for` 走過題目給的陣列 `scores`（一排分數），把每個分數換成等第印出來：分數、空格、等第。",
-      "instructions": "起始碼的 `for` 每一圈會把一格的分數放進 `s`，在裡面用上一步的 `if`／`else if` 判斷 `s`。\n\n按「完成」時，會把 `scores` 改成 `{100, 59}` 再檢查一次。",
+      "goal": "現在 `scores` 是 `{72, 58, 65, 80, 49}`，要印出 5 行：\n`72 C`\n`58 F`\n`65 D`\n`80 B`\n`49 F`\n\n用 `for` 走過 `scores` 的每一格，把每個分數換成等第，印出分數、空格、等第。",
+      "instructions": "起始碼的 `for` 每一圈會把一格的分數放進 `s`：第一圈 `s` 是 `scores[0]`，第二圈是 `scores[1]`⋯⋯在大括號裡用上一步那一串 `if`／`else if` 判斷 `s`，不是判斷 `score`。\n\n印的時候用 `+` 把分數和等第接起來，中間的空格寫在引號裡，例如 `s + \" C\"`。",
       "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" A\");\n    } else if (…) {\n        …\n    }\n}",
       "check": {
         "type": "output",

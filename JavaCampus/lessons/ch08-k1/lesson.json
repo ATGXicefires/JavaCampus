@@ -9,8 +9,8 @@
     {
       "id": "extends",
       "title": "繼承",
-      "goal": "`MyPlan` 裡什麼都不寫，`new MyPlan().hobby()` 也會交回 `ParentsPlan` 的 `畫畫當興趣就好`。\n\n寫 `class MyPlan extends ParentsPlan`，裡面先什麼都不寫。",
-      "instructions": "`ParentsPlan` 是起始碼給的父類別。`MyPlan` 裡面什麼都沒寫，也拿得到它的 `future()` 和 `hobby()`。",
+      "goal": "`MyPlan` 裡什麼都不寫，`new MyPlan().hobby()` 也要交回 `ParentsPlan` 寫好的 `畫畫當興趣就好`。\n\n寫 `class MyPlan extends ParentsPlan`（`extends` 是繼承：父類別有的，子類別直接就有），裡面先什麼都不寫。",
+      "instructions": "`ParentsPlan` 是起始碼給的類別。`class MyPlan extends ParentsPlan` 的意思是 `MyPlan` 繼承 `ParentsPlan`：`ParentsPlan` 叫父類別，`MyPlan` 叫子類別。父類別寫好的欄位和方法，子類別一個字都不用寫，直接就有，所以 `MyPlan` 也拿得到 `future()` 和 `hobby()`。\n\n例如 `class Puppy extends Dog { }`：`Dog` 會 `bark()`，`new Puppy().bark()` 也叫得出來。",
       "expectedShape": "class MyPlan extends … {\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().future()", "new MyPlan().hobby()"] },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "hobby",
       "title": "自己的版本",
-      "goal": "`new MyPlan().hobby()` 交回 `畫畫不只是興趣`，`new MyPlan().future()` 還是 `學一技之長，找一份穩定的工作`。\n\n在 `MyPlan` 裡覆寫 `String hobby()`，交回自己的這一句；`future()` 不動。",
-      "instructions": "覆寫就是寫一個同名、同參數的方法，換成自己的版本。",
+      "goal": "`new MyPlan().hobby()` 要交回 `畫畫不只是興趣`，`new MyPlan().future()` 還是爸媽的 `學一技之長，找一份穩定的工作`。\n\n在 `MyPlan` 裡覆寫 `String hobby()`（寫一個同名、同參數的方法，換成自己的版本），交回自己的這一句；`future()` 不動。",
+      "instructions": "同名、同參數，就是名字一模一樣，括號裡的參數也一樣：`hobby()` 沒有參數，覆寫的也不能有。\n\n例如 `Dog` 的 `String bark()` 交回 `汪`，`Puppy extends Dog` 也寫一個 `String bark()` 交回 `嗚汪`：`new Puppy().bark()` 是 `嗚汪`，`new Dog().bark()` 還是 `汪`。",
       "expectedShape": "class MyPlan extends ParentsPlan {\n    String hobby() {\n        …\n    }\n}",
       "check": { "type": "values", "exprs": ["new MyPlan().hobby()", "new MyPlan().future()"] },
       "hints": {

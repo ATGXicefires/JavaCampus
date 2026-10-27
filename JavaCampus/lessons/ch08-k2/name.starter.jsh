@@ -15,7 +15,7 @@ class ParentsPlan {
 }
 
 class MyPlan extends ParentsPlan {
-    // 建構子 MyPlan(String name)：用 super(name) 把名字交給父類別
+    // 寫建構子 MyPlan(String name)，用 super(name) 把名字交給父類別
 
     String future() {
         return super.future() + "，而且是我喜歡的那一種";

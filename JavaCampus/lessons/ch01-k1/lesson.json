@@ -9,8 +9,8 @@
     {
       "id": "say",
       "title": "讓電腦說話",
-      "goal": "把引號裡的字換掉，印出 `學長，你在說外星語嗎？`。",
-      "instructions": "學長打開的範例會印出 `Hello, World`。\n\n只改兩個 `\"` 中間的字，括號、引號和最後的 `;` 都留著。改完按「執行」看看。",
+      "goal": "要印出 `學長，你在說外星語嗎？`，現在印的是 `Hello, World`。\n\n把 `println`（讓電腦印出一行字）引號裡的 `Hello, World` 換成這句話。",
+      "instructions": "`System.out.println(…);` 會把括號裡的東西印在執行結果裡，印完自動換行。用一對半形雙引號 `\"` 包起來的一段文字叫**字串**，引號裡寫什麼，就原封不動印出什麼。例如 `System.out.println(\"你好\");` 會印出 `你好`。\n\n最後的 `;` 是 Java 的句號，表示這句寫完了。只改兩個 `\"` 中間的字，括號、引號和最後的 `;` 都留著。\n\n引號、括號和分號都要用英文輸入法打的半形符號；引號裡面的字可以是中文，`，`、`？` 這種全形標點也沒關係。如果出現紅字，先看它標在哪一行、說少了什麼，照著修好再按「執行」。",
       "expectedShape": "System.out.println(\"…\");",
       "check": { "type": "output" },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "two-lines",
       "title": "一行一句",
-      "goal": "在下面再寫一行，讓第二行印出 `資訊科一年級`。",
-      "instructions": "專題報名表要寫名字和班級。程式已經會印出 `梁亭瑄`。\n\n一個 `println` 只印一行，想印兩行就要寫兩個。",
+      "goal": "要印出兩行：\n`梁亭瑄`\n`資訊科一年級`\n\n現在只印出第一行。在下面再寫一行 `println`，印出 `資訊科一年級`。",
+      "instructions": "專題報名表要寫名字和班級。一個 `println` 只印一行，印完就換行；想印兩行，就寫兩個 `println`。程式會從上往下，一行一行照順序跑：\n\n```\nSystem.out.println(\"早安\");\nSystem.out.println(\"午安\");\n```\n\n會先印 `早安`，下一行再印 `午安`。",
       "expectedShape": "System.out.println(\"梁亭瑄\");\nSystem.out.println(\"…\");",
       "check": { "type": "output" },
       "hints": {

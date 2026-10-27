@@ -5,14 +5,14 @@
   "partner": "二弘",
   "notes": ["concat", "compare", "inc", "for"],
   "vars": [
-    { "name": "times", "type": "int", "value": "5" }
+    { "name": "times", "type": "int", "value": "5", "note": "要罰寫的遍數" }
   ],
   "steps": [
     {
       "id": "punish",
       "title": "罰寫",
-      "goal": "罰寫 5 遍，就是印出 5 行 `我不會再用全形分號`。\n\n用 `for` 照題目給的 `times`（罰寫遍數）印出這幾行。",
-      "instructions": "`times` 這個盒子題目已經做好了，直接拿來用。\n\n按「完成」時，會把 `times` 改成 100 和 1 各檢查一次，所以要用 `times` 來數；一行一行寫 `println` 會寫不完。\n\n`for` 的括號裡有三段，用分號隔開：從哪裡開始、做到什麼時候、每做完一次怎麼變。\n\n```\nfor (int i = 1; i <= times; i++) {\n    要重複做的事\n}\n```",
+      "goal": "`times` 是要罰寫的遍數，現在是 5，所以要印出 5 行 `我不會再用全形分號`。\n\n用 `for`（把同一件事重複做好幾遍）照 `times` 來數：`times` 是幾，就印幾行。",
+      "instructions": "編輯器最上面那行 `int times = 5;` 是題目先寫好的，你的程式可以直接用 `times`。\n\n`for` 的括號裡有三段，用分號隔開：從哪裡開始、做到什麼時候、每做完一次怎麼變。\n\n```\nfor (int i = 1; i <= times; i++) {\n    要重複做的事\n}\n```\n\n`int i = 1` 是從 1 開始數；`i <= times` 是還沒超過 `times` 就繼續做；`i++` 是每做完一次，`i` 就加一。所以大括號裡的事剛好做 `times` 次。",
       "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
@@ -27,8 +27,8 @@
     {
       "id": "number",
       "title": "第幾遍",
-      "goal": "每一行前面加上編號，例如 `第 1 遍：我不會再用全形分號`。",
-      "instructions": "`i` 每一圈都不一樣：第一圈是 1，第二圈是 2。用 `+` 把它接進字串裡。\n\n按「完成」時會把 `times` 換成 100 再跑一次。",
+      "goal": "每一行前面加上編號。`times` 是 5，就印出：\n`第 1 遍：我不會再用全形分號`\n`第 2 遍：我不會再用全形分號`\n⋯⋯\n`第 5 遍：我不會再用全形分號`\n\n編號就是 `for` 裡的 `i`，用 `+` 把它接進字串裡。",
+      "instructions": "`+` 碰到字串就不是加法，是把兩邊接起來：`\"第 \" + 3` 會變成 `第 3`。\n\n`i` 每一圈都不一樣：第一圈是 1，第二圈是 2，所以每一行的編號會自己往上加。\n\n數字前後各有一個空格，空格要寫在引號裡面。",
       "expectedShape": "for (int i = 1; i <= times; i++) {\n    System.out.println(\"第 \" + … + \" 遍：…\");\n}",
       "check": {
         "type": "output",
@@ -43,8 +43,8 @@
     {
       "id": "total",
       "title": "越寫越累",
-      "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯罰寫 5 遍總共花 1 + 2 + 3 + 4 + 5 = 15 秒。\n\n用 `for` 照題目給的 `times`（罰寫遍數），把每一遍花的秒數加起來，存進 `total`。",
-      "instructions": "`total` 一開始是 0，每一圈把這一遍花的秒數加進去。`total += i` 就是把 `i` 加進 `total`。\n\n這一步只看 `total`，印不印都可以。按「完成」時會把 `times` 換成 100 再算一次。",
+      "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯`times` 是 5，總共花 1 + 2 + 3 + 4 + 5 = 15 秒。\n\n用 `for` 把第 1 遍到第 `times` 遍花的秒數加起來，存進 `total`。",
+      "instructions": "`total` 一開始是 0，每一圈把這一遍花的秒數加進去。第 `i` 遍花 `i` 秒，`total += i` 就是把 `i` 加進 `total`，跟 `total = total + i` 一樣。\n\n這一步只看 `total`，印不印都可以。",
       "expectedShape": "int total = 0;\nfor (…) {\n    total += …;\n}",
       "check": {
         "type": "values",

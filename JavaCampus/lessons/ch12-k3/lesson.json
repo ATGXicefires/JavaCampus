@@ -9,8 +9,8 @@
     {
       "id": "full",
       "title": "多答了一題",
-      "goal": "修好後，`main` 裡的兩條進度條要畫成：\n`■■■□□`（`new ProgressBar(3, 5)`）\n`■■■■■`（`new ProgressBar(6, 5)`）\n\n試玩的老師多答了獎勵題，完成數 `done` 比總數 `total` 多，`bar()` 一跑就是紅字。修好 `bar()`：`done` 超過 `total` 時畫成全滿。",
-      "instructions": "`bar()` 用 `■` 畫做完的格子、用 `□` 畫剩下的格子；`\"□\".repeat(n)` 是把 `□` 重複 `n` 次，`n` 是負數就會出錯。\n\n`main` 會畫出 `new ProgressBar(3, 5)` 和 `new ProgressBar(6, 5)` 兩條，修好後是 `■■■□□` 和 `■■■■■`。",
+      "goal": "修好後，`main` 裡的兩條進度條要畫成：\n`■■■□□`（`new ProgressBar(3, 5)`）\n`■■■■■`（`new ProgressBar(6, 5)`）\n\n試玩的老師多答了獎勵題，第二條的 `done`（完成數）6 比 `total`（總數）5 多，`bar()` 裡的 `\"□\".repeat(total - done)` 收到 -1，畫到第二條就出錯。在 `bar()` 裡把關（先擋下不合理的情況）：`done` 超過 `total` 時，畫成全滿。",
+      "instructions": "`\"□\".repeat(n)` 是把 `□` 重複 `n` 次，`n` 是負數就會出錯。\n\n在方法裡把關，就是方法自己先檢查不合理的情況，擋下來再往下做，誰呼叫都不會出錯。例如存錢的方法先擋掉負數：\n\n```\nboolean deposit(int amount) {\n    if (amount <= 0) {\n        return false;\n    }\n    balance += amount;\n    return true;\n}\n```",
       "expectedShape": "String bar() {\n    int filled = done;\n    if (filled > total) {\n        …\n    }\n    return \"■\".repeat(filled) + \"□\".repeat(total - filled);\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "percent",
       "title": "百分比也要擋",
-      "goal": "`new ProgressBar(6, 5).percent()` 要交回 `100`，`new ProgressBar(3, 4).percent()` 照常交回 `75`。\n\n改 `ProgressBar` 的 `int percent()`：照原本的算法算出來超過 100 時，改成交回 100。",
-      "instructions": "按「完成」時會直接呼叫 `percent()` 測試，`main` 不會執行。",
+      "goal": "`new ProgressBar(6, 5).percent()` 現在交回 `120`，超過百分之百了，應該交回 `100`。\n\n在 `int percent()` 裡也把關：照原本的算法算出來超過 100 時，改成交回 100，其他照常。",
+      "instructions": "`done * 100 / total` 是先乘 100 再除：做完 6 個、總共 5 個，就是 600 ÷ 5 = 120。\n\n這一步只看 `percent()` 交回的數，`main` 不用改。",
       "expectedShape": "int percent() {\n    int p = done * 100 / total;\n    if (…) {\n        return 100;\n    }\n    return p;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["new ProgressBar(6, 5).percent()", "new ProgressBar(3, 4).percent()"] },

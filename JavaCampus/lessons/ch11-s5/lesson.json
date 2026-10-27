@@ -9,8 +9,8 @@
     {
       "id": "first",
       "title": "上學期的",
-      "goal": "修好後要依序印出五行：\n`小白學程式 v0.99`\n`總共 7 個貼紙`\n`總分：195`\n`答對了`\n`及格`\n\n起始碼是學妹最後一版的程式，藏著上學期踩過的五個錯：有的會出紅字，有的會印錯。一個一個修好。",
-      "instructions": "一次修一個。紅字先修，修到能跑，再對照目標裡的輸出找剩下的。",
+      "goal": "修好後要依序印出五行：\n`小白學程式 v0.99`\n`總共 7 個貼紙`\n`總分：195`\n`答對了`\n`及格`\n\n起始碼是學妹最後一版的程式，藏著第一章到第五章踩過的五個錯，在：印標題那一行的分號、算貼紙的加法、加總分的迴圈、比作答的 `==`、判斷及格的 `>`。現在一跑就是紅字，一個一個修好。",
+      "instructions": "一次修一個：紅字先修，修到能跑，再對照目標的五行找剩下的。\n\n印標題那一行最後的 `；` 是全形的分號，電腦不認得。\n\n`\"總共 \" + 3 + 4` 從左邊開始接：先接成 `\"總共 3\"`，再接上 4，印出 `總共 34 個貼紙`。要先算的部分用括號包起來。\n\n`scores` 有 3 格，索引是 0 到 2；`i <= scores.length` 會多跑一圈去拿 `scores[3]`，程式跑到一半出錯。\n\n`typed == \"吃滷肉飯\"` 比的是是不是同一個盒子，所以印出 `再試一次`；比字串的內容要用 `equals`。\n\n`score` 是 60，`score > 60` 不成立，印出 `不及格`；剛好 60 分也要算及格。",
       "expectedShape": "System.out.println(\"總共 \" + (…) + \" 個貼紙\");\nfor (int i = 0; i < …; i++) {\n…\nif (typed.equals(…)) {\n…\nif (score >= 60) {",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "second",
       "title": "下學期的",
-      "goal": "修好後，上學期那五行下面要接著印出四行：\n`true`\n`true`\n`完成 1 章`\n`★ 完成`\n\n這一版多了下學期寫的類別，又藏了四個錯，現在跑起來是紅字。一個一個修好。",
-      "instructions": "四個錯分散在幾個分頁裡。上學期那五行輸出照樣印在最前面。",
+      "goal": "修好後，上學期那五行下面要接著印出四行：\n`true`\n`true`\n`完成 1 章`\n`★ 完成`\n\n這一版多了下學期寫的類別，又藏了第六章到第九章的四個錯，在：`Question` 的建構子、`main` 裡的 `p.done++`、`FillQuestion` 的 `chek`、`Badge` 的 `draw()`。現在一跑就是紅字，一個一個修好。",
+      "instructions": "四個錯分散在幾個分頁裡，上學期那五行照樣印在最前面。\n\n`Question` 的建構子寫 `answer = answer;`：參數和欄位同名，這樣是把參數放回參數自己，欄位 `answer` 一直是空的（`null`），所以 `q.check(\" 選午餐 \")` 印出 `false`。物件自己的欄位要寫成 `this.answer`。\n\n`Progress` 的 `done` 是 `private`，只有 `Progress` 自己能改，`main` 寫 `p.done++` 會出紅字；要用 `Progress` 自己開放的方法。\n\n`FillQuestion` 想換掉 `check`，名字卻打成 `chek`，沒覆寫到，`fill.check(\"選 午 餐\")` 用的還是 `Question` 原本的版本，印出 `false`。在方法上面加 `@Override`，編譯器就會說沒覆寫到。\n\n`Badge` 照 `Drawable` 的約定實作 `draw()`，前面少了 `public`，會出紅字：介面的方法都是 `public`，實作時也要寫。",
       "expectedShape": "this.answer = answer;\n…\n@Override\nboolean check(String typed) {\n…\npublic void draw() {\n…\np.finish();",
       "form": "program",
       "check": { "type": "output" },
@@ -37,8 +37,8 @@
     {
       "id": "last",
       "title": "最後一個",
-      "goal": "清單裝著 1、2、3 時，`total` 要交回 `6`：清單裡所有數字的和。\n\n最後一個是第十章的錯：`Main` 裡的 `total` 現在是紅字，修好它。",
-      "instructions": "按「完成」時會直接呼叫 `total` 測試，`main` 不會執行。",
+      "goal": "`total` 收到裝著 `1`、`2`、`3` 的清單時，要交回 `6`：清單裡所有數字的和。\n\n最後一個是第十章的錯：`total` 的參數寫成 `ArrayList<int>`，現在是紅字。修好這一行。",
+      "instructions": "`ArrayList<…>` 的角括號寫清楚清單裝什麼，裡面只能放類別。`int`、`double` 不是類別，要換成它們的包裝類別，例如裝小數的清單要寫 `ArrayList<Double>`，不能寫 `ArrayList<double>`。放進去、拿出來的時候 Java 會自動轉換，所以 `for (int n : list)` 不用改。\n\n這一步只看 `total` 交回的數，`main` 不用改。",
       "expectedShape": "static int total(ArrayList<…> list) {\n    …\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))"] },

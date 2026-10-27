@@ -9,8 +9,8 @@
     {
       "id": "records",
       "title": "最高分紀錄",
-      "goal": "`main` 已經寫好。記完四筆分數後要印出三行，每一課留最高分，沒記過的課是 0：\n`第1課：75`\n`第2課：80`\n`第3課：0`\n\n在 `Records.java` 寫好 `class Records`：欄位 `HashMap<String, Integer> best`；`void record(String unit, int score)` 第一次記的課直接放，記過的比原本高才更新；`int bestOf(String unit)` 交回那一課的最高分，沒有紀錄時交回 0。",
-      "instructions": "第一次記的課，`best` 裡還沒有它，`best.get(unit)` 會交回 `null`，不能拿來比大小，所以先用 `containsKey` 問有沒有。`getOrDefault(unit, 0)` 查不到時交回 0。",
+      "goal": "`main` 已經寫好：照順序記下 `第1課` 60 分、`第2課` 80 分、`第1課` 75 分、`第2課` 70 分。每一課留最高分，沒記過的課是 0，要印出：\n`第1課：75`\n`第2課：80`\n`第3課：0`\n\n在 `Records.java` 寫好 `class Records`：欄位 `HashMap<String, Integer> best`（對照表：用課名查最高分）；`void record(String unit, int score)` 第一次記的課直接放，記過的比原本高才更新；`int bestOf(String unit)` 交回那一課的最高分，沒有紀錄時交回 0。",
+      "instructions": "`HashMap<String, Integer>` 是用課名（`String`）查分數（`Integer`）的對照表：`put` 放進去、`get` 查出來，同一課再 `put` 一次，就會換掉原本的分數。分數要寫 `Integer`（`int` 的包裝類別），角括號裡不能寫 `int`。欄位要寫成 `= new HashMap<>()`，對照表才真的做出來。\n\n第一次記的課，`best` 裡還沒有它，`best.get(unit)` 會交回 `null`（什麼都沒有），不能拿來比大小，所以先用 `containsKey` 問有沒有。`getOrDefault(unit, 0)` 查不到時交回 0。",
       "expectedShape": "void record(String unit, int score) {\n    if (!best.containsKey(unit) || …) {\n        best.put(unit, score);\n    }\n}\n\nint bestOf(String unit) {\n    return best.getOrDefault(unit, 0);\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "hidden",
       "title": "隱藏測資",
-      "goal": "照順序記了 `第1課` 60 分、`第1課` 45 分，`bestAfter` 查 `第1課` 交回 `60`；什麼都沒記時，查 `第2課` 交回 `0`。\n\n在 `Main` 裡寫一個方法 `static int bestAfter(String[] units, int[] scores, String unit)`：照順序把每一筆記進一個新的 `Records`，交回 `unit` 的最高分。",
-      "instructions": "`units[i]` 和 `scores[i]` 是同一筆。\n\n按「完成」時會直接呼叫 `bestAfter` 測試，`main` 不會執行。例如照順序記了 `第1課` 60 分、`第1課` 45 分，查 `第1課` 要交回 `60`；什麼都沒記時，查 `第2課` 要交回 `0`。",
+      "goal": "`units` 是 `{\"第1課\", \"第1課\"}`、`scores` 是 `{60, 45}` 時，照順序記完，`bestAfter(units, scores, \"第1課\")` 交回 `60`。\n\n在 `Main` 裡寫一個方法 `static int bestAfter(String[] units, int[] scores, String unit)`：照順序把每一筆記進一個新的 `Records`，交回 `unit` 的最高分。",
+      "instructions": "`units[i]` 和 `scores[i]` 是同一筆：`units[0]` 是 `第1課`、`scores[0]` 是 `60`，就是第 1 課記了 60 分。沒有紀錄的課，跟 `bestOf` 一樣交回 0。\n\n這一步只看 `bestAfter` 交回什麼，`main` 不用改。",
       "expectedShape": "static int bestAfter(String[] units, int[] scores, String unit) {\n    Records r = new Records();\n    for (…) {\n        …\n    }\n    return r.bestOf(unit);\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.bestAfter(new String[]{\"第1課\", \"第1課\"}, new int[]{60, 45}, \"第1課\")", "Main.bestAfter(new String[]{}, new int[]{}, \"第2課\")"] },

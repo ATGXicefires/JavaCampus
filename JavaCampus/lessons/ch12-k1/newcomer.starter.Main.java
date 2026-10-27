@@ -15,6 +15,6 @@ public class Main {
         }
         String[] typed = {"選晚餐", " 選午餐"};
         Checker checker = new ExactChecker("選午餐");
-        // 每一次作答都用 checker 判斷：答錯印 RETRY，答對印 PASS
+        // 用 checker.check(…) 一個一個判斷 typed 的作答：答錯印 RETRY，答對印 PASS（不加引號）
     }
 }

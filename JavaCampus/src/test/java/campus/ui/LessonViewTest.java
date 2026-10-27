@@ -104,20 +104,26 @@ class LessonViewTest {
     }
 
     @Test
-    void givenVariablesSitUnderTheGoal(@TempDir Path dir) throws Exception {
+    void givenVariablesOpenTheEditor(@TempDir Path dir) throws Exception {
         ExecutorService runner = Executors.newSingleThreadExecutor();
         // 第 1 步過了，一進來就停在第 2 步「掛勾」，它的重點用到題目給的 gacha
         LessonView hooks = open(dir, runner, "ch02-k1", "boxes");
-        Node given = onFx(() -> hooks.lookup(".given-box"));
-        assertEquals("int gacha = 8;", onFx(() -> ((TextFlow) given).getChildren().stream()
-                .map(n -> ((Text) n).getText()).collect(Collectors.joining())));
-        List<Node> detail = onFx(() -> List.copyOf(given.getParent().getChildrenUnmodifiable()));
-        Node goal = onFx(() -> hooks.lookup(".step-goal"));
-        assertEquals(detail.indexOf(goal) + 1, detail.indexOf(given));
+        Node given = onFx(() -> hooks.lookup(".given-lines"));
+        assertTrue(onFx(given::isVisible));
+        TextFlow line = (TextFlow) onFx(() -> given.lookup(".given-line TextFlow"));
+        String code = onFx(() -> line.getChildren().stream().map(n -> ((Text) n).getText()).collect(Collectors.joining()));
+        String note = LessonLibrary.load(Path.of("lessons")).lesson("ch02-k1").vars().getFirst().note();
+        assertEquals("int gacha = 8;  // " + note, code);
+        assertTrue(onFx(() -> given.lookup(".given-lock")) != null);
+        // 夾在檔案分頁和編輯器中間，看起來就是程式最上面的幾行
+        List<Node> editor = onFx(() -> List.copyOf(given.getParent().getChildrenUnmodifiable()));
+        assertEquals(1, editor.indexOf(given));
+        assertTrue(onFx(() -> editor.get(0).getStyleClass().contains("file-tabs")));
+        assertNull(onFx(() -> hooks.lookup(".given-box")));
         assertEquals(List.of("筆記"), onFx(() -> tabNames(hooks)));
 
         LessonView plain = open(dir, runner, "ch01-k1");
-        assertNull(onFx(() -> plain.lookup(".given-box")));
+        assertFalse(onFx(() -> plain.lookup(".given-lines").isVisible()));
         assertEquals(List.of("筆記"), onFx(() -> tabNames(plain)));
         runner.shutdownNow();
     }

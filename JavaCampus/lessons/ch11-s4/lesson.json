@@ -9,8 +9,8 @@
     {
       "id": "memory",
       "title": "第一句話",
-      "goal": "按「＋」新增 `Memory.java`，用常數存學妹第一章印出的第一句話：`static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`。`main` 印出它。",
-      "instructions": "常數用 `Memory.FIRST_LINE` 叫出來。那句話的逗號和問號是全形的，可以從目標複製。",
+      "goal": "要印出 `學長，你在說外星語嗎？`：學妹第一章印出的第一句話。\n\n按「＋」新增 `Memory.java`，在 `public class Memory` 裡用常數存這句話：`static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`（`final` 是設定一次就不能再改）。再在 `main` 裡用 `Memory.FIRST_LINE` 印出它。",
+      "instructions": "`static final` 做出一個常數：`final` 是設定一次就不能再改，`static` 讓它屬於整個 `Memory` 類別，別的檔案用 `Memory.FIRST_LINE` 就拿得到。常數的名字習慣全部大寫，單字之間用 `_` 隔開。\n\n那句話的逗號和問號是全形的，可以從目標複製。",
       "expectedShape": "// Memory.java\npublic class Memory {\n    static final String FIRST_LINE = \"…\";\n}",
       "form": "program",
       "check": { "type": "output" },
@@ -23,8 +23,8 @@
     {
       "id": "egg",
       "title": "機關",
-      "goal": "在 `Main` 寫 `static String easterEgg(String input)`：輸入去掉前後空白後等於 `Memory.FIRST_LINE` 才交回訊息，否則交回空字串。訊息先寫成 `TODO`。",
-      "instructions": "比字串內容用 `equals`。按「完成」時會直接呼叫 `easterEgg` 測試，`main` 不會執行。",
+      "goal": "`easterEgg(\"學長，你在說外星語嗎？\")` 要交回 `\"TODO\"`，收到別的話就交回空字串 `\"\"`。\n\n在 `Main` 寫一個方法 `static String easterEgg(String input)`：`input` 先用 `trim()`（去掉前後空白），再用 `equals` 和 `Memory.FIRST_LINE` 比，一樣就交回訊息，不一樣就交回空字串。訊息先寫成 `\"TODO\"`。",
+      "instructions": "比字串的內容要用 `equals`，不要用 `==`：`==` 比的是是不是同一個盒子。`trim()` 做出來的是新字串，字一樣，盒子卻是新的：\n\n```\nString typed = \" 小白\".trim();\nSystem.out.println(typed == \"小白\");       // false\nSystem.out.println(typed.equals(\"小白\"));  // true\n```\n\n這一步只看 `easterEgg` 交回什麼，`main` 不用改。",
       "expectedShape": "static String easterEgg(String input) {\n    if (input.trim().equals(…)) {\n        return \"TODO\";\n    }\n    return \"\";\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.easterEgg(\"學長，你在說外星語嗎？\")", "Main.easterEgg(\" 學長，你在說外星語嗎？ \")", "Main.easterEgg(\"學長\")"] },

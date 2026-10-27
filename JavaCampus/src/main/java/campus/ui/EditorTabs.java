@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
@@ -26,6 +27,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.TwoDimensional.Bias;
@@ -53,6 +57,7 @@ final class EditorTabs extends VBox {
     private final Runnable onFilesChanged;
     private final HBox bar = new HBox();
     private final Button addButton = new Button("＋");
+    private final VBox given = new VBox();
     private final StackPane pages = new StackPane();
     private final List<FileTab> tabs = new ArrayList<>();
     private FileTab selected;
@@ -76,8 +81,53 @@ final class EditorTabs extends VBox {
         addButton.setTooltip(game.tooltip("新增檔案"));
         addButton.setOnAction(e -> promptNewFile());
         addButton.managedProperty().bind(addButton.visibleProperty());
+        vars.forEach(v -> given.getChildren().add(givenLine(v)));
+        given.getStyleClass().add("given-lines");
+        given.managedProperty().bind(given.visibleProperty());
         VBox.setVgrow(pages, Priority.ALWAYS);
-        getChildren().addAll(bar, pages);
+        getChildren().addAll(bar, given, pages);
+    }
+
+    /**
+     * 題目先放進執行環境的變數，寫成程式最上面的幾行，玩家才看得出它們就在程式裡；鎖住不能改，
+     * 不編行號，玩家自己的程式還是從第 1 行算，跟錯誤訊息的行號對得上。
+     */
+    private static Node givenLine(SetupVar v) {
+        String code = v.declaration(null) + (v.note() == null || v.note().isBlank() ? "" : "  // " + v.note());
+        TextFlow flow = new TextFlow();
+        int at = 0;
+        for (JavaTokens.Token t : JavaTokens.tokenize(code)) {
+            if (t.start() > at) {
+                flow.getChildren().add(givenText(code.substring(at, t.start()), null));
+            }
+            flow.getChildren().add(givenText(t.text(), JavaHighlighter.styleOf(t)));
+            at = t.end();
+        }
+        Label gutter = new Label("  ");
+        gutter.setGraphic(lockIcon());
+        gutter.setContentDisplay(ContentDisplay.CENTER);
+        gutter.getStyleClass().addAll("lineno", "given-gutter");
+        gutter.setMaxHeight(Double.MAX_VALUE);
+        HBox.setHgrow(flow, Priority.ALWAYS);
+        HBox line = new HBox(gutter, flow);
+        line.getStyleClass().add("given-line");
+        return line;
+    }
+
+    private static Text givenText(String s, String styleClass) {
+        Text t = new Text(s);
+        t.getStyleClass().add("given-code");
+        if (styleClass != null) {
+            t.getStyleClass().add(styleClass);
+        }
+        return t;
+    }
+
+    private static Node lockIcon() {
+        SVGPath lock = new SVGPath();
+        lock.setContent("M3.5 6.5 V4.5 A3 3 0 0 1 9.5 4.5 V6.5 M1.5 6.5 H11.5 V13 H1.5 Z");
+        lock.getStyleClass().add("given-lock");
+        return lock;
     }
 
     /**
@@ -95,6 +145,8 @@ final class EditorTabs extends VBox {
         selected = null;
         files.forEach(this::addTab);
         addButton.setVisible(canAdd);
+        // 完整程式不吃題目變數
+        given.setVisible(!canAdd && !vars.isEmpty());
         select(tabs.getFirst());
     }
 

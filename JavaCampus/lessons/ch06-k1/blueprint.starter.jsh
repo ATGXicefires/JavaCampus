@@ -1,2 +1,2 @@
-// 設計圖：class Item，欄位 name 和 kind
-// new 一個出來：名字 小白、種類 筆電，印出 小白（筆電）
+// 寫設計圖 class Item，欄位有 String name 和 String kind
+// 再用 new 做出一個 Item，名字設成 小白、種類設成 筆電，印出 小白（筆電）

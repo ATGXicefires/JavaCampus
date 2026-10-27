@@ -20,4 +20,5 @@ class QuizScreen extends Screen {
     }
 }
 
+// 先 new 一個 LessonScreen、再 new 一個 QuizScreen，各 show() 一次
 new Screen().show();

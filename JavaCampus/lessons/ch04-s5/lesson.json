@@ -5,15 +5,15 @@
   "partner": "亭瑄",
   "notes": ["return", "else-if"],
   "vars": [
-    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}" },
-    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}" }
+    { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}", "note": "口味的名字" },
+    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}", "note": "各口味的甜度" }
   ],
   "steps": [
     {
       "id": "review",
       "title": "一句話評語",
-      "goal": "`review(2)` 交回 `可以。`，`review(5)` 交回 `太甜。`。\n\n寫一個方法 `static String review(int sweetness)`，依甜度 `sweetness`（1～5）交回評語：1～2 交回 `可以。`，3～4 交回 `甜。`，5 交回 `太甜。`。",
-      "instructions": "按「完成」時會呼叫 `review(1)` 到 `review(5)`，檢查每一個交回的評語。",
+      "goal": "`sweetness` 是甜度（1～5），`review(5)` 要交回 `太甜。`。\n\n寫一個方法 `static String review(int sweetness)`，依甜度用 `return` 交回評語：1～2 交回 `可以。`，3～4 交回 `甜。`，5 交回 `太甜。`。",
+      "instructions": "編輯器最上面兩行 `String[] flavors = {\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"};` 和 `int[] sweet = {2, 4, 3, 3, 5};` 是題目先寫好的，你的程式可以直接用 `flavors` 和 `sweet`。這一步還用不到，下一步才會用。\n\n方法裡可以有好幾個 `return`：哪一個先執行到，就交回哪一個，方法也就結束了。配上 `if`／`else if`／`else`（從上往下問，第一個成立的就做），就能依甜度交回不同的評語。",
       "expectedShape": "static String review(int sweetness) {\n    if (…) {\n        return \"可以。\";\n    } else if (…) {\n        …\n    }\n    …\n}",
       "check": { "type": "values", "exprs": ["review(1)", "review(2)", "review(3)", "review(4)", "review(5)"] },
       "hints": {
@@ -25,8 +25,8 @@
     {
       "id": "list",
       "title": "附在排行榜上",
-      "goal": "原味甜度 2，要印出 `原味：可以。`；黑糖甜度 5，要印出 `黑糖：太甜。`。\n\n照題目給的 `flavors`（口味名稱）的順序，每種口味印一行：名字、`：`，再接上 `review` 依 `sweet`（各口味的甜度）交回的評語。",
-      "instructions": "`flavors` 和 `sweet` 是題目給的陣列，同一格是同一種口味。`：` 是全形，可以從重點複製。\n\n按「完成」時，會把 `sweet` 改成 `{5, 5, 5, 5, 5}` 再檢查一次，所以評語要用 `review` 算，不能直接寫。",
+      "goal": "`sweet` 是各口味的甜度，現在是 `{2, 4, 3, 3, 5}`，和 `flavors` 同一格是同一種口味。要印出 5 行：\n`原味：可以。`\n`巧克力：甜。`\n`芋頭：甜。`\n`花生：甜。`\n`黑糖：太甜。`\n\n用 `for` 照 `flavors` 的順序，每種口味印一行：名字、`：`，再接上 `review` 依那一格的甜度交回的評語。",
+      "instructions": "`：` 是全形，可以從重點複製。\n\n`review` 交回來的字串可以直接用 `+` 接在後面，例如 `\"評語：\" + review(3)` 是 `評語：甜。`。",
       "expectedShape": "for (…) {\n    System.out.println(flavors[i] + \"：\" + …);\n}",
       "check": {
         "type": "output",

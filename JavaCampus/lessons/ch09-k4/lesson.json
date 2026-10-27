@@ -9,8 +9,8 @@
     {
       "id": "screen",
       "title": "抽象的畫面",
-      "goal": "印出三行，依序是標題列、內容、頁尾：\n`== 小白學程式 ==`\n`今天的課：for 迴圈`\n`—— 滷肉和分號陪你寫 ——`\n\n寫 `abstract class Screen`：`void show()` 先印標題列，再呼叫 `body()`，最後印頁尾；`body()` 寫成 `abstract`。再寫 `class LessonScreen extends Screen`，`body()` 印出內容那一行。最後 `new` 一個 `LessonScreen` 呼叫 `show()`。",
-      "instructions": "`——` 可以從目標複製。`abstract` 方法沒有大括號，直接用分號結尾。",
+      "goal": "印出三行，依序是標題列、內容、頁尾：\n`== 小白學程式 ==`\n`今天的課：for 迴圈`\n`—— 滷肉和分號陪你寫 ——`\n\n寫 `abstract class Screen`（抽象類別：共用的寫在這裡）：`void show()` 先印標題列，再呼叫 `body()`，最後印頁尾；`body()` 寫成 `abstract`（沒有內容，留給子類別寫）。再寫 `class LessonScreen extends Screen`，`body()` 印出內容那一行。最後 `new` 一個 `LessonScreen` 呼叫 `show()`。",
+      "instructions": "每個畫面的標題列和頁尾都一樣，寫在 `Screen` 的 `show()` 裡一次就好。中間的內容每個畫面不同，先寫成 `abstract void body();`：只有名字，沒有大括號，直接用分號結尾。\n\n`LessonScreen extends Screen` 繼承了 `Screen`，直接就有寫好的 `show()`，只要補上自己的 `body()`。`show()` 裡呼叫 `body()` 的時候，用的就是 `LessonScreen` 寫的那一個。\n\n`——` 可以從目標複製。",
       "expectedShape": "abstract class Screen {\n    void show() {\n        …\n        body();\n        …\n    }\n\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() {\n        …\n    }\n}\n\n…",
       "check": { "type": "output" },
       "hints": {
@@ -22,8 +22,8 @@
     {
       "id": "new",
       "title": "不能直接 new",
-      "goal": "修好後印出兩個畫面，先是 `今天的課：for 迴圈`，再是 `第 1 題：if-else 像什麼？`，每個上下都有標題列和頁尾。\n\n起始碼多寫好了 `QuizScreen`，但最後一行寫了 `new Screen()`，紅字。改成先 `new` 一個 `LessonScreen`、再 `new` 一個 `QuizScreen`，各 `show()` 一次。",
-      "instructions": "抽象類別還沒寫完，不能直接 `new`。",
+      "goal": "修好後印出兩個畫面，先是 `今天的課：for 迴圈`，再是 `第 1 題：if-else 像什麼？`，每個上下都有標題列和頁尾。\n\n起始碼多寫好了 `QuizScreen`，但最後一行 `new Screen().show();` 是紅字：`Screen` 是抽象類別，不能直接 `new`。把這一行改成先 `new` 一個 `LessonScreen`、再 `new` 一個 `QuizScreen`，各 `show()` 一次。",
+      "instructions": "抽象類別還沒寫完：`Screen` 的 `body()` 只有名字、沒有內容，`new` 出來也不知道中間要印什麼，所以不能 `new Screen()`。要 `new` 的是已經寫好 `body()` 的子類別。\n\n`new LessonScreen().show();` 一行做兩件事：做出一個 `LessonScreen`，馬上叫它 `show()`。",
       "expectedShape": "new LessonScreen().show();\nnew …().show();",
       "check": { "type": "output" },
       "hints": {

@@ -5,14 +5,14 @@
   "partner": "二弘",
   "notes": ["max-min", "test-data"],
   "vars": [
-    { "name": "myScores", "type": "int[]", "value": "{34, 41, 62}" }
+    { "name": "myScores", "type": "int[]", "value": "{34, 41, 62}", "note": "幾次考試的分數" }
   ],
   "steps": [
     {
       "id": "max",
       "title": "最高分",
-      "goal": "陣列是 `{34, 41, 62}` 時，`max` 交回 62；`{-3, -7}` 交回 -3。\n\n寫一個方法 `static int max(int[] a)`，交回陣列 `a` 裡最大的數字。",
-      "instructions": "先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n會用 `{-3, -7}` 測：從 0 開始比的話，0 會贏過每一個人。",
+      "goal": "`a` 是 `{34, 41, 62}` 時，`max(a)` 要交回 62；是 `{-3, -7}` 時，要交回 -3。\n\n寫一個方法 `static int max(int[] a)`，交回 `a` 裡最大的數字。",
+      "instructions": "編輯器最上面那行 `int[] myScores = {34, 41, 62};` 是題目先寫好的，最後一步才會用到。\n\n找最大的方法：先把第一格 `a[0]` 當成目前最大，再從第二格開始一格一格比，遇到更大的就換掉。走完一遍，留下來的就是最大的。\n\n不要從 0 開始比：全部都是負數的時候，例如 `{-3, -7}`，0 會比每一個都大，最後交回 0 就錯了。拿來測程式的資料叫**測資**，要多挑這種刁鑽的：負數、只有一格、全部一樣。",
       "expectedShape": "static int max(int[] a) {\n    int best = …;\n    for (…) {\n        …\n    }\n    return best;\n}",
       "check": { "type": "values", "exprs": ["max(new int[]{34, 41, 62})", "max(new int[]{62, 41, 34})", "max(new int[]{-3, -7})", "max(new int[]{5})"] },
       "hints": {
@@ -24,8 +24,8 @@
     {
       "id": "min",
       "title": "最低分",
-      "goal": "陣列是 `{34, 41, 62}` 時，`min` 交回 34；`{90, 95}` 交回 90。\n\n寫一個方法 `static int min(int[] a)`，交回陣列 `a` 裡最小的數字。",
-      "instructions": "和 `max` 反過來。會用 `{90, 95}` 測：從 0 開始比的話，0 會比每個人都小。",
+      "goal": "`a` 是 `{34, 41, 62}` 時，`min(a)` 要交回 34；是 `{90, 95}` 時，要交回 90。\n\n寫一個方法 `static int min(int[] a)`，交回 `a` 裡最小的數字。",
+      "instructions": "和 `max` 反過來：先把第一格當成目前最小，遇到更小的就換掉。\n\n一樣不要從 0 開始比：像 `{90, 95}` 這樣每個數都比 0 大的時候，0 會比每一個都小，最後交回 0 就錯了。",
       "expectedShape": "static int min(int[] a) {\n    …\n}",
       "check": { "type": "values", "exprs": ["min(new int[]{34, 41, 62})", "min(new int[]{90, 95})", "min(new int[]{5})"] },
       "hints": {
@@ -37,8 +37,8 @@
     {
       "id": "gap",
       "title": "差了幾分",
-      "goal": "分數是 `{34, 41, 62}` 時，最高 62、最低 34，要印出 `最高和最低差了 28 分`。\n\n用題目給的 `myScores`（三次考試的分數）和你寫的 `max`、`min` 算出最高和最低差幾分，照這個格式印出來。",
-      "instructions": "`myScores` 這個陣列題目已經做好了，直接拿來用。\n\n按「完成」時，會把 `myScores` 改成 `{50, 90}` 再檢查一次，那時要印出 `最高和最低差了 40 分`，所以要用 `myScores` 來算，不能直接寫 `28`。",
+      "goal": "現在 `myScores` 是 `{34, 41, 62}`，最高 62、最低 34，要印出 `最高和最低差了 28 分`。\n\n用你寫的 `max` 和 `min` 算出 `myScores` 最高和最低差幾分，照這個格式印出來。",
+      "instructions": "編輯器最上面那行 `int[] myScores = {34, 41, 62};` 是題目先寫好的，你的程式可以直接用 `myScores`。\n\n方法交回來的數可以直接拿來算，例如 `max(myScores)` 就是 `myScores` 裡最大的數字。\n\n算差距的減法放進字串中間時要加括號：`+` 從左往右算，不加括號的話，`-` 會碰到字串。",
       "expectedShape": "System.out.println(\"最高和最低差了 \" + (…) + \" 分\");",
       "check": {
         "type": "output",

@@ -5,14 +5,14 @@
   "partner": "二弘",
   "notes": ["array", "index", "array-loop"],
   "vars": [
-    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}" }
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" }
   ],
   "steps": [
     {
       "id": "ends",
       "title": "第一格和最後一格",
-      "goal": "分數是 `{72, 58, 65, 80, 49}` 時，要印出第一格 `72` 和最後一格 `49`，一個一行。\n\n用題目給的陣列 `scores`（一排小考分數）印出這兩格。",
-      "instructions": "`scores` 是一個陣列，像一排置物櫃，每一格放一個分數。題目已經做好了。\n\n置物櫃的編號從 0 開始，第一格是 `scores[0]`。最後一格的編號是「格數減一」，格數是 `scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 和 `{60}` 再檢查兩次。格數不一樣，所以最後一格不能直接寫 `scores[4]`。",
+      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`，要印出第一格 `72` 和最後一格 `49`，一個一行。\n\n`scores` 是陣列（一排置物櫃，一格放一個分數）。用格子的編號拿出這兩格；最後一格的編號，要用 `scores.length`（總共有幾格）算出來。",
+      "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n`int[]` 是「一排 `int`」：大括號裡用逗號隔開，一格放一個數。要拿出某一格，在陣列名字後面寫 `[編號]`，這個編號叫索引，從 0 開始。例如 `int[] cups = {3, 8, 6};`，`cups[0]` 是 3，`cups[1]` 是 8。\n\n`cups.length` 是總共有幾格，這裡是 3。編號從 0 開始，所以 3 格的編號是 0、1、2，最後一格是 `cups[2]`，編號比格數少一。",
       "expectedShape": "System.out.println(scores[…]);\nSystem.out.println(scores[…]);",
       "check": {
         "type": "output",
@@ -27,8 +27,8 @@
     {
       "id": "sum",
       "title": "全部加起來",
-      "goal": "`{72, 58, 65, 80, 49}` 這五個分數加起來是 324。\n\n用 `for` 走過 `scores` 的每一格，算出全部分數的總和，存進 `sum`。",
-      "instructions": "`i` 從 0 走到最後一格，每一圈把 `scores[i]` 加進 `sum`。條件寫 `i < scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，所以要用 `for` 一格一格加，不能直接寫 `324`。",
+      "goal": "現在 `scores` 是 `{72, 58, 65, 80, 49}`，五個分數加起來是 324。\n\n用 `for` 走過 `scores` 的每一格（從第 0 格到最後一格，每一格看一次），把分數加進 `sum`。",
+      "instructions": "`for` 的 `i` 剛好可以當格子的編號。例如這段會把 `cups` 的每一格印出來：\n\n```\nint[] cups = {3, 8, 6};\nfor (int i = 0; i < cups.length; i++) {\n    System.out.println(cups[i]);\n}\n```\n\n`i` 從 0 開始，每一圈加一，`cups[i]` 就依序是第 0 格、第 1 格、第 2 格。條件是 `i < cups.length`，不是 `<=`：3 格的編號只到 2，`i` 變成 3 就要停。\n\n加總也是這樣走過每一格，只是把印出來換成用 `+=` 把那一格的分數加進 `sum`。",
       "expectedShape": "int sum = 0;\nfor (int i = 0; i < …; i++) {\n    sum += …;\n}",
       "check": {
         "type": "values",
@@ -44,8 +44,8 @@
     {
       "id": "avg",
       "title": "平均",
-      "goal": "五個分數總和 324，平均是 64.8，小數要留下來。\n\n用上一步的 `sum` 算出 `scores` 的平均，存進 `double avg`。",
-      "instructions": "平均是總和除以有幾格，格數是 `scores.length`。\n\n按「完成」時，會把 `scores` 改成 `{90, 85}` 再檢查一次，所以要除以 `scores.length`，不能直接除以 5。",
+      "goal": "現在 `sum` 是 324、`scores` 有 5 格，平均是 64.8。\n\n用上一步的 `sum` 除以 `scores` 的格數，存進 `double avg`，小數要留下來。",
+      "instructions": "格數是 `scores.length`。\n\n`sum` 和 `scores.length` 都是 `int`，兩個 `int` 相除會把小數丟掉。要先把其中一邊換成小數：`(double)` 會把緊接在它後面的東西換成小數，例如 `(double) 7 / 2` 是 `3.5`。",
       "expectedShape": "double avg = …;",
       "check": {
         "type": "values",
