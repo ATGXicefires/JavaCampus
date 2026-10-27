@@ -14,7 +14,7 @@
       "goal": "`new LuRouFan().eat()` 交回 `吃滷肉飯`，`new KongRouFan().eat()` 交回 `吃控肉飯`。\n\n寫 `interface Lunch`（約定：只說中午要吃，不管吃什麼），裡面只有 `String eat();`。再寫 `LuRouFan` 和 `KongRouFan` 兩個類別實作它，`eat()` 各自交回上面那句。",
       "instructions": "編輯器最上面那行 `String[] days = {\"星期一\", \"星期二\", \"星期三\", \"星期四\", \"星期五\"};` 是題目先寫好的，下一步才會用到。\n\n`interface Lunch` 是一張約定，只說「中午要吃」：`String eat();` 只有名字和回傳型別，直接用分號結尾。吃什麼由答應這張約定的類別決定：寫了 `implements Lunch`，就要寫出自己的 `public String eat()`，用 `return` 交回要吃的東西。\n\n`new LuRouFan().eat()` 是做出一個 `LuRouFan`，馬上問它的 `eat()`。這一步不用印出來，只看 `eat()` 交回什麼。",
       "expectedShape": "interface Lunch {\n    String eat();\n}\n\nclass LuRouFan implements Lunch {\n    public String eat() {\n        …\n    }\n}\n\nclass KongRouFan implements Lunch {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new LuRouFan().eat()", "new KongRouFan().eat()"] },
+      "check": { "type": "values", "exprs": ["new LuRouFan().eat()", "new KongRouFan().eat()"], "uses": ["interface Lunch", "class LuRouFan implements Lunch", "class KongRouFan implements Lunch"] },
       "hints": {
         "lead": "介面規定行為，類別各自實作⋯⋯",
         "plain": "⋯⋯白話：`Lunch` 只說「中午要吃」，吃滷肉飯還是控肉飯，由實作的類別決定。"

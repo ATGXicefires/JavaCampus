@@ -13,7 +13,7 @@
       "instructions": "`System.out.println(c)` 印一個物件時，印的是它的 `toString()`。`toString()` 是每個類別都有的方法，本來就是 `public`，覆寫的時候前面也要寫 `public`。\n\n`Credit` 可以按「＋」放在自己的檔案：完整的專題就是這樣好幾個檔案一起合作，從 `Main` 的 `main` 開始跑。`Main.java` 用到 `ArrayList`，最上面要寫 `import java.util.ArrayList;`。",
       "expectedShape": "public String toString() {\n    return role + \" \" + name;\n}\n…\nfor (Credit c : credits) {\n    System.out.println(c);\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["public String toString()"] },
       "hints": {
         "lead": "toString 決定每一行的樣子。",
         "plain": "每一位成員都是一個 `Credit`，印出來的樣子寫在 `toString()` 裡。名單排進清單，迴圈一行一行印。"

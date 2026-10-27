@@ -12,7 +12,7 @@
       "goal": "備審資料的每一節都有標題和內容：`new Project().title()` 交回 `專題製作`，`new License().body()` 交回 `電腦軟體設計`。\n\n寫 `interface Section`（每一節都要照的約定），裡面有 `String title();` 和 `String body();`。再寫三個類別實作它，各自用 `title()`／`body()` 交回自己的標題／內容：`Project` 是 `專題製作`／`小白學程式`，`License` 是 `乙級證照`／`電腦軟體設計`，`Statement` 是 `自傳`／`把術語翻成人話`。",
       "instructions": "`interface Section` 是一張約定：每一節都要會用 `title()` 交回標題、用 `body()` 交回內容，交回什麼由每一節自己決定。約定裡只寫方法的名字和回傳型別，直接用分號結尾。\n\n`class Project implements Section` 答應了這張約定，兩個方法都要寫出來，用 `return` 交回自己的字，前面還要加 `public`。\n\n`new Project().title()` 是做出一個 `Project`，馬上問它的 `title()`。這一步不用印出來，只看這些方法交回什麼。",
       "expectedShape": "interface Section {\n    String title();\n\n    String body();\n}\n\nclass Project implements Section {\n    public String title() {\n        …\n    }\n    …\n}\n…",
-      "check": { "type": "values", "exprs": ["new Project().title()", "new License().body()"] },
+      "check": { "type": "values", "exprs": ["new Project().title()", "new License().body()"], "uses": ["interface Section", "implements Section"] },
       "hints": {
         "lead": "三節，同一個約定。",
         "plain": "備審資料的每一節長得都一樣：一個標題、一段內容。約定好這兩個方法，每一節各自填上自己的字。"

@@ -12,7 +12,7 @@
       "goal": "畫出一個按鈕，就是印出一行 `[ 開始學習 ]`。\n\n寫 `interface Drawable`（介面，一張約定：只說要會 `draw()`，不管怎麼畫），裡面只有 `void draw();`。再寫 `class Button implements Drawable`（答應照這張約定做），在 `draw()` 印出這一行。最後 `new` 一個按鈕，呼叫它的 `draw()`。",
       "instructions": "`interface` 只寫方法的名字、參數和回傳型別，不寫內容，所以 `void draw();` 直接用分號結尾，沒有大括號。\n\n類別後面寫 `implements` 和介面的名字，就是答應照這張約定做：約定裡的方法每一個都要寫出來，大括號裡寫自己的做法。例如：\n\n```\ninterface Alarm {\n    void ring();\n}\n\nclass Phone implements Alarm {\n    public void ring() {\n        System.out.println(\"鈴鈴鈴\");\n    }\n}\n```\n\n介面裡的方法都是 `public`，實作的時候前面也要寫 `public`。",
       "expectedShape": "interface Drawable {\n    void draw();\n}\n\nclass Button implements Drawable {\n    public void draw() {\n        …\n    }\n}\n\n…",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["interface Drawable", "class Button implements Drawable"] },
       "hints": {
         "lead": "照約定寫 draw()，前面加 public。",
         "plain": "`Drawable` 像一張約定：只寫「要會畫」，不管怎麼畫。`Button` 答應了這張約定，就要寫出自己的 `draw()`。"
@@ -25,7 +25,7 @@
       "goal": "按鈕 `[ 開始學習 ]` 下面再畫一條進度條：做完的格數 `done` 是 3、總格數 `total` 是 5 時，畫出 `■■■□□`，做完的是 `■`，剩下的是 `□`。\n\n寫 `class ProgressBar implements Drawable`：欄位 `int done`、`int total`，建構子 `ProgressBar(int done, int total)`，`draw()` 照這兩個欄位印出進度條。最後用 `new ProgressBar(3, 5)` 做一條，呼叫它的 `draw()`。",
       "instructions": "`■` 和 `□` 可以從目標複製。\n\n字串的 `repeat` 會把字串重複好幾次，例如 `\"=\".repeat(4)` 是 `====`。做完幾格就重複幾個 `■`；剩下幾格，用 `total` 和 `done` 算出來，再重複那麼多個 `□`。\n\n上一步畫按鈕的程式留著，按鈕和進度條各畫一次。",
       "expectedShape": "class ProgressBar implements Drawable {\n    …\n\n    public void draw() {\n        System.out.println(\"■\".repeat(…) + \"□\".repeat(…));\n    }\n}",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["class ProgressBar implements Drawable"] },
       "hints": {
         "lead": "repeat 畫出一排格子。",
         "plain": "同一張約定，進度條有自己的畫法：做完幾格就重複幾個 `■`，剩下的用 `□` 補滿。第四章的 `repeat` 正好用得上。"

@@ -12,7 +12,7 @@
       "goal": "`new` 一個扭蛋包 `bag`、加 8 個扭蛋之後，`bag.getCount()` 要交回 `8`。\n\n寫 `class GachaBag`：欄位 `private int count`（`private`：只有這個類別自己能開的抽屜），方法 `void add()` 加一個、`int getCount()` 交回數量。再 `new` 一個 `bag`，呼叫 8 次 `add()`。",
       "instructions": "欄位前面加了 `private`，就只有這個類別自己的方法能讀、能改，外面碰不到。外面想看、想改，都要透過類別自己開放的方法：`add()` 讓外面照規矩加，一次只能加一個；`getCount()` 把數量交出去讓外面看，這種方法叫 getter。\n\n```\nclass Locker {\n    private int number = 7;\n\n    int getNumber() {\n        return number;\n    }\n}\n\nLocker locker = new Locker();\nSystem.out.println(locker.getNumber());\n```\n\n最後一行印出 `7`。寫成 `locker.number` 的話，會被編譯器擋下來。",
       "expectedShape": "class GachaBag {\n    private int count;\n    …\n}\n\nGachaBag bag = new GachaBag();\n…",
-      "check": { "type": "values", "exprs": ["bag.getCount()"] },
+      "check": { "type": "values", "exprs": ["bag.getCount()"], "uses": ["private int count"] },
       "hints": {
         "lead": "外面只能用方法。",
         "plain": "`count` 鎖在扭蛋包裡面，只有 `GachaBag` 自己的方法能改它。`add()` 讓它加一，`getCount()` 把數量交出來。加 8 個就叫 8 次 `add()`，用 `for` 比較快。"
@@ -25,7 +25,7 @@
       "goal": "最後一行 `bag.count = 99;` 想從外面直接改數量，現在是紅字：`count` 是 `private`，外面碰不到。修好後，`bag.getCount()` 要交回 `9`：原本的 8 個再加 1 個。\n\n刪掉這一行，改成用 `add()` 再加一個。",
       "instructions": "`private` 的欄位，外面連讀都不行，更不能直接改。紅字的意思是：`count` 只有 `GachaBag` 自己的程式能用。\n\n外面想多一個扭蛋，只能照扭蛋包開放的方法來，呼叫 `add()`。`add()` 一次只加一個，扭蛋包就不會被人從外面一下改成 99 個。",
       "expectedShape": "bag.…();",
-      "check": { "type": "values", "exprs": ["bag.getCount()"] },
+      "check": { "type": "values", "exprs": ["bag.getCount()"], "uses": ["private int count"] },
       "hints": {
         "lead": "照規矩，用 add()。",
         "plain": "`private` 的欄位，外面連看都不行，更不能直接改。想多一個扭蛋，就照扭蛋包開放的方法 `bag.add();`。"
