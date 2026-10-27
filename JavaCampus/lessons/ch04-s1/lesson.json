@@ -38,7 +38,7 @@
       "goal": "`report(1, 4)` 要印出 `完成 25%`，`report(3, 4)` 要印出 `完成 75%`。\n\n寫一個方法 `static void report(int part, int whole)`（`void`：做完事，什麼都不交回），用 `percent` 算出百分比再印出來。寫好後呼叫 `report(1, 4)` 和 `report(3, 4)`，共印兩行。",
       "instructions": "`report` 不用自己算百分比：在方法裡呼叫 `percent(part, whole)`，拿它交回的數字排成一句話印出來。",
       "expectedShape": "static void report(int part, int whole) {\n    System.out.println(…);\n}\n\nreport(1, 4);\nreport(3, 4);",
-      "check": { "type": "output" },
+      "check": { "type": "output", "exprs": ["report(1, 2)"] },
       "hints": {
         "lead": "`void` 方法沒有回傳值，只負責輸出⋯⋯",
         "plain": "⋯⋯白話：交回來的值可以再拿去用，印出來的就只能看。`report` 用 `percent` 交回的數字，排成一句話印出來。"

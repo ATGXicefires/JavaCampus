@@ -9,7 +9,6 @@ import campus.engine.Verdict;
 import campus.engine.Verifier;
 import campus.fx.Motion;
 import campus.fx.Sfx;
-import campus.lesson.Check;
 import campus.lesson.Handbook;
 import campus.lesson.Lesson;
 import campus.lesson.Reactions;
@@ -475,7 +474,7 @@ final class LessonView extends StackPane {
         }
         List<SourceFile> files = editors.files();
         Step step = current;
-        List<String> probes = step.check().type() == Check.Mode.VALUES ? step.check().exprs() : List.of();
+        List<String> probes = step.check().exprs();
         setBusy(true);
         game.sfx.play(Sfx.Sound.RUN);
         game.background(() -> step.form() == Step.Form.PROGRAM
@@ -621,9 +620,7 @@ final class LessonView extends StackPane {
                 nodes.add(new Separator());
             }
             for (Probe p : r.probes()) {
-                Label line = new Label(p.error() == null
-                        ? p.expr() + " = " + p.value() + "　（" + p.type() + "）"
-                        : p.expr() + "：（還沒有這個變數）");
+                Label line = new Label(probeLine(p));
                 line.getStyleClass().add("probe-line");
                 nodes.add(line);
             }
@@ -637,6 +634,18 @@ final class LessonView extends StackPane {
             clear.play();
         }
         editors.showProblems(r.problems());
+    }
+
+    /** 檢查式的值和型別；回傳 void 的呼叫沒有值，改列出它印了什麼。 */
+    private static String probeLine(Probe p) {
+        if (p.error() != null) {
+            return p.expr() + "：（還沒有這個變數）";
+        }
+        if (!p.type().equals("void")) {
+            return p.expr() + " = " + p.value() + "　（" + p.type() + "）";
+        }
+        String printed = p.output().stripTrailing();
+        return printed.isEmpty() ? p.expr() + "：（沒有印出東西）" : p.expr() + " 印出：" + printed;
     }
 
     private Node problemCard(Problem p, Outcome outcome) {

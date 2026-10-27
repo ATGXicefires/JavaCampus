@@ -25,7 +25,7 @@
       "goal": "要印出 `7`。\n\n做一個叫 `gacha` 的 `int` 盒子，放進 `7`，再把它印出來。`int` 是裝整數的盒子。",
       "instructions": "PDF 的下一個例子是扭蛋。`int` 盒子的寫法跟 `String` 一樣：種類、名字、`=`、內容、分號。數字不用加引號：`7` 是可以拿來算的數字，`\"7\"` 是長得像 7 的文字。\n\n要印出盒子裡的東西，`println` 的括號裡寫盒子的名字，不加引號。例如做好 `int age = 16;` 之後，`System.out.println(age);` 會印出 `16`；寫成 `System.out.println(\"age\");` 只會印出 `age` 這三個字母。",
       "expectedShape": "int gacha = …;\nSystem.out.println(…);",
-      "check": { "type": "values", "exprs": ["gacha"] },
+      "check": { "type": "output", "exprs": ["gacha"] },
       "hints": {
         "lead": "數字不用引號。",
         "plain": "`int` 盒子只裝整數。`7` 是數字，`\"7\"` 是一個長得像 7 的字，兩個不一樣。印的時候括號裡寫盒子的名字 `gacha`，不要加引號。"
@@ -38,7 +38,7 @@
       "goal": "要印出兩行：\n`7`\n`8`\n\n原本的程式留著，在下面用 `=`（把右邊的東西放進盒子）把 `gacha` 換成 `8`，再印一次。",
       "instructions": "又抽到一個了。盒子做好以後，寫盒子的名字、`=`、新的值，就會把盒子裡原本的東西換掉。例如 `int age = 16;` 之後寫 `age = 17;`，`age` 裡就從 16 換成 17。\n\n盒子已經做好了，這次前面**不用再寫** `int`。\n\n程式從上往下跑。第一次印的時候盒子裡還是 7，換成 8 以後再印一次，才會印出 8。",
       "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);\n… = …;\nSystem.out.println(…);",
-      "check": { "type": "output" },
+      "check": { "type": "output", "exprs": ["gacha"] },
       "hints": {
         "lead": "盒子已經有了。不用再寫 int。",
         "plain": "再寫一次 `int gacha` 等於再做一個同名的盒子，電腦會說名字重複了。要換掉盒子裡的東西，只要寫名字、`=`、新的值。"

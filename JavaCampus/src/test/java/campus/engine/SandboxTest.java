@@ -292,4 +292,13 @@ class SandboxTest {
         assertEquals("1200", r.probes().get(0).value());
         assertTrue(r.probes().get(1).error() != null);
     }
+
+    @Test
+    void probesRecordWhatTheyPrintApartFromTheProgram() {
+        RunResult r = sandbox.run(List.of(), "static void hi(String who) {\n    System.out.println(\"嗨，\" + who);\n}\n\nhi(\"小白\");",
+                List.of("hi(\"阿成\")"));
+        assertEquals("嗨，小白", r.output().strip());
+        assertEquals("void", r.probes().getFirst().type());
+        assertEquals("嗨，阿成", r.probes().getFirst().output().strip());
+    }
 }

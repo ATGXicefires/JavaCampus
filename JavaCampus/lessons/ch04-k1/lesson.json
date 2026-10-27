@@ -12,7 +12,7 @@
       "goal": "呼叫一次 `hello();`，就要印出一行 `滷肉：「歡迎來到小白！」`（滷肉是 App 裡的小老師）。\n\n寫一個方法 `static void hello()`（方法：把一件事包起來、取個名字），印出這一行，再呼叫它兩次，共印兩行。",
       "instructions": "把要做的事包進大括號，取名叫 `hello`，就是一個方法。寫好以後，要用的時候寫 `hello();` 叫它。\n\n```\nstatic void 名字() {\n    要做的事\n}\n```\n\n`static` 先照寫。`void` 的意思是這個方法做完事，不交回任何東西。\n\n冒號和引號是全形，可以從重點複製。",
       "expectedShape": "static void hello() {\n    …\n}\n\nhello();\n…",
-      "check": { "type": "output" },
+      "check": { "type": "output", "exprs": ["hello()"] },
       "hints": {
         "lead": "先寫好，再叫兩次。",
         "plain": "方法就像一張寫好的便條：大括號裡是要做的事，`hello` 是便條的名字。寫 `hello();` 就是照便條做一次，叫兩次就做兩次。"
@@ -25,7 +25,7 @@
       "goal": "`say(\"滷肉\", \"沒關係，再跑一次！\")` 要印出 `滷肉：「沒關係，再跑一次！」`，`say(\"分號\", \"分號。\")` 要印出 `分號：「分號。」`。\n\n寫一個方法 `static void say(String who, String line)`，照這個格式印出誰說了什麼；括號裡的 `who` 和 `line` 是參數（呼叫時交給方法的東西）。寫好後用上面兩個呼叫印出這兩行。",
       "instructions": "參數像兩個空盒子：呼叫的時候給什麼，方法裡就用什麼。值會照順序放進去，第一個放進 `who`，第二個放進 `line`。\n\n```\nstatic void twice(String word) {\n    System.out.println(word + word);\n}\n\ntwice(\"喵\");\n```\n\n這段會印出 `喵喵`：呼叫時給的 `\"喵\"` 放進了 `word`。",
       "expectedShape": "static void say(String who, String line) {\n    System.out.println(…);\n}\n\nsay(\"滷肉\", \"…\");\nsay(\"分號\", \"…\");",
-      "check": { "type": "output" },
+      "check": { "type": "output", "exprs": ["say(\"阿成\", \"OH！\")"] },
       "hints": {
         "lead": "括號裡放要交給它的東西。",
         "plain": "`who` 和 `line` 是兩個空盒子，呼叫 `say` 的時候才把名字和台詞放進去。方法裡用這兩個名字排出那一句話。"

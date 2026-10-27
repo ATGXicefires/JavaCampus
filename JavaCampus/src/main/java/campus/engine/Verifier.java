@@ -42,7 +42,7 @@ public final class Verifier {
         List<Map<String, String>> runs = new ArrayList<>();
         runs.add(Map.of());
         runs.addAll(check.variants());
-        List<String> probes = check.type() == Check.Mode.VALUES ? check.exprs() : List.of();
+        List<String> probes = check.exprs();
         RunResult first = null;
         for (int i = 0; i < runs.size(); i++) {
             Map<String, String> overrides = runs.get(i);
@@ -70,9 +70,9 @@ public final class Verifier {
         if (actual.outcome() != Outcome.OK) {
             return Optional.of(brokenRun(actual.outcome()));
         }
-        return check.type() == Check.Mode.OUTPUT
-                ? compareOutput(expected.output(), actual.output())
-                : compareValues(expected.probes(), actual.probes());
+        Optional<String> output = check.type() == Check.Mode.OUTPUT
+                ? compareOutput(expected.output(), actual.output()) : Optional.empty();
+        return output.or(() -> compareValues(expected.probes(), actual.probes()));
     }
 
     /**
@@ -90,42 +90,46 @@ public final class Verifier {
         if (actual.outcome() != Outcome.OK) {
             return Optional.of(change + " 再跑一次，" + brokenRun(actual.outcome()));
         }
-        if (check.type() == Check.Mode.VALUES) {
-            for (int i = 0; i < expected.probes().size(); i++) {
-                Probe want = expected.probes().get(i);
-                Probe got = actual.probes().get(i);
-                if (got.error() != null || !want.type().equals(got.type())) {
-                    return compareValues(List.of(want), List.of(got)).map(m -> change + " 再算一次，" + m);
+        if (check.type() == Check.Mode.OUTPUT) {
+            List<String> want = lines(expected.output());
+            List<String> got = lines(actual.output());
+            boolean same = got.equals(lines(first.output()));
+            if (got.isEmpty() && !want.isEmpty()) {
+                return Optional.of(change + " 再跑一次，你的程式沒有印出任何東西。");
+            }
+            if (want.size() != got.size()) {
+                return Optional.of(change + " 再跑一次，應該印 " + want.size() + " 行，你的程式"
+                        + (same ? "還是印 " + got.size() + " 行" + follow : "印了 " + got.size() + " 行") + "。");
+            }
+            for (int i = 0; i < want.size(); i++) {
+                String w = want.get(i);
+                String g = got.get(i);
+                if (w.equals(g)) {
+                    continue;
                 }
-                if (!want.value().equals(got.value())) {
-                    String mine = got.value().equals(first.probes().get(i).value())
-                            ? "還是 " + got.value() + follow : "是 " + got.value();
-                    return Optional.of(change + " 再算一次，`" + want.expr() + "` 應該是 " + want.value() + "，你的" + mine + "。");
+                if (!same && isTypo(w, g)) {
+                    return Optional.of(typo(i, w, g) + "這一行是 " + change + " 再跑一次時印出來的。");
                 }
+                return Optional.of(change + " 再跑一次，第 " + (i + 1) + " 行應該是「" + visible(w) + "」，你印的"
+                        + (same ? "還是「" + visible(g) + "」" + follow : "是「" + visible(g) + "」") + "。");
             }
-            return Optional.empty();
         }
-        List<String> want = lines(expected.output());
-        List<String> got = lines(actual.output());
-        boolean same = got.equals(lines(first.output()));
-        if (got.isEmpty() && !want.isEmpty()) {
-            return Optional.of(change + " 再跑一次，你的程式沒有印出任何東西。");
-        }
-        if (want.size() != got.size()) {
-            return Optional.of(change + " 再跑一次，應該印 " + want.size() + " 行，你的程式"
-                    + (same ? "還是印 " + got.size() + " 行" + follow : "印了 " + got.size() + " 行") + "。");
-        }
-        for (int i = 0; i < want.size(); i++) {
-            String w = want.get(i);
-            String g = got.get(i);
-            if (w.equals(g)) {
-                continue;
+        for (int i = 0; i < expected.probes().size(); i++) {
+            Probe want = expected.probes().get(i);
+            Probe got = actual.probes().get(i);
+            if (got.error() != null || !want.type().equals(got.type())) {
+                return compareValues(List.of(want), List.of(got)).map(m -> change + " 再算一次，" + m);
             }
-            if (!same && isTypo(w, g)) {
-                return Optional.of(typo(i, w, g) + "這一行是 " + change + " 再跑一次時印出來的。");
+            if (isVoid(want)) {
+                Optional<String> printed = printedProblem(want, got);
+                if (printed.isPresent()) {
+                    return printed.map(m -> change + " 再算一次，" + m);
+                }
+            } else if (!want.value().equals(got.value())) {
+                String mine = got.value().equals(first.probes().get(i).value())
+                        ? "還是 " + got.value() + follow : "是 " + got.value();
+                return Optional.of(change + " 再算一次，`" + want.expr() + "` 應該是 " + want.value() + "，你的" + mine + "。");
             }
-            return Optional.of(change + " 再跑一次，第 " + (i + 1) + " 行應該是「" + visible(w) + "」，你印的"
-                    + (same ? "還是「" + visible(g) + "」" + follow : "是「" + visible(g) + "」") + "。");
         }
         return Optional.empty();
     }
@@ -238,10 +242,34 @@ public final class Verifier {
             if (!want.type().equals(got.type())) {
                 return Optional.of("`" + expr + "` 的型別應該是 " + want.type() + "，你的是 " + got.type() + "。");
             }
-            if (!want.value().equals(got.value())) {
+            if (isVoid(want)) {
+                Optional<String> printed = printedProblem(want, got);
+                if (printed.isPresent()) {
+                    return printed;
+                }
+            } else if (!want.value().equals(got.value())) {
                 return Optional.of("`" + expr + "` 的值不對：你的是 " + got.value() + "。");
             }
         }
         return Optional.empty();
+    }
+
+    private static boolean isVoid(Probe p) {
+        return p.type().equals("void");
+    }
+
+    /** 回傳 {@code void} 的呼叫沒有值，比的是它印出來的字。 */
+    private static Optional<String> printedProblem(Probe want, Probe got) {
+        if (lines(want.output()).equals(lines(got.output()))) {
+            return Optional.empty();
+        }
+        String should = lines(want.output()).isEmpty() ? "不用印出東西" : "應該印出" + quoted(want.output());
+        String mine = lines(got.output()).isEmpty() ? "什麼都沒印" : "印出" + quoted(got.output());
+        return Optional.of("`" + want.expr() + "` " + should + "，你的" + mine + "。");
+    }
+
+    /** 印出來的每一行各用一組引號括起來。 */
+    private static String quoted(String text) {
+        return lines(text).stream().map(l -> "「" + visible(l) + "」").collect(Collectors.joining());
     }
 }
