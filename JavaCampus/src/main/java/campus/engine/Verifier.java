@@ -9,13 +9,20 @@ import campus.engine.RunResult.Probe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-/** 跑參考解答與玩家程式，比對兩者的結果。原始資料與每一組替換資料都要對。 */
+/** 跑參考解答與玩家程式，比對兩者的結果。原始資料與每一組替換資料都要對，最後再看有沒有用到這一步要練的寫法。 */
 public final class Verifier {
 
     private final Sandbox sandbox;
@@ -42,32 +49,129 @@ public final class Verifier {
         List<Map<String, String>> runs = new ArrayList<>();
         runs.add(Map.of());
         runs.addAll(check.variants());
-        List<String> probes = check.type() == Check.Mode.VALUES ? check.exprs() : List.of();
-        RunResult first = null;
+        List<String> probes = check.exprs();
+        IntFunction<RunResult> expectedRun = i -> expectedCache.computeIfAbsent(key + "#" + i,
+                k -> run(form, preamble(vars, runs.get(i)), solution, check, probes));
+        // 參考解答還沒跑過的那幾組，問到才跑，跑完留在快取裡
+        Predicate<String> answer = line -> IntStream.range(0, runs.size()).mapToObj(expectedRun)
+                .anyMatch(r -> lines(r.output()).stream().anyMatch(l -> withoutNumbers(l).equals(withoutNumbers(line))));
+        List<RunResult> actuals = new ArrayList<>();
         for (int i = 0; i < runs.size(); i++) {
             Map<String, String> overrides = runs.get(i);
-            List<String> preamble = preamble(vars, overrides);
-            RunResult expected = expectedCache.computeIfAbsent(key + "#" + i,
-                    k -> run(form, preamble, solution, check, probes));
+            RunResult expected = expectedRun.apply(i);
             if (expected.outcome() != Outcome.OK || expected.probes().stream().anyMatch(p -> p.error() != null)) {
                 throw new IllegalStateException("參考解答跑不過：" + key + " " + expected);
             }
-            RunResult actual = run(form, preamble, source, check, probes);
-            if (first == null) {
-                first = actual;
-            }
-            String prefix = overrides.isEmpty() ? "" : "換一組資料（" + describe(overrides) + "）就不對了。";
-            if (actual.outcome() != Outcome.OK) {
-                return Verdict.fail(prefix + brokenRun(actual.outcome()), actual, overrides);
-            }
-            Optional<String> diff = check.type() == Check.Mode.OUTPUT
-                    ? compareOutput(expected.output(), actual.output())
-                    : compareValues(expected.probes(), actual.probes());
-            if (diff.isPresent()) {
-                return Verdict.fail(prefix + diff.get(), actual, overrides);
+            RunResult actual = run(form, preamble(vars, overrides), source, check, probes);
+            actuals.add(actual);
+            // 後面還沒跑到的那幾組，問到才跑
+            Supplier<Stream<RunResult>> alike = () -> IntStream.range(1, runs.size())
+                    .filter(j -> runs.get(j).keySet().equals(overrides.keySet()))
+                    .mapToObj(j -> j < actuals.size() ? actuals.get(j)
+                            : run(form, preamble(vars, runs.get(j)), source, check, probes));
+            Optional<String> problem = overrides.isEmpty()
+                    ? problem(check, expected, actual, answer)
+                    : variantProblem(overrides, check, expected, actual, actuals.getFirst(), alike, answer);
+            if (problem.isPresent()) {
+                return Verdict.fail(problem.get(), actual, overrides);
             }
         }
+        RunResult first = actuals.getFirst();
+        Optional<String> missing = check.uses().stream().filter(u -> !uses(source, u)).findFirst();
+        if (missing.isPresent()) {
+            return Verdict.fail("結果都對了，不過這一步要用到 `" + missing.get() + "`。", first, Map.of());
+        }
         return Verdict.pass(first);
+    }
+
+    /** 程式碼裡有沒有這串寫法：一個詞一個詞比，略過註解，空白和換行不算；字串整個算一個詞，引號裡的字不算寫出來。 */
+    static boolean uses(List<SourceFile> files, String use) {
+        List<String> want = words(use);
+        return files.stream().anyMatch(f -> Collections.indexOfSubList(words(f.text()), want) >= 0);
+    }
+
+    private static List<String> words(String code) {
+        return JavaTokens.tokenize(code).stream().filter(t -> t.kind() != JavaTokens.Kind.COMMENT)
+                .map(JavaTokens.Token::text).toList();
+    }
+
+    private static Optional<String> problem(Check check, RunResult expected, RunResult actual, Predicate<String> answer) {
+        if (actual.outcome() != Outcome.OK) {
+            return Optional.of(brokenRun(actual.outcome()));
+        }
+        Optional<String> output = check.type() == Check.Mode.OUTPUT
+                ? compareOutput(expected.output(), actual.output(), answer) : Optional.empty();
+        return output.or(() -> compareValues(expected.probes(), actual.probes()));
+    }
+
+    /**
+     * 原始資料對了，換一組才錯。先說換了什麼，玩家才知道這些結果是怎麼來的。換同樣變數的每一組資料，結果都跟原始資料一模一樣，
+     * 才說沒有跟著變；只有這一組一樣的話，可能是有用到變數、只是邊界寫錯，剛好落在原來的答案，例如 {@code score > 90} 在 90 分也印 B。
+     * 只差一兩個字的話，錯的是那一行字，先講差在哪裡。
+     *
+     * @param first  同一份程式用原始資料跑的結果，已經確定是對的
+     * @param alike  同一份程式換同樣幾個變數的每一組資料跑的結果，包括這一組
+     * @param answer 參考解答在某一組資料下也會印出這一行
+     */
+    private static Optional<String> variantProblem(Map<String, String> overrides, Check check, RunResult expected,
+                                                   RunResult actual, RunResult first, Supplier<Stream<RunResult>> alike,
+                                                   Predicate<String> answer) {
+        String change = overrides.entrySet().stream().map(e -> "`" + e.getKey() + "` 改成 " + e.getValue())
+                .collect(Collectors.joining("、"));
+        String follow = "，沒有跟著 " + overrides.keySet().stream().map(n -> "`" + n + "`")
+                .collect(Collectors.joining("、")) + " 變";
+        if (actual.outcome() != Outcome.OK) {
+            return Optional.of(change + " 再跑一次，" + brokenRun(actual.outcome()));
+        }
+        if (check.type() == Check.Mode.OUTPUT) {
+            List<String> want = lines(expected.output());
+            List<String> got = lines(actual.output());
+            if (got.isEmpty() && !want.isEmpty()) {
+                return Optional.of(change + " 再跑一次，你的程式沒有印出任何東西。");
+            }
+            boolean same = !got.equals(want) && unchanged(alike.get(), first, r -> lines(r.output()));
+            if (want.size() != got.size()) {
+                return Optional.of(change + " 再跑一次，應該印 " + want.size() + " 行，你的程式"
+                        + (same ? "還是印 " + got.size() + " 行" + follow : "印了 " + got.size() + " 行") + "。");
+            }
+            for (int i = 0; i < want.size(); i++) {
+                String w = want.get(i);
+                String g = got.get(i);
+                if (w.equals(g)) {
+                    continue;
+                }
+                if (isTypo(w, g, answer)) {
+                    return Optional.of(typo(i, w, g) + "這一行是 " + change + " 再跑一次時印出來的。");
+                }
+                return Optional.of(change + " 再跑一次，第 " + (i + 1) + " 行應該是「" + visible(w) + "」，你印的"
+                        + (same ? "還是「" + visible(g) + "」" + follow : "是「" + visible(g) + "」") + "。");
+            }
+        }
+        for (int i = 0; i < expected.probes().size(); i++) {
+            Probe want = expected.probes().get(i);
+            Probe got = actual.probes().get(i);
+            if (got.error() != null || !want.type().equals(got.type())) {
+                return compareValues(List.of(want), List.of(got)).map(m -> change + " 再算一次，" + m);
+            }
+            if (isVoid(want)) {
+                Optional<String> printed = printedProblem(want, got);
+                if (printed.isPresent()) {
+                    return printed.map(m -> change + " 再算一次，" + m);
+                }
+            } else if (!want.value().equals(got.value())) {
+                int at = i;
+                String mine = unchanged(alike.get(), first, r -> r.probes().get(at).value())
+                        ? "還是 " + got.value() + follow : "是 " + got.value();
+                return Optional.of(change + " 再算一次，`" + want.expr() + "` 應該是 " + want.value() + "，你的" + mine + "。");
+            }
+        }
+        return Optional.empty();
+    }
+
+    /** 每一次的結果裡，這一項都跟原始資料那次一樣。 */
+    private static boolean unchanged(Stream<RunResult> runs, RunResult first, Function<RunResult, Object> part) {
+        Object before = part.apply(first);
+        return runs.allMatch(r -> r.outcome() == Outcome.OK && before.equals(part.apply(r)));
     }
 
     /** 完整程式不吃案件變數；比對輸出時才需要從 main 跑起，比對值時只要類別定義好就能呼叫。 */
@@ -81,10 +185,6 @@ public final class Verifier {
         return vars.stream().map(v -> v.declaration(overrides.get(v.name()))).toList();
     }
 
-    private static String describe(Map<String, String> overrides) {
-        return overrides.entrySet().stream().map(e -> e.getKey() + " = " + e.getValue()).collect(Collectors.joining("，"));
-    }
-
     private static String brokenRun(Outcome outcome) {
         return switch (outcome) {
             case COMPILE_ERROR -> "程式有錯誤，還沒辦法執行。先照下方的說明修正。";
@@ -96,7 +196,7 @@ public final class Verifier {
         };
     }
 
-    static Optional<String> compareOutput(String expectedText, String actualText) {
+    static Optional<String> compareOutput(String expectedText, String actualText, Predicate<String> answer) {
         List<String> want = lines(expectedText);
         List<String> got = lines(actualText);
         if (got.isEmpty() && !want.isEmpty()) {
@@ -111,13 +211,57 @@ public final class Verifier {
             if (w.equals(g)) {
                 continue;
             }
-            int d = Edits.distance(w, g);
-            if (d <= 2 && w.length() > 2) {
-                return Optional.of("第 " + (i + 1) + " 行差了 " + d + " 個字：應該是「" + w + "」，你印的是「" + g + "」。");
+            if (isTypo(w, g, answer)) {
+                return Optional.of(typo(i, w, g));
             }
-            return Optional.of("第 " + (i + 1) + " 行不對：你印的是「" + g + "」。");
+            return Optional.of("第 " + (i + 1) + " 行不對：你印的是「" + visible(g) + "」。");
         }
         return Optional.empty();
+    }
+
+    /** 只差一兩個字。不過玩家印的那一行要是參考解答換一組資料也會印，就是走錯分支或算錯，不是打錯字，例如等第印成另一個字母。 */
+    private static boolean isTypo(String want, String got, Predicate<String> answer) {
+        return want.length() > 2 && Edits.distance(want, got) <= 2 && !answer.test(got);
+    }
+
+    /** 印出來的數字多半是算出來的，只差在數字的兩行算同一種答案，例如「85 分是 B」和「80 分是 B」。 */
+    private static String withoutNumbers(String line) {
+        return line.replaceAll("[0-9]+", "#");
+    }
+
+    /** 只差一兩個字：直接說差在哪裡，空格看不出來，所以也講出來。 */
+    private static String typo(int line, String want, String got) {
+        List<String> what = Edits.changes(want, got).stream().map(c -> describe(c, want)).toList();
+        String where = what.size() == 1
+                ? "第 " + (line + 1) + " 行" + what.getFirst() + "："
+                : "第 " + (line + 1) + " 行有 " + what.size() + " 個地方不一樣：" + String.join("，", what) + "。";
+        return where + "應該是「" + visible(want) + "」，你印的是「" + visible(got) + "」。";
+    }
+
+    /** 插入和刪除用前一個字指出位置，比數第幾個字直覺。 */
+    private static String describe(Edits.Change c, String want) {
+        return switch (c.kind()) {
+            case INSERT -> (c.at() == 0 ? "開頭" : c.at() == want.length() ? "最後" : "在" + name(want.charAt(c.at() - 1)) + "後面")
+                    + "多了" + one(c.to());
+            case DELETE -> (c.at() == 0 ? "開頭" : c.at() == want.length() - 1 ? "最後" : "在" + name(want.charAt(c.at() - 1)) + "後面")
+                    + "少了" + one(c.from());
+            case REPLACE -> c.to() - c.from() == 0xFEE0 ? "把半形的" + name(c.from()) + "打成了全形的" + name(c.to())
+                    : c.from() - c.to() == 0xFEE0 ? "把全形的" + name(c.from()) + "打成了半形的" + name(c.to())
+                    : "把" + name(c.from()) + "打成了" + name(c.to());
+        };
+    }
+
+    private static String one(char c) {
+        return c == ' ' ? "一個空格" : name(c);
+    }
+
+    private static String name(char c) {
+        return c == ' ' ? "空格" : c == '　' ? "全形空格" : "「" + c + "」";
+    }
+
+    /** 引號裡的輸出把空格畫成 ␣，多一個、少一個才看得出來。 */
+    private static String visible(String line) {
+        return line.replace(' ', '␣');
     }
 
     /** 去掉每行尾端看不見的空白與最後的空行，那些差異不算錯。 */
@@ -144,10 +288,34 @@ public final class Verifier {
             if (!want.type().equals(got.type())) {
                 return Optional.of("`" + expr + "` 的型別應該是 " + want.type() + "，你的是 " + got.type() + "。");
             }
-            if (!want.value().equals(got.value())) {
+            if (isVoid(want)) {
+                Optional<String> printed = printedProblem(want, got);
+                if (printed.isPresent()) {
+                    return printed;
+                }
+            } else if (!want.value().equals(got.value())) {
                 return Optional.of("`" + expr + "` 的值不對：你的是 " + got.value() + "。");
             }
         }
         return Optional.empty();
+    }
+
+    private static boolean isVoid(Probe p) {
+        return p.type().equals("void");
+    }
+
+    /** 回傳 {@code void} 的呼叫沒有值，比的是它印出來的字。 */
+    private static Optional<String> printedProblem(Probe want, Probe got) {
+        if (lines(want.output()).equals(lines(got.output()))) {
+            return Optional.empty();
+        }
+        String should = lines(want.output()).isEmpty() ? "不用印出東西" : "應該印出" + quoted(want.output());
+        String mine = lines(got.output()).isEmpty() ? "什麼都沒印" : "印出" + quoted(got.output());
+        return Optional.of("`" + want.expr() + "` " + should + "，你的" + mine + "。");
+    }
+
+    /** 印出來的每一行各用一組引號括起來。 */
+    private static String quoted(String text) {
+        return lines(text).stream().map(l -> "「" + visible(l) + "」").collect(Collectors.joining());
     }
 }

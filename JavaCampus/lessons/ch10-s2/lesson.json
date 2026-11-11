@@ -1,0 +1,52 @@
+{
+  "id": "ch10-s2",
+  "title": "清單的型別",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["arraylist", "for-each", "generics"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "integer",
+      "title": "int 放不進去",
+      "goal": "修好後，清單 `scores` 裝得下 `72`、`58`、`65` 三個分數，印出 `平均：65.0`。\n\n起始碼想把分數放進清單 `scores`，跑起來卻是紅字。",
+      "instructions": "角括號寫清楚清單裝什麼，裡面只能放類別。`int`、`double` 不是類別，各有一個包裝類別：`int` 的是 `Integer`，`double` 的是 `Double`。\n\n放進去、拿出來的時候，Java 會自動在 `int` 和 `Integer` 之間轉換。",
+      "expectedShape": "ArrayList<…> scores = new ArrayList<>();",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "泛型的型別參數必須是參考型別⋯⋯",
+        "plain": "⋯⋯白話：`int` 不是類別，放不進角括號。改成它的包裝類別 `Integer`，放進去、拿出來，Java 都會自動轉換。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "raw",
+      "title": "沒寫型別的清單",
+      "goal": "修好後，`平均：65.0` 下面只印出三個名字：\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n起始碼的名字清單 `names` 沒寫型別，混進了一個數字也不會紅字，現在名字中間多印了一行 `72`。把它寫成 `ArrayList<String>`，讓編譯器擋下那個數字，再修到只剩三個名字。",
+      "instructions": "沒寫角括號的清單什麼都裝得進去，放錯了也不會有紅字，要等執行的時候才發現怪怪的。寫成 `ArrayList<String>`，這張清單就只裝字串，放數字進去，編譯器馬上擋下來。\n\n右邊寫成 `new ArrayList<>()` 就好：右邊的角括號空著，Java 會照左邊寫的型別。",
+      "expectedShape": "ArrayList<String> names = new ArrayList<>();\nnames.add(…);",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "原始型別不做型別檢查，加上型別參數讓錯誤在編譯期出現⋯⋯",
+        "plain": "⋯⋯白話：沒寫型別，`72` 也混得進名字清單，執行的時候才發現怪怪的。寫清楚只裝 `String`，編譯器馬上擋下來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "total",
+      "title": "for-each 加總",
+      "goal": "`list` 裡是 `72`、`58`、`65` 時，`total(list)` 交回 `195`。\n\n在 `Main` 裡寫一個方法 `static int total(ArrayList<Integer> list)`，用 for-each（不用索引，把清單裡的每一個輪流拿出來）把 `list` 裡的數加起來交回。",
+      "instructions": "for-each 的冒號唸成「裡面的每一個」：`for (String s : names)` 就是 `names` 裡面的每一個，輪流放進 `s`，每放一次就做一次大括號裡的事。不用管第幾個，也不用寫 `i`。`ArrayList<Integer>` 拿出來的數，可以直接用 `int` 接。\n\n這一步只看 `total` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
+      "expectedShape": "static int total(ArrayList<Integer> list) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())", "Main.total(new java.util.ArrayList<>(java.util.List.of(80, 49)))"] },
+      "hints": {
+        "lead": "增強型 for 迴圈走訪集合⋯⋯",
+        "plain": "⋯⋯白話：不用索引，`for (int n : list)` 每一個都拿出來加一次。空的清單一次都不會進迴圈，交回 0。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "ch03-k5",
+  "title": "README 說可以問",
+  "route": "學妹",
+  "partner": "小芸",
+  "notes": ["parse-int", "try-catch"],
+  "vars": [
+    { "name": "input", "type": "String", "value": "\"85\"", "note": "答題框收到的字串" },
+    { "name": "total", "type": "int", "value": "240", "note": "成績的總分" },
+    { "name": "count", "type": "int", "value": "3", "note": "成績的筆數" }
+  ],
+  "steps": [
+    {
+      "id": "parse",
+      "title": "字變成數字",
+      "goal": "`input` 是答題框收到的字串，現在是 `\"85\"`，要把它變成能拿來算的數字 85。\n\n用 `Integer.parseInt`（把字串換成 `int`）把 `input` 變成數字，存進 `int score`。",
+      "instructions": "編輯器最上面三行 `String input = \"85\";`、`int total = 240;` 和 `int count = 3;` 是題目先寫好的，你的程式可以直接用 `input`、`total` 和 `count`。\n\n答題框拿到的東西都是字串，就算長得像數字也一樣：`\"85\"` 是「8」和「5」兩個字，不能拿來加減。\n\n`Integer.parseInt(…)` 會讀括號裡的字串，換成真正的數字。例如 `int n = Integer.parseInt(\"7\");`，`n` 就是數字 7，可以拿來算。",
+      "expectedShape": "int score = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["score"],
+        "variants": [ { "input": "\"62\"" } ]
+      },
+      "hints": {
+        "lead": "Integer.parseInt(input)。",
+        "plain": "`\"85\"` 是兩個字，`85` 才是數字。`Integer.parseInt` 會讀那段字，把它換成真正的數字，換好的放進 `int` 盒子。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "catch",
+      "title": "打了國字",
+      "goal": "現在 `input` 是 `\"85\"`，要印出 `收到：85`；`input` 換不成數字的時候（例如打了國字 `八十`），要印 `要輸入數字喔，例如 80`。\n\n用 `try`／`catch`（先試試看，跌倒了就改做備案）：在 `try` 裡把 `input` 換成數字並印出來，換不成時在 `catch` 裡印那句提示。",
+      "instructions": "新生打的不一定是數字。`Integer.parseInt` 看不懂的時候，程式會跌倒，丟出一個叫 `NumberFormatException` 的例外。\n\n```\ntry {\n    可能跌倒的程式\n} catch (NumberFormatException e) {\n    跌倒時要做的事\n}\n```\n\n`try` 裡的程式跌倒了，不會整個停掉，而是直接跳到 `catch` 的大括號；沒跌倒，`catch` 裡的事就不會做。`catch` 的括號寫要接住哪一種例外。",
+      "expectedShape": "try {\n    …\n} catch (NumberFormatException e) {\n    System.out.println(\"…\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "input": "\"八十\"" }, { "input": "\"62\"" } ]
+      },
+      "hints": {
+        "lead": "可能跌倒的放進 try。",
+        "plain": "`try` 是「試試看」：裡面的程式跌倒了，不會整個停掉，而是跳到 `catch` 去做備案。`catch` 的括號寫要接住哪一種例外，這裡是 `NumberFormatException`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "zero",
+      "title": "還沒有成績",
+      "goal": "`total` 是成績的總分、`count` 是成績的筆數。現在 `total` 是 240、`count` 是 3，要印出 `平均：80`；`count` 是 0 的時候，改印 `還沒有成績`。\n\n用 `total / count` 算出平均印出來。`count` 是 0 時這個除法會跌倒，用 `try`／`catch` 接住它。",
+      "instructions": "平均直接用整數算就好，不用小數。\n\n整數除以 0 沒有答案，程式會跌倒，丟出的例外叫 `ArithmeticException`。接住它的寫法跟上一步一樣，只是 `catch` 的括號裡換成這個名字。",
+      "expectedShape": "try {\n    System.out.println(\"平均：\" + …);\n} catch (… e) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "count": "0" } ]
+      },
+      "hints": {
+        "lead": "除以零是 ArithmeticException。",
+        "plain": "整數除以 0 會跌倒，丟出 `ArithmeticException`。把除法放進 `try`，在 `catch (ArithmeticException e)` 裡印出還沒有成績。也可以先用 `if` 檢查 `count` 是不是 0。"
+      },
+      "afterText": ""
+    }
+  ]
+}

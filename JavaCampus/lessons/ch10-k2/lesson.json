@@ -1,0 +1,52 @@
+{
+  "id": "ch10-k2",
+  "title": "她的畫面清單",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["arraylist", "for-each", "generics"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "list",
+      "title": "會變長的清單",
+      "goal": "`screens` 裡放了 4 個畫面，所以要印出 `共 4 個畫面`。\n\n在檔案最上面寫 `import java.util.ArrayList;`（把 Java 寫好的清單借來用），在 `main` 裡做一個 `ArrayList<String> screens`（裝字串、可以一直加的清單），依序加入 `首頁`、`課程列表`、`答題`、`成績`，再用 `screens.size()`（有幾個）印出這一行。",
+      "instructions": "`ArrayList` 是會變長的清單：陣列一開始就決定好有幾格，清單不用先決定，`add` 一次就多一個。它是 Java 寫好、放在 `java.util` 裡的，要先在檔案最上面 `import`，才能用。\n\n角括號寫清楚清單裝什麼，例如：\n\n```\nArrayList<String> foods = new ArrayList<>();\nfoods.add(\"滷肉飯\");\nfoods.add(\"控肉飯\");\nfoods.size()   // 2，有幾個\n```\n\n畫面數用 `screens.size()` 算，清單多加一個畫面，數字就會跟著變。",
+      "expectedShape": "import java.util.ArrayList;\n\n…\nArrayList<String> screens = new ArrayList<>();\nscreens.add(\"首頁\");\n…\nSystem.out.println(\"共 \" + screens.size() + \" 個畫面\");",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "add 加進去，size() 數有幾個。",
+        "plain": "陣列像訂好座位的便當盒，格子一開始就固定；清單像購物袋，要裝多少就 `add` 多少。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "each",
+      "title": "for-each",
+      "goal": "`共 4 個畫面` 下面，`screens` 裡的畫面一個印一行：\n`- 首頁`\n`- 課程列表`\n`- 答題`\n`- 成績`\n\n用 for-each（不用索引，把清單裡的每一個輪流拿出來）走過 `screens`，把每個畫面印成這樣。",
+      "instructions": "for-each 寫成 `for (String s : screens)`，冒號唸成「裡面的每一個」：`screens` 裡面的每一個，輪流放進 `s`，每放一次就做一次大括號裡的事。不用管第幾個，也不用寫 `i`。\n\n例如 `foods` 裡有 `滷肉飯`、`控肉飯`，`for (String f : foods)` 會先讓 `f` 是 `滷肉飯`，做一次大括號裡的事；再讓 `f` 是 `控肉飯`，再做一次。",
+      "expectedShape": "for (String s : screens) {\n    System.out.println(\"- \" + …);\n}",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "冒號唸成「裡面的每一個」。",
+        "plain": "`for (String s : screens)` 就是「`screens` 裡面的每一個，輪流叫它 `s`」。不用管第幾個，每一個都會輪到。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "taps",
+      "title": "每個畫面被點幾次",
+      "goal": "`taps` 是每個畫面被點了幾次，裡面是 `12`、`30`、`7` 時，`totalTaps(taps)` 交回 `49`。\n\n在 `Main` 裡寫一個方法 `static int totalTaps(ArrayList<Integer> taps)`（`Integer` 是 `int` 的包裝類別），用 for-each 把 `taps` 裡的點擊次數加起來交回。",
+      "instructions": "角括號裡只能放類別。`int` 不是類別，要寫成它的包裝類別 `Integer`；`double` 也一樣，要寫 `Double`。放進去、拿出來的時候，Java 會自動轉換，所以 for-each 可以直接用 `int` 接：`for (int t : taps)`。\n\n這一步只看 `totalTaps` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
+      "expectedShape": "static int totalTaps(ArrayList<Integer> taps) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())", "Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(5, 20)))"] },
+      "hints": {
+        "lead": "ArrayList<Integer>，不是 <int>。",
+        "plain": "清單只裝得下物件，`int` 要換成它的包裝 `Integer` 才放得進去。拿出來加的時候，Java 會自動拆開來算。"
+      },
+      "afterText": ""
+    }
+  ]
+}

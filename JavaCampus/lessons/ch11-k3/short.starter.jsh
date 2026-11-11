@@ -1,0 +1,12 @@
+public class Main {
+    public static void main(String[] args) {
+        String[] drafts = {
+            "學長，這一年謝謝你教我寫程式，從 Hello World 一路寫到專題，每一行我都記得。",
+            "學長，謝謝你每天陪我 debug，還有那些一起吃的滷肉飯。",
+            "學長，畢業快樂，臺北很好，你一定可以的。",
+            "謝謝你把外星語翻成人話。",
+            "學長再見。"
+        };
+        // 從頭看 drafts，找到第一句不超過 15 個字的就印出來，再用 break 停下
+    }
+}

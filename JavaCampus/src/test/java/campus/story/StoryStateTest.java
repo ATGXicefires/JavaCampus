@@ -123,7 +123,7 @@ class StoryStateTest {
         new StoryRunner(ch, Route.KOUHAI, s, p.read(), new StoryRunnerTest.AutoStage().pick(0)).start();
         p.setLastRoute(Route.KOUHAI);
         p.notes().add("println");
-        p.markSolved("ch01-k1", "say");
+        p.storyLessons().markSolved("ch01-k1", "say");
 
         SaveStore store = new SaveStore(dir.resolve("progress.json"));
         store.save(p);
@@ -140,7 +140,7 @@ class StoryStateTest {
         assertEquals("笑", back.staging().actors().get("阿成").expression());
         assertTrue(back.staging().filters().contains("夕陽"));
         assertTrue(loaded.notes().contains("println"));
-        assertTrue(loaded.isSolved("ch01-k1", "say"));
+        assertTrue(loaded.storyLessons().isSolved("ch01-k1", "say"));
         assertEquals(p.read(), loaded.read());
 
         back.begin(ch, Route.KOUHAI, true);
@@ -152,15 +152,15 @@ class StoryStateTest {
         Progress p = new Progress();
         p.startRoute(Route.SENPAI, List.of());
         p.startRoute(Route.KOUHAI, List.of());
-        p.markSolved("ch01-k1", "say");
-        p.markSolved("ch01-s1", "say");
+        p.storyLessons().markSolved("ch01-k1", "say");
+        p.storyLessons().markSolved("ch01-s1", "say");
         p.setLastRoute(Route.KOUHAI);
 
         p.resetRoute(Route.KOUHAI, List.of("ch01-k1"));
         assertNull(p.route(Route.KOUHAI));
         assertNull(p.lastRoute());
-        assertTrue(!p.isSolved("ch01-k1", "say"));
-        assertTrue(p.isSolved("ch01-s1", "say"));
+        assertTrue(!p.storyLessons().isSolved("ch01-k1", "say"));
+        assertTrue(p.storyLessons().isSolved("ch01-s1", "say"));
         assertTrue(p.route(Route.SENPAI) != null);
     }
 }

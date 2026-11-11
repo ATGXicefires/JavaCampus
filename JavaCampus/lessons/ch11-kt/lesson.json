@@ -1,0 +1,24 @@
+{
+  "id": "ch11-kt",
+  "title": "找出那句輸入",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["final"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "input",
+      "title": "你先看一下專題",
+      "goal": "`main` 現在交給 `easterEgg` 的是空字串 `\"\"`，什麼都印不出來；交給它對的那句話，才會印出藏起來的訊息。\n\n讀懂 `easterEgg` 拿 `Memory.java` 裡的哪一個常數（`static final`，設定好就不能再改的盒子）來比，把那個常數存的那句話填進 `\"\"` 的引號裡。",
+      "instructions": "`Memory.java` 裡的 `static final String LAPTOP = \"小白\";` 是常數：`final` 是設定一次就不能再改，`static` 讓別的檔案用 `Memory.LAPTOP` 就拿得到。常數的名字習慣全部大寫。\n\n`easterEgg` 只有收到對的那句話，才會交回藏起來的訊息；收到別的就交回空字串。那句話裡有全形的標點，從 `Memory.java` 分頁把常數的內容複製過來，最不會打錯。",
+      "expectedShape": "System.out.println(Main.easterEgg(\"…\"));",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "看 easterEgg 拿誰來比。",
+        "plain": "`easterEgg` 只認一句話。順著 `if` 裡的比對，找到它用的常數，那個常數存的就是答案。"
+      },
+      "afterText": ""
+    }
+  ]
+}

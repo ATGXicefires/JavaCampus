@@ -1,0 +1,62 @@
+{
+  "id": "ch02-k5",
+  "title": "五分鐘簡報",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["cast", "for"],
+  "vars": [
+    { "name": "slides", "type": "int", "value": "7", "note": "投影片的張數" }
+  ],
+  "steps": [
+    {
+      "id": "per-slide",
+      "title": "每張講幾秒",
+      "goal": "報告有 5 分鐘，平分給 `slides` 張投影片。現在 `slides` 是 7，每張講 42 秒。\n\n先算出總共幾秒，存進 `int seconds`；再用 `/`（除法）平分給 `slides` 張，存進 `int perSlide`。兩個 `int` 相除，小數會直接丟掉，所以是 42，不是 42.8⋯。",
+      "instructions": "編輯器最上面那行 `int slides = 7;` 是題目先寫好的，你的程式可以直接用 `slides`。\n\n1 分鐘是 60 秒，5 分鐘可以寫成 `5 * 60`，讓電腦去算。\n\n`/` 是除法。兩個 `int`（整數）相除，答案也是整數：小數點後面直接丟掉，不會四捨五入。例如 `7 / 2` 是 `3`。",
+      "expectedShape": "int seconds = …;\nint perSlide = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["seconds", "perSlide"],
+        "variants": [ { "slides": "6" }, { "slides": "10" } ]
+      },
+      "hints": {
+        "lead": "先算秒數，再平均分。",
+        "plain": "5 分鐘是 `5 * 60` 秒。每張講幾秒，就是把總秒數平均分給每一張：`seconds / slides`。兩個整數相除會丟掉小數，這一步剛好只要整數。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "exact",
+      "title": "精確一點",
+      "goal": "最後一行想算出每張平均講幾秒，但現在 `exact` 算出來是 42.0，小數不見了。`slides` 是 7 時，`exact` 應該是 42.857⋯。\n\n改好這一行，讓 `exact` 留下小數。`double` 是裝小數的盒子，`(double)` 會把緊接在它後面的東西換成小數。",
+      "instructions": "括號裡的東西會先算。`(double) (seconds / slides)` 先算括號裡的 `seconds / slides`：兩個 `int` 相除，小數已經丟掉，剩下 42，之後才換成小數，只會是 42.0。\n\n要在除之前，就先把其中一邊換成小數。只要有一邊是小數，除出來就會留下小數：`7 / 2` 是 `3`，`7.0 / 2` 是 `3.5`。",
+      "expectedShape": "int seconds = …;\nint perSlide = …;\ndouble exact = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["exact"],
+        "variants": [ { "slides": "6" } ]
+      },
+      "hints": {
+        "lead": "先轉型，再除。",
+        "plain": "`(seconds / slides)` 是兩個整數相除，算完已經是 42，小數早就丟掉了，再轉成 `double` 也只是 `42.0`。把 `(double)` 放在 `seconds` 前面，讓它先變成小數再除。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "timeline",
+      "title": "從第幾秒開始",
+      "goal": "`slides` 是 7、`perSlide` 是 42 時，要印出 7 行：\n`第 1 張：0 秒`\n`第 2 張：42 秒`\n⋯⋯\n`第 7 張：252 秒`\n\n用 `for` 一張印一行，印到第 `slides` 張；每一行算出那一張從第幾秒開始講。",
+      "instructions": "第 1 張從 0 秒開始。輪到第 `i` 張的時候，前面已經講完 `i - 1` 張，每張講 `perSlide` 秒。\n\n`for (int i = 1; i <= slides; i++)` 會讓 `i` 從 1 數到 `slides`，一張跑一圈。",
+      "expectedShape": "for (int i = 1; i <= slides; i++) {\n    System.out.println(\"第 \" + i + \" 張：\" + … + \" 秒\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "slides": "10" } ]
+      },
+      "hints": {
+        "lead": "第 i 張前面講完了 i - 1 張。",
+        "plain": "輪到第 3 張時，前面兩張已經講完了，所以是 `perSlide * 2` 秒。換成 `i` 來寫就是 `perSlide * (i - 1)`。乘法會比串接的 `+` 先算，所以直接寫在中間就好。"
+      },
+      "afterText": ""
+    }
+  ]
+}

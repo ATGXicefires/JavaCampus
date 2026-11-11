@@ -11,20 +11,33 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.TwoDimensional.Bias;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -35,12 +48,16 @@ import java.util.function.Predicate;
  */
 final class EditorTabs extends VBox {
 
+    private static final KeyCombination PASTE = new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination PASTE_INSERT = new KeyCodeCombination(KeyCode.INSERT, KeyCombination.SHIFT_DOWN);
+
     private final Game game;
     private final List<SetupVar> vars;
     private final Runnable onEdited;
     private final Runnable onFilesChanged;
     private final HBox bar = new HBox();
     private final Button addButton = new Button("＋");
+    private final VBox given = new VBox();
     private final StackPane pages = new StackPane();
     private final List<FileTab> tabs = new ArrayList<>();
     private FileTab selected;
@@ -64,8 +81,53 @@ final class EditorTabs extends VBox {
         addButton.setTooltip(game.tooltip("新增檔案"));
         addButton.setOnAction(e -> promptNewFile());
         addButton.managedProperty().bind(addButton.visibleProperty());
+        vars.forEach(v -> given.getChildren().add(givenLine(v)));
+        given.getStyleClass().add("given-lines");
+        given.managedProperty().bind(given.visibleProperty());
         VBox.setVgrow(pages, Priority.ALWAYS);
-        getChildren().addAll(bar, pages);
+        getChildren().addAll(bar, given, pages);
+    }
+
+    /**
+     * 題目先放進執行環境的變數，寫成程式最上面的幾行，玩家才看得出它們就在程式裡；鎖住不能改，
+     * 不編行號，玩家自己的程式還是從第 1 行算，跟錯誤訊息的行號對得上。
+     */
+    private static Node givenLine(SetupVar v) {
+        String code = v.declaration(null) + (v.note() == null || v.note().isBlank() ? "" : "  // " + v.note());
+        TextFlow flow = new TextFlow();
+        int at = 0;
+        for (JavaTokens.Token t : JavaTokens.tokenize(code)) {
+            if (t.start() > at) {
+                flow.getChildren().add(givenText(code.substring(at, t.start()), null));
+            }
+            flow.getChildren().add(givenText(t.text(), JavaHighlighter.styleOf(t)));
+            at = t.end();
+        }
+        Label gutter = new Label("  ");
+        gutter.setGraphic(lockIcon());
+        gutter.setContentDisplay(ContentDisplay.CENTER);
+        gutter.getStyleClass().addAll("lineno", "given-gutter");
+        gutter.setMaxHeight(Double.MAX_VALUE);
+        HBox.setHgrow(flow, Priority.ALWAYS);
+        HBox line = new HBox(gutter, flow);
+        line.getStyleClass().add("given-line");
+        return line;
+    }
+
+    private static Text givenText(String s, String styleClass) {
+        Text t = new Text(s);
+        t.getStyleClass().add("given-code");
+        if (styleClass != null) {
+            t.getStyleClass().add(styleClass);
+        }
+        return t;
+    }
+
+    private static Node lockIcon() {
+        SVGPath lock = new SVGPath();
+        lock.setContent("M3.5 6.5 V4.5 A3 3 0 0 1 9.5 4.5 V6.5 M1.5 6.5 H11.5 V13 H1.5 Z");
+        lock.getStyleClass().add("given-lock");
+        return lock;
     }
 
     /**
@@ -83,6 +145,8 @@ final class EditorTabs extends VBox {
         selected = null;
         files.forEach(this::addTab);
         addButton.setVisible(canAdd);
+        // 完整程式不吃題目變數
+        given.setVisible(!canAdd && !vars.isEmpty());
         select(tabs.getFirst());
     }
 
@@ -263,6 +327,19 @@ final class EditorTabs extends VBox {
         });
     }
 
+    /** 有些電腦上 JavaFX 讀不到別的程式複製的文字，讀不到就改用 AWT 的剪貼簿再讀一次。 */
+    private static String clipboardText() {
+        String text = Clipboard.getSystemClipboard().getString();
+        if (text != null && !text.isEmpty()) {
+            return text;
+        }
+        try {
+            return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+        } catch (UnsupportedFlavorException | IOException | IllegalStateException e) {
+            return null;
+        }
+    }
+
     /** 一個檔案：分頁標籤、編輯器，以及這次執行標出來的錯誤。 */
     private final class FileTab {
         final String name;
@@ -291,6 +368,7 @@ final class EditorTabs extends VBox {
                     game.sfx.play(Sfx.Sound.KEY);
                 }
             });
+            area.setContextMenu(editMenu());
             scroll.setVisible(false);
 
             head.getChildren().add(new Label(name));
@@ -360,6 +438,36 @@ final class EditorTabs extends VBox {
                     && AutoPair.deletesPair(area.getText(), area.getCaretPosition())) {
                 e.consume();
                 area.deleteText(area.getCaretPosition() - 1, area.getCaretPosition() + 1);
+            } else if (PASTE.match(e) || PASTE_INSERT.match(e)) {
+                e.consume();
+                paste();
+            }
+        }
+
+        /** 右鍵選單：快捷鍵在某些電腦上沒反應時，至少還能從這裡貼上。 */
+        private ContextMenu editMenu() {
+            MenuItem cut = new MenuItem("剪下");
+            cut.setOnAction(e -> area.cut());
+            MenuItem copy = new MenuItem("複製");
+            copy.setOnAction(e -> area.copy());
+            MenuItem paste = new MenuItem("貼上");
+            paste.setOnAction(e -> paste());
+            MenuItem all = new MenuItem("全選");
+            all.setOnAction(e -> area.selectAll());
+            ContextMenu menu = new ContextMenu(cut, copy, paste, all);
+            menu.setOnShowing(e -> {
+                boolean none = area.getSelection().getLength() == 0;
+                cut.setDisable(none);
+                copy.setDisable(none);
+            });
+            return menu;
+        }
+
+        private void paste() {
+            String text = clipboardText();
+            if (text != null) {
+                area.replaceSelection(text);
+                area.requestFollowCaret();
             }
         }
 

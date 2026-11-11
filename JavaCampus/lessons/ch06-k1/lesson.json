@@ -1,0 +1,49 @@
+{
+  "id": "ch06-k1",
+  "title": "照設計圖做出小白和阿隨",
+  "route": "學妹",
+  "partner": "二弘",
+  "notes": ["class", "object"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "blueprint",
+      "title": "設計圖",
+      "goal": "印出一行 `小白（筆電）`：前面是名字，括號裡是種類。\n\n寫 `class Item`（`Item` 的設計圖），欄位（每個 `Item` 自己的盒子）有 `String name` 和 `String kind`。再用 `new` 照設計圖做出一個 `Item`，名字設成 `小白`、種類設成 `筆電`，照這個格式印出來。",
+      "instructions": "`class` 是一張設計圖：說好一個 `Item` 有哪些欄位。欄位是設計圖裡的盒子，照設計圖做出來的每個東西都各有一份。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n設計圖還不是真的東西。`Item laptop = new Item();` 才是照著設計圖做出一個真的 `Item`（叫做**物件**），放進 `laptop` 這個盒子。用 `.` 拿它自己的欄位：`laptop.name = \"…\";` 是把名字放進它的 `name`。\n\n括號 `（）` 是全形的，可以從這裡複製。",
+      "expectedShape": "class Item {\n    …\n}\n\nItem laptop = new Item();\nlaptop.name = \"…\";\n…\nSystem.out.println(…);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "先寫設計圖，再 new。",
+        "plain": "`class Item` 只是設計圖。`new Item()` 才真的做出一個，放進 `laptop` 這個盒子。`laptop.name` 是這一個的名字，用 `.` 拿得到。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "another",
+      "title": "再做一個",
+      "goal": "印出兩行：\n`小白（筆電）`\n`阿隨（USB）`\n\n再 `new` 一個 `Item`，名字設成 `阿隨`、種類設成 `USB`，照同樣的格式印出來。",
+      "instructions": "同一張設計圖可以用很多次。",
+      "expectedShape": "Item usb = new Item();\n…\nSystem.out.println(…);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "同一張設計圖，再 new 一次。",
+        "plain": "再 `new Item()` 一次，放進另一個盒子 `usb`，設定它自己的名字和種類，再印出來。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "own",
+      "title": "各自一份",
+      "goal": "原本的兩行後面，要再多印出兩行，小白改了名字，阿隨不受影響：\n`小白二號（筆電）`\n`阿隨（USB）`\n\n把小白的名字改成 `小白二號`，再把兩個都印一次。",
+      "instructions": "改完以後，輸出會有四行：前兩行是改之前，後兩行是改之後。",
+      "expectedShape": "laptop.name = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "每個物件的欄位各自一份。",
+        "plain": "`laptop` 和 `usb` 是照同一張設計圖做的兩個東西，各有各的名字。改了 `laptop.name`，`usb.name` 不會跟著變。"
+      },
+      "afterText": ""
+    }
+  ]
+}

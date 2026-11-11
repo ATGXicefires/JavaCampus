@@ -1,0 +1,45 @@
+{
+  "id": "ch03-s5",
+  "title": "你覺得怎麼做比較好？",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["else-if", "array-loop"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{95, 72, 58}", "note": "一排分數" }
+  ],
+  "steps": [
+    {
+      "id": "mascot",
+      "title": "小老師的話",
+      "goal": "`scores` 是一排分數，現在是 `{95, 72, 58}`，要印出 3 行（滷肉是 App 裡的小老師）：\n`95 分 滷肉：「太強了！」`\n`72 分 滷肉：「不錯喔！」`\n`58 分 滷肉：「沒關係，再跑一次！」`\n\n用 `for` 走過 `scores` 的每一格，每個分數印一行滷肉說的話：90 以上 `太強了！`、60 以上 `不錯喔！`、其他 `沒關係，再跑一次！`。",
+      "instructions": "編輯器最上面那行 `int[] scores = {95, 72, 58};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n迴圈裡用 `if`／`else if`／`else` 從高分往低分問，第一個成立的就印。「以上」包含剛好那個分數：剛好 60 分是 `不錯喔！`。\n\n空格是半形的；冒號、引號和話裡的標點都是全形，可以從重點複製。",
+      "expectedShape": "for (…) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" 分 滷肉：「…」\");\n    } else if (…) {\n        …\n    }\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{60, 59}" }, { "scores": "{90}" }, { "scores": "{89}" } ]
+      },
+      "hints": {
+        "lead": "用 for 走訪陣列，迴圈裡做三段式分支⋯⋯",
+        "plain": "⋯⋯白話：每一個分數都問一遍：90 以上、60 以上、其他，各印一句滷肉的話。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "retry",
+      "title": "再試一次",
+      "goal": "現在 `scores` 是 `{95, 72, 58}`，不到 60 分、要顯示「再試一次」按鈕的只有 58 分這 1 個，所以 `retry` 是 1。\n\n用 `for` 走過 `scores`，數出有幾個分數不到 60，存進 `retry`；剛好 60 分不算。",
+      "instructions": "數數的寫法：先準備一個從 0 開始的盒子，走過每一格，符合條件就用 `retry++` 加一。走完以後，盒子裡就是符合條件的個數。\n\n「不到 60」寫成 `< 60`（小於）。",
+      "expectedShape": "int retry = 0;\nfor (…) {\n    if (…) {\n        retry++;\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": ["retry"],
+        "variants": [ { "scores": "{60, 59, 0}" }, { "scores": "{100, 90}" } ]
+      },
+      "hints": {
+        "lead": "計數器：條件成立時遞增⋯⋯",
+        "plain": "⋯⋯白話：準備一個從 0 開始的盒子，走過每一格，不及格就 `retry++`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "ch08-s4",
+  "title": "整理好的資料夾",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["tostring"],
+  "vars": [
+    { "name": "months", "type": "String[]", "value": "{\"9月\", \"10月\", \"11月\", \"12月\", \"1月\", \"2月\"}", "note": "每張草圖的月份" },
+    { "name": "titles", "type": "String[]", "value": "{\"提案簡報的插圖\", \"再試一次的按鈕\", \"校慶版的介面\", \"期中報告的 mockup\", \"小老師的類別圖\", \"貼紙系統的草稿\"}", "note": "每張草圖的標題" }
+  ],
+  "steps": [
+    {
+      "id": "sketch",
+      "title": "每一張都有名字",
+      "goal": "`new Sketch(\"9月\", \"提案簡報的插圖\").toString()` 要交回 `9月：提案簡報的插圖`。\n\n寫 `class Sketch`：欄位 `month`、`title`，建構子 `Sketch(String month, String title)`，再覆寫 `public String toString()`（`println` 印物件時，印的就是它交回的字），交回「月份：標題」。",
+      "instructions": "編輯器最上面兩行是題目先寫好的 `months` 和 `titles`，這一步還用不到，下一步才用。\n\n建構子收到的兩個值，存進同名的欄位：`this.month` 是欄位，`month` 是參數。\n\n每個類別本來就有一個 `toString()`，交回類別名稱加一串數字。覆寫它，就決定這個物件印出來的樣子。它原本就是 `public`（誰都能用），覆寫時前面也要寫 `public`。",
+      "expectedShape": "class Sketch {\n    String month;\n    String title;\n\n    Sketch(String month, String title) {\n        …\n    }\n\n    @Override\n    public String toString() {\n        …\n    }\n}",
+      "check": { "type": "values", "exprs": ["new Sketch(\"9月\", \"提案簡報的插圖\").toString()"], "uses": ["public String toString()"] },
+      "hints": {
+        "lead": "覆寫 `Object.toString()`，定義物件的字串表示⋯⋯",
+        "plain": "⋯⋯白話：每一張草圖要怎麼被叫出名字，寫在 `toString()` 裡。月份、冒號、標題接起來交回去。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "folder",
+      "title": "資料夾的目錄",
+      "goal": "`months` 和 `titles` 是每張草圖的月份和標題，現在有 6 張，要印出 6 行目錄：\n`9月：提案簡報的插圖`\n`10月：再試一次的按鈕`\n⋯⋯\n`2月：貼紙系統的草稿`\n\n用 `for` 照 `months` 和 `titles` 把每一張 `new` 出來，用 `System.out.println(sketch)` 印出。",
+      "instructions": "編輯器最上面兩行 `String[] months = {\"9月\", \"10月\", \"11月\", \"12月\", \"1月\", \"2月\"};` 和 `String[] titles = {\"提案簡報的插圖\", \"再試一次的按鈕\", \"校慶版的介面\", \"期中報告的 mockup\", \"小老師的類別圖\", \"貼紙系統的草稿\"};` 是題目先寫好的，你的程式可以直接用 `months` 和 `titles`。`months[i]` 和 `titles[i]` 是同一張。",
+      "expectedShape": "for (…) {\n    Sketch sketch = new Sketch(…);\n    System.out.println(sketch);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "months": "{\"9月\", \"2月\"}", "titles": "{\"提案簡報的插圖\", \"貼紙系統的草稿\"}" } ]
+      },
+      "hints": {
+        "lead": "`println(Object)` 會呼叫物件的 `toString()`⋯⋯",
+        "plain": "⋯⋯白話：格式已經寫在 `toString()` 裡，迴圈只要一張一張 `new` 出來交給 `println`。"
+      },
+      "afterText": ""
+    }
+  ]
+}

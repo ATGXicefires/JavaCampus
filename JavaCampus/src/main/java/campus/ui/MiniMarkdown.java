@@ -11,6 +11,8 @@ import javafx.scene.transform.Scale;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,11 @@ public final class MiniMarkdown {
 
     private static final Pattern INLINE = Pattern.compile("\\*\\*(.+?)\\*\\*|`([^`]+)`");
     private static final Pattern IMAGE = Pattern.compile("!\\[([^\\]]*)]\\(([^)]+)\\)");
+
+    /** 畫成看得見的空格的字；複製時要換回真的空格（見 TextSelection）。 */
+    static final char SPACE_MARK = '␣';
+    // 呼叫方法、取陣列的格子或指定：是程式碼，不是要印的字
+    private static final Pattern CODE_LIKE = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*[(\\[]| = ");
 
     private MiniMarkdown() {}
 
@@ -41,7 +48,8 @@ public final class MiniMarkdown {
         for (int i = 0; i < parts.length; i++) {
             if (i % 2 == 1) {
                 // 用 TextFlow 而不是 Label，程式說明裡的範例程式才選取得到（見 TextSelection）
-                TextFlow pre = new TextFlow(text(parts[i].strip(), "md-pre-text"));
+                TextFlow pre = new TextFlow();
+                pre.getChildren().addAll(texts(visibleSpaces(parts[i].strip(), false), "md-pre-text"));
                 pre.getStyleClass().add("md-pre");
                 box.getChildren().add(pre);
                 continue;
@@ -136,22 +144,70 @@ public final class MiniMarkdown {
         int at = 0;
         while (m.find()) {
             if (m.start() > at) {
-                flow.getChildren().add(text(text.substring(at, m.start()), "md-text"));
+                flow.getChildren().addAll(texts(text.substring(at, m.start()), "md-text"));
             }
             if (m.group(1) != null) {
-                flow.getChildren().add(text(m.group(1), "md-bold"));
+                flow.getChildren().addAll(texts(m.group(1), "md-bold"));
             } else {
-                flow.getChildren().add(text(m.group(2), "md-code"));
+                flow.getChildren().addAll(texts(visibleSpaces(m.group(2), true), "md-code"));
             }
             at = m.end();
         }
         if (at < text.length()) {
-            flow.getChildren().add(text(text.substring(at), "md-text"));
+            flow.getChildren().addAll(texts(text.substring(at), "md-text"));
         }
         return flow;
     }
 
-    private static Node text(String s, String styleClass) {
+    /**
+     * 要照打的輸出裡，空格和中文的字距分不出來，所以畫成 {@value #SPACE_MARK}：程式碼只換字串引號裡的空格；
+     * {@code wholeOutput} 時，沒有引號、有中文、又不像 {@code substring(開始, 結束)} 這種帶中文說明的程式碼，
+     * 整段就是要印出來的字，每個空格都換。
+     */
+    static String visibleSpaces(String code, boolean wholeOutput) {
+        if (code.indexOf('"') < 0) {
+            return wholeOutput && code.codePoints().anyMatch(MiniMarkdown::isCjk) && !CODE_LIKE.matcher(code).find()
+                    ? code.replace(' ', SPACE_MARK) : code;
+        }
+        StringBuilder b = new StringBuilder(code.length());
+        boolean quoted = false;
+        for (int i = 0; i < code.length(); i++) {
+            char c = code.charAt(i);
+            if (c == '"' && (i == 0 || code.charAt(i - 1) != '\\') || c == '\n') {
+                quoted = c == '"' && !quoted;
+            }
+            b.append(quoted && c == ' ' ? SPACE_MARK : c);
+        }
+        return b.toString();
+    }
+
+    private static boolean isCjk(int cp) {
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(cp);
+        return Character.UnicodeScript.of(cp) == Character.UnicodeScript.HAN
+                || block == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || block == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS;
+    }
+
+    /** 一段字切成好幾個 Text：{@value #SPACE_MARK} 單獨一個，淡一點，跟真的字分得開。 */
+    static List<Text> texts(String s, String styleClass) {
+        List<Text> out = new ArrayList<>();
+        int at = 0;
+        for (int i = s.indexOf(SPACE_MARK); i >= 0; i = s.indexOf(SPACE_MARK, at)) {
+            if (i > at) {
+                out.add(text(s.substring(at, i), styleClass));
+            }
+            Text mark = text(String.valueOf(SPACE_MARK), styleClass);
+            mark.getStyleClass().add("md-space");
+            out.add(mark);
+            at = i + 1;
+        }
+        if (at < s.length() || out.isEmpty()) {
+            out.add(text(s.substring(at), styleClass));
+        }
+        return out;
+    }
+
+    private static Text text(String s, String styleClass) {
         Text t = new Text(s);
         t.getStyleClass().add(styleClass);
         return t;

@@ -58,6 +58,19 @@ final class Diagnostics {
     private static final Pattern JSHELL_WRAPPER = Pattern.compile("REPL\\.\\$JShell\\$\\d+\\w*\\.");
     private static final Pattern INDEX = Pattern.compile("(?i)index (-?\\d+) out of bounds for length (\\d+)");
     private static final Pattern NUMBER_INPUT = Pattern.compile("For input string: \"(.*)\"");
+    private static final Pattern DEREF = Pattern.compile("(\\S+) cannot be dereferenced");
+    private static final Pattern ACCESS = Pattern.compile("(\\S+) has (private|protected) access in (\\S+)");
+    private static final Pattern FINAL_VAR = Pattern.compile("final variable (\\S+)");
+    private static final Pattern NOT_IMPLEMENTED = Pattern.compile(
+            "(\\S+) is not abstract and does not override abstract method (\\S+) in (\\S+)");
+    private static final Pattern WEAKER = Pattern.compile("(\\S+) in (\\S+) cannot (?:implement|override)");
+    private static final Pattern WAS = Pattern.compile("was (\\w+)");
+    private static final Pattern ABSTRACT_NEW = Pattern.compile("(\\S+) is abstract; cannot be instantiated");
+    private static final Pattern FOUND = Pattern.compile("found:\\s+(\\S+)");
+    private static final Pattern DEFINED = Pattern.compile("(variable|method|class|interface|enum|record) (\\S+) is already defined");
+    private static final Pattern NEGATIVE_COUNT = Pattern.compile("count is negative: (-?\\d+)");
+    private static final Map<String, String> WRAPPERS = Map.of("int", "Integer", "double", "Double", "boolean",
+            "Boolean", "char", "Character", "long", "Long", "float", "Float", "short", "Short", "byte", "Byte");
 
     private Diagnostics() {}
 
@@ -99,6 +112,17 @@ final class Diagnostics {
             case "compiler.err.void.not.allowed.here" -> "這個方法不會回傳值（void），所以不能把它當成一個值來用。";
             case "compiler.err.non-static.cant.be.ref" -> nonStatic(msg);
             case "compiler.err.invalid.meth.decl.ret.type.req" -> "方法名稱前面要寫回傳型別；不回傳任何值就寫 `void`。";
+            case "compiler.err.cant.deref" -> cantDeref(msg);
+            case "compiler.err.report.access" -> access(msg);
+            case "compiler.err.cant.assign.val.to.var" -> assignFinal(msg);
+            case "compiler.err.method.does.not.override.superclass" ->
+                    "加了 `@Override`，但父類別或介面裡沒有一模一樣的方法可以覆寫。檢查方法的名字、參數和大小寫是不是寫錯了。";
+            case "compiler.err.does.not.override.abstract" -> notImplemented(msg);
+            case "compiler.err.override.weaker.access" -> weakerAccess(msg);
+            case "compiler.err.abstract.cant.be.instantiated" -> abstractNew(msg);
+            case "compiler.err.type.found.req" -> typeFoundReq(msg);
+            case "compiler.err.unreachable.stmt" -> "這一行永遠不會被執行到：前面的迴圈停不下來，或是已經 `return`、`break` 了。";
+            case "compiler.err.already.defined" -> alreadyDefinedIn(msg);
             default -> "編譯器回報了錯誤：" + firstLine(msg);
         };
     }
@@ -144,6 +168,11 @@ final class Diagnostics {
         return "`" + main + "` 裡找不到能執行的 `main` 方法。程式的起點要寫成 `public static void main(String[] args)`。";
     }
 
+    static String conflictMarker() {
+        return "這裡還留著合併衝突的標記。`<<<<<<<` 到 `=======` 是一邊的改動，`=======` 到 `>>>>>>>` 是另一邊的。"
+                + "決定要留下哪些程式，再把這三行標記刪掉。";
+    }
+
     static String alreadyDefined(String name, boolean givenByCase) {
         if (givenByCase) {
             return "`" + name + "` 是題目提供的資料，已經宣告好了。直接使用它就好，前面不用再寫型別。";
@@ -162,6 +191,7 @@ final class Diagnostics {
             case "IndexOutOfBoundsException" -> outOfBounds(msg, "清單");
             case "NumberFormatException" -> numberFormat(msg);
             case "ClassCastException" -> "型別轉換失敗：" + simplifyTypes(msg);
+            case "IllegalArgumentException" -> illegalArgument(msg);
             case "StackOverflowError" -> "方法不斷呼叫自己停不下來（遞迴沒有終點），呼叫堆疊滿了。";
             case "OutOfMemoryError" -> "記憶體用完了，可能有集合或字串一直無限制地變大。";
             default -> "程式執行時拋出了例外 `" + simple + "`" + (msg.isEmpty() ? "。" : "：" + msg);
@@ -369,6 +399,86 @@ final class Diagnostics {
             return "索引 " + index + " 超出範圍：這個" + what + "是空的。";
         }
         return "索引 " + index + " 超出範圍：這個" + what + "的長度是 " + length + "，能用的索引是 0 到 " + (length - 1) + "。";
+    }
+
+    private static String cantDeref(String msg) {
+        Matcher m = DEREF.matcher(msg);
+        String type = m.find() ? m.group(1) : "基本型別";
+        return "`" + type + "` 是基本型別，只是一個值，後面不能接 `.` 呼叫方法。像 `length()` 這種方法，要對字串（`String`）用。";
+    }
+
+    private static String access(String msg) {
+        Matcher m = ACCESS.matcher(msg);
+        if (!m.find()) {
+            return "這個成員不開放給外面使用：" + firstLine(msg);
+        }
+        if (m.group(2).equals("protected")) {
+            return "`" + m.group(1) + "` 是 protected，只有 `" + m.group(3) + "` 的子類別能用。";
+        }
+        return "`" + m.group(1) + "` 是 `" + m.group(3) + "` 的 private 成員，只有 `" + m.group(3)
+                + "` 自己的程式能用。從外面要改用它開放的方法，例如 getter。";
+    }
+
+    private static String assignFinal(String msg) {
+        Matcher m = FINAL_VAR.matcher(msg);
+        String name = m.find() ? "`" + m.group(1) + "`" : "這個變數";
+        return name + " 是 final，設定一次就不能再改。需要不一樣的值時，另外用一個變數來放。";
+    }
+
+    private static String notImplemented(String msg) {
+        Matcher m = NOT_IMPLEMENTED.matcher(msg);
+        if (!m.find()) {
+            return "這個類別還有方法沒有實作：" + firstLine(msg);
+        }
+        return "`" + m.group(1) + "` 說要實作 `" + m.group(3) + "`，但還沒寫 `" + m.group(2)
+                + "`。介面或抽象類別裡的每個方法，都要實作出來。";
+    }
+
+    private static String weakerAccess(String msg) {
+        Matcher m = WEAKER.matcher(msg);
+        Matcher was = WAS.matcher(msg);
+        String method = m.find() ? "`" + m.group(1) + "`" : "這個方法";
+        String level = was.find() ? was.group(1) : "public";
+        return method + " 原本是 " + level + "，實作或覆寫的時候不能變得更封閉：在前面加上 `" + level + "`。"
+                + "介面裡的方法都是 public。";
+    }
+
+    private static String abstractNew(String msg) {
+        Matcher m = ABSTRACT_NEW.matcher(msg);
+        String name = m.find() ? "`" + m.group(1) + "`" : "它";
+        return name + " 是介面或抽象類別，不能直接 `new`。要 `new` 的是實作它、把方法都寫完的類別。";
+    }
+
+    private static String typeFoundReq(String msg) {
+        Matcher m = FOUND.matcher(msg);
+        String found = m.find() ? m.group(1) : "";
+        if (msg.contains("required: reference") && WRAPPERS.containsKey(found)) {
+            return "角括號裡只能放類別，不能放 `" + found + "` 這種基本型別。`" + found + "` 要寫成 `" + WRAPPERS.get(found) + "`。";
+        }
+        if (msg.contains("required: variable")) {
+            return "等號左邊要是一個變數，才能把值放進去。";
+        }
+        return "型別用錯了地方：" + firstLine(msg);
+    }
+
+    private static String alreadyDefinedIn(String msg) {
+        Matcher m = DEFINED.matcher(msg);
+        if (!m.find()) {
+            return "這個名字已經用過了：" + firstLine(msg);
+        }
+        return switch (m.group(1)) {
+            case "variable" -> alreadyDefined(m.group(2), false);
+            case "method" -> "方法 `" + m.group(2) + "` 已經寫過一次了。名字和參數都一樣的方法，不能有兩個。";
+            default -> duplicateType(m.group(2));
+        };
+    }
+
+    private static String illegalArgument(String msg) {
+        Matcher m = NEGATIVE_COUNT.matcher(msg);
+        if (m.find()) {
+            return "`repeat` 的次數不能是負數，這次收到的是 " + m.group(1) + "。";
+        }
+        return "傳給方法的值不合理" + (msg.isEmpty() ? "。" : "：" + msg);
     }
 
     private static String numberFormat(String msg) {

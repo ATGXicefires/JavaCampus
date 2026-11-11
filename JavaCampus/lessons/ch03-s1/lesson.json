@@ -1,0 +1,63 @@
+{
+  "id": "ch03-s1",
+  "title": "她這個月寫的",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["compare", "int-div", "for"],
+  "vars": [
+    { "name": "score", "type": "int", "value": "60", "note": "要判斷的分數" },
+    { "name": "total", "type": "int", "value": "312", "note": "5 科的總分" },
+    { "name": "days", "type": "int", "value": "7", "note": "要印幾天" }
+  ],
+  "steps": [
+    {
+      "id": "equal",
+      "title": "又是全形",
+      "goal": "`score` 是要判斷的分數，現在是 60，修好後要印出 `剛好及格`；`score` 不是 60 的時候，什麼都不印。\n\n起始碼想判斷 `score` 是不是剛好 60，現在跑起來卻是紅字。",
+      "instructions": "編輯器最上面三行 `int score = 60;`、`int total = 312;` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接用 `score`、`total` 和 `days`。\n\n`=` 是「把右邊放進左邊的盒子」，`==`（兩個等號）才是在問「等不等於」，答案是 `true` 或 `false`。`if` 的括號裡要放問題，例如 `if (temp == 30)`。",
+      "expectedShape": "if (score … 60) {\n    System.out.println(\"剛好及格\");\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "score": "59" }, { "score": "0" }, { "score": "100" } ]
+      },
+      "hints": {
+        "lead": "`incompatible types: int cannot be converted to boolean`，還有 `illegal character: '\\uff1b'`⋯⋯",
+        "plain": "⋯⋯白話：`=` 是把 60 放進 `score`，不是在比較；比較要用 `==`。行尾的 `；` 是全形，換成半形的 `;`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "avg",
+      "title": "平均又是整數",
+      "goal": "`total` 是 5 科的總分，現在是 312，修好後平均 `avg` 要是 62.4，現在卻算出 `62.0`，小數不見了。",
+      "instructions": "右邊會先算完，才放進盒子。兩個 `int`（整數）相除，答案也是整數，小數點後面直接丟掉；放進 `double` 盒子時只會補上 `.0`，小數早就不見了。\n\n只要有一邊是小數，除出來就會留下小數：`7 / 2` 是 `3`，`7 / 2.0` 是 `3.5`。",
+      "expectedShape": "double avg = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["avg"],
+        "variants": [ { "total": "300" } ]
+      },
+      "hints": {
+        "lead": "`total / 5` 是 `int` 除法，指定給 `double` 之前就已經截斷⋯⋯",
+        "plain": "⋯⋯白話：兩個整數相除會丟掉小數。把 `5` 寫成 `5.0`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "days",
+      "title": "少印一天",
+      "goal": "`days` 是要印幾天，現在是 7，要印出 7 行：\n`第 1 天`\n`第 2 天`\n⋯⋯\n`第 7 天`\n\n可是現在只印到 `第 6 天`，少印一天。",
+      "instructions": "`for` 括號裡的三段是：從哪裡開始、做到什麼時候、每做完一次怎麼變。中間那段是「還成立就再做一次」。\n\n例如 `for (int i = 1; i < 3; i++)`：`i` 變成 3 時，`i < 3` 就不成立了，所以只跑過 1 和 2。寫成 `i <= 3`（小於等於），3 也會跑到。",
+      "expectedShape": "for (int i = 1; i … days; i++) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "days": "3" } ]
+      },
+      "hints": {
+        "lead": "`i < days` 在 `i == days` 時就結束，少執行一次⋯⋯",
+        "plain": "⋯⋯白話：從 1 數到 7 要包含 7，所以條件是 `i <= days`。和從 0 開始數、多跑一次的錯剛好相反。"
+      },
+      "afterText": ""
+    }
+  ]
+}

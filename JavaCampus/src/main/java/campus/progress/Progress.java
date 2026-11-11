@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /** 玩家進度與設定。用 Gson 存成 JSON，所以欄位保持可變的一般集合。 */
 public final class Progress {
@@ -212,11 +213,58 @@ public final class Progress {
         private Map<String, String> code = new HashMap<>();
     }
 
+    /** 一份程式題紀錄：完成的步驟、看過幾層提示、寫過的程式碼。劇情和練習各有一份，分開存。 */
+    public static final class LessonRecord {
+        // 每次都回頭問 Progress 拿表：重設練習會換掉整張表，先拿到的紀錄也要跟著換
+        private final Supplier<Map<String, LessonProgress>> map;
+
+        private LessonRecord(Supplier<Map<String, LessonProgress>> map) {
+            this.map = map;
+        }
+
+        public boolean isEmpty() {
+            return map.get().isEmpty();
+        }
+
+        public boolean isSolved(String lessonId, String stepId) {
+            LessonProgress p = map.get().get(lessonId);
+            return p != null && p.solved.contains(stepId);
+        }
+
+        public void markSolved(String lessonId, String stepId) {
+            of(lessonId).solved.add(stepId);
+        }
+
+        public int hintsRevealed(String lessonId, String stepId) {
+            LessonProgress p = map.get().get(lessonId);
+            return p == null ? 0 : p.hints.getOrDefault(stepId, 0);
+        }
+
+        public void setHintsRevealed(String lessonId, String stepId, int n) {
+            of(lessonId).hints.put(stepId, n);
+        }
+
+        public String code(String lessonId, String stepId) {
+            LessonProgress p = map.get().get(lessonId);
+            return p == null ? null : p.code.get(stepId);
+        }
+
+        public void setCode(String lessonId, String stepId, String source) {
+            of(lessonId).code.put(stepId, source);
+        }
+
+        private LessonProgress of(String lessonId) {
+            return map.get().computeIfAbsent(lessonId, k -> new LessonProgress());
+        }
+    }
+
     private Route lastRoute;
     private Map<Route, StoryState> routes = new HashMap<>();
     private Set<String> read = new HashSet<>();
     private Set<String> notes = new LinkedHashSet<>();
     private Map<String, LessonProgress> lessons = new HashMap<>();
+    /** 練習模式的紀錄，跟劇情的 {@link #lessons} 分開；舊存檔沒有這一欄。 */
+    private Map<String, LessonProgress> practice = new HashMap<>();
     private Settings settings = new Settings();
 
     public Settings settings() {
@@ -281,35 +329,19 @@ public final class Progress {
         return notes;
     }
 
-    public boolean isSolved(String lessonId, String stepId) {
-        LessonProgress p = lessons().get(lessonId);
-        return p != null && p.solved.contains(stepId);
+    /** 劇情裡的程式題紀錄，依視角清除，見 {@link #startRoute} 和 {@link #resetRoute}。 */
+    public LessonRecord storyLessons() {
+        return new LessonRecord(this::lessons);
     }
 
-    public void markSolved(String lessonId, String stepId) {
-        of(lessonId).solved.add(stepId);
+    /** 練習模式的程式題紀錄；新遊戲和重設視角都不清它。 */
+    public LessonRecord practiceLessons() {
+        return new LessonRecord(this::practice);
     }
 
-    public int hintsRevealed(String lessonId, String stepId) {
-        LessonProgress p = lessons().get(lessonId);
-        return p == null ? 0 : p.hints.getOrDefault(stepId, 0);
-    }
-
-    public void setHintsRevealed(String lessonId, String stepId, int n) {
-        of(lessonId).hints.put(stepId, n);
-    }
-
-    public String code(String lessonId, String stepId) {
-        LessonProgress p = lessons().get(lessonId);
-        return p == null ? null : p.code.get(stepId);
-    }
-
-    public void setCode(String lessonId, String stepId, String source) {
-        of(lessonId).code.put(stepId, source);
-    }
-
-    private LessonProgress of(String lessonId) {
-        return lessons().computeIfAbsent(lessonId, k -> new LessonProgress());
+    /** 只清練習的紀錄；劇情、筆記和設定不動。 */
+    public void resetPractice() {
+        practice = new HashMap<>();
     }
 
     private Map<Route, StoryState> routes() {
@@ -324,5 +356,12 @@ public final class Progress {
             lessons = new HashMap<>();
         }
         return lessons;
+    }
+
+    private Map<String, LessonProgress> practice() {
+        if (practice == null) {
+            practice = new HashMap<>();
+        }
+        return practice;
     }
 }

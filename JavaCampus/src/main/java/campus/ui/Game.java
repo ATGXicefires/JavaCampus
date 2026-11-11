@@ -55,8 +55,8 @@ public final class Game {
     /** 程式題的配色掛在最外層，各畫面的樣式用 {@code .app-root:code-dark} 切換，不用各自監聽設定。 */
     private static final PseudoClass CODE_DARK = PseudoClass.getPseudoClass("code-dark");
     private static final String CODE_SELECTORS = Stream.of(".code-area", ".code-font", ".md-code", ".md-pre",
-            ".lineno", ".console-out", ".shape-box", ".hint-code", ".probe-line", ".raw", ".var-name", ".var-type",
-            ".var-value").map(c -> ".app-root " + c).collect(Collectors.joining(", "));
+            ".lineno", ".console-out", ".shape-box", ".given-lines", ".hint-code", ".probe-line", ".raw",
+            ".term").map(c -> ".app-root " + c).collect(Collectors.joining(", "));
 
     /** 想自己處理按鍵的畫面（劇情、選視角）實作這個介面；Esc 和 F11 由 {@link Game} 統一處理。 */
     interface KeyAware {
@@ -80,6 +80,9 @@ public final class Game {
     private Node current;
     private Overlay overlay;
     private String codeFontSheet;
+    /** 背景查到的新版本號；還沒查到或沒有新版時是 null。 */
+    private String newVersion;
+    private boolean updateRequested;
 
     public Game(StoryLibrary story, LessonLibrary lessons, Art art, Progress progress, SaveStore store, Sfx sfx,
                 Music music, Sandbox sandbox, ExecutorService runner, StackPane root, Stage stage, Viewport viewport) {
@@ -225,10 +228,14 @@ public final class Game {
      */
     private void setCodeFont(double size, String family) {
         String css = String.format(Locale.ROOT,
-                ".app-root .code-area { -fx-font-size: %.0fpx; } .app-root .lineno, .app-root .console-out { -fx-font-size: %.0fpx; } "
+                ".app-root .code-area, .app-root .given-lines, .app-root .term { -fx-font-size: %.0fpx; } .app-root .lineno, .app-root .console-out { -fx-font-size: %.0fpx; } "
                         + "%s { -fx-font-family: \"%s\"; }",
                 size, size - 2, CODE_SELECTORS, family.replace("\"", ""));
         String url = "data:text/css;base64," + Base64.getEncoder().encodeToString(css.getBytes(StandardCharsets.UTF_8));
+        // 換樣式表會讓整個畫面重套一次 CSS；拖音量滑桿時每動一下都會走到這裡，字型沒變就不要換
+        if (url.equals(codeFontSheet)) {
+            return;
+        }
         List<String> sheets = stage.getScene().getStylesheets();
         sheets.remove(codeFontSheet);
         sheets.add(url);
@@ -281,6 +288,25 @@ public final class Game {
         swapTo(new ChapterSelectView(this));
     }
 
+    void showPractice() {
+        music.play(Music.Track.DAILY);
+        swapTo(new PracticeView(this));
+    }
+
+    /** 從練習的終端機開一題；按「←」或寫完按「繼續」，回到同一個終端機。 */
+    void showPracticeLesson(Lesson lesson, PracticeView back) {
+        swapTo(new LessonView(this, lesson, progress.practiceLessons(), true, () -> {
+            swapTo(back);
+            back.returnFrom(lesson);
+        }));
+    }
+
+    void resetPractice() {
+        progress.resetPractice();
+        save();
+        showTitle();
+    }
+
     /** 這個視角的程式題 id，重設或重新開始那個視角時一起清掉。 */
     List<String> lessonIds(Route r) {
         return lessons.lessons().values().stream().filter(l -> l.route().equals(r.label)).map(Lesson::id).toList();
@@ -321,7 +347,7 @@ public final class Game {
 
     /** 從劇情進入程式題；按「繼續」時回到同一個劇情畫面，再接著播下一行。 */
     void showLesson(String lessonId, StoryView back, Runnable next) {
-        swapTo(new LessonView(this, lessons.lesson(lessonId), () -> {
+        swapTo(new LessonView(this, lessons.lesson(lessonId), progress.storyLessons(), false, () -> {
             swapTo(back);
             back.resumeAfterLesson();
             next.run();
@@ -462,6 +488,28 @@ public final class Game {
 
     void exit() {
         Platform.exit();
+    }
+
+    /** 背景查到新版本時呼叫；標題畫面已經開著，就直接把「更新」補進選單。 */
+    public void offerUpdate(String version) {
+        newVersion = version;
+        if (current instanceof TitleView t) {
+            t.offerUpdate(version);
+        }
+    }
+
+    String newVersion() {
+        return newVersion;
+    }
+
+    /** 跟「離開」一樣存檔關閉，再由啟動器下載新版、重新開啟，見 {@link campus.App#main(String[])}。 */
+    void update() {
+        updateRequested = true;
+        Platform.exit();
+    }
+
+    public boolean updateRequested() {
+        return updateRequested;
     }
 
     private static void alert(String title, String message) {

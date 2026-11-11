@@ -108,6 +108,24 @@ class MultiFileProgramTest {
     }
 
     @Test
+    void errorInClassThatNeedsALaterFileIsReportedThere() {
+        SourceFile main = new SourceFile("Main.java", """
+                public class Main {
+                    public static void main(String[] args) {
+                        new Badge().draw();
+                    }
+                }
+                """);
+        String text = "public class Badge implements Drawable {\n    void draw() {\n    }\n}\n";
+        RunResult r = run(main, new SourceFile("Badge.java", text),
+                new SourceFile("Drawable.java", "public interface Drawable {\n    void draw();\n}\n"));
+        assertEquals(Outcome.COMPILE_ERROR, r.outcome());
+        Problem p = error(r);
+        assertEquals("Badge.java", p.file());
+        assertMentions(p, "`public`");
+    }
+
+    @Test
     void runtimeErrorInSecondFileMapsToThatFile() {
         String text = """
                 class Student {

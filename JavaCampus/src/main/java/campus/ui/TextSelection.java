@@ -180,7 +180,8 @@ final class TextSelection {
         String s = selectedText();
         if (!s.isEmpty()) {
             ClipboardContent content = new ClipboardContent();
-            content.putString(s);
+            // 畫成 ␣ 的空格貼進程式裡要是真的空格
+            content.putString(s.replace(MiniMarkdown.SPACE_MARK, ' '));
             Clipboard.getSystemClipboard().setContent(content);
         }
     }

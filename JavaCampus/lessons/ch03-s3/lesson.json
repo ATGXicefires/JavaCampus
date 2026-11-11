@@ -1,0 +1,61 @@
+{
+  "id": "ch03-s3",
+  "title": "段考筆記：陣列與等第",
+  "route": "學長",
+  "partner": "二弘OS",
+  "notes": ["array", "index", "else-if"],
+  "vars": [
+    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" },
+    { "name": "score", "type": "int", "value": "85", "note": "要換成等第的分數" }
+  ],
+  "steps": [
+    {
+      "id": "lockers",
+      "title": "置物櫃",
+      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`，要印出 5 行：\n`第 0 格：72`\n`第 1 格：58`\n⋯⋯\n`第 4 格：49`\n\n用 `for` 走過 `scores` 的每一格，印出格子的編號（索引，從 0 開始）和那一格的分數。",
+      "instructions": "編輯器最上面兩行 `int[] scores = {72, 58, 65, 80, 49};` 和 `int score = 85;` 是題目先寫好的，你的程式可以直接用 `scores` 和 `score`。\n\n這份筆記把編號和分數一起印出來，讓人一眼看到編號從 0 開始。\n\n`for` 的 `i` 從 0 開始、每一圈加一，條件寫 `i < scores.length`（`length` 是總共有幾格），`i` 就剛好走過每一格的編號；`scores[i]` 是那一格的分數。",
+      "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    System.out.println(\"第 \" + … + \" 格：\" + …);\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "陣列索引是從 0 起算的位移量⋯⋯",
+        "plain": "⋯⋯白話：把編號和分數一起印出來，一眼就看得出編號從 0 開始。`i` 是編號，`scores[i]` 是那一格的分數。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "last",
+      "title": "最後一格",
+      "goal": "現在 `scores` 有 5 格，最後一格的編號是 4，要在下面再印一行 `最後一格是第 4 格`。\n\n這個編號用 `scores.length - 1`（格數減一）算出來。",
+      "instructions": "編號從 0 開始，所以 5 格的編號是 0 到 4，最後一格的編號比格數少一。\n\n算式放進字串中間時要加括號：`\"共 \" + (3 - 1) + \" 格\"` 會先算 `3 - 1`，印出 `共 2 格`。不加括號的話，`+` 會先把字串和 3 接起來，接著碰到 `-` 就是紅字。",
+      "expectedShape": "System.out.println(\"最後一格是第 \" + (…) + \" 格\");",
+      "check": {
+        "type": "output",
+        "variants": [ { "scores": "{90, 85}" } ]
+      },
+      "hints": {
+        "lead": "最後一個索引是 `length - 1`；放在串接裡要加括號⋯⋯",
+        "plain": "⋯⋯白話：5 格的最後一格是 4 號，用 `scores.length - 1` 算。放進字串中間時要加括號，不然 `-` 會碰到字串。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "grade",
+      "title": "順序很重要",
+      "goal": "`score` 是要換成等第的分數，現在是 85，要印出 `85 分是 B`。\n\n用 `if`／`else if`／`else`（從上往下問，第一個成立的就做）照 `score` 印出等第：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
+      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。第一個成立的就做，後面的都不問了，所以條件要從高分往低分問。\n\n「以上」包含剛好那個分數：剛好 60 分是 D。",
+      "expectedShape": "if (score >= 90) {\n    System.out.println(score + \" 分是 A\");\n} else if (…) {\n    …\n}",
+      "check": {
+        "type": "output",
+        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ]
+      },
+      "hints": {
+        "lead": "多分支選擇依序判斷，條件要從嚴到寬排列⋯⋯",
+        "plain": "⋯⋯白話：從 90 分開始往下問，第一個成立的就是答案。95 分停在 A，60 分停在 D，59 分走到最後的 F。"
+      },
+      "afterText": ""
+    }
+  ]
+}

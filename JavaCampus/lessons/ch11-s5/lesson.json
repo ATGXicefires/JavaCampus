@@ -1,0 +1,52 @@
+{
+  "id": "ch11-s5",
+  "title": "一年的 bug",
+  "route": "學長",
+  "partner": "亭瑄",
+  "notes": ["fullwidth", "concat", "index", "equals", "boundary", "this", "private", "override-annotation", "implements", "generics"],
+  "vars": [],
+  "steps": [
+    {
+      "id": "first",
+      "title": "上學期的",
+      "goal": "修好後要依序印出五行：\n`小白學程式 v0.99`\n`總共 7 個貼紙`\n`總分：195`\n`答對了`\n`及格`\n\n起始碼是學妹最後一版的程式，藏著第一章到第五章踩過的五個錯：有的會出紅字，有的會印錯。一個一個修好。",
+      "instructions": "一次修一個：紅字先修，修到能跑，再對照目標的五行找剩下的。",
+      "expectedShape": "System.out.println(\"總共 \" + (…) + \" 個貼紙\");\nfor (int i = 0; i < …; i++) {\n…\nif (typed.equals(…)) {\n…\nif (score >= 60) {",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "編譯錯誤、執行期例外、邏輯錯誤依序排除⋯⋯",
+        "plain": "⋯⋯白話：五個錯分別是第一章到第五章踩過的坑：分號、字串接數字、陣列的最後一格、字串比內容、剛好 60 分。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "second",
+      "title": "下學期的",
+      "goal": "修好後，上學期那五行下面要接著印出四行：\n`true`\n`true`\n`完成 1 章`\n`★ 完成`\n\n這一版多了下學期寫的類別，又藏了第六章到第九章的四個錯，現在跑起來是紅字。一個一個修好。",
+      "instructions": "四個錯分散在幾個分頁裡，上學期那五行照樣印在最前面。",
+      "expectedShape": "this.answer = answer;\n…\n@Override\nboolean check(String typed) {\n…\npublic void draw() {\n…\np.finish();",
+      "form": "program",
+      "check": { "type": "output" },
+      "hints": {
+        "lead": "`this`、封裝、覆寫、介面實作的常見錯誤⋯⋯",
+        "plain": "⋯⋯白話：第六章到第九章的坑：參數蓋住欄位、`private` 從外面碰不到、名字打錯就沒覆寫到、介面的方法要寫 `public`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "last",
+      "title": "最後一個",
+      "goal": "`total` 收到裝著 `1`、`2`、`3` 的清單時，要交回 `6`：清單裡所有數字的和。\n\n最後一個是第十章的錯：`Main` 裡的 `total` 現在是紅字，修好它。",
+      "instructions": "這一步只看 `total` 交回的數，`main` 不用改。",
+      "expectedShape": "static int total(ArrayList<…> list) {\n    …\n}",
+      "form": "program",
+      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))"] },
+      "hints": {
+        "lead": "型別參數不可為基本型別⋯⋯",
+        "plain": "⋯⋯白話：角括號裡只能放類別，`int` 要寫成 `Integer`。"
+      },
+      "afterText": ""
+    }
+  ]
+}
