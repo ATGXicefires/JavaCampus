@@ -53,7 +53,7 @@
       "id": "average-v2",
       "title": "除不盡與截斷順序",
       "goal": "修好起手程式裡的兩處整數截斷錯誤：\n1. `double avg`：算出 `gacha` 個扭蛋平分到 3 個掛勾的精確小數平均（`gacha` 為 8 時約 `2.666…`）\n2. `double fillRate`：算出扭蛋數量佔書包上限 `15` 個的精確百分比（例如 `gacha` 為 8 時是 `53.333…`，不是 `0.0`）",
-      "instructions": "兩個 `int` 相除會先丟掉小數，而且是**先把右邊算完才放進左邊的 `double`**。\n\n陷阱 1：`(double) (gacha / 3)` 會先算括號內的整數除法，丟掉小數後才轉型。應該把 `(double)` 放在 `gacha` 前面，或把 `3` 寫成 `3.0`。\n陷阱 2：`gacha / 15 * 100` 由左往右先算 `gacha / 15`，當 `gacha < 15` 時會先變成 `0`，再乘 `100` 還是 `0.0`！應該先讓其中一邊成為 `double`（例如 `(double) gacha * 100 / 15` 或 `gacha * 100.0 / 15`）。",
+      "instructions": "兩個 `int` 相除會先丟掉小數，而且是**先把右邊算完**才放進左邊的 `double`。\n\n陷阱 1：`(double) (gacha / 3)` 會先算括號內的整數除法，丟掉小數後才轉型。應該把 `(double)` 放在 `gacha` 前面，或把 `3` 寫成 `3.0`。\n陷阱 2：`gacha / 15 * 100` 由左往右先算 `gacha / 15`，當 `gacha < 15` 時會先變成 `0`，再乘 `100` 還是 `0.0`！應該先讓其中一邊成為 `double`（例如 `(double) gacha * 100 / 15` 或 `gacha * 100.0 / 15`）。",
       "expectedShape": "double avg = …;\ndouble fillRate = …;",
       "check": {
         "type": "values",

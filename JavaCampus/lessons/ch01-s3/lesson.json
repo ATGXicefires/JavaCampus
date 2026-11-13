@@ -30,7 +30,7 @@
       "id": "laptop-v2",
       "title": "小白不見了",
       "goal": "修好盒子程式的所有錯誤（保留 `laptop` 與 `gacha` 的宣告與更新）：\n讓 `laptop` 是 `\"小白\"`，`gacha` 更新成 `8`，最後印出 `小白上有 8 個扭蛋`。",
-      "instructions": "亭瑄：「這個也是照抄的，可是一直出現找不到符號或重複定義。」\n\n除錯重點：\n1. 每句結尾的分號 `;` 與括號 `()` 必須是英文半形\n2. 已經用 `int gacha = 7;` 建好盒子了，下面要把值改成 `8` 時**不能再寫一次 `int`**\n3. 變數名稱區分大小寫（`Laptop` 和 `laptop` 不同），而且不能使用還沒宣告過的變數名稱。",
+      "instructions": "亭瑄：「這個也是照抄的，可是一直出現找不到符號或重複定義。」\n\n除錯重點：\n1. 每句結尾的分號 `;` 與括號 `()` 必須是英文半形\n2. 已經用 `int gacha = 7;` 建好盒子了，下面要把值改成 `8` 時**不可重複寫** `int`\n3. 變數名稱區分大小寫（`Laptop` 和 `laptop` 不同），而且不能使用還沒宣告過的變數名稱。",
       "expectedShape": "// …\nString laptop = …\nint gacha = …\ngacha = …\nSystem.out.println(…);",
       "check": {
         "type": "output",

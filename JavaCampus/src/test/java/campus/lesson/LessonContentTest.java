@@ -14,6 +14,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +26,8 @@ class LessonContentTest {
     private static final Set<String> GENTLE_PREFIXES = Set.of("ch11-kt", "ch11-sg", "ch12-kt", "ch12-sb");
     private static final Set<String> GENTLE_STEPS = Set.of(
             "ch01-k1/say", "ch01-k1/two-lines", "ch01-s1/rewrite", "ch02-k3/first");
+
+    private static final Pattern MINI_MD_INLINE = Pattern.compile("\\*\\*(.+?)\\*\\*|`([^`]+)`");
 
     private static Sandbox sandbox;
     private static Verifier verifier;
@@ -78,6 +82,14 @@ class LessonContentTest {
         for (String text : List.of(step.goal(), step.instructions())) {
             for (String word : forbidden) {
                 assertFalse(text.contains(word), l.key(step) + " 題目文字不應劇透或提及隱藏檢查（命中「" + word + "」）");
+            }
+            for (String para : text.replace("\r\n", "\n").split("\n\\s*\n")) {
+                Matcher m = MINI_MD_INLINE.matcher(para);
+                while (m.find()) {
+                    String bold = m.group(1);
+                    assertFalse(bold != null && bold.contains("`"),
+                            l.key(step) + " 粗體 **...** 內不可再嵌套 `...`，會導致畫面印出反引號：" + bold);
+                }
             }
         }
     }
