@@ -71,6 +71,30 @@ function Assert-Setup {
     }
 }
 
+function Get-InputSignature([string[]]$Dirs, [string[]]$Files) {
+    $items = New-Object System.Collections.Generic.List[string]
+    foreach ($dir in $Dirs) {
+        if (-not (Test-Path $dir)) { continue }
+        foreach ($f in (Get-ChildItem -Recurse -File $dir)) {
+            $items.Add("$($f.FullName)|$($f.Length)|$($f.LastWriteTimeUtc.Ticks)")
+        }
+    }
+    foreach ($file in $Files) {
+        if (-not (Test-Path $file)) { continue }
+        $f = Get-Item $file
+        $items.Add("$($f.FullName)|$($f.Length)|$($f.LastWriteTimeUtc.Ticks)")
+    }
+    $arr = $items.ToArray()
+    [Array]::Sort($arr, [StringComparer]::OrdinalIgnoreCase)
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [Text.Encoding]::UTF8.GetBytes($arr -join "`n")
+        return -join ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') })
+    } finally {
+        $sha.Dispose()
+    }
+}
+
 function Invoke-Javac([string]$SourceRoot, [string]$OutDir, [string]$ClassPath) {
     $sources = Get-ChildItem -Recurse -Filter *.java $SourceRoot | ForEach-Object { $_.FullName }
     if (-not $sources) { return }
@@ -85,11 +109,20 @@ function Invoke-Javac([string]$SourceRoot, [string]$OutDir, [string]$ClassPath) 
 
 function Invoke-Build {
     Assert-Setup
+    $stamp = 'out/.main.stamp'
+    $sig = Get-InputSignature @('src/main/java', 'src/main/resources', 'lib/app', 'lib/fx') @('dev.ps1')
+    $hasOut = (Test-Path 'out/classes') -and ($null -ne (Get-ChildItem 'out/classes' -Recurse -File | Select-Object -First 1))
+    if ($hasOut -and (Test-Path $stamp) -and ([IO.File]::ReadAllText((Resolve-Path $stamp).Path, [Text.Encoding]::UTF8).Trim() -eq $sig)) {
+        Write-Host '主程式無變更，略過編譯'
+        return
+    }
     if (Test-Path out/classes) { Remove-Item -Recurse -Force out/classes }
     Invoke-Javac 'src/main/java' 'out/classes' $AppCp
     if (Test-Path src/main/resources) {
         Copy-Item -Recurse -Force 'src/main/resources/*' 'out/classes/'
     }
+    New-Item -ItemType Directory -Force 'out' | Out-Null
+    [IO.File]::WriteAllText((Join-Path (Resolve-Path 'out').Path '.main.stamp'), $sig, [Text.UTF8Encoding]::new($false))
 }
 
 function Invoke-Run {
@@ -100,12 +133,29 @@ function Invoke-Run {
 
 function Invoke-Test {
     Invoke-Build
-    if (Test-Path out/test-classes) { Remove-Item -Recurse -Force out/test-classes }
-    $testCp = "out/classes$Sep$AppCp$Sep" + 'lib/test/*'
-    Invoke-Javac 'src/test/java' 'out/test-classes' $testCp
+    $testStamp = 'out/.test.stamp'
+    $testSig = Get-InputSignature @('src/test/java', 'lib/test') @('out/.main.stamp', 'dev.ps1')
+    $hasTestOut = (Test-Path 'out/test-classes') -and ($null -ne (Get-ChildItem 'out/test-classes' -Recurse -File | Select-Object -First 1))
+    if ($hasTestOut -and (Test-Path $testStamp) -and ([IO.File]::ReadAllText((Resolve-Path $testStamp).Path, [Text.Encoding]::UTF8).Trim() -eq $testSig)) {
+        Write-Host '測試程式無變更，略過編譯'
+    } else {
+        if (Test-Path out/test-classes) { Remove-Item -Recurse -Force out/test-classes }
+        $testCp = "out/classes$Sep$AppCp$Sep" + 'lib/test/*'
+        Invoke-Javac 'src/test/java' 'out/test-classes' $testCp
+        New-Item -ItemType Directory -Force 'out' | Out-Null
+        [IO.File]::WriteAllText((Join-Path (Resolve-Path 'out').Path '.test.stamp'), $testSig, [Text.UTF8Encoding]::new($false))
+    }
     $junit = (Get-ChildItem lib/test/junit-platform-console-standalone-*.jar).FullName
     $runCp = (@('out/test-classes', 'out/classes') + (Get-ChildItem lib/app/*.jar).FullName) -join $Sep
-    & java @FxArgs '--enable-native-access=javafx.graphics' '-Dfile.encoding=UTF-8' '-Dstdout.encoding=UTF-8' -jar $junit execute `
+    $parallelism = [Math]::Min([Math]::Max([Environment]::ProcessorCount, 2), 8)
+    & java @FxArgs '--enable-native-access=javafx.graphics' '-Dfile.encoding=UTF-8' '-Dstdout.encoding=UTF-8' `
+        '-Djunit.jupiter.execution.parallel.enabled=true' `
+        '-Djunit.jupiter.execution.parallel.mode.default=same_thread' `
+        '-Djunit.jupiter.execution.parallel.mode.classes.default=concurrent' `
+        '-Djunit.jupiter.execution.parallel.config.strategy=fixed' `
+        "-Djunit.jupiter.execution.parallel.config.fixed.parallelism=$parallelism" `
+        '-Djunit.jupiter.execution.parallel.config.executor-service=WORKER_THREAD_POOL' `
+        -jar $junit execute `
         --class-path $runCp --scan-classpath out/test-classes --disable-banner --details=tree
     if ($LASTEXITCODE -ne 0) { throw '測試失敗' }
 }

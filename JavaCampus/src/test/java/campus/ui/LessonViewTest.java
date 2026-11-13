@@ -20,6 +20,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.nio.file.Path;
 import java.time.Duration;
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class LessonViewTest {
 
     private static Sandbox sandbox;
@@ -45,12 +48,7 @@ class LessonViewTest {
 
     @BeforeAll
     static void start() {
-        try {
-            Platform.startup(() -> {
-            });
-        } catch (IllegalStateException alreadyRunning) {
-            // 別的測試已經把 JavaFX 開起來了
-        }
+        FxTestSupport.ensureToolkit();
         sandbox = new Sandbox(Duration.ofSeconds(3));
         sfx = Sfx.create();
         sfx.setVolumes(0, 0, 0, 0);

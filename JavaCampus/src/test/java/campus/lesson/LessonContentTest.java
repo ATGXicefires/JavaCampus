@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,6 +16,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 每個步驟都要能用自己的解答過關，而且不能不寫新東西就過關。 */
+@Execution(ExecutionMode.CONCURRENT)
 class LessonContentTest {
 
     private static final Set<String> GENTLE_PREFIXES = Set.of("ch11-kt", "ch11-sg", "ch12-kt", "ch12-sb");
@@ -29,20 +33,26 @@ class LessonContentTest {
 
     private static final Pattern MINI_MD_INLINE = Pattern.compile("\\*\\*(.+?)\\*\\*|`([^`]+)`");
 
-    private static Sandbox sandbox;
-    private static Verifier verifier;
+    private record Worker(Sandbox sandbox, Verifier verifier) {
+    }
+
+    private static final List<Sandbox> sandboxes = new CopyOnWriteArrayList<>();
+    private static final ThreadLocal<Worker> worker = ThreadLocal.withInitial(() -> {
+        Sandbox s = new Sandbox(Duration.ofSeconds(3));
+        sandboxes.add(s);
+        return new Worker(s, new Verifier(s));
+    });
     private static LessonLibrary library;
 
     @BeforeAll
     static void load() throws IOException {
-        sandbox = new Sandbox(Duration.ofSeconds(3));
-        verifier = new Verifier(sandbox);
         library = LessonLibrary.load(Path.of("lessons"));
     }
 
     @AfterAll
     static void close() {
-        sandbox.close();
+        sandboxes.forEach(Sandbox::close);
+        sandboxes.clear();
     }
 
     @TestFactory
@@ -60,6 +70,7 @@ class LessonContentTest {
     }
 
     private static void checkStep(Lesson l, Step step, List<SourceFile> before) {
+        Verifier verifier = worker.get().verifier();
         Verdict solved = verifier.verify(l.key(step), step.form(), l.vars(), step.check(), step.solution(), step.solution());
         assertTrue(solved.passed(), "解答沒有通過：" + solved.message());
 

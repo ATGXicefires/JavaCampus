@@ -10,7 +10,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Translate;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,13 +17,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,10 +31,7 @@ class SvgLoaderTest {
     /** 遊戲啟動時才會載入附帶的字型，測試要自己載，字型名稱和粗細才查得到。 */
     @BeforeAll
     static void loadFonts() {
-        for (String f : List.of("SourceHanSans/SourceHanSansTC-Regular.otf", "SourceHanSans/SourceHanSansTC-Bold.otf",
-                "MapleMono/MapleMono-NF-CN-Regular.ttf")) {
-            assertNotNull(Font.loadFont(Path.of("fonts", f).toUri().toString(), 12), f);
-        }
+        FxTestSupport.loadFonts();
     }
 
     private static SvgLoader.Drawing parse(String svg) throws IOException {

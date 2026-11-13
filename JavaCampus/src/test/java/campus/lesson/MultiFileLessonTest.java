@@ -2,6 +2,8 @@ package campus.lesson;
 
 import campus.engine.Sandbox;
 import campus.engine.Verifier;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -19,6 +21,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 完整程式的步驟可以有好幾個檔案，用暫存資料夾做一份小題目來讀。 */
 class MultiFileLessonTest {
+
+    private static Sandbox sandbox;
+    private static Verifier verifier;
+
+    @BeforeAll
+    static void start() {
+        sandbox = new Sandbox(Duration.ofSeconds(3));
+        verifier = new Verifier(sandbox);
+    }
+
+    @AfterAll
+    static void stop() {
+        sandbox.close();
+    }
 
     @TempDir
     Path root;
@@ -87,11 +103,8 @@ class MultiFileLessonTest {
         assertEquals(List.of("Main.java", "Student.java"), step.solution().stream().map(SourceFile::name).toList());
         assertEquals("", step.instructions());
 
-        try (Sandbox sandbox = new Sandbox(Duration.ofSeconds(3))) {
-            Verifier verifier = new Verifier(sandbox);
-            assertTrue(verifier.verify("fx", step.form(), List.of(), step.check(), step.solution(), step.solution()).passed());
-            assertFalse(verifier.verify("fx", step.form(), List.of(), step.check(), step.solution(), step.starter()).passed());
-        }
+        assertTrue(verifier.verify("fx", step.form(), List.of(), step.check(), step.solution(), step.solution()).passed());
+        assertFalse(verifier.verify("fx", step.form(), List.of(), step.check(), step.solution(), step.starter()).passed());
     }
 
     @Test
