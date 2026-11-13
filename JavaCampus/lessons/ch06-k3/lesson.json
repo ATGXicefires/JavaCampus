@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "speak",
+      "id": "speak-v2",
       "title": "小老師的體力與心情",
       "goal": "照類別骨架實作 `Mascot` 狀態機的建構子、`String speak()` 與 `void rest(int minutes)`，讓體力 `energy` 與心情 `mood` 維持在 `0..100` 之間連動。",
       "instructions": "狀態規則如下：\n- `Mascot(String name, String line)`：若 `name` 為 `null` 或去掉前後空白後為空字串，設為 `\"新同學\"`；若 `line` 為 `null` 設為 `\"\"`。初始 `energy = 60`、`mood = 50`、`level = 1`。\n- `String speak()`：若 `energy < 10`，體力不足無法說話，不變動 `energy` 與 `mood`，回傳 `name + \"：「……（沒力了）」\"`；否則 `energy` 減 `10`、`mood` 加 `5`（上限 `100`），回傳 `name + \"：「\" + line + \"」\"`。\n- `void rest(int minutes)`：若 `minutes <= 0` 不做任何事；每滿 10 分鐘（`(minutes / 10)`，未滿 10 分鐘不計）恢復 `5` 點 `energy` 與 `2` 點 `mood`，兩者上限皆為 `100`。",

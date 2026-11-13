@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "space",
+      "id": "space-v2",
       "title": "正規化與 == 陷阱",
       "goal": "原本的 `isCorrect(typed, answer)` 用 `==` 比對，導致玩家多打空白或大小寫不同就判錯。請完成下面兩個方法：\n1. `static String normalize(String text)`：若 `text` 是 `null` 交回 `\"\"`；否則去掉前後全形與半形空白，並將英文字母轉成小寫（可使用 `Locale.ROOT` 或 `.toLowerCase()`）。\n2. 修好 `static boolean isCorrect(String typed, String answer)`：若 `answer` 為 `null` 交回 `false`；將 `typed` 交給 `normalize` 清理後，用 `equals` 與 `answer` 比較（這一步假設題庫的 `answer` 已是小寫且無多餘空白）。",
       "instructions": "`==` 比對的是兩個字串是不是同一個記憶體物件，不是內容一不一樣。只要透過 `trim()`、`strip()` 或 `toLowerCase()` 處理過，就會產生新字串物件，用 `==` 比必定是 `false`。\n\n字串比對一律用 `.equals(...)`。去除前後全半形空白可以用 `.strip()`，全轉小寫可用 `.toLowerCase()`。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "both",
+      "id": "both-v2",
       "title": "雙邊正規化與連續空白折疊",
       "goal": "阿成實測又發現兩個問題：題庫裡的 `answer` 有時也帶空白或大寫，且詞彙中間如果多打了好幾個空白會比對失敗；另外如果兩邊都是空的或只有空白，不應該算答對。\n\n請升級這兩個方法：\n1. `normalize(String text)`：除了原本的 `null` 防護、前後去空白與轉小寫，還必須把中間連續的多個全半形空白（例如 `\"hello   world\"` 或 `\"hello　　world\"`）折疊成**單一個半形空白** `\" \"`。\n2. `isCorrect(String typed, String answer)`：對 `typed` 和 `answer` 兩邊都呼叫 `normalize`；若任一方清理後是空字串 `\"\"`，直接交回 `false`；否則用 `equals` 比對。",
       "instructions": "要一次把全形空白、半形空白與連續空白換成單一半形空白，可以先將全形空白 `'　'` 換成 `' '`，再用 `.trim()` 與 `.replaceAll(\" +\", \" \")`（或用迴圈把連續空白收成一個）；直接用 `.replaceAll(\"\\\\s+\", \" \").trim()`（記得在 Java 字串中寫成 `\"\\\\s+\"`）也能把連續空白折疊成一個。\n\n記得檢查 `isEmpty()`，不能讓空答案交卷過關。",

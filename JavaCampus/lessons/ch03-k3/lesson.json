@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "crash",
+      "id": "crash-v2",
       "title": "越界與除以零雙重陷阱",
       "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`。\n\n修好起始碼的兩個例外陷阱與一個運算錯誤：\n1. 修復 `for` 迴圈的陣列索引越界（讓 `sum` 正確算出 324）。\n2. 修復整數除法截斷，讓 `double avg` 保留小數（現在應為 `64.8`）。\n3. 保護空陣列（`scores.length == 0`）：不可發生除以零或算出 `NaN`，空陣列時 `avg` 必須是 `0.0`，並照樣印出 `平均：0.0`。",
       "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n先按「執行」，看看例外訊息停在哪一行。5 格陣列的索引是 `0` 到 `4`，寫 `i <= scores.length` 會多跑到索引 `5` 而跌倒。\n\n此外，就算把迴圈修好了，如果陣列是空的（`scores.length == 0`）：\n- `sum / scores.length` 會丟出除以零例外（`ArithmeticException`）。\n- `(double) sum / scores.length` 則會算出 `0.0 / 0`，結果變成 `NaN`（不是數字）！\n\n所以計算 `avg` 之前一定要先用 `if` 檢查 `scores.length > 0`。",

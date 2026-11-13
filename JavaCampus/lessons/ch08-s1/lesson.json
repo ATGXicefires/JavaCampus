@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "choice",
+      "id": "choice-v2",
       "title": "選擇題與選項邊界",
       "goal": "`q` 是包含 `\"吃牛排\"`（A）、`\"吃滷肉飯\"`（B）兩個選項、正解索引為 `1`、配分 `10` 分的選擇題。\n\n在 `ChoiceQuestion` 裡用 `@Override` 覆寫 `boolean check(String typed)`，規則如下：\n1. 若 `typed` 為 `null`、或 `options` 為 `null`、或 `correctIndex` 超出 `0` 到 `options.length - 1` 的合法範圍，直接回傳 `false`。\n2. 先對 `typed` 去掉前後空白（`trim()`）；若為空字串回傳 `false`。\n3. 支援字母代號作答（不分大小寫：`'A'`/`'a'` 代表索引 `0`、`'B'`/`'b'` 代表索引 `1`，依此類推，不可超過選項總數）：若單一字元轉大寫後減去 `'A'` 剛好等於 `correctIndex` 且落在選項範圍內，回傳 `true`。\n4. 或者直接輸入與父類別 `answer` 相符的完整選項文字（可透過 `super.check(t)` 判斷），也回傳 `true`；其餘回傳 `false`。",
       "instructions": "起始碼已經把 `Question` 與 `ChoiceQuestion` 的欄位和建構子寫好了。選擇題用 `options` 存所有選項文字、`correctIndex` 存正確索引，同時用 `super(...)` 把正解文字放進父類別的 `answer`（若建構時索引越界或選項為空則存 `\"\"`）。\n\n覆寫 `check(String typed)` 時務必先檢查 `options != null` 與 `0 <= correctIndex && correctIndex < options.length`，避免在題庫資料異常時崩潰；字元代號也只能接受 `'A'` 到 `'A' + options.length - 1`。",
@@ -34,7 +34,7 @@
       "afterText": ""
     },
     {
-      "id": "hint",
+      "id": "hint-v2",
       "title": "不用重寫的評分引擎",
       "goal": "在父類別 `Question` 中新增兩個所有題型都能直接繼承與共用的方法（`ChoiceQuestion` 不用改寫）：\n1. `String summary()`：回傳 `text + \"（\" + points + \" 分，答案 \" + len + \" 字）\"`，其中 `len` 為 `answer == null ? 0 : answer.length()`。\n2. `static int gradeTotal(Question[] quiz, String[] answers)`：計算混合作答的總分。\n   - 若 `quiz` 或 `answers` 為 `null`，回傳 `0`。\n   - 走訪索引 `0` 到 `Math.min(quiz.length, answers.length) - 1`，跳過 `quiz[i] == null` 的項目，呼叫 `quiz[i].score(answers[i])` 累加總分。",
       "instructions": "把 `summary()` 與 `gradeTotal(...)` 寫在父類別 `Question` 裡，子類別 `ChoiceQuestion` 就能直接繼承 `summary()`，也能放進 `Question[]` 陣列裡讓 `gradeTotal` 透過多型呼叫各自覆寫過的 `check(typed)` 來計分。\n\n注意 `quiz` 與 `answers` 長度可能不同，使用 `Math.min(quiz.length, answers.length)` 可防止陣列索引越界。",

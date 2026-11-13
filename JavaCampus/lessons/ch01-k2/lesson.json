@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "laptop",
+      "id": "laptop-var",
       "title": "貼標籤的盒子",
       "goal": "建立兩個 `String` 變數：`laptop` 放 `\"小白\"`，`owner` 放 `\"亭瑄\"`。\n\n再用 `+` 把變數接進句子裡，印出 `亭瑄的筆電是小白`。",
       "instructions": "編輯器最上面那行 `int startGacha = 7;` 是後面步驟才會用到的題目變數。\n\nPDF 第 2 頁：**變數就像一個有名字的盒子**。建立變數的寫法是：型別、變數名稱、`=`、初始內容，最後加分號。`String` 是裝文字的型別，文字要用半形雙引號 `\"` 包起來。\n\n要拿出盒子裡的字來接成一句話，只要把變數名稱寫在引號外面，用 `+` 串起來，例如 `owner + \"的筆電是\" + laptop`。",
@@ -25,24 +25,24 @@
       "afterText": "亭瑄（心想）：「小白，你現在是一個盒子了。」"
     },
     {
-      "id": "gacha",
-      "title": "相加與串接",
-      "goal": "題目給了 `startGacha`（預設 7）。宣告一個 `int bonus = 2;`，再用它們算出兩者相加的結果存進 `int total`。\n\n接著印出兩行（以 `startGacha` 為 7 時為例）：\n`相加：9`\n`串接：72`",
-      "instructions": "`int` 是裝整數的型別，數字不用加引號。`+` 號遇到兩邊都是數字時會做**加法**；只要碰到字串，就會變成**串接**，而且運算會從左往右執行。\n\n例如 `\"結果：\" + 3 + 2` 會先變成 `\"結果：3\"`，再接上 `2` 變成 `\"結果：32\"`；如果想先算數字相加，可以用已經算好的 `total` 變數，或是加上括號 `\"結果：\" + (3 + 2)`。",
-      "expectedShape": "int bonus = …;\nint total = …;\nSystem.out.println(\"相加：\" + …);\nSystem.out.println(\"串接：\" + …);",
+      "id": "add-num",
+      "title": "數字盒子相加",
+      "goal": "題目給了 `startGacha`（預設 7）。宣告一個 `int bonus = 2;`，再用它們算出相加的總數存進 `int total`。\n\n接著印出兩行（以 `startGacha` 為 7 時為例）：\n`原本 7 個`\n`加上 2 個變 9 個`",
+      "instructions": "`int` 是裝整數的型別，數字不用加引號。\n\n兩個 `int` 變數用 `+` 連接時會做數字加法，例如 `int total = startGacha + bonus;` 會先把兩個盒子裡的數字加起來存進 `total`；之後再把 `startGacha`、`bonus` 和 `total` 分別接進文字句子裡印出即可。",
+      "expectedShape": "int bonus = …;\nint total = …;\nSystem.out.println(\"原本 \" + … + \" 個\");\nSystem.out.println(\"加上 \" + … + \" 個變 \" + … + \" 個\");",
       "check": {
         "type": "output",
         "exprs": ["bonus", "total"],
         "variants": [ { "startGacha": "5" }, { "startGacha": "12" } ]
       },
       "hints": {
-        "lead": "`+` 由左往右算，碰到字串就不再做加法。",
-        "plain": "第一行印 `\"相加：\" + total`（或 `\"相加：\" + (startGacha + bonus)`），會先得到總和再接上去；第二行直接寫 `\"串接：\" + startGacha + bonus`，讓兩個數字一個一個接在字串後面。"
+        "lead": "先用 `total = startGacha + bonus` 算出總數，再分別接進兩行文字裡。",
+        "plain": "寫 `int bonus = 2;` 和 `int total = startGacha + bonus;`，第一行印 `\"原本 \" + startGacha + \" 個\"`，第二行印 `\"加上 \" + bonus + \" 個變 \" + total + \" 個\"`（注意空白要放在引號裡）。"
       },
-      "afterText": "亭瑄（心想）：「7 加 2 變成 72⋯⋯難怪少一對括號差這麼多。」"
+      "afterText": "亭瑄（心想）：「先放進另一個盒子算好，就不會自己心算算錯了。」"
     },
     {
-      "id": "again",
+      "id": "update-seq",
       "title": "覆寫與累積順序",
       "goal": "宣告 `int gacha = startGacha;` 並先印出一次 `gacha`。\n\n接著依序更新 `gacha` 並各印一次（共印 4 行）：\n1. 多抽到 1 個（加 1 存回 `gacha`）\n2. 送給朋友 2 個（減 2 存回 `gacha`）\n3. 又抽到 3 個（加 3 存回 `gacha`）",
       "instructions": "變數建立之後，想把舊的值換掉，只要寫 `變數名稱 = 新算式;`，前面**不能再寫** `int`（再寫一次 `int` 會被電腦當成重複建立同名盒子）。\n\nJava 會先把 `=` 右邊算完，再存進左邊的變數。所以 `gacha = gacha + 1;` 的意思是：拿出目前 `gacha` 裡的數字加 1，再覆寫回 `gacha`。程式由上往下執行，每改完一次印出一次，數字才會照順序變化。",

@@ -11,7 +11,7 @@
   ],
   "steps": [
     {
-      "id": "lockers",
+      "id": "lockers-v2",
       "title": "置物櫃巡檢與極值索引",
       "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`。\n\n走訪 `scores` 並算出最高分 `int max` 與最高分所在的索引 `int maxIndex`：\n- 若 `scores.length == 0`（空陣列）：`max = 0`、`maxIndex = -1`，只印一行 `置物櫃是空的`。\n- 若非空陣列：\n  1. 依序印出每一格：`第 i 格：scores[i]`（例如 `第 0 格：72`）。\n  2. 走訪時記下最大值 `max` 與它**第一次出現的索引** `maxIndex`（同分時保留較前面的索引，也就是只用嚴格大於 `>` 更新）。\n  3. 迴圈結束後印出兩行：\n     `最後一格是第 (scores.length - 1) 格`\n     `最高分在第 maxIndex 格：max 分`",
       "instructions": "編輯器最上面三行 `int[] scores = ...;`、`int score = 85;` 和 `int bonus = 5;` 是題目先寫好的，你的程式可以直接使用。\n\n注意兩個常見錯誤：\n- 如果陣列全為負數（例如 `{-10, -5, -20}`），`max` 一開始設為 `0` 會錯把 `0` 當成最大值！正確做法是在確定 `scores.length > 0` 後，把 `max = scores[0]`、`maxIndex = 0` 當起點。\n- 算式 `scores.length - 1` 放進字串串接時要加括號：`\"最後一格是第 \" + (scores.length - 1) + \" 格\"`，不然 `+` 先串接字串後碰到 `-` 會編譯錯誤。",
@@ -35,7 +35,7 @@
       "afterText": ""
     },
     {
-      "id": "grade",
+      "id": "grade-v2",
       "title": "無效排除、加權封頂與等第",
       "goal": "`score` 是原始分數（現在是 `85`），`bonus` 是平時加分（現在是 `5`）。\n\n算出加權後分數 `int finalScore` 並依序印出等第：\n1. 先檢查原始輸入是否合理：若 `score < 0`、`score > 100` 或 `bonus < 0`，視為無效輸入，`finalScore` 設為 `-1`，並只印出 `分數無效`。\n2. 原始輸入合法時，計算 `finalScore = score + bonus`，但最高封頂在 `100`（若超過 100 則只算 `100`）。\n3. 依 `finalScore` 印出 `finalScore 分是 X`（90 以上 A、80 以上 B、70 以上 C、60 以上 D、0～59 F）。",
       "instructions": "這一步重新開始，練習「先驗證原始輸入，再計算加權與上限封頂」。\n\n如果先把 `score + bonus` 加完才檢查 `< 0` 或 `> 100`，會出大事：\n- 當 `score` 是 `-1`、`bonus` 是 `10` 時，加完會變成 `9`，原本無效的分數就偷偷變合法了！\n- 當 `score` 是 `98`、`bonus` 是 `5` 時，它其實是合法分數，只是加完要封頂成 `100`，不能被當成無效分數擋掉。\n\n所以順序一定是：先檢查原始 `score` 與 `bonus` 合法性 -> 相加並封頂於 `100` -> `else if` 從高分往低分判斷等第。",

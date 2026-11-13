@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "cheer",
+      "id": "cheer-v2",
       "title": "修好她的介面契約",
       "goal": "起始碼的 `Me` 實作了 `Cheer` 介面，但存在方法名稱拼錯、缺少 `public`、回傳型別錯誤與漏寫方法等編譯錯誤。請依照 `interface Cheer` 契約修復 `class Me implements Cheer`：\n1. `public String sender()`：回傳 `\"我\"`。\n2. `public String message(int round)`：依照面試輪次 `round` 回傳對應加油訊息：\n   - `round <= 1`：回傳 `\"學長第一關加油！深呼吸別緊張！\"`\n   - `round == 2`：回傳 `\"學長進入複試了！穩住節奏！\"`\n   - `round >= 3`：回傳 `\"學長最後一哩路！你一定可以！\"`",
       "instructions": "實作介面時，方法名稱、參數型別、回傳型別都必須和介面完全一致，而且必須加上 `public`（介面方法預設皆為 `public`）。\n\n如果漏實作介面裡的任何一個方法，編譯器會回報 `Me is not abstract and does not override abstract method ...`。",

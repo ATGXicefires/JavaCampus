@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "bar",
+      "id": "bar-v2",
       "title": "動態比例進度條",
       "goal": "寫一個方法 `static String bar(int done, int total, int width)`，依完成比例畫出固定寬度的進度條，例如 `bar(3, 5, 10)` 要交回 `██████░░░░`。\n\n規則如下：\n1. 若 `width <= 0`，直接交回空字串 `\"\"`。\n2. 滿格字元用 `\"█\"`，空格字元用 `\"░\"`，回傳字串總長度必須等於 `width`。\n3. 滿格數 `filled` 的計算方式：\n   - 若 `total <= 0` 或 `done <= 0`，`filled` 為 `0`。\n   - 若 `done >= total`（且 `total > 0`），`filled` 為 `width`。\n   - 其餘情況，用整數比例換算 `done * width / total`（先乘後除，捨去小數）。\n4. 用 `\"█\"` 重複 `filled` 次，接上 `\"░\"` 重複 `width - filled` 次並交回。",
       "instructions": "字串的 `.repeat(次數)` 會交回重複指定次數的新字串，例如 `\"█\".repeat(3)` 是 `\"███\"`，`\"█\".repeat(0)` 是 `\"\"`（注意次數不可為負數，否則執行時會出錯）。\n\n換算比例時要寫 `done * width / total`，如果先寫 `done / total`，整數除法會先變成 0。`█` 和 `░` 可以從這裡複製。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "progress",
+      "id": "progress-v2",
       "title": "標題與百分比組合",
       "goal": "寫一個方法 `static String progress(String title, int done, int total, int width)`，將標題、進度條與百分比排成一行交回，例如 `progress(\" 第 4 章 \", 3, 5, 10)` 要交回 `第 4 章 ██████░░░░ 60%`。\n\n規則如下：\n1. 將 `title` 去掉前後空白；若處理後是空字串，標題改顯示為 `\"未命名\"`。\n2. 進度條部分請呼叫上一步寫好的 `bar(done, total, width)`。\n3. 百分比 `pct` 用整數計算（小數捨去）：若 `total <= 0` 或 `done <= 0` 為 `0`；若 `done >= total`（且 `total > 0`）上限為 `100`；其餘為 `done * 100 / total`。\n4. 依格式 `\"<標題> <進度條> <百分比>%\"` 串接交回。",
       "instructions": "方法裡面可以呼叫前面寫好的方法。直接呼叫 `bar(done, total, width)` 取得進度條字串，再跟清理後的標題、空格和百分比拼在一起。\n\n別忘了標題可能是純空白字串，要先去空白再檢查是不是空的。",
@@ -54,7 +54,7 @@
       "afterText": ""
     },
     {
-      "id": "underline",
+      "id": "underline-v2",
       "title": "自適應標題底線",
       "goal": "寫一個方法 `static String underline(String title, int minWidth)`，回傳含兩行的標題區段（中間用 `\"\\n\"` 換行）：第一行是清理後的標題，第二行是與標題或最小寬度對齊的 `\"=\"` 底線。\n\n規則如下：\n1. 將 `title` 去掉前後空白；若處理後是空字串，標題改為 `\"未命名\"`。\n2. 底線長度取「清理後標題的字數」與 `minWidth` 兩者較大值（若 `minWidth < 0` 視為 `0`）。\n3. 回傳 `\"<標題>\\n<底線>\"`，例如 `underline(\" 變數 \", 5)` 交回 `\"變數\\n=====\"`，`underline(\"方法與參數\", 3)` 交回 `\"方法與參數\\n=====\"`。",
       "instructions": "字串的 `.length()` 會交回字串的字數，搭配 `Math.max(a, b)` 或 `if` 比較就可以決定底線要重複幾次。\n\n`\"\\n\"` 代表換行字元，放在兩段字串中間就能組成包含換行的多行字串。",

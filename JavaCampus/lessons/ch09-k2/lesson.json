@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "screen",
+      "id": "screen-v2",
       "title": "多型面板與元件統計",
       "goal": "起始碼已經準備好 `Drawable`、`Button` 與 `ProgressBar`。請完成兩個類別：\n1. `class MascotView implements Drawable`，建構子 `MascotView(String speaker, String message)`：\n   - `speaker` 若為 `null` 或 `trim()` 後為空，預設為 `\"滷肉\"`；否則取 `trim()` 後結果。\n   - 記錄是否有有效訊息（`message != null && !message.trim().isEmpty()`）；若無有效訊息，訊息文字改用 `\"…\"`。\n   - `isReady()`：有有效訊息時回傳 `true`，否則回傳 `false`。\n   - `render(int maxWidth)`：先組合成 `speaker + \"：「\" + msg + \"」\"`。若 `maxWidth <= 0` 回傳 `\"\"`；長度不超過 `maxWidth` 原樣回傳；超過時，若 `maxWidth >= 2` 取前 `maxWidth - 1` 字加 `\"…\"`，若 `maxWidth == 1` 取第 1 個字。\n2. `class Panel`（多型容器面板），建構子 `Panel(Drawable[] items, int width)`（`items` 為 `null` 視同空陣列，`width < 0` 視為 `0`）：\n   - `int readyCount()`：走訪 `items`（略過 `null` 元素），統計 `isReady()` 為 `true` 的元件個數。\n   - `String renderAll()`：依序對每個非 `null` 元件呼叫 `render(width)`，略過回傳 `\"\"` 的元件，把其餘各行用 `\"\\n\"` 串接回傳（首尾不加多餘換行；若沒有任何可繪製內容則回傳 `\"\"`）。",
       "instructions": "陣列型別寫成介面 `Drawable[]`，就能把 `Button`、`ProgressBar`、`MascotView` 裝進同一個陣列，透過多型用同一個迴圈呼叫 `isReady()` 與 `render(width)`。\n\n注意陣列本身可能是 `null`，陣列裡的某一格也可能是 `null`，走訪時都要先判斷 `item != null` 才呼叫方法。\n\n全形冒號 `：` 與引號 `「`、`」` 可直接從目標複製。",
@@ -34,7 +34,7 @@
       "afterText": ""
     },
     {
-      "id": "title",
+      "id": "title-v2",
       "title": "擴充標題元件與切換摘要",
       "goal": "不修改原本的 `Button`、`ProgressBar`、`MascotView` 與 `Panel.renderAll()` 迴圈邏輯，完成兩項擴充：\n1. 新增 `class TitleBanner implements Drawable`，建構子 `TitleBanner(String title)`：\n   - `isReady()`：當傳入的 `title` 非 `null` 且 `trim()` 後非空字串時為 `true`，否則 `false`。\n   - 顯示標題若為空則用預設值 `\"未命名\"`，否則取 `title.trim()`。\n   - `render(int maxWidth)`：外框格式為 `\"== \" + 內容 + \" ==\"`（外框佔 6 字元）。若 `maxWidth < 7` 回傳 `\"\"`；否則 `cap = maxWidth - 6`，若標題長度超過 `cap`（`cap >= 2` 取前 `cap - 1` 字加 `\"…\"`，`cap == 1` 取第 1 字）截斷後再套外框。\n2. 在 `Panel` 中新增 `String summary()`：\n   - 計算非 `null` 元件總數 `total` 與已就緒數 `ready`。\n   - 組合為 `\"就緒 \" + ready + \"/\" + total`；若 `renderAll()` 非空字串，再用 `\"\\n\"` 接上 `renderAll()` 一起回傳，否則只回傳首行狀態。",
       "instructions": "新增實作 `Drawable` 的 `TitleBanner` 後，不用修改 `Panel` 裡的任何多型走訪邏輯，它就能直接放進 `Drawable[]` 一起渲染，這正是面向介面設計的擴充優勢。\n\n在 `summary()` 中注意 `total` 只算非 `null` 的元件個數。",

@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "view",
+      "id": "view-v2",
       "title": "眼鏡與擦拭布狀態錯亂",
       "goal": "修好 `class Glasses` 的 `wear(int minutes)` 與 `boolean wipe()`，讓鏡片髒污度 `smudges`、配戴時間 `wearMinutes`、擦拭次數 `wipeCount` 與擦拭布狀態 `clothReady` 正確連動。",
       "instructions": "剛做出來的眼鏡初始狀態為：`smudges = 40`、`wipeCount = 0`、`wearMinutes = 0`、`clothReady = true`。\n\n規格如下：\n- `boolean isClear()`：`smudges <= 20` 時為 `true`，否則 `false`。\n- `String view()`：`isClear()` 為 `true` 回傳 `\"世界很清楚\"`，否則回傳 `\"世界霧霧的\"`。\n- `void wear(int minutes)`：若 `minutes <= 0` 不做任何事；否則將物件的 `wearMinutes` 加上 `minutes`，並將 `smudges` 加上 `minutes / 5`（上限 `100`）。\n- `boolean wipe()`：若 `clothReady` 為 `false`（擦拭布已經太髒），擦拭失敗：不變動 `smudges` 與 `wipeCount`，回傳 `false`；否則將 `smudges` 減少 `30`（最低 `0`）、`wipeCount` 加 `1`，且每當 `wipeCount % 3 == 0` 時將 `clothReady` 設為 `false`，最後回傳 `true`。",
@@ -50,7 +50,7 @@
       "afterText": ""
     },
     {
-      "id": "wipe",
+      "id": "wipe-v2",
       "title": "清洗與每日狀態重置",
       "goal": "修好 `washCloth()`、`resetDaily()` 與 `String summary()`，確保清洗擦拭布與跨天重置後所有相關欄位都恢復正確。",
       "instructions": "修復後的規格：\n- `void washCloth()`：將物件自己的 `clothReady` 設為 `true`。\n- `void resetDaily()`：代表新的一天重新記錄，將 `wearMinutes` 歸 `0`、`wipeCount` 歸 `0`、`smudges` 歸 `0`，並將 `clothReady` 設為 `true`。\n- `String summary()`：回傳 `\"配戴 \" + wearMinutes + \" 分鐘，擦拭 \" + wipeCount + \" 次，\" + view()`。",

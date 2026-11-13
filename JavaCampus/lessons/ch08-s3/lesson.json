@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "ctor",
+      "id": "ctor-v2",
       "title": "數字題與容許誤差建構子",
       "goal": "寫 `class NumberQuestion extends Question`，用來處理允許誤差的數字題：\n1. 新增欄位 `double target`（標準數字答案）與 `double tolerance`（容許誤差）。\n2. 寫建構子 `NumberQuestion(String text, double target, double tolerance)`：\n   - 透過 `super(text, String.valueOf(target))` 把題目與數字轉成的標準字串交給父類別 `Question` 存起來。\n   - 設定 `this.target = target;`，並對誤差做防呆：若 `tolerance < 0`（或 `Double.isNaN(tolerance)`）則設為 `0.0`，否則為 `tolerance`。",
       "instructions": "新的題型答案是數值（整數或小數，例如計算誤差或近似值）。父類別 `Question` 已經處理好 `text` 與字串形式的 `answer` 儲存。\n\n子類別 `NumberQuestion` 只需額外紀錄 `double target` 和 `double tolerance`，並在建構子中透過 `super(text, String.valueOf(target))` 對接父類別，再替 `tolerance` 擋掉不合理的負數。",
@@ -30,7 +30,7 @@
       "afterText": ""
     },
     {
-      "id": "check",
+      "id": "check-v2",
       "title": "誤差解析與多型答對率引擎",
       "goal": "為評分引擎補齊數值誤差比對與全卷答對率統計：\n1. 在 `NumberQuestion` 裡覆寫 `@Override boolean check(String typed)`：\n   - 若 `typed == null || typed.isBlank()`，回傳 `false`。\n   - 先 `trim()` 再用 `Double.parseDouble(...)` 解析成 `double val`；若丟出 `NumberFormatException` 就回傳 `false`。\n   - `Double.parseDouble(\"NaN\")` 與 `\"Infinity\"` 不會丟例外，請用 `Double.isFinite(val)` 檢查；若非有限數字回傳 `false`。\n   - 最後以 `Math.abs(val - target) <= tolerance` 判斷是否落在容許誤差範圍內（當 `tolerance == 0` 時也會精確比對數值是否相等）。\n2. 在父類別 `Question` 中實作靜態多型統計方法 `static double accuracy(Question[] quiz, String[] answers)`：\n   - 若 `quiz == null || answers == null`，回傳 `0.0`。\n   - 只將 `quiz` 中非 `null` 的題目計入總題數 `validCount`；若 `validCount == 0` 回傳 `0.0`。\n   - 對每個非 `null` 的 `quiz[i]`：若 `i < answers.length` 且 `quiz[i].check(answers[i])` 為 `true`，答對題數 `+1`（缺答或超過 `answers.length` 的題目算答錯，仍計入分母 `validCount`）。\n   - 回傳 `(double) correct / validCount`。",
       "instructions": "第 1 步我們保留了父類別的 `String answer`，但在數值題中不能只比對字串相等（例如 `\"10.50\"` 和 `\"10.5\"` 字串不同但數值相同，或是 `10.4` 在 `10.0 ± 0.5` 的容許範圍內）。因此 `NumberQuestion` 需要自己覆寫 `check(String typed)` 進行浮點數解析與誤差判斷。\n\n寫好後，`Question[]` 陣列就能同時放入 `Question`、`ChoiceQuestion` 與 `NumberQuestion`，透過 `Question.accuracy(...)` 統一批改計算答對率。",

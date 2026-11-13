@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "blueprint",
+      "id": "blueprint-v2",
       "title": "設計圖與建構保護",
       "goal": "寫出 `class Item`（欄位 `String name`、`String kind`、`int price`、`int stock`，建構子 `Item(String name, String kind, int price, int stock)` 與方法 `int totalValue()`），並建立 `laptop`（\"小白\"、\"筆電\"、32000、1）與 `usb`（\"阿隨\"、\"USB\"、450、2）。",
       "instructions": "建構子必須處理欄位預設與下限保護：\n- 若 `name` 為 `null` 或去掉前後空白後為空字串（`name.trim().isEmpty()`），設為 `\"未命名\"`；否則保留原 `name`。\n- 若 `kind` 為 `null` 或去掉前後空白後為空字串，設為 `\"未分類\"`；否則保留原 `kind`。\n- 若 `price < 0`，設為 `0`。\n- 若 `stock < 0`，設為 `0`。\n\n`totalValue()` 回傳單價乘以庫存（`price * stock`）。參數與欄位同名時，欄位要寫 `this.name`、`this.kind`、`this.price`、`this.stock`。",

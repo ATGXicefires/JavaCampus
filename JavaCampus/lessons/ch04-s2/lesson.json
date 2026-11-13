@@ -11,7 +11,7 @@
   ],
   "steps": [
     {
-      "id": "call",
+      "id": "call-v2",
       "title": "修正簽章順序與百分比",
       "goal": "`units`、`done`、`total` 同一格是同一課。起始碼上方是學妹寫好的 `bar(int done, int total, int width)` 與 `say(String who, String line)`，請勿修改。\n\n草稿迴圈有兩個問題：`bar` 的參數順序放反了，而且百分比的整數除法寫錯。\n1. 請寫一個方法 `static int calcPercent(int done, int total)`：若 `total <= 0` 或 `done <= 0` 回傳 `0`；若 `done >= total`（且 `total > 0`）上限回傳 `100`；其餘回傳 `done * 100 / total`。\n2. 修好迴圈，讓每課印出：`\"<課名> <width=6 的進度條> <done[i]>/<total[i]> (<百分比>%)\"`。",
       "instructions": "編輯器最上面三行 `units`、`done`、`total` 是題目先寫好的變數。\n\n呼叫方法時，引數是依位置放進參數的，與你的陣列名稱無關：`bar(int done, int total, int width)` 的第一個位置是完成數、第二個位置是總數、第三個是寬度 6。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "finished",
+      "id": "finished-v2",
       "title": "單課完成與總結提醒",
       "goal": "在原本的迴圈裡加上完成判定與整課堂總結，全部呼叫學妹寫好的 `say` 輸出：\n1. 每一課印完進度行後，若 `total[i] > 0` 且 `done[i] >= total[i]`（避免把總數為 0 誤判為完成），就呼叫 `say(\"滷肉\", units[i] + \" 完成！\");` 並累計完成課數 `completed`。\n2. 迴圈結束後：\n   - 若 `units.length > 0` 且 `completed == units.length`，呼叫 `say(\"滷肉\", \"全部完成了！\");`。\n   - 否則呼叫 `say(\"滷肉\", \"已完成 \" + completed + \"/\" + units.length + \" 課，繼續加油！\");`。",
       "instructions": "注意「總數為 0 時即使 `done[i]` 也是 0，不能算完成」，所以條件要加上 `total[i] > 0`。\n\n宣告一個 `int completed = 0;` 在迴圈外面累計完成的課數，迴圈跑完後再依 `completed` 決定最後一句話。",

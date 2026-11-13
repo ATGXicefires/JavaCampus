@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "hint",
+      "id": "hint-v2",
       "title": "安全首字提示",
       "goal": "寫一個方法 `static String hint(String answer)`，做出不會因空字串或空白而當機的首字提示。\n\n規則如下：\n1. 若 `answer` 是 `null`，直接交回 `\"\"`。\n2. 先去掉 `answer` 前後的全形與半形空白。\n3. 若清理後是空字串 `\"\"`，直接交回 `\"\"`。\n4. 若清理後只有 1 個字，直接交回該字（不加底線）。\n5. 若超過 1 個字，保留第 1 個字，後面每個字換成半形底線 `\"_\"`（例如 `\"Java\"` 交回 `\"J___\"`，`\"吃滷肉飯\"` 交回 `\"吃___\"`）。",
       "instructions": "直接對空字串呼叫 `substring(0, 1)` 或 `charAt(0)` 會在執行時發生 `StringIndexOutOfBoundsException` 跌倒，所以必須先清理空白並檢查長度。\n\n全形空白 `'　'`（`\\u3000`）不會被 `trim()` 清掉，可以用 `.strip()` 一次去除全半形前後空白，或是先用 `.replace('　', ' ')` 再 `.trim()`。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "correct",
+      "id": "correct-v2",
       "title": "空白與大小寫正規化比對",
       "goal": "寫一個方法 `static boolean isCorrect(String typed, String answer)`，判斷玩家輸入 `typed` 是否符合標準答案 `answer`。\n\n規則如下：\n1. 若 `typed` 或 `answer` 為 `null`，交回 `false`。\n2. 兩邊各自去掉前後的全形與半形空白。\n3. 若任一方清理後是空字串 `\"\"`，交回 `false`（空白交卷不算答對）。\n4. 比對兩邊字串內容是否一致，且忽略英文字母大小寫（例如 `\" java \"` 與 `\"JAVA\"` 交回 `true`）。",
       "instructions": "不要用 `==` 比對字串，因為 `==` 比的是是不是同一個物件；清理空白後會產生新字串，用 `==` 一定會判錯。\n\n要比較內容且忽略大小寫，請用字串的 `.equalsIgnoreCase(...)` 方法。",

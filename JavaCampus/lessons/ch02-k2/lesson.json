@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "punish",
+      "id": "punish-v2",
       "title": "編號與奇偶標記",
       "goal": "用 `for` 從第 1 遍數到第 `times` 遍，依奇偶加上標記（以 `times` 為 5 為例）：\n`[奇] 第 1 遍：我不會再用全形分號`\n`[偶] 第 2 遍：我不會再用全形分號`\n⋯⋯\n`[奇] 第 5 遍：我不會再用全形分號`",
       "instructions": "編輯器最上面那行 `int times = 5;` 是題目先寫好的變數。\n\n`for` 括號裡有三段：`for (int i = 1; i <= times; i++)`，讓 `i` 從 1 數到 `times`。\n\n在迴圈裡用 `i % 2 == 0` 判斷這一遍是不是偶數（`==` 才是比較相等，`=` 是放進去）。再用 `+` 把前綴、`i` 與後面的文字接起來，注意 `第 ` 與 ` 遍` 之間各有一個半形空格。",
@@ -43,7 +43,7 @@
       "afterText": ""
     },
     {
-      "id": "total",
+      "id": "total-v2",
       "title": "累計與平均秒數",
       "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯第 `i` 遍花 `i` 秒。用 `for` 從 1 跑到 `times` 算出三個統計值：\n1. `int total`：全部 `times` 遍的總秒數\n2. `int evenTotal`：只計算偶數遍（`i % 2 == 0`）的秒數總和\n3. `double avgSec`：每遍平均花幾秒（保留小數，例如 `times` 為 4 時是 `2.5`）",
       "instructions": "`total` 和 `evenTotal` 一開始都是 `0`。在迴圈裡用 `total += i;` 累加每一遍的秒數；如果是偶數遍（`i % 2 == 0`），就再做 `evenTotal += i;`。\n\n迴圈跑完後再算 `avgSec`，記得先轉成 `double`（例如 `(double) total / times`），才不會因為兩個 `int` 相除而丟掉小數。",

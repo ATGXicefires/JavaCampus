@@ -32,12 +32,10 @@ class Glasses {
         return true;
     }
 
-    // Bug：誤宣告區域變數
     void washCloth() {
         boolean clothReady = true;
     }
 
-    // Bug：跨天重置漏掉其他狀態欄位
     void resetDaily() {
         wearMinutes = 0;
     }

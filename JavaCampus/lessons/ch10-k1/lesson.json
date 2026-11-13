@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "main",
+      "id": "main-v2",
       "title": "從 main 開始",
       "goal": "撰寫完整的 `Main` 類別，實作 `public static String formatTab(String title, boolean unlocked)` 格式化頁籤標題，並在 `main` 印出：\n`小白學程式 v0.9`\n`[已解鎖] 首頁`\n`[未解鎖] 進階統計`\n\n`formatTab` 規則：\n- 若 `title` 為 `null` 或去除空白後為空字串（`isBlank()`），標題改為 `未命名`；否則去掉前後空白（`trim()`）。\n- `unlocked` 為 `true` 時回傳 `[已解鎖] <標題>`，為 `false` 時回傳 `[未解鎖] <標題>`。",
       "instructions": "完整的 Java 程式從 `public class Main` 裡的 `public static void main(String[] args)` 開始執行。所有執行敘述都要放進方法裡，class 外面只能寫 `import` 與類別定義。\n\n在 `Main` 裡面定義 `public static String formatTab(String title, boolean unlocked)` 時，請先檢查 `title == null || title.isBlank()` 避免對 `null` 呼叫方法而發生例外。",
@@ -30,7 +30,7 @@
       "afterText": ""
     },
     {
-      "id": "screen",
+      "id": "screen-v2",
       "title": "具狀態的頁籤元件與多檔協作",
       "goal": "在 `Screen.java` 與 `Main.java` 完成多頁籤組裝與狀態統計，讓 `main` 執行後印出：\n`小白學程式 v0.9`\n`== 首頁 (點擊:1) ==`\n`尚未解鎖：成績統計`\n`== 成績統計 (點擊:1) ==`\n`未註冊頁籤`\n`總切換：2`\n\n類別與方法規則：\n1. `Screen.java`：\n   - 建構子 `public Screen(String title, boolean unlocked)`：若 `title` 為 `null` 或空白，標題設為 `未命名`，否則 `trim()`；`visitCount` 初始為 `0`。\n   - `public void unlock()`：將頁籤設為已解鎖。\n   - `public boolean open()`：僅在已解鎖時將 `visitCount` 加 `1` 並回傳 `true`；未解鎖時不累加並回傳 `false`。\n   - `public String render()`：已解鎖回傳 `== <標題> (點擊:<visitCount>) ==`；未解鎖回傳 `== <標題> [未解鎖] ==`。\n2. `Main.java`：\n   - `public static String openTab(Screen[] tabs, String title)`：若 `tabs` 為 `null`、`title` 為 `null` 或空白，或找不到非 `null` 且標題相符（`trim()` 後相等）的頁籤，回傳 `未註冊頁籤`；找到但未解鎖回傳 `尚未解鎖：<標題>`；已解鎖則呼叫該頁籤的 `open()` 並回傳 `render()`。\n   - `public static int totalVisits(Screen[] tabs)`：回傳所有非 `null` 頁籤的 `visitCount` 總和（`tabs` 為 `null` 時回傳 `0`）。\n   - `public static int visitAfterSequence(Screen[] tabs, String[] sequence)`：依序對 `sequence` 中的每個標題呼叫 `openTab(tabs, target)`（若 `sequence` 為 `null` 則略過），最後回傳 `totalVisits(tabs)`。",
       "instructions": "程式拆成多個檔案時，每個 `public class` 必須放在同名的 `.java` 檔案中。同一個專案裡的 `Main.java` 可以直接使用 `Screen.java`，不需要另外 `import`。\n\n請留意所有邊界條件：`tabs` 陣列可能為 `null` 或內含 `null` 元素，傳入的 `title` 也可能前後有空白、為空字串或 `null`。`Screen` 的欄位應保持 `private` 封裝，透過方法操作狀態。",

@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "lock",
+      "id": "lock-v2",
       "title": "帶密碼鎖的扭蛋包",
       "goal": "寫 `class GachaBag` 用密碼鎖保護扭蛋數量。全部欄位都要是 `private`，並建立 `GachaBag bag = new GachaBag(\"0718\");`、解鎖後呼叫 8 次 `bag.add()`，使 `bag.getCount()` 為 `8`。\n\n規格如下：\n- 建構子 `GachaBag(String pin)`：若 `pin` 是 `null` 或空字串 `\"\"`，預設為 `\"0000\"`；否則存為密碼。初始數量為 `0`、未開鎖、未鎖死、連續錯誤次數為 `0`。\n- `boolean unlock(String input)`：若已鎖死，直接交回 `false`（連正確密碼也拒絕）。若密碼相符，設為開鎖、連續錯誤次數歸零並交回 `true`；若不符，設為未開鎖、連續錯誤次數加 1，達到 3 次時設為鎖死，交回 `false`。\n- `void lock()`：設為未開鎖。\n- `boolean add()`：只有「未鎖死且已開鎖」時才將數量加 1 並交回 `true`；否則不改數量並交回 `false`。\n- `int getCount()`、`boolean isOpened()`、`boolean isLockedOut()`：各自交回目前數量、是否開鎖、是否鎖死。",
       "instructions": "真正的封裝不只是把欄位加 `private` 後寫個 getter，而是讓物件自己守住規則：外面拿不到密碼與狀態欄位，只能透過你開放的方法互動。\n\n狀態轉換要特別注意順序：\n1. `unlock(String input)` 一進來先檢查「是不是已經鎖死了」，已鎖死就直接 `return false;`。\n2. 比對字串內容要用 `pin.equals(input)`，不要用 `==`。\n3. 只要開鎖成功，記得把連續錯誤次數歸零，否則先前錯 2 次再成功、下次又錯 1 次就會誤鎖。\n4. `add()` 必須同時確認 `!lockedOut && opened`。",
@@ -44,7 +44,7 @@
       "afterText": ""
     },
     {
-      "id": "outside",
+      "id": "outside-v2",
       "title": "從外面改不了與重設流程",
       "goal": "起始碼最後一行 `bag.count = 99;` 想直接從外面改欄位，因為 `count` 是 `private` 而出現紅字。請修正外層操作，並為扭蛋包加上管理碼重設流程，使 `bag.getCount()` 為 `9`。\n\n規格如下：\n- 刪掉 `bag.count = 99;`，改用 `bag.add();` 再放入第 9 個扭蛋。\n- 新增 `boolean resetLock(String masterCode, String newPin)`：只有當 `\"MASTER-07\".equals(masterCode)` 且 `newPin != null && !newPin.isEmpty()` 時，才將密碼換成 `newPin`、解除鎖死、連續錯誤次數歸零、設為未開鎖（需用新密碼重新 `unlock`），並交回 `true`；否則什麼都不改，交回 `false`。",
       "instructions": "`private` 擋住了從外面直接竄改 `bag.count` 的企圖。但萬一真的輸錯 3 次鎖死了，還是需要一個受控管的重設窗口。\n\n寫 `resetLock` 時也要把關：管理碼不對、或新密碼是 `null` / 空字串，都不能解除鎖死，也不能把原本密碼蓋掉；重設成功後要設成未開鎖，讓使用者必須用新密碼重新通過驗證。",

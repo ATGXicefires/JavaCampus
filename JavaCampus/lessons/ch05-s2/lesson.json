@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "prime",
+      "id": "prime-v2",
       "title": "質數試除與平方根最佳化",
       "goal": "寫一個方法 `static boolean isPrime(int n)` 判斷 `n` 是否為質數：\n- 若 `n <= 1`，不是質數，交回 `false`。\n- 若 `n == 2`，是質數，交回 `true`。\n- 若 `n` 是大於 2 的偶數（`n % 2 == 0`），不是質數，交回 `false`。\n- 其餘奇數請用 `while` 從 `d = 3` 開始，每次加 `2` 試除，而且只須檢查到 `d <= n / d` 為止（避免超時與乘法溢位）。找到因數即提早回傳 `false`，都沒找到就回傳 `true`。",
       "instructions": "如果 `n` 是接近 `Integer.MAX_VALUE` 的大質數（例如 `1000000007` 或 `2147483647`），從 2 一個一個試到 `n - 1` 會跑數億次直接逾時！\n\n事實上，如果 `n` 有因數，必定有一個小於等於 $\\sqrt{n}$：只需檢查到 `d * d <= n`。不過當 `n` 接近 `int` 上限時，`d * d` 可能會發生整數溢位變成負數導致無窮迴圈，改寫成 `d <= n / d` 就能同時避開溢位與逾時。",
@@ -36,7 +36,7 @@
       "afterText": ""
     },
     {
-      "id": "count",
+      "id": "count-v2",
       "title": "區間質數個數與第 k 個質數",
       "goal": "保留上一步的 `isPrime`，再實作兩個方法：\n1. `static int countPrimes(int a, int b)`：計算閉區間 `[a, b]`（包含 `a` 與 `b`）之間總共有幾個質數；若 `a > b`，交回 `0`。\n2. `static int kthPrime(int k)`：使用 `while` 找出並交回第 `k` 個質數（第 1 個是 `2`，第 2 個是 `3`，第 3 個是 `5`⋯⋯）；若 `k <= 0`，交回 `-1`。",
       "instructions": "兩個方法都直接重用你剛寫好的 `isPrime`。\n\n在 `countPrimes(a, b)` 中，如果 `a` 是負數或 `0`、`1`，只要交給 `isPrime` 檢查都會回傳 `false`，所以從 `a` 數到 `b`（或從較大的起始點 `Math.max(2, a)` 開始）都可以；若 `a > b` 迴圈一次都不會跑，直接回傳 `0`。\n\n在 `kthPrime(k)` 中，用 `while` 讓候選數字 `cand` 從 `2` 開始往上遞增，每遇到一個 `isPrime(cand)` 就讓計數器加 1，數到第 `k` 個時立刻交回 `cand`。",

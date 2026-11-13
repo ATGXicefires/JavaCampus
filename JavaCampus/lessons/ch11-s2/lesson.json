@@ -10,7 +10,7 @@
       "id": "deadlock",
       "title": "修好狀態死鎖的模擬",
       "goal": "起始碼裡的 `daysUntilBudgetReady(int saved, int dailySave, int target, int maxDays)` 存在多處狀態更新與終止條件缺陷，導致某些輸入會算錯天數或陷入無限迴圈。\n\n請修正該方法，讓它正確模擬畢業基金存款：\n- 若一開始 `saved >= target`，不需要等待任何天數，直接回傳 `0`。\n- 否則若 `dailySave <= 0` 或 `maxDays <= 0`，永遠不可能存夠目標，直接回傳 `-1`。\n- 否則使用 `while (true)` 搭配 `break` 逐日模擬（第 1 天、第 2 天……）：\n  - 每天先把 `day` 加 1；\n  - 週末（`day % 7 == 6 || day % 7 == 0`）不存錢只過這一天（若用 `continue` 略過存錢，務必先完成天數更新與上限檢查！）；\n  - 平日將 `saved` 加上 `dailySave`；\n  - 若 `saved >= target`，立即 `break` 並回傳 `day`；\n  - 若還沒達標但 `day >= maxDays`，立即 `break` 並回傳 `-1`。\n\n修正後 `main` 應印出：`需要 4 天`。",
-      "instructions": "檢視起始碼時留意三個陷阱：\n1. 進入 `while (true)` 前沒先檢查 `saved >= target`，會多跑至少一天。\n2. 在週末分支直接 `continue`，卻把 `day >= maxDays` 的上限檢查放在迴圈尾端，會導致剛好最後一天落在週末時衝過 `maxDays` 或永遠跳不出來。\n3. `dailySave <= 0` 時若沒有入口檢查，會白跑或卡死。",
+      "instructions": "排查無限迴圈與天數誤差時，建議追蹤邊界或極端輸入在每一輪迴圈的變數變化；若迴圈內使用了 `continue`，務必確認迴圈計數更新與終止上限檢查一定會被執行到。",
       "expectedShape": "public static int daysUntilBudgetReady(int saved, int dailySave, int target, int maxDays) {\n    …\n    while (true) {\n        …\n        if (…) {\n            break;\n        }\n    }\n    return …;\n}",
       "form": "program",
       "check": {

@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "super",
+      "id": "super-v2",
       "title": "用 super 延伸計畫",
       "goal": "在 `MyPlan` 裡覆寫 `future()` 與 `totalHours()`，延伸父類別 `Plan` 原本的內容而非全部重寫：\n1. `@Override String future()`：必須用 `super.future()` 拿到父類別那句話，並在後面加上 `\"，而且加上\" + artNote`（例如 `\"學一技之長，找一份穩定的工作，而且加上介面插畫\"`）。\n2. `@Override int totalHours()`：必須用 `super.totalHours()` 拿到父類別計算好的讀書時數，再加上子類別自己的 `extraHours`。\n\n父類別的 `describe()` 會自動呼叫這兩個方法，完成後父子類別呼叫 `describe()` 就會呈現各自的版本。",
       "instructions": "子類別裡寫 `super.方法()`，指的是呼叫父類別那一份原本的實作。例如在 `MyPlan` 的 `future()` 裡若直接呼叫 `future()`，會不斷呼叫自己直到當掉；寫 `super.future()` 才能拿到 `Plan` 的版本，再用 `+` 接上自己的想法。\n\n父類別的 `describe()` 寫在 `Plan` 裡，但裡面呼叫的 `future()` 和 `totalHours()` 會在執行時動態派遣到子類別覆寫過的版本，因此 `MyPlan` 不用重寫 `describe()` 就能印出自己的版本。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "name",
+      "id": "name-v2",
       "title": "建構子 super 對接與格式修正",
       "goal": "父類別 `Plan` 現在提供 `static int sumHours(Plan[] plans)` 介面，且 `MyPlan` 需要完整實作建構子驗證與多型加總：\n1. 在 `MyPlan(String owner, int studyHours, String artNote, int extraHours)` 建構子中：\n   - 先對 `owner` 去前後空白（若為 `null` 視為 `\"\"`）；若整理後不是空字串且開頭不是 `\"學妹-\"`，補上 `\"學妹-\"` 前綴後，用 `super(fixedOwner, studyHours)` 交給父類別（若整理後是空字串則直接交給 `super(\"\", studyHours)`，讓父類別設為 `\"同學\"`）。\n   - `this.artNote` 若為 `null` 或空白字串設為 `\"畫畫\"`，否則 `trim()`。\n   - `this.extraHours` 若小於 `0` 設為 `0`，若大於 `20` 設為 `20`。\n2. 保留 `future()` 與 `totalHours()` 的 `super` 延伸覆寫。\n3. 在 `Plan` 中完成 `static int sumHours(Plan[] plans)`：若 `plans` 為 `null` 回傳 `0`，走訪陣列略過 `null` 元素，累加每個元素的 `totalHours()`。",
       "instructions": "呼叫 `super(...)` 之前可以先計算整理好的參數（Java 25 允許在呼叫 `super(...)` 前準備區域變數，或使用靜態輔助方法／條件運算式傳入）。\n\n`sumHours(Plan[] plans)` 接收的是父類別陣列，裡面可能同時有 `Plan` 和 `MyPlan`；呼叫 `p.totalHours()` 時，Java 會自動針對每個元素實際的型別執行對應版本。",

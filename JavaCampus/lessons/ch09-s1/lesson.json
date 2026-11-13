@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "checkers",
+      "id": "checkers-v2",
       "title": "三種批改策略實作",
       "goal": "起始碼已定好策略介面 `interface Checker { boolean check(String typed); }`。請實作三種不同題型的批改策略類別：\n1. `class ExactChecker implements Checker`，建構子 `ExactChecker(String answer, boolean ignoreCase)`：\n   - 若 `answer` 或 `typed` 為 `null`，直接回傳 `false`。\n   - 兩者各自去掉前後空白（`trim()`）後比對：若 `ignoreCase` 為 `true` 則忽略大小寫（`equalsIgnoreCase`），否則精準比對（`equals`）。\n2. `class RangeChecker implements Checker`，建構子 `RangeChecker(double target, double tolerance)`：\n   - 若 `tolerance < 0`，先取絕對值 `Math.abs(tolerance)`。\n   - `check(String typed)`：若 `typed` 為 `null` 或 `trim()` 後為空，回傳 `false`。嘗試用 `Double.parseDouble(typed.trim())` 轉成數值並用 `try-catch` 攔截 `NumberFormatException`（非數字不崩潰、回傳 `false`）；若值或 `target` 為 `NaN` 或無窮大（`Infinite`）也回傳 `false`。最後檢查 `Math.abs(val - target) <= tolerance + 1e-9`。\n3. `class KeywordChecker implements Checker`，建構子 `KeywordChecker(String[] keywords)`：\n   - 過濾 `keywords` 中的 `null` 與空白字串，僅保留有效關鍵字（去前後空白並轉小寫）。\n   - `check(String typed)`：若 `typed` 為 `null` 或沒有任何有效關鍵字，回傳 `false`。須**同時包含全部**有效關鍵字（忽略大小寫）才回傳 `true`。",
       "instructions": "這就是策略模式（Strategy Pattern）：同樣實作 `Checker` 介面，每一種策略各自封裝一套判斷邏輯與邊界防護。\n\n轉浮點數時務必包在 `try { ... } catch (NumberFormatException e)` 裡，否則遇到 `\"12px\"` 或 `\"abc\"` 會直接拋出例外中止程式；另外也要用 `Double.isNaN(val)` 與 `Double.isInfinite(val)` 排除 `\"NaN\"`、`\"Infinity\"` 等特殊字串。",
@@ -43,7 +43,7 @@
       "afterText": ""
     },
     {
-      "id": "judge",
+      "id": "judge-v2",
       "title": "批次評分引擎 Judge",
       "goal": "保留三種 `Checker` 策略，實作批次評分引擎 `class Judge`：\n1. 建構子 `Judge(Checker[] checkers, int[] weights)`：\n   - 有效處理區間長度 `n` 取 `checkers` 與 `weights` 較短者（若任一為 `null` 則 `n = 0`）。\n   - 遍歷 `0 .. n - 1`：若 `checkers[i] == null` 或 `weights[i] <= 0`，該題視為無效題目，直接忽略不計入題數與總分。\n2. `String grade(String[] answers)`：\n   - 若無任何有效題目，回傳 `\"無有效題目\"`。\n   - 逐一對有效題目比對 `answers` 對應索引的作答（若 `answers == null` 或 `i >= answers.length`，該題作答視為 `null` 即不通過）。\n   - 統計獲得分數 `earned`、總分 `total`、答對題數 `correctCount`、有效題數 `validCount`，整數百分比 `pct = (earned * 100) / total`。\n   - 回傳格式：`\"得分 \" + earned + \"/\" + total + \" (\" + pct + \"%)，答對 \" + correctCount + \"/\" + validCount + \" 題\"`。\n3. 另提供靜態方法 `static String checkOne(Checker checker, String typed)`：若 `checker != null && checker.check(typed)` 回傳 `\"答對了\"`，否則回傳 `\"再試一次\"`。",
       "instructions": "`Judge` 完全只依賴 `Checker` 介面（多型陣列 `Checker[]`），因此任何實作 `Checker` 的策略都能直接交給 `Judge` 批次評分。\n\n注意「題目陣列與配分陣列長度不同」、「答案陣列比題目少」、「配分出現 0 或負數」等邊界條件，並小心 `validCount == 0` 時不要除以零。",

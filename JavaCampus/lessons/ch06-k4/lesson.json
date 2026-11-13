@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "crash",
+      "id": "crash-v2",
       "title": "空元素與空欄位除錯",
       "goal": "修好起始碼裡的 `validCount(Mascot[] list)` 與 `describe(Mascot m)`，讓它們遇到 `null` 陣列、`null` 物件元素或 `null` 欄位時都不會拋出 `NullPointerException`。",
       "instructions": "起始碼裡的 `mascots` 陣列故意混入了 `null` 物件、`name == null` 以及 `line == null` 的資料。\n\n修復後的規格如下：\n- `static int validCount(Mascot[] list)`：若 `list == null` 回傳 `0`；略過陣列中的 `null` 元素，只計算 `m.name != null` 且去掉前後空白後非空（`!m.name.trim().isEmpty()`）的小老師數量。\n- `static String describe(Mascot m)`：\n  - 若 `m == null`，回傳 `\"空位\"`。\n  - 名稱若為 `null` 或去掉前後空白後為空，顯示 `\"未取名\"`；否則顯示 `m.name`。\n  - 台詞若為 `null` 或去掉前後空白後為空，顯示 `\"（安靜）\"`；否則顯示 `m.line`。\n  - 回傳 `顯示名稱 + \"：\" + 顯示台詞`。",
@@ -33,7 +33,7 @@
       "afterText": ""
     },
     {
-      "id": "default",
+      "id": "default-v2",
       "title": "建構保護與方法防呆",
       "goal": "修好 `class Mascot` 的建構子、`boolean hasName(String target)` 與 `boolean copyLineFrom(Mascot other)`，擋掉所有可能引起 `NullPointerException` 的輸入。",
       "instructions": "修復後的規格如下：\n- `Mascot(String name, String line)`：若 `name` 為 `null` 或去掉前後空白後為空，設為 `\"新同學\"`，否則設為 `name.trim()`；若 `line` 為 `null`，設為 `\"\"`。\n- `boolean hasName(String target)`：若 `target == null` 或 `this.name == null`，回傳 `false`；否則回傳 `this.name.equals(target.trim())`。\n- `boolean copyLineFrom(Mascot other)`：若 `other == null`、`other.line == null` 或 `other.line.trim().isEmpty()`，不改動自己的 `line` 並回傳 `false`；否則將 `this.line` 設為 `other.line` 並回傳 `true`。",

@@ -21,8 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** 每個步驟都要能用自己的解答過關，而且不能不寫新東西就過關。 */
 class LessonContentTest {
 
-    private static final Set<String> GENTLE_PREFIXES = Set.of("ch01-", "ch11-kt", "ch11-sg", "ch12-kt", "ch12-sb");
-    private static final Set<String> GENTLE_STEPS = Set.of("ch02-k3/first");
+    private static final Set<String> GENTLE_PREFIXES = Set.of("ch11-kt", "ch11-sg", "ch12-kt", "ch12-sb");
+    private static final Set<String> GENTLE_STEPS = Set.of(
+            "ch01-k1/say", "ch01-k1/two-lines", "ch01-s1/rewrite", "ch02-k3/first");
 
     private static Sandbox sandbox;
     private static Verifier verifier;
@@ -70,9 +71,14 @@ class LessonContentTest {
         assertFalse(step.instructions().isBlank(), "缺少題目說明");
         assertTrue(step.expectedShape().contains("…"), "預期的樣子直接寫出答案，玩家要寫的地方要換成 …");
         assertAntiBypass(l.key(step), step.check());
-        // 換資料再跑的事交給沒過時的訊息說明，題目先講只會讓人以為要對付檢查
+        // 換資料再跑的事交給沒過時的訊息說明，題目先講只會讓人以為要對付檢查；除錯題也不直接數出地雷或劇透定位
+        List<String> forbidden = List.of(
+                "按「完成」", "隱藏測資", "隱藏的", "隱藏 Bug", "隱藏Bug", "隱藏 bug",
+                "邏輯地雷", "常見地雷", "三個陷阱", "四種陷阱");
         for (String text : List.of(step.goal(), step.instructions())) {
-            assertFalse(text.contains("按「完成」"), "題目文字預告了隱藏測資：" + text);
+            for (String word : forbidden) {
+                assertFalse(text.contains(word), l.key(step) + " 題目文字不應劇透或提及隱藏檢查（命中「" + word + "」）");
+            }
         }
     }
 

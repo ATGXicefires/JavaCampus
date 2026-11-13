@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "check",
+      "id": "check-v2",
       "title": "布林與整數比對工具",
       "goal": "起手程式上面是她寫好的 `isPass`、`max`、`showBadge`（都是正確版本）。為了幫它們做壓力測試，請寫兩個同名的比對方法（方法重載）：\n1. `static String check(boolean actual, boolean expected)`：兩個布林值相等回傳 `\"PASS\"`，不相等回傳 `\"FAIL\"`。\n2. `static String check(int actual, int expected)`：兩個整數相等回傳 `\"PASS\"`，不相等回傳 `\"FAIL\"`。",
       "instructions": "同一個方法名稱 `check`，只要參數型別不同（一個收 `boolean`，一個收 `int`），Java 就能自動辨識要呼叫哪一個，這叫做方法重載。\n\n有了整數版的 `check`，待會比對 `max` 和 `myMax` 時就能直接交給 `check(myMax(a), max(a))`，不用另外先比較再轉成布林。",
@@ -32,7 +32,7 @@
       "afterText": ""
     },
     {
-      "id": "boundary",
+      "id": "boundary-v2",
       "title": "及格線與徽章邊界全測",
       "goal": "拿一組涵蓋上下界與異常值的分數 `{59, 60, 61, 0, 100, -1, 101}` 測 `isPass`，再拿 4 組測資 `(5, 5, 60)`、`(5, 5, 59)`、`(4, 5, 100)`、`(0, 0, 100)` 測 `showBadge`，依序印出 11 行：\n`isPass(59) PASS`\n`isPass(60) PASS`\n`isPass(61) PASS`\n`isPass(0) PASS`\n`isPass(100) PASS`\n`isPass(-1) PASS`\n`isPass(101) PASS`\n`showBadge(5,5,60) PASS`\n`showBadge(5,5,59) PASS`\n`showBadge(4,5,100) PASS`\n`showBadge(0,0,100) PASS`",
       "instructions": "測試不能只測順風局：除了 59、60、61 貼近及格邊界，還要測 0、100、-1、101 的範圍邊界；徽章也要測 `total == 0` 與 `done < total` 的防呆。\n\n使用平行陣列搭配 `for` 迴圈呼叫 `check(isPass(...), ...)` 和 `check(showBadge(...), ...)` 印出結果，全部都會是 `PASS`。",
@@ -49,7 +49,7 @@
       "afterText": ""
     },
     {
-      "id": "my-max",
+      "id": "my-max-v2",
       "title": "手寫 myMax 與對偶壓力測試",
       "goal": "自己寫一個獨立的 `static int myMax(int[] a)`（不能呼叫她寫的 `max`，且需處理 `null` 或空陣列回傳 `Integer.MIN_VALUE`），接著用二維陣列準備以下 6 組壓力測資（全負數、單元素、重複最大值、全負重複、首項最大、含 0 負數）：\n`{{-30, -5, -18}, {42}, {9, 9, 3, 9}, {-100, -100, -200}, {62, 41, 34}, {0, -1, -50}}`\n\n接在上一步的 11 行輸出之後，用迴圈對這 6 組測資呼叫 `check(myMax(cases[i]), max(cases[i]))` 進行對偶交叉測試，依序印出：\n`第 1 組 PASS`\n`第 2 組 PASS`\n`第 3 組 PASS`\n`第 4 組 PASS`\n`第 5 組 PASS`\n`第 6 組 PASS`",
       "instructions": "這種「自己另外寫一份對照實作，拿同一批極端測資跑兩邊比對結果」的驗證方法叫對偶測試（Differential Testing）。\n\n`myMax` 必須嚴謹處理三種最容易寫爆的狀況：空陣列、全負數（不可初始化成 `0`）、以及最大值重複出現。組號從 `1` 開始編號（`i + 1`）。",

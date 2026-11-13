@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "ends",
+      "id": "ends-v2",
       "title": "首尾總和與差值",
       "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`。\n\n算出第一格與最後一格的總和 `int endSum` 和差值 `int endDiff`（最後一格減第一格），並依不同長度安全印出結果：\n- 若 `scores.length == 0`（空陣列）：`endSum = 0`、`endDiff = 0`，印出 `空陣列`。\n- 若 `scores.length == 1`（只有 1 格）：首尾是同一格，只算一次，`endSum = scores[0]`、`endDiff = 0`，印出 `首：X 尾：X 差：0`。\n- 若 `scores.length >= 2`：`endSum = scores[0] + scores[scores.length - 1]`、`endDiff = scores[scores.length - 1] - scores[0]`，印出 `首：X 尾：Y 差：Z`。",
       "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n陣列索引從 `0` 開始，最後一格的索引是 `scores.length - 1`。如果直接存取 `scores[0]`，遇到空陣列（`scores.length == 0`）就會發生索引越界例外！\n\n因此要先用 `if / else if / else` 依 `scores.length` 分三種情況處理，再用變數記下 `first` 和 `last` 算出 `endSum` 與 `endDiff`。",

@@ -11,7 +11,7 @@
   ],
   "steps": [
     {
-      "id": "constructor",
+      "id": "constructor-v2",
       "title": "建構子與背包總值",
       "goal": "為 `class Item` 加上四參數建構子 `Item(String name, String kind, int price, int stock)` 與 `int totalValue()`，再用 `names`、`prices`、`stocks` 建出 `Item[] bag`，並寫 `static int totalBagValue(Item[] bag)` 計算總價值。",
       "instructions": "編輯器最上面已宣告好 `names`、`prices`、`stocks` 三個陣列，你的程式可以直接使用。\n\n規則如下：\n- `Item(String name, String kind, int price, int stock)`：用 `this.` 把四個參數放進欄位；若 `name` 為 `null` 或去掉前後空白後為空，設為 `\"未命名\"`；`kind` 為 `null` 或空白設為 `\"扭蛋\"`；`price < 0` 或 `stock < 0` 各自歸 `0`。\n- `int totalValue()`：回傳 `price * stock`。\n- `Item[] bag = new Item[names.length];`：依序填入 `new Item(names[i], \"扭蛋\", prices[i], stocks[i])`。\n- `static int totalBagValue(Item[] bag)`：若 `bag == null` 回傳 `0`；加總陣列裡所有非 `null` 品項的 `totalValue()`（遇到 `null` 格要略過）。",
@@ -40,7 +40,7 @@
       "afterText": ""
     },
     {
-      "id": "family",
+      "id": "family-v2",
       "title": "扭蛋盤點統計",
       "goal": "寫出三個靜態統計方法：`lowestStockName(Item[] bag)` 找庫存最低品項名稱、`highestValueName(Item[] bag)` 找總價值最高品項名稱，以及 `countOutOfStock(Item[] bag)` 統計缺貨品項數量。",
       "instructions": "三個方法都要能安全處理 `bag == null`、空陣列或陣列內夾雜 `null` 元素：\n- `static String lowestStockName(Item[] bag)`：找出 `stock` 最低的非 `null` 品項名稱；若有多個並列最低，取先出現的那個；若沒有任何有效品項，回傳 `\"無\"`。\n- `static String highestValueName(Item[] bag)`：找出 `totalValue()` 最高的非 `null` 品項名稱；若並列最高，取先出現的那個；若沒有有效品項，回傳 `\"無\"`。\n- `static int countOutOfStock(Item[] bag)`：統計非 `null` 且 `stock == 0` 的品項個數；`bag == null` 回傳 `0`。",

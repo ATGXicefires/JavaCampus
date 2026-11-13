@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "empty",
+      "id": "empty-v2",
       "title": "零題數、負數與超額百分比防呆",
       "goal": "修好 `Main.java` 裡的兩個方法，讓總覽頁安全印出五課統計：\n`第 10 課：75%`\n`第 11 課：80%`\n`第 12 課：—`\n`第 13 課：100%`\n`第 14 課：0%`\n\n方法規格如下：\n1. `public static int percent(int correct, int count)`：\n- 若 `count <= 0` 或 `correct <= 0`：回傳 `0`（避免除以零或出現負百分比）。\n- 若 `correct >= count`：封頂回傳 `100`。\n- 其餘情況：計算百分比並四捨五入至整數（`(int) Math.round(correct * 100.0 / count)`，例如 `2 / 3` 為 `67`）。\n2. `public static String formatUnitLine(String unit, int correct, int count)`：\n- 若 `unit` 為 `null` 或空白，名稱改用 `\"未命名\"`，否則去掉前後空白。\n- 若 `count <= 0`，回傳 `名稱 + \"：—\"`；否則回傳 `名稱 + \"：\" + percent(correct, count) + \"%\"`。",
       "instructions": "發表前總覽頁同時遇到三種極端資料：第 12 課尚未出題（`count == 0` 會觸發 `ArithmeticException: / by zero`）、第 13 課測試帳號多答了一題（`correct > count`）、第 14 課資料異常出現負值（`correct < 0`）。\n\n把規則各自封裝在 `percent` 與 `formatUnitLine` 內部，就能確保從任何地方呼叫都不會失誤。",
@@ -35,7 +35,7 @@
       "afterText": ""
     },
     {
-      "id": "guard",
+      "id": "guard-v2",
       "title": "發表前綜合極端案例壓測",
       "goal": "修正 `Main.java` 中四個在發表前壓測失敗的統計方法（原本沒有防護 `null`、空陣列、負數成績與超過 `100` 的異常成績）：\n1. `public static int clampScore(int score)`：將分數限制在 `0` 到 `100` 之間（`< 0` 回傳 `0`、`> 100` 回傳 `100`）。\n2. `public static int averageScore(int[] scores)`：若 `scores` 為 `null` 或空陣列回傳 `0`；否則先將每筆成績套用 `clampScore` 再加總（使用 `long` 避免溢位），以整數除法回傳平均值（`總和 / 筆數`，小數無條件捨去）。\n3. `public static int maxScore(int[] scores)`：若 `scores` 為 `null` 或空陣列回傳 `0`；否則回傳套用 `clampScore` 後的最大值。\n4. `public static String stressReport(int[] scores)`：若 `scores` 為 `null` 或空陣列回傳 `\"無成績資料\"`；否則回傳 `\"筆數=\" + scores.length + \", 平均=\" + averageScore(scores) + \", 最高=\" + maxScore(scores)`。",
       "instructions": "壓測時常見的崩潰原因：\n- 直接存取 `scores[0]` 在空陣列會拋出 `ArrayIndexOutOfBoundsException`，在 `null` 會拋出 `NullPointerException`。\n- 沒有先將單筆成績限制在 `[0, 100]`，會導致負數拉低平均或 `150` 分讓最高分超過上限。\n\n這一步會用大量極端輸入一次驗證這四個方法與 `percent` 是否全部就位。",

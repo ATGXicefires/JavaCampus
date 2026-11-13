@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "to-score",
+      "id": "to-score-v2",
       "title": "字串安全轉分數",
       "goal": "考卷登記資料常混著空白、錯字或離譜數字。寫一個方法 `static int toScore(String s)`：\n- 若 `s` 是 `null`，回傳 `-1`。\n- 去掉前後空白（`.trim()`）後，用 `Integer.parseInt` 轉成整數；若不是整數會丟出 `NumberFormatException`，用 `try` / `catch` 接住並回傳 `-1`。\n- 轉出來的整數必須在 `0` 到 `100` 之間（含 0 與 100），超出範圍一樣視為無效資料，回傳 `-1`。",
       "instructions": "先處理 `s == null` 再呼叫 `.trim()`，才不會對 `null` 呼叫方法而當場跌倒。\n\n把 `Integer.parseInt(s.trim())` 放進 `try` 的大括號裡，成功轉成整數後，還要再檢查是不是在 `0..100` 範圍內；若遇到 `NumberFormatException`，就在 `catch` 裡回傳 `-1`。",
@@ -35,7 +35,7 @@
       "afterText": ""
     },
     {
-      "id": "average",
+      "id": "average-v2",
       "title": "過濾壞資料的有效平均",
       "goal": "保留上一步的 `toScore`，寫一個方法 `static double validAverage(String[] raw)`：\n- 走訪 `raw` 陣列，對每個字串呼叫 `toScore`，只把合法分數（`>= 0`）加進總和並計算有效筆數。\n- 若 `raw == null`、陣列為空、或**全部資料都無效**（有效筆數為 0），安全回傳 `0.0`。\n- 否則回傳 `(double) sum / validCount`。",
       "instructions": "資料清理的第一步是只統計有效資料：無效字串會被 `toScore` 轉成 `-1`，千萬不能把 `-1` 加進總分，也不能把無效筆數算進分母。\n\n當全部資料都無效時，有效筆數是 `0`：如果不先判斷直接做除法，會發生除以 0 得到 `NaN`，所以要先擋掉 `raw == null` 和 `validCount == 0` 的情況。",

@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "flow",
+      "id": "flow-v2",
       "title": "畫面與關卡進度模組",
       "goal": "1. 在 `Main.java` 最上方匯入 `ArrayList`（`import java.util.ArrayList;`），用 `ArrayList<Drawable>` 依序加入四個畫面（`首頁`、`課程`、`答題`、`成績`），以 for-each 呼叫 `draw()` 印出四行標題。\n2. 完成 `LessonFlow.java`：\n- `public LessonFlow(List<String> stages)`：依序保存有效關卡名稱（若 `stages` 為 `null` 則視為空清單；忽略 `null`、空白與重複的關卡名稱）。\n- `public ArrayList<String> pending(List<String> completed)`：依原順序回傳尚未出現在 `completed` 中的關卡清單；若 `completed` 為 `null` 則回傳全部關卡。\n- `public int completionRate(List<String> completed)`：計算已完成關卡佔總關卡數的百分比（`已完成數 * 100 / 總數`，整數除法無條件捨去）。忽略 `completed` 中不在 `stages` 內的無效名稱與重複項；若總關卡數為 `0` 則回傳 `0`。\n3. 在 `Main.main` 最後建立 `LessonFlow`（關卡：`變數入門`、`語法基礎`、`條件判斷`、`迴圈練習`，已完成：`變數入門`），印出：\n`剩餘關卡：[語法基礎, 條件判斷, 迴圈練習]`\n`完成率：25%`",
       "instructions": "`Screen` 已實作 `Drawable` 介面，呼叫 `draw()` 會印出 `== 標題 ==`。\n\n`ArrayList` 與 `List` 位於 `java.util` 套件，`import` 只對寫它的那個檔案有效，因此 `Main.java` 與 `LessonFlow.java` 各自用到什麼都要在檔案最上方宣告。\n\n計算 `completionRate` 時，只要走訪自己的 `stages` 清單並檢查每一關是否在 `completed` 中出現，就能同時避免重複計分與無效名稱干擾。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "newcomer",
+      "id": "newcomer-v2",
       "title": "新手路徑推薦與解鎖狀態",
       "goal": "1. 在 `LessonFlow.java` 新增兩個方法：\n- `public String nextRecommended(List<String> completed)`：回傳第一個尚未完成的關卡名稱；若全部關卡皆已完成（或關卡清單為空），回傳 `\"全部完成\"`。\n- `public boolean isUnlocked(String target, List<String> completed)`：判斷 `target` 是否解鎖。規則如下：若 `target` 為 `null` 或不在 `stages` 中回傳 `false`；第 0 關永遠解鎖（回傳 `true`）；其餘第 `i` 關（`i > 0`）只有在「前一關 `stages.get(i - 1)` 存在於 `completed`（且 `completed` 不為 `null`）」時才回傳 `true`，否則回傳 `false`。\n2. 在 `Main.main` 保留畫面繪製，接著用 `checker.check(…)` 依序檢查 `typed`（`\"選晚餐\"`、`\" 選午餐\"`），答錯印常數 `RETRY`、答對印常數 `PASS`，最後再印出：\n`推薦下一關：語法基礎`",
       "instructions": "`RETRY` 與 `PASS` 是 `Main` 裡定義好的字串常數，輸出時直接傳入變數名稱即可，不要加上雙引號。\n\n`nextRecommended` 可以直接重用上一步寫好的 `pending(completed)`；`isUnlocked` 則可用 `stages.indexOf(target)` 先找出位置，再依索引值判斷是否為第 0 關或檢查前一關是否已完成。",

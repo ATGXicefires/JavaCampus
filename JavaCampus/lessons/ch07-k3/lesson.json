@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "total",
+      "id": "total-v2",
       "title": "實例各自獨立，static 共享統計",
       "goal": "`daily` 是寒假每天提到「學長」的次數，現在是 `{3, 5, 4, 8, 7, 9, 12}`。寫 `class Day` 區分每一天自己的次數與整個寒假共用的統計：\n- 欄位一律設為 `private`：實例欄位記這一天的次數；`static` 欄位記全體總次數、總天數與單日最高次數。\n- 建構子 `Day(int mentions)`：若 `mentions < 0` 一律防呆為 `0`；存進這一天的次數，並累加到總次數、總天數加 1，以及更新單日最高次數。\n- 實例方法 `int getMentions()` 交回這一天的次數。\n- 靜態方法 `static int getTotal()`、`static int getDayCount()`、`static int getMaxMentions()`，以及 `static void resetAll()`（將總次數、總天數、單日最高全歸零）。\n- 用 `for` 走過 `daily` 把每一天都 `new` 出來。",
       "instructions": "編輯器最上面那行 `int[] daily = {3, 5, 4, 8, 7, 9, 12};` 是題目先寫好的，你的程式可以直接用 `daily`。\n\n一般的欄位每個物件各有一份：`d1.getMentions()` 和 `d2.getMentions()` 互不干擾；加上 `static` 的欄位屬於整個類別，所有 `new` 出來的 `Day` 都共用同一份統計，外面再透過 `static` 方法讀取或重設，誰都無法從外面亂改數值。",
@@ -46,7 +46,7 @@
       "afterText": ""
     },
     {
-      "id": "running",
+      "id": "running-v2",
       "title": "每日累計與平均",
       "goal": "接續上一步的 `Day`，補上平均方法並把每天與總結印出來：\n1. 新增靜態方法 `static double getAverage()`：若 `dayCount == 0` 交回 `0.0`，否則交回 `(double) total / dayCount`。\n2. 修改 `for` 迴圈，每 `new` 一天就印一行：\n`第 1 天：3 次，累計 3 次`\n`第 2 天：5 次，累計 8 次`\n⋯⋯\n3. 迴圈結束後，印出一行總結：\n`共 7 天，合計 48 次，單日最高 12 次`",
       "instructions": "這一步接續上一步的 `Day` 類別，補上 `getAverage()` 並調整下方的迴圈。\n\n算平均要特別防兩個坑：\n1. 沒半天資料（`dayCount == 0`）時不能直接除，要回傳 `0.0`。\n2. 兩個 `int` 相除會直接捨去小數，記得先轉成 `(double)` 再除。",

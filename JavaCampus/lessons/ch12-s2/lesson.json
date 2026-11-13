@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "releases",
+      "id": "releases-v2",
       "title": "版本物件與有效筆記篩選",
       "goal": "1. 完成 `Release.java`（請於檔案最上方匯入 `ArrayList` 與 `List`）：\n- 建構子 `public Release(String version, String date, List<String> items)`：將 `version`、`date` 去掉前後空白（若為 `null` 視為 `\"\"`）；將 `items` 中非 `null` 且非空白的更新項目去掉前後空白後存進 `ArrayList<String>`（若 `items` 為 `null` 視為空清單）。\n- 提供 `public String version()`、`public String date()`、`public ArrayList<String> items()`。\n- 覆寫 `public String toString()`：\n  - 有更新項目時回傳：`版號 (日期)：項目1、項目2`（例如 `v1.2.0 (2026-05-01)：修好進度條、新增提示`）。\n  - 若 `items` 為空則回傳：`版號 (日期)：無更新項目`。\n2. 完成 `Main.java`：\n- 實作 `public static ArrayList<Release> filterWithNotes(List<Release> releases)`：過濾出所有「非 `null` 且 `items()` 不為空」的 `Release`（若 `releases` 為 `null` 回傳空清單）。\n- 在 `main` 用起始資料建立 `ArrayList<Release>`，再印出 `filterWithNotes(releases)` 裡的每一筆版本。",
       "instructions": "括號與冒號格式請嚴格依照範例：`版號 + \" (\" + 日期 + \")：\"`，其中小括號是半形 `(` `)`、前後有一個半形空白在版號與左括號之間，冒號是全形 `：`，多個項目之間用全形頓號 `、` 串接（可用 `String.join(\"、\", items)`）。\n\n將無意義的空白更新項目在建構子就先濾除，能避免後續印出多餘分隔符號。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "newest",
+      "id": "newest-v2",
       "title": "語意化版號比較與最新版本",
       "goal": "在 `Main.java` 實作真正的版號比較與最新查詢（不可直接取清單最後一筆，因為版本順序可能錯亂，例如 `v1.10.0` 比 `v1.2.0` 新）：\n1. `public static int compareVersions(String v1, String v2)`：比較兩個語意化版號（去掉前後空白與開頭的 `v`/`V`，依 `.` 拆成整數段落逐段比較，較短版號缺少的尾段補 `0`，例如 `v1.2` 等於 `v1.2.0`；若傳入 `null` 或空白視為 `0`）。`v1` 較新回傳正數（例如 `1`）、較舊回傳負數（例如 `-1`）、相等回傳 `0`。\n2. `public static Release findLatest(List<Release> releases)`：找出清單中版號最大的 `Release`（略過 `null` 元素）；若清單為 `null` 或沒有有效版本則回傳 `null`。\n3. `public static String latestSummary(List<Release> releases)`：呼叫 `findLatest(releases)`；若為 `null` 回傳 `\"尚無版本紀錄\"`，否則回傳該版本的 `toString()`。\n4. 在 `main` 最後加上一行印出：`最新：` 加上 `latestSummary(releases)`。",
       "instructions": "直接用字串比較 `\"v1.10.0\".compareTo(\"v1.2.0\")` 會誤判 `v1.2.0` 較大（因為字元 `'1'` 小於 `'2'`），所以必須拆開每一段轉成 `int` 後逐段比大小。\n\n拆段時可用 `split(\"\\\\.\")`（正規表示式中 `.` 要跳脫兩次），兩邊長度不同時，迴圈跑到 `Math.max(parts1.length, parts2.length)`，超出長度的那邊預設為 `0`。",

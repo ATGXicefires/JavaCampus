@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "check",
+      "id": "check-v2",
       "title": "診斷覆寫失效與欄位遮蔽",
       "goal": "修正 `FillQuestion` 的繼承缺陷，使其正確覆寫 `Question` 的 `boolean check(String typed)`：\n1. 若 `typed` 或 `answer` 為 `null`，回傳 `false`。\n2. 拿掉 `typed` 與 `answer` 中所有半形空白（`\" \"`），進行不分英文字母大小寫的比對（`equalsIgnoreCase`）。\n3. 不論透過 `FillQuestion` 或父類別 `Question` 變數呼叫 `check(String)`，都必須執行 `FillQuestion` 的規則。\n\n目前的程式雖能編譯但執行結果異常，請為預期覆寫的方法加上 `@Override` 讓編譯器協助檢查方法簽章，並排查是否有子類別欄位遮蔽了父類別欄位。",
       "instructions": "沒有寫 `@Override` 時，方法名稱或參數型別只要和父類別差一點，Java 就會視為「多載（overload）了一個新方法」而不會報錯，但透過父類別型別呼叫時只會執行父類別舊版本。\n\n此外，若子類別宣告了與父類別同名的欄位，會發生欄位遮蔽（shadowing）：`super(...)` 存進父類別的那份值，子類別方法卻讀不到，反而讀到自己未初始化的 `null`。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "tostring",
+      "id": "tostring-v2",
       "title": "診斷物件轉字串覆寫",
       "goal": "最後一行 `System.out.println(q)` 目前印出類別名稱加雜湊碼，而不是可讀題目。\n\n請完成以下覆寫：\n1. 在 `Question` 中覆寫 `toString()`，回傳 `\"問答題：\" + text + \" -> \" + answer`。\n2. 修好 `FillQuestion` 中的物件轉字串方法（補上 `@Override` 並注意存取權限與方法簽章），使其回傳 `\"填空題：\" + text + \"（答案 \" + len + \" 字）\"`，其中 `len` 為 `answer == null ? 0 : answer.replace(\" \", \"\").length()`。\n\n完成後，程式執行時應印出：`填空題：if-else 像什麼？（答案 3 字）`。",
       "instructions": "`System.out.println(q)` 會自動呼叫物件從 `Object` 繼承來的 `public String toString()`。\n\n若方法名稱拼錯、或覆寫時忘了維持 `public`（存取權限不可比父類別更窄），都會造成覆寫失效或編譯錯誤。加上 `@Override` 可立即請編譯器確認簽章與繼承關係是否正確。",

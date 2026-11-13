@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "countdown",
+      "id": "countdown-v2",
       "title": "跳過週末與假日的倒數",
       "goal": "在 `Main` 實作兩個方法，讓畢業倒數能正確跳過週末（星期六、日）與國定假日：\n1. `public static boolean isOffDay(int weekday, int dayIndex, int[] holidays)`：星期用 `0..6` 表示（`0` 是星期日、`6` 是星期六；若傳入超出 `0..6` 的數可取 `((weekday % 7) + 7) % 7` 正規化）。若當天是星期六或日，或 `dayIndex` 出現在 `holidays` 陣列中（`holidays` 可能為 `null` 或空陣列），回傳 `true`；否則回傳 `false`。\n2. `public static void printCountdown(int totalDays, int startWeekday, int[] holidays)`：從 `i = 0` 到 `i < totalDays`（共 `totalDays` 天，若 `<= 0` 不印），第 `i` 天為星期 `(startWeekday + i) % 7`；遇到 `isOffDay(weekday, i, holidays)` 為 `true` 時以 `continue` 跳過不印，其餘印出 `距離畢業還有 <totalDays - i> 天`。\n\n修正 `main`，呼叫 `printCountdown(10, 3, new int[]{1, 6})`（星期三起算 10 天，第 1 天與第 6 天為假日）。",
       "instructions": "起始碼目前每天都印、也沒有處理 `holidays`。計算第 `i` 天的星期幾時，用 `((startWeekday + i) % 7 + 7) % 7` 可以確保任何整數都能正確落回 `0..6`。\n\n別忘了先檢查 `holidays != null` 再去走訪裡面的日期，以免傳入 `null` 時拋出例外。",

@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "extends",
+      "id": "extends-v2",
       "title": "繼承共用規則",
       "goal": "寫出繼承 `Plan` 的子類別 `MyPlan`，擴充夢想欄位 `String dream` 與建構子 `MyPlan(String title, int weeklyHours, String dream)`。\n\n規則如下：\n1. `MyPlan` 建構子必須透過 `super(title, weeklyHours)` 讓父類別處理標題與每週時數的防呆。\n2. `this.dream` 若為 `null` 或空白字串，設為 `\"繼續畫畫\"`；否則去掉前後空白（`trim()`）。\n3. 不用重寫 `monthlyHours()` 與 `summary()`，讓 `MyPlan` 直接繼承使用，並能放進 `Plan[]` 參與 `Plan.totalMonthlyHours(Plan[])` 統計。",
       "instructions": "起始碼中的 `Plan` 已經實作好共用欄位（`title`、`weeklyHours`）、時數防呆、計算每月時數的 `monthlyHours()`，以及統計整個計畫陣列的 `Plan.totalMonthlyHours(Plan[])`。\n\n子類別用 `class MyPlan extends Plan` 繼承後，不用複製父類別的欄位或方法，只需補上子類別獨有的 `String dream` 欄位與自己的建構子。\n\n在建構子裡呼叫 `super(title, weeklyHours);` 把共用資料交給父類別驗證，接著再對 `this.dream` 做 `null` 與 `isBlank()` 檢查即可。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "hobby",
+      "id": "hobby-v2",
       "title": "行為差異化與多型",
       "goal": "讓同一個 `Plan[]` 陣列中的父類別與子類別各自表達不同的想法：\n1. 在 `MyPlan` 裡用 `@Override` 覆寫 `String hobbyNote()`，改為依狀態回傳 `dream + \"不只是興趣\"`（例如 `\"介面插畫不只是興趣\"`）。\n2. 在父類別 `Plan` 中新增靜態方法 `static String collectNotes(Plan[] plans)`：若 `plans` 為 `null` 回傳 `\"\"`；否則走訪陣列（略過 `null` 元素），將每個元素的 `hobbyNote()` 用 `\" / \"` 串接起來（例如 `\"畫畫當興趣就好 / 介面插畫不只是興趣\"`；若沒有有效元素則回傳 `\"\"`）。",
       "instructions": "因為 `MyPlan` 已經繼承 `Plan`，兩者可以一起放進 `Plan[]` 陣列。\n\n當 `collectNotes` 對每個 `Plan p` 呼叫 `p.hobbyNote()` 時，Java 會依照物件實際的型別動態執行對應版本：`Plan` 實例回傳 `\"畫畫當興趣就好\"`，`MyPlan` 實例則回傳自己覆寫後的 `dream + \"不只是興趣\"`。\n\n串接時記得只有從第二個有效項目開始才在前面加上 `\" / \"`，不要讓結尾多出分隔符號。",

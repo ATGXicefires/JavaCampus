@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "valid",
+      "id": "valid-v2",
       "title": "合法資料檢查",
       "goal": "先擋掉打錯的成績或缺席次數：分數 `score` 必須在 `0` 到 `100` 之間（含 0 與 100），而且缺席次數 `absent` 必須在 `0` 到 `18` 之間（含 0 與 18）。\n\n寫一個方法 `static boolean isValid(int score, int absent)`：兩項資料都在合法範圍內才交回 `true`，否則交回 `false`。",
       "instructions": "名字前面寫 `boolean` 的方法，只回答一個是非題。\n\n合法的輸入要同時滿足四個邊界條件：`score` 不小於 0、不大於 100，而且 `absent` 不小於 0、不大於 18（一學期最多 18 週）。\n\n`a && b` 要兩邊都是 `true`，整體才是 `true`；只要有一邊不成立，答案就是 `false`。寫完可以試測 `-1`、`0`、`100`、`101` 和缺席 `-1`、`18`、`19` 等邊界值。",
@@ -32,7 +32,7 @@
       "afterText": ""
     },
     {
-      "id": "pass",
+      "id": "pass-v2",
       "title": "及格與補考門檻",
       "goal": "有時候分數剛好差一點，或雖考高分卻缺席過多。\n\n保留上一步的 `isValid`，再新增兩個方法：\n1. `static boolean isPass(int score, int absent)`：資料須先合法（呼叫 `isValid`），且 `score >= 60`（剛好 60 算及格），而且缺席次數不超過 3 次（`absent <= 3`），才交回 `true`。\n2. `static boolean canRetake(int score, int absent)`：資料須合法、尚未及格但分數在 `40` 到 `59` 之間（含 40 與 59），而且缺席次數不超過 3 次（`absent <= 3`），才交回 `true`。",
       "instructions": "方法裡可以呼叫同一個檔案裡定義好的方法。先用 `isValid(score, absent)` 擋掉不合理資料，就不用在每個方法重複寫 `0..100` 和 `0..18` 的檢查。\n\n注意「不超過 3 次」代表 3 次也算通過，第 4 次才扣考。已經 `>= 60` 分的人已經及格，不屬於補考名單，`canRetake` 要交回 `false`；低於 40 分直接死當，`canRetake` 也要交回 `false`。",
@@ -62,7 +62,7 @@
       "afterText": ""
     },
     {
-      "id": "judge",
+      "id": "judge-v2",
       "title": "綜合評定",
       "goal": "寫一個方法 `static String judge(int score, int absent)`，依照以下順序回傳結果：\n1. 若 `isValid(score, absent)` 為 `false`，立即交回 `\"資料有誤\"`。\n2. 若 `isPass(score, absent)` 為 `true`，交回 `\"及格\"`。\n3. 若 `canRetake(score, absent)` 為 `true`，交回 `\"可補考\"`。\n4. 其餘情況交回 `\"重修\"`。",
       "instructions": "把不合法的資料放在最前面用 `!isValid(...)` 提早 `return`，走得到下面的就一定是合法資料，再依序判斷及格與補考。\n\n缺席超過 3 次時，就算考了 80 分，`isPass` 和 `canRetake` 都會是 `false`，最後自然會走到 `\"重修\"`（扣考）。",

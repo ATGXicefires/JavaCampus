@@ -13,7 +13,7 @@
       "id": "fixSummary",
       "title": "全形、等號與整數除法",
       "goal": "`scores` 是一排小考分數，現在是 `{60, 72, 58, 85, 60}`。\n\n起始碼想同時算出所有分數的平均 `double avg`（保留小數；空陣列時 `avg` 必須是 `0.0`，不可變成 `NaN`）以及剛好 60 分的科目數 `int exactSixty`，最後印出 `平均：67.0，剛好 60 分：2 科`。\n\n現在卻從頭紅到尾、還會算錯與除零。請修好所有錯誤。",
-      "instructions": "編輯器最上面兩行 `int[] scores = {60, 72, 58, 85, 60};` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接使用。\n\n這段程式藏了四個常見地雷：\n1. 行尾誤打了全形分號 `；`（要改成半形 `;`）。\n2. `if (scores[i] = 60)` 把比較寫成了賦值（`==` 才是在問「等不等於」）。\n3. `sum / scores.length` 是兩個 `int` 相除，會在放進 `double` 之前就把小數截斷。\n4. 空陣列（`scores.length == 0`）直接做 `(double) sum / scores.length` 會算出 `NaN`，必須先確認 `scores.length > 0` 再除。",
+      "instructions": "編輯器最上面兩行 `int[] scores = {60, 72, 58, 85, 60};` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接使用。\n\n除錯時建議先從第一個編譯錯誤（紅字）修起，能順利執行後再逐項核對數值計算：\n- Java 敘述結尾須使用英文半形分號 `;`，而判斷「等於」必須寫兩個等號 `==`。\n- 兩個 `int` 相除會直接捨去小數；計算平均前請確認浮點型別轉換，並注意陣列長度為 `0` 時不可進行除法運算。",
       "expectedShape": "int sum = 0;\nint exactSixty = 0;\nfor (…) {\n    sum += scores[i];\n    if (…) {\n        exactSixty++;\n    }\n}\ndouble avg = 0.0;\nif (…) {\n    avg = …;\n}\nSystem.out.println(\"平均：\" + avg + \"，剛好 60 分：\" + exactSixty + \" 科\");",
       "check": {
         "type": "output",
@@ -33,7 +33,7 @@
       "afterText": ""
     },
     {
-      "id": "days",
+      "id": "days-v2",
       "title": "少算一天與奇偶複習量",
       "goal": "`days` 是計畫複習的天數，現在是 `7`。我們想從第 `1` 天走到第 `days` 天（包含第 `days` 天），奇數天做 `2` 題、偶數天做 `3` 題，累計到 `int done` 並每天印一行：`第 X 天：累計 done 題`。\n\n起始碼卻少算了最後一天，也沒有處理 `days <= 0` 的情況（`days <= 0` 時 `done` 為 `0`，且印出一行 `尚未排程`）。請修好它。",
       "instructions": "這一步重新開始，修復起始碼的迴圈邊界與零天數防呆。\n\n- `for (int i = 1; i < days; i++)` 會在 `i == days` 時提前結束，導致最後一天被漏掉；要包含第 `days` 天，條件必須是 `i <= days`。\n- 判斷奇數或偶數可用餘數 `%`：`i % 2 == 1` 表示除以 `2` 餘 `1`（奇數天）。\n- 當 `days <= 0` 時，不要進迴圈，直接印出 `尚未排程`（`done` 保持 `0`）。",

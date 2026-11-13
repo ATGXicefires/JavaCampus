@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "student",
+      "id": "student-v2",
       "title": "第一題：防禦複製與成績評等",
       "goal": "寫出 `class Student`（欄位 `String name`、`int[] scores`），建構子做空白姓名保護、陣列複製與 `0..100` 箝制，並實作 `double average()` 與 `boolean pass()`。",
       "instructions": "期末模擬題改為實作一套「班級成績單系統」，第一部分規格如下：\n- `Student(String name, int[] scores)`：\n  - `name` 若為 `null` 或去掉前後空白後為空，設為 `\"無名氏\"`；否則設為 `name.trim()`。\n  - 若 `scores == null`，`this.scores` 設為長度 `0` 的空陣列 `new int[0]`；否則**複製一份新陣列**（避免外部改動原本陣列影響此學生），並將每個分數限制在 `0..100`（小於 `0` 歸 `0`，大於 `100` 固定為 `100`）。\n- `double average()`：若 `scores.length == 0` 回傳 `0.0`，否則回傳所有科目的平均分數（`double`）。\n- `boolean pass()`：同時滿足「`scores.length > 0`」、「`average() >= 60.0`」且「沒有任何一科低於 `40` 分」才回傳 `true`，否則回傳 `false`。",

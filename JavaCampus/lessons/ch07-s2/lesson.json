@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "positive",
+      "id": "positive-v2",
       "title": "單筆上限與負數防呆",
       "goal": "為阿嬤的錢櫃 `class Ledger` 加上單筆存款上限與異常次數紀錄：\n- 加上常數 `static final int MAX_SINGLE_DEPOSIT = 50000;`（避免手滑多打好幾個零）。\n- 欄位皆為 `private`：餘額 `balance` 與被擋次數 `rejectedCount`。\n- `boolean deposit(int amount)`：若 `amount <= 0` 或 `amount > MAX_SINGLE_DEPOSIT`，不入帳、將 `rejectedCount` 加 1 並交回 `false`；合法才加進 `balance` 並交回 `true`。\n- `int getBalance()` 與 `int getRejectedCount()` 各自交回餘額與被擋次數。",
       "instructions": "`balance` 是 `private`，外面要動錢只能走 `deposit`。在門口同時擋掉「非正數」與「超過 50000 的異常大額」，並把每一次不合法的嘗試記在 `rejectedCount`，這樣阿嬤才知道有人手滑或亂試過幾次。",
@@ -35,7 +35,7 @@
       "afterText": ""
     },
     {
-      "id": "withdraw",
+      "id": "withdraw-v2",
       "title": "提款防呆與安全建構子",
       "goal": "接續上一步的 `Ledger`，補上開帳防呆與領錢方法：\n- 新增無參數建構子 `Ledger()` 與帶起始金額建構子 `Ledger(int start)`：若 `start < 0` 一律防呆為 `0`（不允許負餘額開帳），否則設為 `start`。\n- 新增 `boolean withdraw(int amount)`：若 `amount <= 0`（防止領負數變成存錢！）或 `amount > balance`（超領），都不改餘額、將 `rejectedCount` 加 1 並交回 `false`；其餘（含剛好領完）扣掉 `amount` 並交回 `true`。",
       "instructions": "提款最容易漏掉兩個邊界：\n1. `withdraw(-50)` 如果只檢查 `amount > balance`，負數會通過檢查，讓 `balance -= (-50)` 反而多出 50 元！所以一定要檢查 `amount <= 0`。\n2. `new Ledger(-100)` 會在出生那刻就把餘額變成負的，建構子一樣要把關。",
@@ -65,7 +65,7 @@
       "afterText": ""
     },
     {
-      "id": "typo",
+      "id": "typo-v2",
       "title": "差點算錯與異常鎖定保護",
       "goal": "最後一行 `book.deposit(-350);` 手滑打錯，而且錢櫃需要更嚴格的錯誤鎖定機制：\n1. 在 `Ledger` 加入 `private boolean locked;`、`boolean isLocked()`，與 `boolean unlock(String code)`：當 `rejectedCount >= 3` 時自動將 `locked` 設為 `true`（鎖定）。鎖定期間，連合法的 `deposit` 與 `withdraw` 都一律拒絕並交回 `false`（且不改變餘額）；只有呼叫 `unlock(\"GRANDMA\")` 才能解除鎖定、把 `rejectedCount` 歸零並交回 `true`（口令不符則交回 `false` 且維持鎖定）。\n2. 在下方接住 `amount = -350` 存不進去的情況，印出 `金額不對：-350`。",
       "instructions": "把狀態機守緊：只要累計被擋滿 3 次就上鎖，在鎖定解除前，連正常金額的存取款都要在方法一開頭被擋下來。\n\n印出提醒時，先把 `-350` 放進變數 `amount`，用 `if (!book.deposit(amount))` 接住失敗的回傳值。",

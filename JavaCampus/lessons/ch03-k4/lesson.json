@@ -10,7 +10,7 @@
   ],
   "steps": [
     {
-      "id": "grade",
+      "id": "grade-v2",
       "title": "五個等第與無效排除",
       "goal": "`score` 是要換成等第的分數，現在是 85，所以要印出 `B`。\n\n用 `if`／`else if`／`else` 依下列規則印出結果：\n- 小於 `0` 或大於 `100`：印出 `無效分數`（最優先擋掉！）\n- `90`～`100`（含 90 與 100）：印出 `A`\n- `80`～`89`：印出 `B`\n- `70`～`79`：印出 `C`\n- `60`～`69`：印出 `D`\n- `0`～`59`：印出 `F`",
       "instructions": "編輯器最上面兩行 `int score = 85;` 和 `int[] scores = {72, -5, 95, 105, 60, 49};` 是題目先寫好的，你的程式可以直接使用。\n\n`else if` 會從上往下一個一個問，第一個成立的就執行，後面的都不問了。\n\n如果忘了先檢查無效分數，例如輸入 `105` 會直接滿足 `>= 90` 而被誤判為 `A`，`-5` 會落到最後的 `else` 被誤判為 `F`！所以必須先把 `< 0 || > 100` 寫在最前面的 `if`，再從高分往低分依序判斷。",
@@ -40,7 +40,7 @@
       "afterText": ""
     },
     {
-      "id": "all",
+      "id": "all-v2",
       "title": "過濾統計與合規平均",
       "goal": "現在 `scores` 是 `{72, -5, 95, 105, 60, 49}`。\n\n單次走訪 `scores`，排除 `< 0` 或 `> 100` 的無效分數後，同時完成三件事：\n1. 依序印出每一格：`s 無效`（無效分數）或 `s 等第`（如 `72 C`）。\n2. 統計各等第人數 `countA`、`countB`、`countC`、`countD`、`countF` 及無效筆數 `invalidCount`。\n3. 只針對合規分數（`0`～`100`）算出平均 `double validAvg`（保留小數；若無任何合規分數或陣列為空，`validAvg = 0.0`，不可除以零）。\n\n迴圈結束後印出兩行摘要：\n`統計：A=countA B=countB C=countC D=countD F=countF 無效=invalidCount`\n`有效平均：validAvg`",
       "instructions": "這一步重新開始，把單筆判斷放進陣列走訪，並加上計數與有效平均。\n\n除了起始碼已經宣告的 6 個計數器，你還需要準備 `int validSum = 0;` 和 `int validCount = 0;`。\n\n在 `for` 迴圈裡拿到 `int s = scores[i];` 之後，先擋掉無效分數並讓 `invalidCount++`；進入合法分支（`A`～`F`）時，除了印出等第與累加對應計數器，也要把 `s` 加進 `validSum` 並讓 `validCount++`。\n\n最後算 `validAvg` 之前，務必檢查 `validCount > 0`，避免全部無效或空陣列時算出 `NaN`。",

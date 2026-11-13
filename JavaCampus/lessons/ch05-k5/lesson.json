@@ -11,7 +11,7 @@
   ],
   "steps": [
     {
-      "id": "badge",
+      "id": "badge-v2",
       "title": "徽章門檻與防呆",
       "goal": "寫一個方法 `static boolean showBadge(int done, int total, int score)`，同時滿足以下全部條件才交回 `true`，否則交回 `false`：\n- 總課數 `total > 0`（0 課或負數課表不能亮徽章）。\n- 已完成課數 `done` 等於 `total`（`done == total`）。\n- 分數 `score` 在合法且及格的範圍 `60` 到 `100` 之間（含 60 與 100）。",
       "instructions": "編輯器最上面三行 `rows`、`cols`、`done` 是最後一步畫進度格子時才會用到的；這一步方法裡的 `done` 是方法參數，與最上面的變數無關。\n\n除了檢查完成課數與及格線，正式 UI 邏輯還必須擋掉不合理資料：例如 `total` 為 0（沒有課程）、或 `score` 超過 100 分，都不該亮起完成徽章。",
@@ -36,7 +36,7 @@
       "afterText": ""
     },
     {
-      "id": "hint",
+      "id": "hint-v2",
       "title": "提示條件與運算優先序",
       "goal": "寫一個方法 `static boolean showHint(int tries, boolean passed, boolean practice)`（`tries` 是嘗試次數、`passed` 是過關了沒、`practice` 是是否開啟練習模式）：\n- 只有**還沒過關（`!passed`）**，而且（嘗試次數 `tries >= 2` **或者**處於練習模式 `practice` 為 `true`）時，才交回 `true`。\n- 已經過關時，就算開啟練習模式也不顯示提示，交回 `false`。",
       "instructions": "特別留意 `&&`（而且）與 `||`（或者）的運算優先序：在 Java 裡 `&&` 會比 `||` 先算。\n\n如果直接寫 `!passed && tries >= 2 || practice` 而沒加括號，當 `passed` 是 `true` 且 `practice` 是 `true` 時，右半邊的 `practice` 會讓整個結果變成 `true`！一定要用括號把「或」的部分包起來。",
@@ -60,7 +60,7 @@
       "afterText": ""
     },
     {
-      "id": "grid",
+      "id": "grid-v2",
       "title": "雙層迴圈進度矩陣",
       "goal": "寫一個方法 `static void printGrid(int rows, int cols, int done)` 並呼叫 `printGrid(rows, cols, done);`：\n- 若 `rows <= 0` 或 `cols <= 0`，什麼都不印（直接結束方法）。\n- 否則用巢狀迴圈印出 `rows` 列、每列 `cols` 格：從第 1 格開始連續編號（換列不歸零），編號 `<= done` 的格子畫 `■`，其餘畫 `□`，格子間不留空白。當 `done <= 0` 時全部畫 `□`，當 `done >= rows * cols` 時全部畫 `■`。",
       "instructions": "編輯器最上面三行 `rows`、`cols`、`done` 是題目變數，方法寫好後在最下面呼叫 `printGrid(rows, cols, done);`。\n\n外層迴圈控制列（`0` 到 `rows - 1`），內層迴圈控制每一列的欄（`0` 到 `cols - 1`）。準備一個在雙層迴圈外初始化的計數器 `count`，每畫一格就遞增 1，再依 `count <= done` 決定拼上 `\"■\"` 或 `\"□\"`。\n\n記得在方法開頭擋掉 `rows <= 0 || cols <= 0`，確保輸入為 0 或負數時不會印出空行或出錯。",

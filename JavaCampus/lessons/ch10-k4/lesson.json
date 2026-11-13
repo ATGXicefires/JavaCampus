@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "count",
+      "id": "count-v2",
       "title": "清理重複與異常註冊",
       "goal": "`Features.list()` 回傳的後端清單裡藏了重複註冊的項目。請在 `Main.java` 實作清理與抓重複方法，讓 `main` 印出：\n`畫面 4 個，功能不重複 5 個`\n`重複註冊：[課程]`\n\n方法規則：\n1. `public static ArrayList<String> uniqueOf(ArrayList<String> items)`：\n   - 若 `items` 為 `null`，回傳空清單。\n   - 忽略 `null` 與空白字串（`isBlank()`），有效字串去掉前後空白（`trim()`）後去重加入，維持第一次出現的順序。\n2. `public static ArrayList<String> duplicatesOf(ArrayList<String> items)`：\n   - 若 `items` 為 `null`，回傳空清單。\n   - 找出經 `trim()` 後出現超過一次的有效項目（每個重複項在結果中只列一次，維持第一次發現重複時的順序）。",
       "instructions": "`Features.java` 已經寫好後端回傳的清單，不需要修改。\n\n在 `duplicatesOf` 中，可以準備兩個清單（或搭配 `HashMap` 計數）：一個記錄「已經看過的項目」，另一個記錄「已經確認重複的項目」；當某個項目已經在「看過」裡、卻還不在「重複」裡，就把它加進「重複」。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "needs",
+      "id": "needs-v2",
       "title": "雙集合對帳類別 Reconciler",
       "goal": "在獨立分頁 `Reconciler.java` 實作雙集合對帳工具，讓 `Main.java` 執行後印出：\n`畫面 4 個，功能不重複 5 個`\n`缺漏：[計分]`\n`重複：[課程]`\n`未用到：[提示, 貼紙]`\n\n`Reconciler.java` 方法規則（所有方法對清單為 `null` 時皆回傳空清單，有效元素皆忽略 `null`/空白並做 `trim()`）：\n1. `public static ArrayList<String> cleanUnique(ArrayList<String> items)`：去重並維持原順序。\n2. `public static ArrayList<String> missingFeatures(ArrayList<String> needed, ArrayList<String> implemented)`：找出 `needed` 裡有、但 `implemented` 裡沒有的項目（去重、維持順序）。\n3. `public static ArrayList<String> unusedFeatures(ArrayList<String> needed, ArrayList<String> implemented)`：找出 `implemented` 裡有、但 `needed` 裡沒有用到的「孤兒項」（去重、維持順序）。\n4. `public static ArrayList<String> duplicateItems(ArrayList<String> items)`：找出 `items` 中出現超過一次的項目（去重、維持發現順序）。",
       "instructions": "把對帳邏輯搬進 `Reconciler.java`，讓 `Main.java` 專注在組裝畫面清單與印出結果。\n\n實作 `missingFeatures` 與 `unusedFeatures` 時，建議先用 `cleanUnique` 把兩張輸入清單清理去重，再用 `!cleanImplemented.contains(item)` 找出差集，就不怕被原始清單裡的重複、空白或 `null` 干擾。",
@@ -54,7 +54,7 @@
       "afterText": ""
     },
     {
-      "id": "missing",
+      "id": "missing-v2",
       "title": "畫面對照表精準對帳",
       "goal": "在 `Reconciler.java` 新增 `screenGaps`，並在 `Main.java` 補上 `missing` 方法進行整合對帳：\n1. `Reconciler.screenGaps(ArrayList<String> screens, HashMap<String, String> needs, ArrayList<String> implemented)`：\n   - 若 `screens` 為 `null` 回傳空清單；將 `implemented` 用 `cleanUnique` 整理為有效清單 `have`。\n   - 依序走訪 `screens`（忽略 `null` 與空白，將名稱 `trim()`）：\n     - 若 `needs` 為 `null`、不含該畫面（`!needs.containsKey(s)`），或對應值為 `null`/空白，加入 `<畫面>:未設定需求`。\n     - 否則取得所需功能 `feat = needs.get(s).trim()`；若 `have` 不包含 `feat`，加入 `<畫面>:缺少「<feat>」`。\n2. `Main.missing(ArrayList<String> needs, ArrayList<String> have)`：\n   - 回傳 `needs` 裡有、`have` 裡沒有的項目（去重並維持順序，可直接呼叫 `Reconciler.missingFeatures(needs, have)`）。",
       "instructions": "這一步把劇本畫面清單 `screens`、畫面需求表 `needs` 與後端實作 `implemented` 三者接在一起，同時抓出「忘記登記需求」與「後端漏做功能」兩種對不上的狀況。\n\n別忘了在 `Reconciler.java` 最上方加上 `import java.util.HashMap;`。",

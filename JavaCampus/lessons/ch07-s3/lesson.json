@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "tables",
+      "id": "tables-v2",
       "title": "多桌各自點餐與全店 static 統計",
       "goal": "寫 `class Table` 區分每一桌自己的帳與全店 `static` 共用的今日統計，並建立兩桌 `t1`、`t2`：`t1` 點 `80` 和 `35`，`t2` 點 `120`（使 `t1.getAmount()` 為 `115`、`t2.getAmount()` 為 `120`、`Table.getTodayTotal()` 為 `235`、`Table.getTodayOrders()` 為 `3`）：\n- 所有欄位皆設為 `private`：實例欄位記這桌的金額與有效點餐數；`static` 欄位記全店今日總營業額與今日有效點餐筆數。\n- `boolean order(int price)`：若 `price <= 0` 拒絕點餐並交回 `false`；大於 0 才加進該桌金額與 `todayTotal`，並讓該桌點餐數與 `todayOrders` 各加 1，交回 `true`。\n- 實例方法 `int getAmount()` 與 `int getItemCount()`。\n- 靜態方法 `static int getTodayTotal()`、`static int getTodayOrders()` 與 `static void resetDay()`（歸零全店總營業額與總筆數）。",
       "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 下一步才會用到。\n\n把 `todayTotal` 和 `todayOrders` 也設成 `private static`，外面就無法亂寫 `Table.todayTotal = 0;`，只能透過 `order` 累加或透過 `resetDay()` 合法歸零。開多桌時，各桌的 `amount` 互不干擾，全店的 `static` 合計則正確同步增加。",
@@ -47,7 +47,7 @@
       "afterText": ""
     },
     {
-      "id": "day",
+      "id": "day-v2",
       "title": "結帳防呆與整天訂單統計",
       "goal": "為 `Table` 加上結帳保護，並用 `for` 走過 `orders` 把每一筆訂單點在新的一桌上再結帳：\n1. 新增 `private boolean settled;`、`int settle()`（將該桌標記為已結帳並交回該桌金額）與 `boolean isSettled()`。\n2. 修改 `order(int price)`：若該桌已經結帳（`settled` 為 `true`）或 `price <= 0`，都拒絕加點並交回 `false`（不可動到該桌或全店統計）。\n3. 用 `for` 走過 `orders`：每一筆都 `new` 一桌 `Table`，呼叫 `order(orders[i])` 與 `settle()`。",
       "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 是題目先寫好的，你的程式可以直接用 `orders`。\n\n客人結帳之後，這桌的帳單就定案了：再往同一桌呼叫 `order` 必須被擋下來，全店的 `todayTotal` 和 `todayOrders` 才不會被灌進已結帳的重複單。",

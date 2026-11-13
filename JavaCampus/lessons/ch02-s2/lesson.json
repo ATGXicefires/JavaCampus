@@ -11,7 +11,7 @@
   ],
   "steps": [
     {
-      "id": "total",
+      "id": "total-v2",
       "title": "型別錯誤與串接陷阱",
       "goal": "這份練習同時犯了型別錯誤和字串串接陷阱，請一併修好：\n1. 將 `targetAvg` 改為 `double` 型別並保留 `3.5`\n2. 算出 `int sum = today + yesterday;` 與 `double remain = targetAvg * days - sum;`\n3. 印出：`共 7 個，距離目標還差 3.5 個`（依變數實際值變動）",
       "instructions": "編輯器最上面的 `today`、`yesterday` 與 `days` 是題目先寫好的變數。\n\n把帶小數的數字放進 `int` 會直接編譯失敗（紅字），必須用 `double`。\n\n另外，寫成 `\"共 \" + today + yesterday` 時，`+` 從左往右碰到字串就變成文字拼接，會印出 `共 34 個`。請用 `(today + yesterday)` 或已經加好的 `sum`。",
@@ -32,7 +32,7 @@
       "afterText": ""
     },
     {
-      "id": "avg",
+      "id": "avg-v2",
       "title": "雙重截斷與達標判定",
       "goal": "修好起手程式裡的兩處整數截斷錯誤，並補上達標檢查：\n1. `double avg`：`sum` 除以 `days` 的精確小數平均（例如 `7 / 3` 約 `2.333…`）\n2. `double dayShare`：`today` 佔總數 `sum` 的百分比（`today` 除以 `sum` 再乘以 100，例如 `3 / 7 * 100` 應約 `42.857…`，不能是 `0.0`）\n3. `boolean metGoal`：`avg` 是否大於等於 `targetAvg`（剛好等於也算達標）",
       "instructions": "`(double) (sum / days)` 會先把括號裡的整數除法算完丟掉小數，才轉成 `.0`；而 `today / sum * 100` 由左往右先做整數除法，當 `today < sum` 時會先算出 `0`，乘 100 還是 `0.0`。\n\n必須在除法開始前就先把其中一邊轉成 `(double)`。",

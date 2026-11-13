@@ -10,7 +10,7 @@
   ],
   "steps": [
     {
-      "id": "per-slide",
+      "id": "per-slide-v2",
       "title": "時間分配與餘秒進位",
       "goal": "報告有 `totalMinutes` 分鐘，平分給 `slides` 張投影片。用整數算出四個值：\n1. `int seconds`：總秒數（`totalMinutes * 60`）\n2. `int perSlide`：每張基本可講幾秒（整數商）\n3. `int extraSec`：平分後多出來的餘秒（`seconds % slides`）\n4. `int ceilSec`：若有餘秒則無條件進位成每張至少幾秒（例如 300 秒分 7 張是 43 秒，整除時維持 50 秒）",
       "instructions": "編輯器最上面的 `totalMinutes` 和 `slides` 是題目先寫好的變數。\n\n兩個 `int` 相除會直接捨去小數，餘數用 `%` 求得。若要算出「除不盡就加 1 秒」的無條件進位秒數，可以用整數進位公式 `(seconds + slides - 1) / slides`，或是先算好 `perSlide` 與 `extraSec`，再用 `if (extraSec > 0)` 多加 1。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "exact",
+      "id": "exact-v2",
       "title": "先轉型與先算的陷阱",
       "goal": "修好起手程式裡兩處被整數除法截斷的小數計算：\n1. `double exact`：每張投影片的精確平均秒數（例如 300 秒分 7 張約 `42.857…`）\n2. `double usedRatio`：這場簡報佔 10 分鐘（`600` 秒）上限的百分比（例如 `300` 秒佔 `600` 秒為 `50.0`）",
       "instructions": "括號裡的式子會先算完才轉型。`(double) (seconds / slides)` 會先算出整數商，丟掉小數後才轉成 `.0`；而 `seconds / 600 * 100` 由左往右先算 `seconds / 600`（小於 600 秒時會直接變成 `0`），再乘 100 還是 `0.0`。\n\n務必先將 `seconds` 轉型成 `(double)`，再進行除法或乘除計算。",
@@ -51,7 +51,7 @@
       "afterText": ""
     },
     {
-      "id": "timeline",
+      "id": "timeline-v2",
       "title": "分秒換算時間軸",
       "goal": "用 `for` 從第 1 張印到第 `slides` 張，算出每張開始的時間並換算成 `分:秒`（秒數小於 10 要補 `0`）。\n\n以 `totalMinutes=5, slides=7`（`perSlide=42, extraSec=6`）為例：\n`第 1 張 0:00`\n`第 2 張 0:42`\n`第 3 張 1:24`\n`第 4 張 2:06`\n⋯⋯\n`第 7 張 4:12`\n\n迴圈結束後，若 `extraSec > 0` 印出 `預留緩衝：6 秒`（隨 `extraSec` 變）；若 `extraSec == 0` 則印出 `時間剛剛好`。",
       "instructions": "第 `i` 張開始的總秒數是 `int start = (i - 1) * perSlide;`。\n\n把總秒數換算成分與秒：\n- 分鐘數 `int min = start / 60;`\n- 秒數 `int sec = start % 60;`\n\n如果 `sec < 10`，要拼成 `min + \":0\" + sec`（例如 `2:06`）；否則拼成 `min + \":\" + sec`。",

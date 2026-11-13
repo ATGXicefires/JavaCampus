@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "refactor",
+      "id": "refactor-v2",
       "title": "抽出共用報表樣板",
       "goal": "起始碼的三個進度報表類別各自複製貼上相同的組裝外框，第三個類別 `StickerProgress` 甚至悄悄寫錯格式（少了一個字且沒夾限完成度）。請把它們重構為樣板方法模式：\n1. 建立 `abstract class ProgressScreen`，建構子 `ProgressScreen(String owner)`（若 `owner` 為 `null` 或 `trim()` 為空，預設為 `\"學員\"`，否則取 `owner.trim()`）：\n   - 定義抽象方法：`abstract String title();`、`abstract String[] details();`、`abstract int completionPercent();`。\n   - 實作 `final int safePercent()`：呼叫 `completionPercent()`，將結果夾在 `0` 到 `100` 之間。\n   - 實作 `final String export()`（樣板方法）：\n     - 第一行：`\"[學習進度] \" + owner + \" - \" + safeTitle`（若 `title()` 為 `null` 或 `trim()` 為空，預設為 `\"報表\"`）。\n     - 依序走訪 `details()`（若非 `null`），跳過其中為 `null` 或 `trim()` 為空的項目，有效項目加上 `\"  - \"` 前綴各佔一行；若沒有任何有效明細，補一行 `\"  - (尚無紀錄)\"`。\n     - 最後一行：`\"完成度：\" + safePercent() + \"%\"`。\n     - 各行以 `\"\\n\"` 串接回傳。\n2. 讓三個類別改為 `extends ProgressScreen`，只實作各自的 `title()`、`details()` 與 `completionPercent()`：\n   - `LessonProgress(String owner, int done, int total)`：`title()` 為 `\"課程單元\"`，`completionPercent()` 為 `total <= 0 ? 0 : (done * 100) / total`，`details()` 回傳 `{\"已完成 \" + Math.max(0, done) + \" 堂\", \"總計 \" + Math.max(0, total) + \" 堂\"}`。\n   - `QuizProgress(String owner, int correct, int attempts)`：`title()` 為 `\"測驗紀錄\"`，`completionPercent()` 為 `attempts <= 0 ? 0 : (correct * 100) / attempts`，`details()` 回傳 `{\"答對 \" + Math.max(0, correct) + \" 題\", \"作答 \" + Math.max(0, attempts) + \" 次\"}`。\n   - `StickerProgress(String owner, int collected)`：`title()` 為 `\"貼紙蒐集\"`，`completionPercent()` 為 `collected * 10`，`details()` 回傳 `{\"已收集 \" + Math.max(0, collected) + \" 張貼紙\"}`。",
       "instructions": "重構的關鍵是把會重複出錯的外框流程與邊界防護（預設學員名稱、空明細補字、`0~100` 百分比夾限）全部收進父類別的 `final` 方法裡。\n\n子類別只要透過 `super(owner)` 交出擁有者名稱，再專心提供自己的標題、明細陣列與原始百分比即可；就算 `StickerProgress` 收集 15 張算出 `150`，父類別的 `safePercent()` 也會自動把它夾成 `100`。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "result",
+      "id": "result-v2",
       "title": "新增打卡子類別與多型平均統計",
       "goal": "保留 `ProgressScreen` 與前三個子類別，完成兩項擴充：\n1. 新增 `class StreakProgress extends ProgressScreen`，建構子 `StreakProgress(String owner, int days, int goalDays)`：\n   - `title()` 回傳 `\"連續打卡\"`。\n   - `completionPercent()`：若 `goalDays <= 0` 回傳 `0`，否則回傳 `(days * 100) / goalDays`。\n   - `details()`：若 `days <= 0` 回傳空陣列 `new String[0]`（讓父類別的樣板自動補上 `\"  - (尚無紀錄)\"`），否則回傳 `{\"連續 \" + days + \" 天\", \"目標 \" + Math.max(0, goalDays) + \" 天\"}`。\n2. 寫靜態方法 `static int averageCompletion(ProgressScreen[] screens)`：\n   - 走訪 `screens`（若為 `null` 視為 0 筆，略過陣列中的 `null` 元素），累計每個物件的 `safePercent()`。\n   - 若無有效元素回傳 `0`，否則回傳整數平均 `sum / count`。",
       "instructions": "注意 `averageCompletion` 呼叫的是父類別受保護的樣板計算 `safePercent()`，因此即使某個子類別算出 `150%` 或 `-20%`，平均統計拿到的依然是被夾在 `0~100` 的安全分數。",

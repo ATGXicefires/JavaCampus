@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "fix",
+      "id": "fix-v2",
       "title": "防護空值與空白遮罩",
       "goal": "原本的 `hint(answer)` 只硬切 `substring(1, 2)`，不只露錯字、底線多一格，遇到單字元、空字串或 `null` 還會直接當機。\n\n請修好 `static String hint(String answer)`，符合以下規則：\n1. 若 `answer` 是 `null`，直接交回 `\"\"`。\n2. 去掉 `answer` 前後的全形與半形空白；若清理後是空字串 `\"\"`，直接交回 `\"\"`。\n3. 保留第 1 個字元不變。\n4. 從第 2 個字元開始逐字處理：若該字元是半形空白 `' '` 或全形空白 `'　'`，輸出保留為半形空白 `' '`；其餘每個字元換成半形底線 `'_'`。\n\n例如：`\"Java\"` 交回 `\"J___\"`、`\"Hello World\"` 交回 `\"H____ _____\"`、`\"  A  \"` 交回 `\"A\"`。",
       "instructions": "先處理 `null` 與去空白後的空字串防護，才能安全使用 `charAt(0)` 或 `substring(0, 1)`，避免 `StringIndexOutOfBoundsException`。\n\n去除前後全半形空白可以用 `.strip()`，再用 `for` 迴圈從索引 1 走到 `clean.length() - 1`，用 `clean.charAt(i)` 判斷該拼空白還是 `'_'`。",

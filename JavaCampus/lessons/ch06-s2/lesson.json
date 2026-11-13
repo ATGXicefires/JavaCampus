@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "blueprint",
+      "id": "blueprint-v2",
       "title": "建構狀態與基礎互動",
       "goal": "照類別骨架完成 `class Mascot` 的雙建構子、`String speak()` 與 `void rest(int minutes)`，並將 `energy` 與 `mood` 嚴格維持在 `0..100`。",
       "instructions": "規則如下：\n- `Mascot(String name, String line, int energy, int mood)`：若 `name` 為 `null` 或去掉前後空白後為空，設為 `\"小老師\"`；若 `line` 為 `null` 設為 `\"\"`；`energy` 與 `mood` 若小於 `0` 歸 `0`、大於 `100` 固定為 `100`；`level` 固定從 `1` 開始。\n- `Mascot(String name, String line)`：直接以預設值 `energy = 60`、`mood = 50` 建構。\n- `String speak()`：若 `energy < 10` 不變動數值，回傳 `name + \"：「……（沒力了）」\"`；否則 `energy -= 10`、`mood` 加 `5`（上限 `100`），回傳 `name + \"：「\" + line + \"」\"`。\n- `void rest(int minutes)`：若 `minutes <= 0` 不處理；每滿 10 分鐘恢復 `5` 點 `energy` 與 `2` 點 `mood`（上限 `100`）。",

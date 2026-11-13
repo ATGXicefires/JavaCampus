@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "ledger",
+      "id": "ledger-v2",
       "title": "改寫成有帳本彙總的 Java",
       "goal": "把國中寫的 Python 記帳程式改寫成 Java 的 `class Ledger`，用 `private` 與 `final` 保護帳本不變量，並建立 `Ledger book = new Ledger(\"阿嬤小吃店\");`，存入 `350` 和 `120`（使 `book.getBalance()` 為 `470`、`book.getEntryCount()` 為 `2`）：\n- 全部欄位為 `private`：不可變持有人 `private final String owner`、餘額 `balance`、有效入帳筆數 `entryCount`、累計入帳總額 `totalDeposited`。\n- 建構子 `Ledger(String owner)`：若 `owner == null || owner.isBlank()` 設為 `\"未命名帳本\"`，否則存 `owner.trim()`；另提供無參數建構子 `Ledger()` 預設為 `\"阿嬤小吃店\"`。\n- `boolean deposit(int amount)`：拒絕 `amount <= 0`（不改欄位，交回 `false`）；大於 0 才累加 `balance`、`totalDeposited` 與 `entryCount` 並交回 `true`。\n- `int getBalance()`、`int getEntryCount()`、`int getTotalDeposited()`、`String getOwner()`。",
       "instructions": "起始碼的註解是國中寫的 Python 版本，`balance` 誰都能直接改。改寫成 Java 時：\n- 帳本持有人在開帳那刻決定後就不能改，用 `private final String` 保護。\n- 餘額、筆數和累計入帳都鎖成 `private`，外面只能透過 `deposit` 記帳，確保每一筆合法入帳都會同時更新餘額、總入帳與筆數，不會出現餘額變了、筆數沒加的不一致狀態。",
@@ -42,7 +42,7 @@
       "afterText": ""
     },
     {
-      "id": "outside",
+      "id": "outside-v2",
       "title": "從外面偷改與日結封帳",
       "goal": "起始碼最後一行 `book.balance = 0;` 照舊習慣從外面直接歸零餘額，現在出現紅字。請修正錯誤，並加上日結封帳保護，使 `book.getBalance()` 為 `550`、`book.getEntryCount()` 為 `3`：\n1. 刪掉 `book.balance = 0;`，改成呼叫 `book.deposit(80);`。\n2. 在 `Ledger` 新增 `private boolean closed;`（初始為 `false`），加上 `void close()`（將帳本設為已封帳）與 `boolean isClosed()`。\n3. 修改 `deposit(int amount)`：若帳本已封帳（`closed` 為 `true`），一律拒絕入帳並交回 `false`。",
       "instructions": "`private` 讓外面無法偷改餘額。日結封帳是真實帳本常見的不變量：一旦呼叫 `close()` 封帳，這本帳就只能查詢（`getBalance()` 等），不能再存入任何金額。\n\n在 `deposit` 最前面把 `if (closed || amount <= 0)` 擋下來，封帳後就誰也改不了這本帳的數字。",

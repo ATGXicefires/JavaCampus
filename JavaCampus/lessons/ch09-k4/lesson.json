@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "screen",
+      "id": "screen-v2",
       "title": "鎖住外框流程的樣板方法",
       "goal": "請完成樣板方法模式（Template Method）：\n1. 在 `abstract class Screen` 中：\n   - 建構子 `Screen(int width)` 將寬度儲存起來（若 `width < 12` 強制夾成 `12`，避免外框過窄）。\n   - 定義抽象方法 `abstract String header();` 與 `abstract String body();`，並定義預設勾子方法 `String subtitle() { return \"\"; }`。\n   - 實作 `final String render()` 作為不可覆寫的外框樣板方法：\n     - 第一行：`\"[ \" + safeHeader + \" ]\"`（若 `header()` 為 `null` 或 `trim()` 為空，預設為 `\"小白學程式\"`）。\n     - 選填副標行：呼叫 `subtitle()`，若非 `null` 且 `trim()` 非空，加上一行 `\"> \" + subtitle().trim()`；否則省略這一行。\n     - 內容行：呼叫 `body()`，若為 `null` 或 `trim()` 為空，統一補成 `\"(無內容)\"`，否則取 `body().trim()`。\n     - 頁尾分隔行：`\"-\".repeat(width)`。\n     - 各行以 `\"\\n\"` 串接回傳。\n2. 實作兩個子類別 `extends Screen`：\n   - `LessonScreen(int width, String topic)`：`header()` 回傳 `\"課程\"`、`subtitle()` 回傳 `\"章節：物件導向\"`、`body()` 當 `topic` 為 `null` 或 `trim()` 為空時回傳 `\"\"`（交由父類別保護），否則回傳 `\"主題：\" + topic.trim()`。\n   - `QuizScreen(int width, int number, String question)`：`header()` 當 `number <= 0` 時回傳 `\"隨堂測驗\"`，否則回傳 `\"第 \" + number + \" 題\"`；不覆寫 `subtitle()`；`body()` 直接回傳 `question`。",
       "instructions": "樣板方法 `final String render()` 放在抽象父類別裡，加上 `final` 可以防止子類別擅自改寫外框順序或拿掉邊界防呆。\n\n子類別只需要實作 `header()`、`body()`（與選填的 `subtitle()`）這些變化點，就能保證所有畫面的寬度下限、空內容保護與頁尾格式完全一致。",
@@ -30,7 +30,7 @@
       "afterText": ""
     },
     {
-      "id": "new",
+      "id": "new-v2",
       "title": "多型畫面切換與抽象約束",
       "goal": "起始碼已經準備好 `Screen`、`LessonScreen`、`QuizScreen`，但最後有一行錯誤示範 `new Screen(20)`（抽象類別不能直接實例化）。請修正並完成：\n1. 移除錯誤的 `new Screen(20)`。\n2. 新增 `class SummaryScreen extends Screen`，建構子 `SummaryScreen(int width, int passed, int total)`：\n   - 若 `total < 0` 視為 `0`；將 `passed` 夾在 `0` 到 `total` 之間。\n   - `header()` 回傳 `\"學習結算\"`。\n   - `subtitle()`：若 `total > 0 && passed == total` 回傳 `\"全部通過\"`，否則回傳 `\"繼續練習\"`。\n   - `body()` 回傳 `\"完成 \" + passed + \" / \" + total + \" 題\"`。\n3. 完成 `class ScreenRouter`，建構子 `ScreenRouter(Screen[] screens)`（`screens` 為 `null` 視為空陣列）：\n   - `int count()`：統計陣列中非 `null` 的畫面數量。\n   - `String renderAt(int index)`：若 `index` 超出陣列範圍（`< 0` 或 `>= length`）或該格是 `null`，回傳 `\"(無效畫面)\"`；否則回傳 `screens[index].render()`。\n   - `String renderAll()`：將所有非 `null` 畫面的 `render()` 結果以 `\"\\n\\n\"`（中間空一行）串接回傳；若沒有有效畫面回傳 `\"\"`。",
       "instructions": "抽象類別不能直接 `new`，但可以當成陣列型別 `Screen[]` 與方法參數型別，透過多型統一呼叫樣板方法 `render()`。",

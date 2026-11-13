@@ -22,7 +22,7 @@
       "afterText": ""
     },
     {
-      "id": "spin",
+      "id": "spin-v2",
       "title": "轉圈計數與總計",
       "goal": "用 `for` 轉 `spins` 圈（以 `spins` 為 3 為例）：\n`[1/3] 梁亭瑄天才！`\n`[2/3] 梁亭瑄天才！！`\n`[3/3] 梁亭瑄天才！！！`\n`總共轉了 3 圈，共 6 個！`\n\n宣告 `int bangCount = 0;` 累計總共印出幾個驚嘆號，迴圈結束後印出最後一行總結。",
       "instructions": "宣告 `String bangs = \"\";` 和 `int bangCount = 0;`。\n\n在 `for (int i = 1; i <= spins; i++)` 每一圈裡：\n1. `bangs += \"！\";` 讓驚嘆號比上一圈多一個\n2. `bangCount += i;` 把這一圈印出的 `i` 個驚嘆號加進總數\n3. 用 `+` 串出 `\"[\" + i + \"/\" + spins + \"] 梁亭瑄天才\" + bangs` 並印出\n\n迴圈結束後，印出 `\"總共轉了 \" + spins + \" 圈，共 \" + bangCount + \" 個！\"`。",

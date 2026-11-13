@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "max",
+      "id": "max-v2",
       "title": "上限與進度鉗制",
       "goal": "扭蛋包最多裝 `12` 個、最少 `0` 個。加上 `static final int MAX = 12;`、`private int count`、建構子 `GachaBag(int count)`，並實作三個保護容量範圍的方法：\n- `boolean add()`：未滿 `MAX` 時數量加 1 並交回 `true`；已滿則不加並交回 `false`。\n- `int addUpTo(int n)`：嘗試一次放入 `n` 個，最多放到 `MAX` 為止，交回實際放入了幾個；若 `n <= 0` 不放入，交回 `0`。\n- `int take(int n)`：嘗試取出 `n` 個，最多拿到 `0` 為止，交回實際拿出了幾個；若 `n <= 0` 不取出，交回 `0`。\n- `int getCount()`：交回目前數量。",
       "instructions": "`static final int MAX = 12;` 是整個類別共用的常數，設定好就不能改。\n\n在 `addUpTo` 和 `take` 裡做「進度鉗制」：先擋掉 `n <= 0`，再計算還能放多少（`MAX - count`）或還能拿多少（`count`），實際變動量取兩者較小的那個，這樣無論給多大數字都不會超出 `0..MAX`。",
@@ -38,7 +38,7 @@
       "afterText": ""
     },
     {
-      "id": "start",
+      "id": "start-v2",
       "title": "建構子鉗制與不可變標籤",
       "goal": "這一步接續上一步的 `GachaBag`，補上建構子防呆與 `final` 標籤欄位：\n- 在建構子 `GachaBag(int count)` 把初始數量鉗制在 `0..MAX`：超過 `MAX` 只放 `MAX` 個，小於 `0` 放 `0`，其餘照放；標籤預設為 `\"基本款\"`。\n- 新增 `private final String label;` 與建構子 `GachaBag(String label, int count)`：若 `label` 為 `null` 或空白（`isBlank()`）則存成 `\"未命名\"`，否則存 `label.trim()`；`count` 同樣鉗制在 `0..MAX`。\n- 新增 `String getLabel()` 交回標籤。",
       "instructions": "只有 `add()`、`addUpTo()` 和 `take()` 把關還不夠，若有人一開始就 `new GachaBag(20)` 或 `new GachaBag(-3)`，不合法的數字還是會跑進欄位。\n\n標籤在建立扭蛋包的那一刻就決定好，之後不能改，所以用 `private final String label;` 保護。兩個建構子可以讓 `GachaBag(int count)` 呼叫 `this(\"基本款\", count);`，把鉗制與標籤處理寫在一處就好。",
@@ -65,7 +65,7 @@
       "afterText": ""
     },
     {
-      "id": "final",
+      "id": "final-v2",
       "title": "改不了的上限與剩餘空間",
       "goal": "起始碼最後一行 `GachaBag.MAX = 20;` 試圖修改 `final` 常數，導致紅字編譯失敗。請修正錯誤並完成剩餘容量方法與輸出：\n1. 刪掉 `GachaBag.MAX = 20;`。\n2. 在 `GachaBag` 加上 `int remainingSpace()`（交回還能再放幾個，即 `MAX - count`）和 `boolean isFull()`（已滿交回 `true`，否則 `false`）。\n3. 建立 `GachaBag bag = new GachaBag(\"新年款\", 9);`，印出兩行：\n`最多 12 個`（使用 `GachaBag.MAX`）\n`新年款：已放 9 個，還能放 3 個`",
       "instructions": "`static final` 常數只能讀，不能從任何地方重新指派。想知道上限，直接讀 `GachaBag.MAX`；想知道目前這個扭蛋包還剩幾格，讓物件用自己的 `remainingSpace()` 算給你看。",

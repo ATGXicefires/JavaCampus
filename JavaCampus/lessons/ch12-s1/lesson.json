@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "wire",
+      "id": "wire-v2",
       "title": "多檔接線與防重複計分",
       "goal": "1. 完成 `QuizSession.java` 串接題庫與驗收規則：\n- `public QuizSession(ArrayList<Question> questions)`：保存題目清單（若為 `null` 視為空清單），並記錄哪些題號已答對。\n- `public String submit(int index, String typed)`：依序檢查：\n  1) 若 `index < 0` 或 `index >= 題數`（或該題為 `null`），安全回傳 `\"無效題號\"`。\n  2) 以 `ExactChecker` 比對作答（`typed` 為 `null` 時視同答錯），答錯回傳 `\"再試一次\"`。\n  3) 答對且該題尚未答對過，標記為已答對並回傳 `\"答對了\"`；若同一題重複答對，不重複計分並回傳 `\"已答對過\"`。\n- `public int correctCount()`：回傳已答對的不重複題數。\n- `public int score()`：回傳百分比成績（`correctCount() * 100 / 題數`，題數為 `0` 回傳 `0`）。\n2. 在 `Main.java` 匯入 `ArrayList`，將 `texts` 與 `answers` 裝進 `ArrayList<Question>`，交給 `QuizSession` 依序提交 `typed` 並印出每題結果，最後將 `session.score()` 記進 `records`，在 `== 第 1 課 ==` 下方印出：\n`第 1 題：答對了`\n`第 2 題：再試一次`\n`第 3 題：答對了`\n`最高分：66`",
       "instructions": "每個 `.java` 檔案的 `import` 只對自己有效：`Main.java` 要自行 `import java.util.ArrayList;`，`QuizSession.java` 用到 `ArrayList`、`HashSet` 或 `Set` 時也要在自己檔案上方 `import`。\n\n用 `HashSet<Integer>` 或 `boolean[]` 記錄已答對的題號，就能確保重複提交同一題時不會重複增加 `correctCount()`。",
@@ -31,7 +31,7 @@
       "afterText": ""
     },
     {
-      "id": "hidden",
+      "id": "hidden-v2",
       "title": "批次驗收與成績報告",
       "goal": "在 `Main.java` 新增兩個公開靜態方法串接後端驗收與成績紀錄：\n1. `public static int runQuiz(String[] answers, int[] indices, String[] typed)`：用 `answers` 建立 `ArrayList<Question>` 與 `QuizSession`，依序將 `indices[i]` 與 `typed[i]` 交給 `session.submit(...)` 批改（長度取 `Math.min(indices.length, typed.length)`），最後回傳 `session.score()`。若 `answers`、`indices` 或 `typed` 為 `null` 或 `answers.length == 0`，直接回傳 `0`。\n2. `public static String formatReport(String unit, String[] answers, int[] indices, String[] typed, Records records)`：計算本次分數並記進 `records`（若 `unit` 為 `null` 或空白改用 `\"未命名單元\"`；若 `records` 不為 `null` 才記錄並查出該單元歷史最高分），回傳格式：`單元名稱：本次 X 分，最高 Y 分`（例如 `第 1 課：本次 50 分，最高 66 分`）。",
       "instructions": "`runQuiz` 直接使用 `QuizSession` 即可自然具備「重複答對同一題不重複計分」與「無效題號不當機」的保護。\n\n這一步 `main` 不用改，驗證時會直接呼叫 `Main.runQuiz(...)` 與 `Main.formatReport(...)` 測試各種極端輸入。",

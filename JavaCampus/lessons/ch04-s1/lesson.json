@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "total",
+      "id": "total-v2",
       "title": "過濾異常值的加總",
       "goal": "寫一個方法 `static int total(int[] counts)`，加總 `counts` 裡所有大於 0 的有效計數並交回總和（負數與 0 視為異常或無效資料，不計入總和；若為空陣列或全是無效值，交回 `0`）。\n\n例如 `total(new int[]{3, -2, 5, 0})` 要交回 `8`。",
       "instructions": "`new int[]{3, 4, 5}` 會在呼叫時當場建立一個整數陣列交給方法；`new int[]{}` 是長度為 0 的空陣列。\n\n用迴圈走訪 `counts` 時，先判斷每一格是否大於 0，只把合法的正數累加起來，最後用 `return` 交回結果。",
@@ -28,7 +28,7 @@
       "afterText": ""
     },
     {
-      "id": "percent",
+      "id": "percent-v2",
       "title": "上限鉗制與防零百分比",
       "goal": "寫一個方法 `static int percent(int part, int whole)`，計算 `part` 占 `whole` 的整數百分比（小數直接捨去），並做好邊界防護：\n1. 若 `whole <= 0` 或 `part <= 0`，直接交回 `0`（避免除以 0 與負數比例）。\n2. 若 `part >= whole`（且 `whole > 0`），上限鉗制為 `100`。\n3. 其餘情況交回 `part * 100 / whole`。",
       "instructions": "先乘 100 再除以 `whole`，才不會因為整數除法先變成 0。\n\n在方法開頭先把 `whole <= 0`、`part <= 0` 和超過 100% 的邊界條件用 `return` 擋下來，主計算邏輯就不會出錯。",
@@ -51,7 +51,7 @@
       "afterText": ""
     },
     {
-      "id": "report",
+      "id": "report-v2",
       "title": "組裝進度分級報告",
       "goal": "寫一個方法 `static void report(String label, int[] doneList, int whole)`，結合前面兩個方法印出單行進度報告，並在方法外呼叫 `report(\"方法篇\", new int[]{1, 2}, 4);` 與 `report(\"迴圈篇\", new int[]{5, 5}, 8);`。\n\n規則如下：\n1. 將 `label` 去掉前後空白；若結果為空字串，標籤改顯示為 `\"未分類\"`。\n2. 呼叫 `total(doneList)` 算出總完成數 `part`，再呼叫 `percent(part, whole)` 算出百分比 `p`。\n3. 依 `p` 決定狀態標籤：`p == 100` 為 `\"[已完成]\"`，`p >= 50` 為 `\"[進行中]\"`，其餘為 `\"[剛起步]\"`。\n4. 印出格式：`\"<標籤> <狀態> <part>/<whole> (<p>%)\"`（例如 `report(\"方法篇\", new int[]{1, 2}, 4)` 印出 `方法篇 [進行中] 3/4 (75%)`）。",
       "instructions": "這一步展現為什麼前兩個方法要用 `return` 交回數字而不是直接印出來：因為 `report` 需要拿 `total` 和 `percent` 的回傳值繼續計算與判斷分級。\n\n用 `if / else if / else` 依序從 100、50 往下判斷就能分出三個狀態。",

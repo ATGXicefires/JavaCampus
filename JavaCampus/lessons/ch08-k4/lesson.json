@@ -10,7 +10,7 @@
   ],
   "steps": [
     {
-      "id": "plan",
+      "id": "plan-v2",
       "title": "父子物件的 toString()",
       "goal": "起始碼的 `System.out.println(plan)` 現在印出類別名稱加一串雜湊碼。請為 `Plan` 與 `MyPlan` 覆寫 `public String toString()`：\n1. 在 `Plan` 中覆寫 `@Override public String toString()`，回傳 `owner + \"的計畫\"`。\n2. 在 `MyPlan` 中覆寫 `@Override public String toString()`，必須透過 `super.toString()` 取得父類別那一段，接上 `\"：\" + department + \"，\" + hobby + \"（每週 \" + weeklyHours + \" 小時）\"`。\n\n完成後，程式要印出：`梁亭瑄的計畫：資訊科，繼續畫畫（每週 8 小時）`。",
       "instructions": "編輯器最上面兩行是題目先寫好的 `months` 和 `titles`，這一步還用不到，下一步才用。\n\n`Object.toString()` 原本就是 `public`，子類別覆寫時必須保持 `public`，否則編譯器會阻止你把存取權限變窄。\n\n和一般方法一樣，`MyPlan` 的 `toString()` 也可以用 `super.toString()` 延伸父類別已經格式化好的部分。",
@@ -18,8 +18,8 @@
       "check": {
         "type": "output",
         "exprs": [
-          "String.valueOf(new Plan(\"爸媽\", 10))",
-          "String.valueOf(new MyPlan(\"小芸\", 6, \"廣設科\", \"電繪\"))"
+          "new Plan(\"爸媽\", 10).toString()",
+          "new MyPlan(\"小芸\", 6, \"廣設科\", \"電繪\").toString()"
         ],
         "uses": ["@Override", "public String toString()", "super.toString()"]
       },
@@ -30,7 +30,7 @@
       "afterText": ""
     },
     {
-      "id": "sketches",
+      "id": "sketches-v2",
       "title": "草圖與資料夾摘要",
       "goal": "利用題目變數 `months` 和 `titles`，實作 `Sketch` 與 `Folder` 的物件嵌套 `toString()` 與月份篩選：\n1. `class Sketch`：欄位 `String month`、`String title`；建構子對 `null`/空白做防呆（`month` 空則 `\"未定\"`，`title` 空則 `\"未命名草圖\"`，否則 `trim()`）；覆寫 `public String toString()` 回傳 `month + \"：\" + title`。\n2. `class Folder`：欄位 `String name`、`Sketch[] items`；建構子若 `name` 為 `null`/空白設為 `\"草圖資料夾\"`（否則 `trim()`），若 `items` 為 `null` 視為 `new Sketch[0]`。\n   - `int countByMonth(String targetMonth)`：統計 `items` 中非 `null` 且 `month` 等於 `targetMonth.trim()` 的張數（`targetMonth` 為 `null` 回傳 `0`）。\n   - `Folder filterMonth(String targetMonth)`：回傳新 `Folder`，名稱為 `name + \"[\" + (targetMonth == null ? \"\" : targetMonth.trim()) + \"]\"`，內含所有符合該月份的非 `null` 草圖（保持原順序）。\n   - `@Override public String toString()`：若有效（非 `null`）草圖為 0 張，回傳 `name + \"（0 張）：（空）\"`；否則第一行為 `name + \"（共 \" + count + \" 張）\"`，接著每張有效草圖占一行 `\"  - \" + sketch`，行間以 `\"\\n\"` 連接。\n3. 主程式依 `Math.min(months.length, titles.length)` 建立 `Sketch[]`，放進 `new Folder(\"亭瑄的草圖\", sketches)` 並 `System.out.println` 印出。",
       "instructions": "`System.out.println(folder)` 會呼叫 `folder.toString()`，而 `Folder.toString()` 內部用 `\"  - \" + s` 串接字串時，Java 又會自動呼叫每張草圖的 `Sketch.toString()`，形成物件層層包裝的文字摘要。\n\n請留意 `months` 與 `titles` 長度可能不同或為空陣列 `{}`，`items` 裡也可能混有 `null` 元素，都要安全略過。",

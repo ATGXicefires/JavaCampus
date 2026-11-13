@@ -36,7 +36,7 @@
       "afterText": ""
     },
     {
-      "id": "countdown",
+      "id": "countdown-v2",
       "title": "衝刺倒數",
       "goal": "`days` 是離段考還有幾天，現在是 7。\n\n用 `for` 從 `days` 倒數到 `1`，一天印一行，並同時累計安排的天數到 `int studyDays`：\n- 第 4 天以上（`i > 3`）：印 `段考倒數 X 天`\n- 最後 3 天（`1 <= i <= 3`）：印 `最後衝刺倒數 X 天`\n- 迴圈結束後（包含 `days <= 0` 的情況）都要印出最後一行：`共 studyDays 天`（當 `days <= 0` 時印 `共 0 天`）。",
       "instructions": "這一步獨立計算倒數天數。\n\n`for` 倒數寫法是 `for (int i = days; i >= 1; i--)`：如果 `days` 一開始就 `<= 0`，條件 `i >= 1` 第一圈就不成立，迴圈會安全跳過一次也不跑，`studyDays` 就會維持 `0`。\n\n迴圈裡面再用 `if / else` 區分一般日（`i > 3`）和最後衝刺日（`i <= 3`），並用 `studyDays++` 累計實際倒數了幾天。",

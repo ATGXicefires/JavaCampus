@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "blueprint",
+      "id": "blueprint-v2",
       "title": "扭蛋的設計圖",
       "goal": "寫 `class Gacha`（欄位 `String name`、`String color`、`int price`、`int stock`），建構子 `Gacha(String name, String color, int price, int stock)`（含空白與負數保護），以及方法 `int totalValue()`（回傳 `price * stock`）。",
       "instructions": "編輯器最上面那行 `String[] names = ...;` 第三步才會用到。\n\n建構子要幫欄位把關：\n- 若 `name` 為 `null` 或去掉前後空白後為空字串（`name.trim().isEmpty()`），設為 `\"未命名\"`；否則保留原 `name`。\n- 若 `color` 為 `null` 或去掉前後空白後為空字串，設為 `\"透明\"`；否則保留原 `color`。\n- 若 `price < 0`，設為 `0`。\n- 若 `stock < 0`，設為 `0`。\n\n參數和欄位同名時，欄位前面要加 `this.`。",
@@ -68,7 +68,7 @@
       "afterText": ""
     },
     {
-      "id": "eight",
+      "id": "eight-v2",
       "title": "一張設計圖，八個扭蛋",
       "goal": "用 `names` 建立 `Gacha[] box`（每個品項顏色 `\"限定色\"`、單價 `60`、庫存 `(i % 3) + 1`），依序印出 `第 1 個：麻糬（剩 1 顆）` 等各行，並寫出 `static int totalBoxValue(Gacha[] box)` 統計總價值。",
       "instructions": "編輯器最上面那行 `String[] names = ...;` 是題目先寫好的。\n\n要完成兩件事：\n1. 建立 `Gacha[] box = new Gacha[names.length];`，每一格用 `new Gacha(names[i], \"限定色\", 60, (i % 3) + 1)` 填滿，並印出 `\"第 \" + (i + 1) + \" 個：\" + box[i].name + \"（剩 \" + box[i].stock + \" 顆）\"`。\n2. 寫出 `static int totalBoxValue(Gacha[] box)`：若 `box == null` 回傳 `0`；否則加總每個非 `null` 扭蛋的 `totalValue()`（遇到 `null` 格要略過）。",

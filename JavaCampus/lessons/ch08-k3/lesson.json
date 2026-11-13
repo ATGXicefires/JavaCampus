@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "paths",
+      "id": "paths-v2",
       "title": "兩條路的多型推薦",
       "goal": "寫兩個繼承 `Path` 的子類別 `DesignPath` 與 `CodePath`，搭配父類別 `Path.recommend(Path[], int)` 運作：\n1. `DesignPath(int weeklyHours)`：透過 `super(\"廣設科\", weeklyHours)` 初始化。\n   - `@Override boolean isSuitable(int enthusiasm)`：當 `enthusiasm >= 60 && weeklyHours >= 5` 回傳 `true`，否則 `false`。\n   - `@Override String describe(int enthusiasm)`：回傳 `name + \"：畫我喜歡的東西（熱情 \" + enthusiasm + \"%）\"`。\n2. `CodePath(int weeklyHours)`：透過 `super(\"資訊科\", weeklyHours)` 初始化。\n   - `@Override boolean isSuitable(int enthusiasm)`：當 `enthusiasm >= 70 && weeklyHours >= 8` 回傳 `true`，否則 `false`。\n   - `@Override String describe(int enthusiasm)`：回傳 `name + \"：把我畫的東西變成會動的（每週 \" + weeklyHours + \" 小時）\"`。",
       "instructions": "起始碼的 `Path` 已經寫好 `name`、`weeklyHours`（小於 0 會歸零），以及靜態方法 `Path.recommend(Path[] paths, int enthusiasm)`：它會依序檢查每個非 `null` 的路線，回傳第一個 `isSuitable(enthusiasm)` 為 `true` 的 `describe(enthusiasm)`；若都不適合則回傳 `\"先留在原地觀察\"`。\n\n在兩個子類別的覆寫方法上方都加上 `@Override`，請編譯器確認方法名稱與參數型別都和父類別完全一致。",
@@ -32,7 +32,7 @@
       "afterText": ""
     },
     {
-      "id": "typo",
+      "id": "typo-v2",
       "title": "診斷失靈的第三條路",
       "goal": "起始碼新增了第三條路 `StayPath`，正確規格如下：\n1. `StayPath(int weeklyHours)` 以 `\"留下來\"` 交給父類別作為 `name`。\n2. `isSuitable(int enthusiasm)`：只要 `enthusiasm >= 50` 就回傳 `true`（不論 `weeklyHours` 為何）。\n3. `describe(int enthusiasm)`：回傳 `\"留下來：先試試看（每週 \" + weeklyHours + \" 小時）\"`。\n4. 透過 `Path` 型別變數或 `Path.recommend(...)` 呼叫時，必須正確派遣到 `StayPath` 的版本。\n\n目前的 `StayPath` 雖然能編譯，但有幾個繼承缺陷導致呼叫結果不對。請幫每個預期覆寫的方法加上 `@Override` 讓編譯器診斷，並排除可能發生的欄位遮蔽（shadowing）問題。",
       "instructions": "沒有寫 `@Override` 時，方法名稱拼錯、大小寫不同、或參數型別差一點（例如把 `int` 寫成 `double`），編譯器都會當成「多載了一個新方法」而靜靜放行，造成多型呼叫時依然跑進父類別的舊版本。\n\n另外，若子類別不小心宣告了與父類別同名的欄位，子類別的方法讀到的會是自己那份未初始化的欄位（變成 `null`），而不是 `super(...)` 存進父類別的那份。",

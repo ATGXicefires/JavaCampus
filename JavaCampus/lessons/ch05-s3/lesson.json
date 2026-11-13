@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "row",
+      "id": "row-v2",
       "title": "任意一列與精準空白",
       "goal": "寫一個方法 `static String multRow(int base, int limit)`，回傳 `base` 從 `1` 乘到 `limit` 的那一列字串：\n- 若 `limit <= 0`，交回空字串 `\"\"`。\n- 否則每一項格式為 `base + \"x\" + j + \"=\" + (base * j)`，項與項之間用一個半形空白隔開，**開頭與結尾都不可有多餘空白**（例如 `multRow(2, 3)` 必須精確交回 `\"2x1=2 2x2=4 2x3=6\"`）。\n\n最後若 `n > 0`，印出 `multRow(2, n)`；若 `n <= 0`，不要印出任何東西。",
       "instructions": "編輯器最上面那行 `int n = 9;` 是題目先寫好的。\n\n為了同時支援任意乘數 `base`（含負數或大於 9 的數）與任意長度 `limit`，把乘法一列的邏輯抽成多參數方法。若 `j > 1` 才在前面補一個空白，就能保證行尾不會多出多餘空格。",
@@ -38,7 +38,7 @@
       "afterText": ""
     },
     {
-      "id": "table",
+      "id": "table-v2",
       "title": "多參數矩形乘法表",
       "goal": "保留上一步的 `multRow`，再寫一個方法 `static void printTable(int rows, int cols)`：\n- 若 `rows <= 0` 或 `cols <= 0`，什麼都不印（直接結束方法）。\n- 否則印出 `rows` 列，第 `i` 列（從 1 到 `rows`）印出 `i` 從 `1` 乘到 `cols` 的結果（每列格式與 `multRow` 一致，無尾端空白）。\n\n最後呼叫 `printTable(n, n);` 印出 `n × n` 乘法表。",
       "instructions": "表的大小不再限制只能正方形：呼叫 `printTable(3, 4)` 要印出 3 列、每列 4 項；呼叫 `printTable(0, 4)` 或 `printTable(3, -1)` 則不能印出任何東西。\n\n外層迴圈控制列號 `i` 從 1 走到 `rows`，每一圈可呼叫 `multRow(i, cols)` 並印出，或使用雙層 `for` 迴圈自行組合字串再印出。",

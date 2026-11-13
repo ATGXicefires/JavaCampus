@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "say",
+      "id": "say-v2",
       "title": "預設名字與防空說話",
       "goal": "寫一個方法 `static void say(String who, String line)`，印出 `<說話者>：「<台詞>」`（冒號和引號為全形）。\n\n規則如下：\n1. 先將 `who` 與 `line` 各自去掉前後多餘空白。\n2. 若 `who` 處理後為空字串，說話者預設成 `\"滷肉\"`。\n3. 若 `line` 處理後為空字串，台詞預設成 `\"……\"`。\n\n寫好後在方法外呼叫兩次：`say(\"滷肉\", \"歡迎來到小白！\");` 與 `say(\"  \", \"分號別忘記。\");`。",
       "instructions": "方法把重複的流程收進大括號並取個名字。`static void say(String who, String line)` 有兩個字串參數，呼叫時會照順序放進來，`void` 代表只執行動作、不回傳值。\n\n可以先用字串的 `.trim()` 去掉前後空白，再用 `.isEmpty()` 或 `.length() == 0` 檢查是不是空的。冒號與引號是全形 `：「」`，省略符號為兩個全形 `……`。",
@@ -52,7 +52,7 @@
       "afterText": ""
     },
     {
-      "id": "line",
+      "id": "line-v2",
       "title": "組合安全對話字串",
       "goal": "寫一個方法 `static String line(String who, String text, int maxLen)`，把處理過的名字與截斷後的台詞組合成 `<說話者>：「<台詞>」` 並交回（不要印出）。\n\n規則如下：\n1. 若 `who` 去掉前後空白後為空字串，說話者預設為 `\"滷肉\"`。\n2. 台詞呼叫上一步寫好的 `clip(text, maxLen)` 處理。\n3. 若 `clip` 交回的結果是空字串 `\"\"`，台詞改顯示為 `\"……\"`。",
       "instructions": "這一步不呼叫 `System.out.println`，而是用 `return` 把排好的字串交給呼叫的人。\n\n在 `line` 裡面可以直接呼叫上一步寫好的 `clip(text, maxLen)`，拿到處理完的文字後，再檢查是不是空的，最後串成完整對話交回。",

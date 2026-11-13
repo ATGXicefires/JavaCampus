@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "memory",
+      "id": "memory-v2",
       "title": "秘密常數與安全比對",
       "goal": "在 `Memory.java` 宣告兩個不可更改的公開常數：\n- `public static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`\n- `public static final String SECRET_CMD = \"HELP_SENIOR\";`\n\n並在 `Memory.java` 實作兩個公開方法：\n- `public String firstLine()`：回傳 `FIRST_LINE`。\n- `public boolean isFirstLine(String input)`：若 `input == null`，安全回傳 `false`（不可拋出空指標例外）；否則先用 `trim()` 去掉前後空白，再用 `equals`（不可用 `==`）比對 `FIRST_LINE`，相符回傳 `true`。\n\n在 `Main.java` 的 `main` 建立 `new Memory()` 並印出 `mem.firstLine()`。",
       "instructions": "因為 `trim()` 會產生新的字串物件，用 `==` 比對內容即使字完全一樣也會是 `false`；比對字串內容必須用 `.equals(...)`。\n\n常數加上 `static final` 後就無法被任何程式修改，且依慣例以全大寫與底線命名；將常數與比對邏輯一起封裝在 `Memory` 類別裡，也能避免其他檔案直接耦合內部常數細節。",

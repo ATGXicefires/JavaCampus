@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "main",
+      "id": "main-v2",
       "title": "放進 main",
       "goal": "修好片段殘留的程式，撰寫 `public class Main`，實作 `public static String tabSummary(String title, int items, boolean unlocked)` 並在 `main` 依序印出：\n`小白學程式 v0.9`\n`[開啟] 題庫 (5 項)`\n`[鎖定] 未命名 (0 項)`\n\n`tabSummary` 規則：\n- `title` 若為 `null` 或空白，改為 `未命名`；否則去掉前後空白。\n- `items` 若小於 `0`，當作 `0`。\n- 回傳 `([開啟] 或 [鎖定]) + \" \" + <標題> + \" (\" + <項目數> + \" 項)\"`。",
       "instructions": "完整的 Java 程式從 `Main` 類別裡的 `main` 方法開始執行。class 外面只能寫 `import` 與類別，原本直接寫在最外層的變數、方法與 `println` 都要放進 `Main` 與 `main` 裡面。\n\n`tabSummary` 必須宣告為 `public static` 才能直接從 `main` 與測試端呼叫；別忘了檢查 `title == null || title.isBlank()` 與 `items < 0` 兩個邊界。",
@@ -30,7 +30,7 @@
       "afterText": ""
     },
     {
-      "id": "split",
+      "id": "split-v2",
       "title": "多檔拆分與頁籤狀態元件",
       "goal": "排除 `Main.java` 內重複宣告的型別，補完 `Screen.java` 與 `Main.java` 的多頁籤狀態與點擊統計，讓 `main` 執行後印出：\n`小白學程式 v0.9`\n`if-else 像什麼？ true`\n`題庫 [可用] 篩選:選擇題 點擊:1`\n`未解鎖：統計`\n`未註冊頁籤`\n`總點擊：1`\n\n各檔案規則：\n1. `Main.java` 內原本重複的 `Checker` 與 `Question` 必須刪除，改用分頁中的 `Checker.java` 與 `Question.java`。\n2. `Screen.java`（頁籤元件）：\n   - 建構子 `public Screen(String title, boolean unlocked)`：若 `title` 為 `null` 或空白設為 `未命名`，否則 `trim()`；預設 `filter` 為 `全部`，`clicks` 為 `0`。\n   - `public void unlock()`：設為已解鎖。\n   - `public void setFilter(String filter)`：若 `filter` 為 `null` 或空白，改回 `全部`；否則設為 `filter.trim()`。\n   - `public boolean select()`：僅在已解鎖時將 `clicks` 加 `1` 並回傳 `true`；未解鎖時不加次數並回傳 `false`。\n   - `public String status()`：回傳 `<標題> [<可用或鎖定>] 篩選:<filter> 點擊:<clicks>`。\n3. `Main.java` 統計與切換方法：\n   - `public static String openTab(Screen[] tabs, String title)`：`tabs` 為 `null`、`title` 為 `null`/空白，或找不到非 `null` 且標題相符（`trim()`）的頁籤，回傳 `未註冊頁籤`；找到但未解鎖回傳 `未解鎖：<標題>`；已解鎖則呼叫 `select()` 並回傳 `status()`。\n   - `public static int totalClicks(Screen[] tabs)`：加總非 `null` 頁籤的 `clicks`（`tabs` 為 `null` 時回傳 `0`）。\n   - `public static int clicksAfterSequence(Screen[] tabs, String[] sequence)`：依序呼叫 `openTab(tabs, target)`（`sequence` 為 `null` 時略過），最後回傳 `totalClicks(tabs)`。",
       "instructions": "整個專案中同一個名字的類別或介面只能宣告一次。`Checker.java` 和 `Question.java` 已經獨立出去，`Main.java` 裡的舊宣告留著就會報重複型別錯誤。\n\n在 `Screen.java` 裡，請確實保持 `private` 欄位封裝，並注意 `setFilter` 收到空白或 `null` 時要回復預設值 `全部`，避免畫面顯示空篩選。",

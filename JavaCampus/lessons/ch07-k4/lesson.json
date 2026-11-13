@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "heart",
+      "id": "heart-v2",
       "title": "真心話與勇氣進度鉗制",
       "goal": "寫 `class Heart`，把真心話和勇氣進度都鎖在 `private` 裡面：\n- 欄位一律為 `private`：真心話 `real`（可自訂字串）、勇氣目標步數 `totalSteps`、目前進度 `progress`（初始為 `0`）。\n- 建構子 `Heart()` 預設目標為 `5` 步；`Heart(int totalSteps)` 若收到 `<= 0` 一律防呆為 `1`，否則用傳入的步數。\n- `void advance(int delta)`：依 `delta`（可正可負）調整進度，並嚴格鉗制在 `0..totalSteps` 之間（小於 `0` 變 `0`，超過 `totalSteps` 變 `totalSteps`）。\n- `int getProgress()` 與 `int getTotalSteps()`：各自交回目前進度與目標步數。\n- `String whatAreYouDoing()`：一律交回 `\"在幹嘛\"`。\n- `String status()`：只有當 `progress == totalSteps` 時交回 `\"其實很想你\"`，否則一律交回 `\"沒事\"`。",
       "instructions": "外面永遠拿不到 `real`，也無法直接把 `progress` 改到負數或超過上限。\n\n進度鉗制（Clamp）很常用：先做 `progress += delta;`，如果 `< 0` 就設為 `0`，如果 `> totalSteps` 就設為 `totalSteps`。這樣 `advance` 就能安全接受正數推進或負數退縮。",
@@ -39,7 +39,7 @@
       "afterText": ""
     },
     {
-      "id": "draft",
+      "id": "draft-v2",
       "title": "打了又刪的草稿檢核",
       "goal": "寫 `class Draft` 加上字數限制與修改次數檢核，並建立 `Draft draft = new Draft();`，依序呼叫 `type(\"學長\")`、`clear()`、`type(\"新年快樂\")`：\n- 常數 `static final int MAX_LEN = 20;`，其餘欄位（內容 `text`、修改次數 `editCount`）皆為 `private`。\n- `boolean type(String s)`：若 `s == null || s.isEmpty()`，或接上去後長度超過 `MAX_LEN`（`text.length() + s.length() > MAX_LEN`），都拒絕整段加入、不增加修改次數並交回 `false`；合法才接在 `text` 後面、修改次數加 1 並交回 `true`。\n- `void clear()`：若目前 `text` 不是空的才清空為 `\"\"` 並讓修改次數加 1；已經是空的就不做任何事（不增加次數）。\n- `String preview()` 交回目前文字、`int getEditCount()` 交回修改次數、`int remainingChars()` 交回還能打幾個字（`MAX_LEN - text.length()`）。",
       "instructions": "檢核規則寫在 `type` 和 `clear` 裡面，就能確保草稿永遠不會變成 `null` 或超過 20 個字，而且無效操作（例如空字串或對空草稿按清空）也不會灌水修改次數。",

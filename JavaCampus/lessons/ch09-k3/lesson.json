@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "sections",
+      "id": "sections-v2",
       "title": "多樣化的段落實作",
       "goal": "起始碼已定好 `interface Section` 契約，包含 `title()`、`format()`、`priority()`、`lineCount()`、`isEmpty()`。請實作兩個具體段落類別：\n1. `class TextSection implements Section`，建構子 `TextSection(String title, String body, int priority)`：\n   - `title` 若為 `null` 或 `trim()` 為空，預設為 `\"未命名\"`，否則取 `trim()`。\n   - `body` 若為 `null` 視為 `\"\"`，否則取 `trim()`。\n   - `isEmpty()`：當清理後的 `body` 為空字串時回傳 `true`。\n   - `lineCount()`：若 `isEmpty()` 回傳 `0`；否則計算 `body` 以 `\"\\n\"` 分割後的行數（`body.split(\"\\n\", -1).length`）。\n   - `format()`：若 `isEmpty()` 回傳 `\"\"`；否則回傳 `\"【\" + title() + \"】\\n\" + body`。\n2. `class BulletSection implements Section`，建構子 `BulletSection(String title, String[] points, int priority)`：\n   - `title` 處理規則同上。\n   - 過濾 `points`（若為 `null` 視為 0 項）：略過 `null` 與 `trim()` 後為空的項目，只保留有效項目的 `trim()` 結果。\n   - `isEmpty()`：有效項目數為 `0` 時回傳 `true`。\n   - `lineCount()`：回傳有效項目的個數。\n   - `format()`：若 `isEmpty()` 回傳 `\"\"`；否則第一行為 `\"【\" + title() + \"】\"`，底下依序每項一行 `\"1. \" + 第一項`、`\"2. \" + 第二項`……（用 `\"\\n\"` 串接，最後不留多餘換行）。",
       "instructions": "兩個類別實作 `Section` 時，介面裡所有五個方法都要寫出來並加上 `public`。\n\n在 `BulletSection` 建構子中，可以先數出有幾個有效項目，再建立對應長度的 `String[]` 儲存清理後的條目；這樣後面 `lineCount()` 與 `format()` 都能直接使用乾淨的陣列。\n\n全形括號 `【`、`】` 可從目標複製。",
@@ -34,7 +34,7 @@
       "afterText": ""
     },
     {
-      "id": "page",
+      "id": "page-v2",
       "title": "頁面組裝器：過濾、排序與行數彙總",
       "goal": "保留 `Section`、`TextSection` 與 `BulletSection`，新增頁面組裝器 `class PortfolioPage`，建構子 `PortfolioPage(Section[] rawSections, int maxLines)`：\n1. **過濾**：跳過 `rawSections` 中的 `null` 以及 `isEmpty()` 為 `true` 的空白段落（`rawSections` 為 `null` 視為空陣列；`maxLines < 0` 視為 `0`）。\n2. **穩定排序**：將有效段落依 `priority()` **由小到大**排列；若兩個段落 `priority()` 相同，必須維持原本陣列中的先後順序。\n3. **行數預算篩選**：依排序後的順序逐段檢查，若「目前累計行數 + 該段 `lineCount()` <= `maxLines`」，就收錄這一段並累加行數；若會超過 `maxLines`，就跳過這一段繼續檢查下一段。\n\n請提供三個公開／套件方法：\n- `int includedCount()`：回傳實際收錄的段落數。\n- `int usedLines()`：回傳實際收錄段落的 `lineCount()` 總和。\n- `String render()`：將所有實際收錄的段落依序呼叫 `format()`，段落之間以 `\"\\n---\\n\"` 分隔；若沒有收錄任何段落回傳 `\"\"`。",
       "instructions": "整個 `PortfolioPage` 只依賴介面 `Section`（呼叫 `isEmpty()`、`priority()`、`lineCount()`、`format()`），完全不需判斷具體類別是 `TextSection` 還是 `BulletSection`。\n\n為了確保 `priority()` 相同時順序不變，可使用穩定的排序法（例如插入排序，或氣泡排序只在 `a.priority() > b.priority()` 時交換）。",

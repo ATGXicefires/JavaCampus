@@ -11,14 +11,34 @@
   ],
   "steps": [
     {
-      "id": "quota",
-      "title": "週總量、超標與日均",
-      "goal": "用 `perDay`、`days` 與 `budget` 算出四個結果：\n1. `int perWeek`：上學日一週總共吃幾個飯糰\n2. `boolean overQuota`：是否**嚴格超過** `budget`（剛好等於 `budget` 不算超標）\n3. `int diff`：與配額的差額（`perWeek - budget`）\n4. `double dailyAvg`：平均到整週 7 天（含週末）每天吃幾個（保留小數）",
-      "instructions": "編輯器最上面的 `perDay`、`days` 與 `budget` 是題目先寫好的變數。\n\n注意「超過」不包含「剛好等於」：要用 `>`（大於），不能寫成 `>=`。\n計算 `dailyAvg` 時要把一週的總量除以 `7.0`（或先用 `(double)` 轉型），才不會因為兩個 `int` 相除而丟掉小數。",
-      "expectedShape": "int perWeek = …;\nboolean overQuota = …;\nint diff = …;\ndouble dailyAvg = …;",
+      "id": "weekly-sum",
+      "title": "一週總量與日均",
+      "goal": "用 `perDay` 與 `days` 算出兩個結果：\n1. `int perWeek`：上學日一週總共吃幾個飯糰\n2. `double dailyAvg`：平均到整週 7 天（含週末）每天吃幾個（保留小數）",
+      "instructions": "編輯器最上面的 `perDay`、`days` 與 `budget` 是題目先寫好的變數（`budget` 後面步驟才會用到）。\n\n計算 `dailyAvg` 時要把一週總量除以 `7.0`（或先用 `(double)` 轉型），才不會因為兩個 `int` 相除而丟掉小數。",
+      "expectedShape": "int perWeek = …;\ndouble dailyAvg = …;",
       "check": {
         "type": "values",
-        "exprs": ["perWeek", "overQuota", "diff", "dailyAvg"],
+        "exprs": ["perWeek", "dailyAvg"],
+        "variants": [
+          { "perDay": "2", "days": "5", "budget": "10" },
+          { "perDay": "2", "days": "4", "budget": "12" }
+        ]
+      },
+      "hints": {
+        "lead": "上學日總量是 `perDay * days`；除以 `7.0` 才會保留小數。",
+        "plain": "`perWeek = perDay * days;`、`dailyAvg = perWeek / 7.0;`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "over-check",
+      "title": "是否超過配額",
+      "goal": "保留上一步的 `perWeek` 與 `dailyAvg`，再比對 `budget` 算出兩個結果：\n1. `boolean overQuota`：是否**嚴格超過** `budget`（剛好等於 `budget` 不算超標）\n2. `int diff`：與配額的差額（`perWeek - budget`）",
+      "instructions": "「超過」不包含「剛好等於」：要用 `>`（大於），不能寫成 `>=`。`perWeek > budget` 的結果是 `boolean`（`true` 或 `false`），可以直接存進 `overQuota`。",
+      "expectedShape": "int perWeek = …;\ndouble dailyAvg = …;\nboolean overQuota = …;\nint diff = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["overQuota", "diff"],
         "variants": [
           { "perDay": "2", "days": "5", "budget": "10" },
           { "perDay": "2", "days": "4", "budget": "12" },
@@ -26,13 +46,13 @@
         ]
       },
       "hints": {
-        "lead": "嚴格超過用 `>`；除以 `7.0` 才會保留小數。",
-        "plain": "`perWeek = perDay * days;`、`overQuota = perWeek > budget;`、`diff = perWeek - budget;`、`dailyAvg = perWeek / 7.0;`。"
+        "lead": "嚴格超過用 `>`，剛好等於時 `overQuota` 應為 `false`。",
+        "plain": "`boolean overQuota = perWeek > budget;`、`int diff = perWeek - budget;`。"
       },
       "afterText": ""
     },
     {
-      "id": "tell",
+      "id": "adjust-plan",
       "title": "配額調整與週末分配",
       "goal": "保留上一步的計算結果，加入下週配額調整 `int nextQuota` 與狀態報告：\n- 若 `overQuota` 為 `true`：`nextQuota` 減為 `budget - 1`，並印出 `超標 X 個，需要減量`（`X` 為 `diff`）\n- 否則 `nextQuota` 維持 `budget`，且：\n  - 若 `perWeek == budget`：印出 `剛好達標：0 個餘額`\n  - 若還有餘額（`perWeek < budget`）：設 `int remain = budget - perWeek;` 平分給週末 2 天，印出 `餘額 X 個，週末每天 Y 個，剩 Z 個`（`Y` 為 `remain / 2`，`Z` 為 `remain % 2`）",
       "instructions": "請先宣告 `int nextQuota;`（或先給預設值 `budget`），再用 `if` / `else if` / `else` 依三種情況分別設定 `nextQuota` 與印出對應訊息。\n\n判斷相等必須寫兩個等號 `==`，不可寫成單一等號 `=`。把餘額平分給週末 2 天時，每天分到幾個用 `/`、分完剩幾個用 `%`。",

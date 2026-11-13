@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "credits",
+      "id": "credits-v2",
       "title": "名單與職位查詢",
       "goal": "1. 完成 `Credit.java`：\n- 欄位 `role`、`name`（封裝為 `private`），並提供 `public String role()` 與 `public String name()` 取值方法。\n- 建構子 `public Credit(String role, String name)`：去掉前後空白；若 `role` 為 `null` 或空白則預設為 `\"未分類\"`，若 `name` 為 `null` 或空白則預設為 `\"匿名\"`。\n- 無參數建構子 `public Credit()`：預設為 `\"未分類\"` 與 `\"匿名\"`。\n- 覆寫 `public String toString()`：回傳 `role + \" \" + name`。\n2. 完成 `Main.java`：\n- 將起始陣列 `roles`、`names` 裝進 `ArrayList<Credit>`，先印出 `== 製作團隊 ==`，再用 for-each 逐行印出每位成員。\n- 實作 `public static ArrayList<String> findByRole(ArrayList<Credit> credits, String role)`：回傳指定職位（忽略前後空白）的所有成員名字清單；若 `credits` 為 `null`、`role` 為 `null` 或空白，或無符合者，回傳空清單（同時略過清單中的 `null` 物件）。\n- 在 `main` 最後印出 `程式組：` 加上 `findByRole(credits, \"程式\")`。",
       "instructions": "`System.out.println(c)` 會自動呼叫物件的 `toString()`；覆寫時必須寫上 `public String toString()`。\n\n在建構子做完 `null` 與空白（`isBlank()`）的預設值處理後，後續 `toString()` 與 `findByRole(...)` 都能安全使用欄位，不必到處重複檢查。",
@@ -34,7 +34,7 @@
       "afterText": ""
     },
     {
-      "id": "thanks",
+      "id": "thanks-v2",
       "title": "特別感謝的有序查詢",
       "goal": "1. 在 `Main.java` 匯入 `HashMap`（`import java.util.HashMap;`），實作兩個防呆查詢方法：\n- `public static String lookupThank(HashMap<String, String> map, String who)`：\n  - 若 `map` 為 `null` 或空表，或 `who` 為 `null` 或空白，回傳 `\"無特別感謝紀錄\"`。\n  - 去掉 `who` 前後空白後查詢 `map`：若查不到（或對應原因為 `null`／空白），回傳 `\"查無此人：\" + 清理後人名`。\n  - 查到時回傳 `\"特別感謝 \" + 清理後人名 + \"（\" + 清理後原因 + \"）\"`。\n- `public static ArrayList<String> formatThanksInOrder(HashMap<String, String> map, String[] order)`：依 `order` 陣列順序取出存在於 `map`（且原因非 `null`／空白）的對象，透過 `lookupThank` 轉成清單回傳；略過無效或不在 `map` 中的名字。若 `map` 為 `null`／空表或 `order` 為 `null`，回傳空清單。\n2. 在 `main` 建立 `HashMap<String, String> thanks`，依起始陣列 `order` 與 `reasons` 放進四筆感謝，再用 `formatThanksInOrder(thanks, order)` 依序印出這四行：\n`特別感謝 阿嬤（每天的菜）`\n`特別感謝 燕韋芸（478 次的統計）`\n`特別感謝 李有成（偷拍的照片）`\n`特別感謝 王葉聖老師（那一次抽籤）`",
       "instructions": "`HashMap` 本身不保證走訪順序，因此要用 `order` 陣列固定輸出次序，再逐個去 `map` 查原因。\n\n查詢前先確認 `map == null || map.isEmpty()` 與人名是否有效，可以防止直接 `get` 出現 `NullPointerException` 或印出 `null`。",

@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "this",
+      "id": "this-v2",
       "title": "參數遮蔽與改名失靈",
       "goal": "修好 `class Mascot` 建構子、`rename(String name)` 與 `updateLine(String line)` 的欄位遮蔽與空值保護問題，讓 `speakText()` 與後續改名、改台詞都正確生效。",
       "instructions": "起始碼裡的建構子與更新方法都被同名參數遮蔽了，導致修改都只留在參數自己身上。\n\n修復後的規格：\n- `Mascot(String name, String line)`：若 `name` 為 `null` 或去掉前後空白後為空，欄位設為 `\"未命名\"`，否則設為 `name.trim()`；若 `line` 為 `null` 設為 `\"\"`，否則放 `line`。\n- `void rename(String name)`：只有當 `name != null && !name.trim().isEmpty()` 時，才將物件自己的 `name` 更新為 `name.trim()`；否則忽略。\n- `void updateLine(String line)`：只有當 `line != null` 時，才將物件自己的 `line` 更新為 `line`；否則忽略。\n- `String speakText()`：回傳 `name + \"：「\" + line + \"」\"`。",
@@ -40,10 +40,10 @@
       "afterText": ""
     },
     {
-      "id": "length",
+      "id": "length-v2",
       "title": "空指標與跨方法狀態重置",
-      "goal": "修好 `nameLength()`、`greet(String user)` 與 `resetStats()`：擋掉 `null` 引起的崩潰，修復區域變數遮蔽與狀態重置遺漏。",
-      "instructions": "起始碼有三個隱藏 Bug，請逐一檢查修復：\n- `int nameLength()`：若 `this.name == null` 回傳 `0`，否則回傳 `this.name.length()`。\n- `String greet(String user)`：若 `user` 為 `null` 或去掉前後空白後為空，稱呼改用 `\"新同學\"`，否則用 `user.trim()`；更新物件的 `lastListener` 為這個稱呼、將 `speakCount` 加 `1`，並回傳 `(this.name == null ? \"未命名\" : this.name) + \"：「\" + 稱呼 + \"，嗨！」\"`。\n- `void resetStats()`：將 `speakCount` 歸 `0` 並將 `lastListener` 重設為 `null`。",
+      "goal": "修復 `Mascot` 中的 `nameLength()`、`greet(String user)` 與 `resetStats()`，使其在各種邊界輸入下都維持正確的回傳值與物件狀態。",
+      "instructions": "三個方法須符合以下行為規格：\n- `int nameLength()`：回傳 `this.name` 的字元長度；若 `this.name == null`，回傳 `0`。\n- `String greet(String user)`：若 `user` 為 `null` 或去掉前後空白後為空，稱呼改用 `\"新同學\"`，否則用 `user.trim()`；更新物件本身的 `lastListener` 為這個稱呼、將 `speakCount` 加 `1`，並回傳 `(this.name == null ? \"未命名\" : this.name) + \"：「\" + 稱呼 + \"，嗨！」\"`。\n- `void resetStats()`：將物件的統計狀態重設回初始值（`speakCount` 歸 `0`、`lastListener` 重設為 `null`）。",
       "expectedShape": "int nameLength() {\n    …\n}\n\nString greet(String user) {\n    …\n}\n\nvoid resetStats() {\n    …\n}",
       "check": {
         "type": "values",

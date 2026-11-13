@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "button",
+      "id": "button-v2",
       "title": "定下元件契約與按鈕",
       "goal": "定義畫面元件契約 `interface Drawable`，包含兩個方法：\n- `String render(int maxWidth);`（依最大寬度繪製單行字串）\n- `boolean isReady();`（回傳元件是否處於可用或完成狀態）\n\n再寫 `class Button implements Drawable`，建構子為 `Button(String label, boolean enabled)`，規則如下：\n1. 將 `label` 視為文字（若為 `null` 當成 `\"\"`，再做 `trim()` 去掉前後空白）。\n2. `isReady()`：只有當 `enabled` 為 `true` 且清理後的 `label` 非空字串時才回傳 `true`，否則回傳 `false`。\n3. `render(int maxWidth)`：\n   - 若 `maxWidth < 5`（連外框 `\"[ \"`、`\" ]\"` 加 1 個字都放不下），直接回傳 `\"\"`。\n   - 若清理後的 `label` 為空，顯示基礎字樣改為 `\"按鈕\"`。\n   - 若 `!enabled`，顯示文字加上 `\"(停用)\"`；否則為基礎字樣。\n   - 內容區可用寬度為 `cap = maxWidth - 4`：若顯示文字長度超過 `cap`，當 `cap >= 2` 時保留前 `cap - 1` 字再接 `\"…\"`，當 `cap == 1` 時取第 1 個字。\n   - 最後回傳 `\"[ \" + 顯示內容 + \" ]\"`。",
       "instructions": "`interface` 只宣告方法簽章（名稱、參數與回傳型別），不寫大括號；實作類別寫 `implements Drawable`，並將介面裡的方法宣告為 `public`。\n\n處理文字邊界時先檢查 `null`，再 `trim()`。截斷字串可用 `substring(0, len)`，例如 `\"開始學習\".substring(0, 2)` 是 `\"開始\"`。注意 `\"…\"` 是全形單一刪節號字元（長度為 1），可從目標複製。",
@@ -34,7 +34,7 @@
       "afterText": ""
     },
     {
-      "id": "bar",
+      "id": "bar-v2",
       "title": "進度條的百分比與寬度",
       "goal": "保留 `Drawable` 與 `Button`，新增 `class ProgressBar implements Drawable`，建構子為 `ProgressBar(int done, int total)`：\n1. 建構時做數值邊界保護：若 `total <= 0`，將 `done` 與 `total` 都記為 `0`；否則將 `done` 限制在 `0` 到 `total` 之間（小於 `0` 視為 `0`，大於 `total` 視為 `total`）。\n2. `isReady()`：當 `total > 0` 且夾限後的 `done == total`（進度 100%）時回傳 `true`，否則回傳 `false`。\n3. `render(int maxWidth)`：\n   - 若 `maxWidth <= 0`，回傳 `\"\"`。\n   - 計算整數百分比 `pct`：`total <= 0 ? 0 : (done * 100) / total`，後綴字串為 `\" \" + pct + \"%\"`。\n   - 進度格寬度 `barWidth = maxWidth - suffix.length()`。若 `barWidth <= 0`（連 1 格都畫不下），若 `maxWidth >= (pct + \"%\").length()` 則只回傳 `pct + \"%\"`，否則回傳 `\"\"`。\n   - 若 `barWidth > 0`，實心格數 `filled = total <= 0 ? 0 : (done * barWidth) / total`，空心格數 `empty = barWidth - filled`，回傳 `\"■\".repeat(filled) + \"□\".repeat(empty) + suffix`。",
       "instructions": "`\"■\".repeat(n)` 與 `\"□\".repeat(n)` 可重複字元（`n == 0` 時回傳空字串）。\n\n注意先乘再除才不會在整數除法裡提早歸零：例如 `(done * barWidth) / total`，若寫成 `(done / total) * barWidth` 會因為整數除法先變成 `0`。",

@@ -22,24 +22,24 @@
       "afterText": "二弘（心想）：「⋯⋯這樣她應該看得懂。應該。」"
     },
     {
-      "id": "box",
-      "title": "盒子與加減",
-      "goal": "建立一個 `String box = \"扭蛋\";`，並利用題目的 `count` 印出兩行（以 `count` 為 7 為例）：\n`扭蛋有 7 個`\n`扭蛋加 1 個是 8 個`",
-      "instructions": "`+` 號遇到兩邊都是整數時會相加；只要碰到字串，就會由左往右變成文字串接。因此 `box + \"加 1 個是 \" + count + 1` 會把數字一個接一個串成 `71`。\n\n想先算出數字加法再串進句子，記得加上括號 `(count + 1)`，或是先存進另一個 `int` 變數。",
-      "expectedShape": "// …\nString box = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
+      "id": "box-add",
+      "title": "盒子與數量更新",
+      "goal": "建立 `String box = \"扭蛋\";` 與 `int total = count + 1;`，再利用它們印出兩行（以 `count` 為 7 為例）：\n`扭蛋有 7 個`\n`扭蛋加 1 個共有 8 個`",
+      "instructions": "`String` 用來裝文字、`int` 用來裝整數。先用 `int total = count + 1;` 把相加後的數量存進新的盒子，再用 `+` 把 `box`、`count` 與 `total` 串進兩行輸出句子裡。",
+      "expectedShape": "// …\nString box = \"…\";\nint total = …;\nSystem.out.println(…);\nSystem.out.println(…);",
       "check": {
         "type": "output",
-        "exprs": ["box"],
+        "exprs": ["box", "total"],
         "variants": [ { "count": "3" }, { "count": "12" } ]
       },
       "hints": {
-        "lead": "字串串接由左往右執行，數字加法需要先用括號包住或先算完。",
-        "plain": "第一行印 `box + \"有 \" + count + \" 個\"`；第二行印 `box + \"加 1 個是 \" + (count + 1) + \" 個\"`。注意數字前後的空白也要放進引號裡。"
+        "lead": "先算好 `int total = count + 1;`，再各自用 `+` 串接進句子。",
+        "plain": "第一行印 `box + \"有 \" + count + \" 個\"`；第二行印 `box + \"加 1 個共有 \" + total + \" 個\"`。注意數字前後的空白也要放進引號裡。"
       },
       "afterText": "二弘（心想）：「扭蛋只是剛好想到的例子。跟她的書包沒有關係。」"
     },
     {
-      "id": "gacha",
+      "id": "gacha-order",
       "title": "覆寫的順序",
       "goal": "建立 `int gacha = count;` 與 `int before = gacha;`。\n\n先讓 `gacha` 增加 1，印出 `原本 X 個，抽一次變 Y 個`（`X` 為 `before`，`Y` 為目前的 `gacha`）；\n接著再讓 `gacha` 增加 2，印出 `又抽兩次變 Z 個`（`Z` 為最後的 `gacha`）。",
       "instructions": "程式由上往下執行，`=` 會先算出右邊的結果，再把新值覆寫進左邊的變數。\n\n因此 `before = gacha` 必須寫在改動 `gacha` **之前**，才能留住原本的數字；改動 `gacha` 時只要寫 `gacha = gacha + 1;`，不可再加 `int`。",

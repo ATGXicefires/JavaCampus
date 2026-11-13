@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "list",
+      "id": "list-v2",
       "title": "會變長的清單與清理去重",
       "goal": "在 `Main` 中實作 `public static ArrayList<String> cleanScreens(ArrayList<String> raw)`，清理畫面清單中的無效與重複項目，並在 `main` 印出 `共 4 個畫面`。\n\n`cleanScreens` 規則：\n- 若 `raw` 為 `null`，回傳空清單 `new ArrayList<>()`。\n- 走過 `raw` 中的每個元素：忽略 `null` 與空白字串（`isBlank()`）。\n- 有效名稱先去掉前後空白（`trim()`）；若尚未加入結果清單，才 `add` 進去（維持原本出現順序、不重複）。",
       "instructions": "`ArrayList` 是會變長的清單，必須在檔案最上面寫 `import java.util.ArrayList;` 才能使用。\n\n利用 `result.contains(name)` 可以判斷清單裡是否已經有這個名稱。記得先檢查元素是不是 `null`，再去呼叫 `isBlank()` 與 `trim()`。`main` 中的原始資料會含空白與重複名稱，清理後再用 `.size()` 印出數量。",
@@ -30,7 +30,7 @@
       "afterText": ""
     },
     {
-      "id": "each",
+      "id": "each-v2",
       "title": "for-each 走訪與關鍵字篩選",
       "goal": "在 `共 4 個畫面` 下面依序印出每個畫面，並實作 `public static ArrayList<String> filterByKeyword(ArrayList<String> screens, String keyword)`：\n`- 首頁`\n`- 課程列表`\n`- 答題`\n`- 成績`\n`符合「答」：1 個`\n\n`filterByKeyword` 規則：\n- 若 `screens` 為 `null`，回傳空清單。\n- 走過 `screens`，忽略 `null` 與空白字串（將有效名稱 `trim()`）。\n- 若 `keyword` 為 `null` 或空白，回傳所有有效名稱；否則只留下包含 `keyword.trim()`（`contains(...)`）的名稱，維持原順序。",
       "instructions": "使用增強型 `for-each`：`for (String s : screens)` 走過 `screens` 的每一個項目，依序印出 `- <畫面名稱>`。\n\n在 `filterByKeyword` 中一樣可以用 `for-each` 逐一檢查。注意 `keyword` 可能是 `null` 或前後帶空白，要先安全檢查再比對。",
@@ -54,7 +54,7 @@
       "afterText": ""
     },
     {
-      "id": "taps",
+      "id": "taps-v2",
       "title": "泛型 Integer 門檻統計",
       "goal": "在 `Main` 裡實作兩個統計方法，計算達到門檻的熱門畫面數與總有效點擊數：\n1. `public static int countHotScreens(ArrayList<Integer> taps, int threshold)`：\n   - 統計 `taps` 中大於等於 `threshold` 且非負的有效點擊筆數（若 `taps` 為 `null` 回傳 `0`；忽略 `null` 元素與小於 `0` 的異常負值）。\n2. `public static int totalValidTaps(ArrayList<Integer> taps)`：\n   - 使用 `for-each` 加總 `taps` 中所有大於等於 `0` 的有效點擊次數（若 `taps` 為 `null` 回傳 `0`；忽略 `null` 元素與負值）。",
       "instructions": "角括號裡只能放類別，所以裝整數的清單要寫成 `ArrayList<Integer>`，不能寫 `ArrayList<int>`。\n\n用 `for (Integer t : taps)` 走訪時，建議先用 `Integer` 接住元素並檢查 `t != null && t >= 0`，避免在清單內含 `null` 時自動拆箱成 `int` 而發生 `NullPointerException`！",

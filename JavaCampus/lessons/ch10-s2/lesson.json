@@ -7,7 +7,7 @@
   "vars": [],
   "steps": [
     {
-      "id": "integer",
+      "id": "integer-v2",
       "title": "int 放不進去與平均除錯",
       "goal": "修正泛型型別與平均計算的錯誤，讓 `scores` 裝入 `72`、`58`、`68`、`82`，並印出 `及格平均：74.0`。\n\n修正規則：\n1. 將 `ArrayList<int>` 改為 `ArrayList<Integer>`。\n2. 修好 `public static double passAverage(ArrayList<Integer> scores)`：\n   - 計算清單中所有非 `null` 且大於等於 `60` 分的及格分數平均。\n   - 必須回傳精確的 `double` 平均（不可用整數除法捨去小數）。\n   - 若 `scores` 為 `null`、空清單或沒有任何及格分數（`count == 0`），必須回傳 `0.0`，不可除以零崩潰。",
       "instructions": "泛型的角括號裡只能放類別，`int` 不是類別，要改用包裝類別 `Integer`。\n\n另外，原本 `passAverage` 裡直接寫 `sum / count` 會發生整數除法截斷小數，而且在沒有及格分數時會拋出除以零的例外，請先檢查 `count == 0` 再用 `(double) sum / count` 計算。",
@@ -32,7 +32,7 @@
       "afterText": ""
     },
     {
-      "id": "raw",
+      "id": "raw-v2",
       "title": "原始型別隱患與迴圈移除跳項除錯",
       "goal": "同時修好「原始型別轉型錯誤」與「迴圈刪元素跳項 Bug」，讓 `main` 執行後印出：\n`及格平均：74.0`\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n修正規則：\n1. 將沒寫泛型的原始清單 `ArrayList names = new ArrayList();` 改為 `ArrayList<String> names = new ArrayList<>();`，並移除誤混入清單的整數 `72`。\n2. 修好 `public static ArrayList<String> removeBlank(ArrayList<String> list)`：\n   - 若 `list` 為 `null`，回傳空清單 `new ArrayList<>()`。\n   - 從 `list` 中移除所有為 `null` 或空白字串（`isBlank()`）的元素，最後回傳 `list`。\n   - 必須解決正向 `for` 迴圈一邊 `remove(i)` 一邊 `i++` 導致**相鄰空白會被跳過**的索引位移 Bug。",
       "instructions": "沒寫角括號的原始型別 `ArrayList` 什麼都塞得進去，`72` 混進名字清單時編譯不會擋，執行做 `(String)` 轉型才會當場崩潰。改寫成 `ArrayList<String>` 就能讓編譯器把關。\n\n在 `removeBlank` 中，從索引 `0` 往後刪除時，一旦刪掉第 `i` 個，後面的元素會全部往前補一格，接著 `i++` 就會跳過原本的第 `i + 1` 個！改用**倒序迴圈**（從 `list.size() - 1` 往 `0` 刪）、`Iterator` 或 `removeIf`，並記得先檢查 `item == null || item.isBlank()`。",
@@ -55,7 +55,7 @@
       "afterText": ""
     },
     {
-      "id": "total",
+      "id": "total-v2",
       "title": "泛型 for-each 過濾累加",
       "goal": "在 `Main` 裡寫兩個使用 `for-each` 的泛型整數加總方法：\n1. `public static int total(ArrayList<Integer> list)`：\n   - 走訪 `list` 並加總所有非 `null` 的整數（若 `list` 為 `null` 回傳 `0`）。\n2. `public static int sumAbove(ArrayList<Integer> list, int minScore)`：\n   - 走訪 `list` 並加總所有非 `null` 且大於等於 `minScore` 的整數（若 `list` 為 `null` 回傳 `0`）。",
       "instructions": "使用 `for (Integer n : list)` 走訪 `ArrayList<Integer>`，在累加前先檢查 `n != null`，避免清單內出現 `null` 時自動拆箱拋出 `NullPointerException`。\n\n這一步只檢查 `total` 與 `sumAbove` 的回傳值，`main` 原本的內容保留即可。",

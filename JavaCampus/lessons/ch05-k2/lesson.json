@@ -12,7 +12,7 @@
   ],
   "steps": [
     {
-      "id": "days",
+      "id": "days-v2",
       "title": "扣掉花費要存幾天",
       "goal": "目標金額是 `price` 元，你原本已經存了 `start` 元。每天存入 `earn` 元、同時花掉 `cost` 元，也就是每天淨成長 `earn - cost` 元。\n\n算出需要幾天才能存到至少 `price` 元（剛好等於也算夠），把天數存進 `days`：\n- 如果一開始就已經達標（`start >= price`），需要 `0` 天。\n- 如果還沒達標，而且每天淨成長 `<= 0`（永遠存不到目標），直接把 `days` 設為 `-1`，不要跑無窮迴圈。\n- 其餘情況，用 `while` 一天一天累加直到達標。",
       "instructions": "編輯器最上面四行 `price`、`start`、`earn`、`cost` 是題目先寫好的。\n\n現實生活中存錢不是只進不出：每天存的 `earn` 扣掉花費 `cost` 才是淨成長。要是每天存入還不夠抵銷花費（`earn - cost <= 0`），錢不會變多甚至變少，如果傻傻寫 `while (saved < price)` 就會卡成無窮迴圈。\n\n因此要用判斷式先把不可能達成的情況擋掉：先確認是不是「還沒達標且淨成長 `<= 0`」，是的話直接令 `days = -1`；否則再用 `while (saved < price)` 一天一天模擬存錢（每次加上 `earn - cost` 並讓 `days++`）。",
@@ -37,7 +37,7 @@
       "afterText": ""
     },
     {
-      "id": "method",
+      "id": "method-v2",
       "title": "封裝方法與負數防呆",
       "goal": "寫一個方法 `static int daysToSave(int price, int start, int earn, int cost)`，依照以下優先順序回傳結果：\n1. 若任一參數小於 0（`price < 0 || start < 0 || earn < 0 || cost < 0`），代表資料有誤，交回 `-1`。\n2. 若一開始已達標（`start >= price`），交回 `0`。\n3. 若每天淨成長 `<= 0`（`earn - cost <= 0`），永遠存不到，交回 `-1`。\n4. 其餘情況，用 `while` 一天一天存直到 `saved >= price`，交回天數。",
       "instructions": "把上一步的模擬邏輯包成方法，並且多加一層參數合法性檢查。注意判斷順序很重要：例如 `daysToSave(50, 80, 10, 20)`，雖然每日淨成長是負的，但因為起始已經有 80 元早就買得起了，所以要先判 `start >= price` 交回 `0`，不能誤判成 `-1`。\n\n目標 `price` 為 `0`、起始 `start` 為 `0` 時，也算已經達標，交回 `0`。",
