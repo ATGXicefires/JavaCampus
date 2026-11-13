@@ -25,7 +25,7 @@
       "goal": "`percent(1, 4)` 要交回 `25`：`part` 是 1、`whole` 是 4，1 占 4 的 25%。\n\n寫一個方法 `static int percent(int part, int whole)`，交回 `part` 占 `whole` 的百分之幾，用整數算，小數直接捨去；`whole` 是 0 時不能除，交回 0。",
       "instructions": "先乘 100 再除，答案才不會被整數除法吃掉：`3 / 8 * 100` 是 0，`3 * 100 / 8` 才是 37。\n\n`whole` 是 0 時，整數除以 0 會跌倒。除之前先檢查，是 0 就直接 `return 0;`：`return` 一執行，方法就結束了，後面的程式不會再跑。",
       "expectedShape": "static int percent(int part, int whole) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["percent(1, 4)", "percent(2, 3)", "percent(0, 0)"] },
+      "check": { "type": "values", "exprs": ["percent(1, 4)", "percent(2, 3)", "percent(0, 5)", "percent(0, 0)"] },
       "hints": {
         "lead": "除數為 0 時先 `return`，避免 `ArithmeticException`⋯⋯",
         "plain": "⋯⋯白話：先檢查 `whole` 是不是 0，是的話直接交回 0。不是的話，先乘 100 再除。"
@@ -37,8 +37,8 @@
       "title": "她問為什麼",
       "goal": "`report(1, 4)` 要印出 `完成 25%`，`report(3, 4)` 要印出 `完成 75%`。\n\n寫一個方法 `static void report(int part, int whole)`（`void`：做完事，什麼都不交回），用 `percent` 算出百分比再印出來。寫好後呼叫 `report(1, 4)` 和 `report(3, 4)`，共印兩行。",
       "instructions": "`report` 不用自己算百分比：在方法裡呼叫 `percent(part, whole)`，拿它交回的數字排成一句話印出來。",
-      "expectedShape": "static void report(int part, int whole) {\n    System.out.println(…);\n}\n\nreport(1, 4);\nreport(3, 4);",
-      "check": { "type": "output", "exprs": ["report(1, 2)"] },
+      "expectedShape": "static void report(int part, int whole) {\n    …\n}\n\nreport(…);\nreport(…);",
+      "check": { "type": "output", "exprs": ["report(1, 2)", "report(0, 0)"], "uses": ["percent("] },
       "hints": {
         "lead": "`void` 方法沒有回傳值，只負責輸出⋯⋯",
         "plain": "⋯⋯白話：交回來的值可以再拿去用，印出來的就只能看。`report` 用 `percent` 交回的數字，排成一句話印出來。"

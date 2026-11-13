@@ -16,7 +16,8 @@
       "expectedShape": "System.out.println(scores[…]);\nSystem.out.println(scores[…]);",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{90, 85}" }, { "scores": "{60}" } ]
+        "variants": [ { "scores": "{90, 85}" }, { "scores": "{60}" } ],
+        "uses": ["scores.length"]
       },
       "hints": {
         "lead": "第一格是 0 號。",
@@ -33,7 +34,8 @@
       "check": {
         "type": "values",
         "exprs": ["sum"],
-        "variants": [ { "scores": "{90, 85}" } ]
+        "variants": [ { "scores": "{90, 85}" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "i 就是格子的編號。",

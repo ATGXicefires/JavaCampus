@@ -12,7 +12,7 @@
       "goal": "`bar(3, 5)` 要交回 `■■■□□`：`done` 是完成的課數 3，`total` 是總課數 5。\n\n寫一個方法 `static String bar(int done, int total)`：完成的每課一個 `■`，剩下的每課一個 `□`，接成一條進度條交回來。重複的部分用 `repeat`（把字串重複幾次）。",
       "instructions": "字串會做一些自己的事，在字串後面接 `.` 叫出來。`.repeat(次數)` 會交回重複那麼多次的新字串：`\"哈\".repeat(3)` 是 `哈哈哈`，`\"哈\".repeat(0)` 是什麼都沒有的空字串。\n\n剩下的課數是總課數減掉完成的課數。兩段用 `+` 接起來，再用 `return` 交回。`■` 和 `□` 可以從這裡複製。",
       "expectedShape": "static String bar(int done, int total) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["bar(3, 5)", "bar(0, 4)", "bar(4, 4)"] },
+      "check": { "type": "values", "exprs": ["bar(3, 5)", "bar(0, 4)", "bar(4, 4)"], "uses": [".repeat("] },
       "hints": {
         "lead": "repeat 幾次，就有幾格。",
         "plain": "`\"■\".repeat(done)` 是完成的部分，`\"□\".repeat(total - done)` 是還沒完成的部分，兩段用 `+` 接起來就是整條進度條。"
@@ -24,8 +24,8 @@
       "title": "加上數字",
       "goal": "`progress(3, 5)` 要交回 `■■■□□ 3/5`：進度條、一個空格，再接上 `done`、`/`、`total`。\n\n寫一個方法 `static String progress(int done, int total)` 交回這一串；進度條呼叫上一步寫的 `bar` 來做。",
       "instructions": "方法裡也可以呼叫別的方法。不用再寫一次進度條：呼叫 `bar`，把 `done` 和 `total` 照順序交給它，它交回的進度條就能直接用 `+` 接上後面的字。",
-      "expectedShape": "static String progress(int done, int total) {\n    return bar(…) + …;\n}",
-      "check": { "type": "values", "exprs": ["progress(3, 5)", "progress(1, 2)"] },
+      "expectedShape": "static String progress(int done, int total) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["progress(3, 5)", "progress(1, 2)", "progress(0, 4)"], "uses": ["bar("] },
       "hints": {
         "lead": "方法裡也能叫方法。",
         "plain": "叫 `bar(done, total)` 拿到進度條那一段，再接上空格、`done`、`\"/\"`、`total`。`3/5` 要跟著參數變，不能直接寫成字。"
@@ -38,7 +38,7 @@
       "goal": "`underline(\"第 1 課\")` 要交回 `=====`：`title` 是 `第 1 課`，有 5 個字，空格也算一個字。\n\n寫一個方法 `static String underline(String title)`，交回和 `title` 一樣長的一串 `=`。字串有幾個字，用 `length()`（量長度）算。",
       "instructions": "在字串後面接 `.length()`，會交回它有幾個字，空格和標點也算：`\"小白！\".length()` 是 3。\n\n知道有幾個字以後，用前面用過的 `repeat` 讓 `=` 重複那麼多次。",
       "expectedShape": "static String underline(String title) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["underline(\"第 1 課\")", "underline(\"變數\")"] },
+      "check": { "type": "values", "exprs": ["underline(\"第 1 課\")", "underline(\"變數\")", "underline(\"\")"], "uses": [".length()", ".repeat("] },
       "hints": {
         "lead": "字串的長度是 length()。",
         "plain": "`title.length()` 是標題有幾個字，讓 `=` 重複那麼多次就好：`\"=\".repeat(title.length())`。"

@@ -29,7 +29,8 @@
       "expectedShape": "String s = \"梁亭瑄天才\";\nfor (…) {\n    s += \"…\";\n    System.out.println(s);\n}",
       "check": {
         "type": "output",
-        "variants": [ { "spins": "5" } ]
+        "variants": [ { "spins": "5" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "字串也能 +=。",

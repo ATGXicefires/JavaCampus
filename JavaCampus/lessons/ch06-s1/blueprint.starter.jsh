@@ -1,2 +1,5 @@
-// 範例：寫設計圖 class Gacha，欄位有 name 和 color
-// 再用 new 做出兩顆扭蛋，麻糬是白色、黑糖是咖啡色，各印一行
+class Gacha {
+    // 加上 String name 和 String color 兩個欄位
+}
+
+// 用 new 做出兩顆扭蛋：麻糬（白色）、黑糖（咖啡色），各印一行

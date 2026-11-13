@@ -13,7 +13,7 @@
       "instructions": "完整的 Java 程式從 `Main` 類別裡的 `main` 方法開始執行。class 外面只能寫 `import` 和類別，敘述都要放進方法裡。\n\n`public static void main(String[] args)` 這一行先照抄，一個字都不能少。",
       "expectedShape": "public class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["public class Main", "public static void main(String[] args)"] },
       "hints": {
         "lead": "頂層只允許型別宣告，敘述必須位於方法內⋯⋯",
         "plain": "⋯⋯白話：片段可以直接寫敘述，完整的程式不行。全部包進 `main`，程式就知道從哪裡開始跑。"
@@ -27,7 +27,7 @@
       "instructions": "程式變大以後，一個類別放一個檔案：`Checker` 放在 `Checker.java`，`Question` 放在 `Question.java`。寫了 `public` 的類別，名字一定要和檔名一樣。\n\n同一個名字的類別，整個程式只能有一個。同一個程式裡的檔案互相叫得到，`Main` 不用 `import`，就能直接用 `Question`。",
       "expectedShape": "// Main.java\npublic class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["public interface Checker", "public class Question implements Checker", ".check("] },
       "hints": {
         "lead": "同一專案內型別名稱不得重複宣告⋯⋯",
         "plain": "⋯⋯白話：搬到新分頁的類別，舊的那份要刪掉。`Main` 不用 import，就叫得到同一個程式裡其他檔案的類別。"

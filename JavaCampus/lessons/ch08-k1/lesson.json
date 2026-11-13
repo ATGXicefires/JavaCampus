@@ -25,7 +25,7 @@
       "goal": "`new MyPlan().hobby()` 要交回 `畫畫不只是興趣`，`new MyPlan().future()` 還是爸媽的 `學一技之長，找一份穩定的工作`。\n\n在 `MyPlan` 裡覆寫 `String hobby()`（寫一個同名、同參數的方法，換成自己的版本），交回自己的這一句；`future()` 不動。",
       "instructions": "同名、同參數，就是名字一模一樣，括號裡的參數也一樣：`hobby()` 沒有參數，覆寫的也不能有。\n\n例如 `Dog` 的 `String bark()` 交回 `汪`，`Puppy extends Dog` 也寫一個 `String bark()` 交回 `嗚汪`：`new Puppy().bark()` 是 `嗚汪`，`new Dog().bark()` 還是 `汪`。",
       "expectedShape": "class MyPlan extends ParentsPlan {\n    String hobby() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new MyPlan().hobby()", "new MyPlan().future()"] },
+      "check": { "type": "values", "exprs": ["new MyPlan().hobby()", "new MyPlan().future()", "new ParentsPlan().hobby()"], "uses": ["class MyPlan extends ParentsPlan"] },
       "hints": {
         "lead": "同名的方法，換成自己的版本。",
         "plain": "抄來的計畫，想改哪一行就重寫那一行。`MyPlan` 自己寫了 `hobby()`，就用自己的；沒寫的 `future()`，照樣用爸媽的。"

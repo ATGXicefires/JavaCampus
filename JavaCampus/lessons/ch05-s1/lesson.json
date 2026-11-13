@@ -24,8 +24,8 @@
       "title": "百年不閏",
       "goal": "現在的 `isLeap(1900)` 會交回 `true`，但 1900 年不是閏年，要交回 `false`。改好後，`isLeap(2000)` 要交回 `true`，`isLeap(2024)` 還是 `true`。\n\n修改 `isLeap` 的 `return` 那一行，加上規則：能被 100 整除的不是閏年，但能被 400 整除的又是。條件用 `&&`（而且）和 `||`（或者）組起來。",
       "instructions": "`a && b` 是「而且」：兩邊都成立，答案才是 `true`。`a || b` 是「或者」：有一邊成立，答案就是 `true`。例如 `day == 6 || day == 7` 是「星期六或星期日」。\n\n「不能被 100 整除」就是除以 100 的餘數不是 0；「不等於」寫成 `!=`。\n\n`&&` 和 `||` 寫在同一行時，`&&` 會先算，就像乘法比加法先算。",
-      "expectedShape": "return … && … || …;",
-      "check": { "type": "values", "exprs": ["isLeap(1900)", "isLeap(2000)", "isLeap(2100)", "isLeap(2024)"] },
+      "expectedShape": "static boolean isLeap(int year) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["isLeap(1900)", "isLeap(2000)", "isLeap(2100)", "isLeap(2400)", "isLeap(2024)", "isLeap(2023)"] },
       "hints": {
         "lead": "四年一閏、百年不閏、四百年再閏：用 `&&`、`||` 組合條件⋯⋯",
         "plain": "⋯⋯白話：「能被 4 整除，而且不能被 100 整除」，或者「能被 400 整除」。前半用 `&&`，兩半之間用 `||`。"

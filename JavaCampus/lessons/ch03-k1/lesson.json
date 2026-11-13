@@ -34,7 +34,8 @@
       "expectedShape": "if (avg … 60) {\n    System.out.println(\"及格\");\n} else {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "total": "250" }, { "total": "300" }, { "total": "0" }, { "total": "298" } ]
+        "variants": [ { "total": "250" }, { "total": "300" }, { "total": "0" }, { "total": "298" } ],
+        "uses": ["if", "else"]
       },
       "hints": {
         "lead": "60 以上，包含 60。",
@@ -50,7 +51,8 @@
       "expectedShape": "for (int i = days; …; i--) {\n    System.out.println(\"段考倒數 \" + i + \" 天\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "days": "3" } ]
+        "variants": [ { "days": "3" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "倒數用 i--。",

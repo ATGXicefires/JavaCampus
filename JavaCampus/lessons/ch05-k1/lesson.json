@@ -24,8 +24,8 @@
       "title": "不合理的分數",
       "goal": "`isValid(100)` 要交回 `true`，`isValid(101)` 要交回 `false`：剛好 0 或 100 分都還算合理。\n\n寫一個方法 `static boolean isValid(int score)`：`score` 在 0 到 100 之間交回 `true`；小於 0 或大於 100 是打錯了，交回 `false`。兩個條件都要成立，用 `&&`（而且）接起來。",
       "instructions": "合理的分數要同時滿足兩個條件：不小於 0，也不大於 100。\n\n`a && b` 要 `a` 和 `b` 兩邊都是 `true`，答案才是 `true`；只要有一邊是 `false`，答案就是 `false`。例如 `temp >= 20 && temp <= 28` 是在問「溫度在 20 到 28 度之間嗎？」：`temp` 是 25 時是 `true`，是 30 時是 `false`。",
-      "expectedShape": "static boolean isValid(int score) {\n    return … && …;\n}",
-      "check": { "type": "values", "exprs": ["isValid(-1)", "isValid(0)", "isValid(100)", "isValid(101)"] },
+      "expectedShape": "static boolean isValid(int score) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["isValid(-1)", "isValid(0)", "isValid(60)", "isValid(100)", "isValid(101)"], "uses": ["&&"] },
       "hints": {
         "lead": "兩個條件都要成立用 &&。",
         "plain": "合理的分數要「大於等於 0」**而且**「小於等於 100」。`&&` 就是「而且」：兩邊都成立，答案才是 `true`。"
@@ -37,8 +37,8 @@
       "title": "提早交回",
       "goal": "`judge(-5)` 要交回 `分數打錯了`，`judge(60)` 要交回 `及格`，`judge(59)` 要交回 `不及格`。\n\n寫一個方法 `static String judge(int score)`：分數不合理（`isValid` 交回 `false`）就馬上交回 `分數打錯了`；合理的話，再用 `isPass` 決定交回 `及格` 還是 `不及格`。`return` 一執行，方法就結束了。",
       "instructions": "先把不合理的分數擋掉，一碰到就 `return`，這叫提早 `return`。走得到下面的，一定是合理的分數，接下來只要分及格和不及格。\n\n`!` 會把答案反過來，例如 `isPass(50)` 是 `false`，`!isPass(50)` 就是 `true`。",
-      "expectedShape": "static String judge(int score) {\n    if (…) {\n        return \"分數打錯了\";\n    }\n    …\n}",
-      "check": { "type": "values", "exprs": ["judge(-5)", "judge(101)", "judge(60)", "judge(59)"] },
+      "expectedShape": "static String judge(int score) {\n    …\n}",
+      "check": { "type": "values", "exprs": ["judge(-5)", "judge(0)", "judge(59)", "judge(60)", "judge(100)", "judge(101)"], "uses": ["isValid(", "isPass("] },
       "hints": {
         "lead": "不合理的先擋掉。",
         "plain": "`return` 一執行，方法就結束了。所以先問「分數合不合理」，不合理就馬上交回 `分數打錯了`；走得到下面的，一定是合理的分數。`!` 是把答案反過來。"

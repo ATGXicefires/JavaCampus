@@ -11,8 +11,8 @@
       "title": "露錯字了",
       "goal": "`hint(answer)` 該只露出答案的第一個字，其他每個字換成一個 `＿`。修好後，`hint(\"吃滷肉飯\")` 要交回 `吃＿＿＿`，`hint(\"滷\")` 要交回 `滷`。\n\n現在 `hint(\"吃滷肉飯\")` 交回的卻是 `滷＿＿＿＿`：露出的是第二個字，`＿` 也多了一個；只有一個字的答案還會跌倒。",
       "instructions": "`substring(開始, 結束)` 從編號「開始」那個字，切到編號「結束」那個字之前，編號從 0 開始：`\"小白貓\".substring(1, 3)` 是 `白貓`。\n\n`\"＿\".repeat(3)` 會把 `＿` 重複 3 次，交回 `＿＿＿`。",
-      "expectedShape": "return answer.substring(…) + \"＿\".repeat(…);",
-      "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")", "hint(\"滷\")"] },
+      "expectedShape": "static String hint(String answer) {\n    return …;\n}",
+      "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")", "hint(\"滷\")"], "uses": [".substring(", ".repeat("] },
       "hints": {
         "lead": "`substring(beginIndex, endIndex)`：索引從 0 起算，不含 endIndex⋯⋯",
         "plain": "⋯⋯白話：`substring(1, 2)` 切到的是第二個字，第一個字是 `substring(0, 1)`。後面的格數要扣掉露出來的那個字：`answer.length() - 1`。"

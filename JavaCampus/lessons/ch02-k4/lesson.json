@@ -51,7 +51,8 @@
       "expectedShape": "if (…) {\n    System.out.println(\"…\");\n} else {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "perDay": "1" } ]
+        "variants": [ { "perDay": "1" } ],
+        "uses": ["if", "else"]
       },
       "hints": {
         "lead": "if 的括號裡放 tooMany。",

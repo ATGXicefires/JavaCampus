@@ -11,9 +11,9 @@
       "title": "上學期的",
       "goal": "修好後要依序印出五行：\n`小白學程式 v0.99`\n`總共 7 個貼紙`\n`總分：195`\n`答對了`\n`及格`\n\n起始碼是學妹最後一版的程式，藏著第一章到第五章踩過的五個錯：有的會出紅字，有的會印錯。一個一個修好。",
       "instructions": "一次修一個：紅字先修，修到能跑，再對照目標的五行找剩下的。",
-      "expectedShape": "System.out.println(\"總共 \" + (…) + \" 個貼紙\");\nfor (int i = 0; i < …; i++) {\n…\nif (typed.equals(…)) {\n…\nif (score >= 60) {",
+      "expectedShape": "// Main.java（檢查這五處）\nSystem.out.println(\"小白學程式 v0.99\"…\nSystem.out.println(\"總共 \" + …);\nfor (int i = 0; …; i++) { … }\nif (…) { System.out.println(\"答對了\"); }\nif (…) { System.out.println(\"及格\"); }",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["< scores.length", ".equals(", ">= 60"] },
       "hints": {
         "lead": "編譯錯誤、執行期例外、邏輯錯誤依序排除⋯⋯",
         "plain": "⋯⋯白話：五個錯分別是第一章到第五章踩過的坑：分號、字串接數字、陣列的最後一格、字串比內容、剛好 60 分。"
@@ -25,9 +25,9 @@
       "title": "下學期的",
       "goal": "修好後，上學期那五行下面要接著印出四行：\n`true`\n`true`\n`完成 1 章`\n`★ 完成`\n\n這一版多了下學期寫的類別，又藏了第六章到第九章的四個錯，現在跑起來是紅字。一個一個修好。",
       "instructions": "四個錯分散在幾個分頁裡，上學期那五行照樣印在最前面。",
-      "expectedShape": "this.answer = answer;\n…\n@Override\nboolean check(String typed) {\n…\npublic void draw() {\n…\np.finish();",
+      "expectedShape": "// Question.java：建構子欄位指派\nQuestion(String text, String answer) { … }\n\n// FillQuestion.java：覆寫檢查方法\nclass FillQuestion extends Question { … }\n\n// Main.java：透過公開方法更新 Progress\nProgress p = new Progress();\n…\n\n// Badge.java：實作 Drawable 的方法\nclass Badge implements Drawable { … }",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["this.answer = answer;", "private int done;", "p.finish();", "public void draw()"] },
       "hints": {
         "lead": "`this`、封裝、覆寫、介面實作的常見錯誤⋯⋯",
         "plain": "⋯⋯白話：第六章到第九章的坑：參數蓋住欄位、`private` 從外面碰不到、名字打錯就沒覆寫到、介面的方法要寫 `public`。"
@@ -41,7 +41,7 @@
       "instructions": "這一步只看 `total` 交回的數，`main` 不用改。",
       "expectedShape": "static int total(ArrayList<…> list) {\n    …\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))"] },
+      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))", "Main.total(new java.util.ArrayList<>())", "Main.total(new java.util.ArrayList<>(java.util.List.of(10, 20, 30, 40)))"], "uses": ["ArrayList<Integer>"] },
       "hints": {
         "lead": "型別參數不可為基本型別⋯⋯",
         "plain": "⋯⋯白話：角括號裡只能放類別，`int` 要寫成 `Integer`。"

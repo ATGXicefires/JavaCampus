@@ -11,9 +11,9 @@
       "title": "兩張清單",
       "goal": "`screens` 裡有 4 個畫面，`features` 裡有 5 個功能，要印出 `畫面 4 個，功能 5 個`。\n\n起始碼已經準備好這兩張清單：`screens` 是 App 的畫面，`features` 是 `Features.java` 交回的後端功能。用兩張清單的 `size()`（有幾個）印出這一行。",
       "instructions": "`Features.java` 是寫好的後端，不用改：`Features.list()` 會交回一張清單，裡面是做好的功能。\n\n`size()` 交回清單裡有幾個。兩個數字都用 `size()` 算，清單變長，數字也會跟著變。",
-      "expectedShape": "System.out.println(\"畫面 \" + screens.size() + \" 個，功能 \" + … + \" 個\");",
+      "expectedShape": "System.out.println(\"畫面 \" + … + \" 個，功能 \" + … + \" 個\");",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": ["screens.size()", "features.size()"] },
       "hints": {
         "lead": "兩張清單，各問一次 size()。",
         "plain": "`Features.list()` 交回後端做好的功能清單。兩張清單各自數一數，接成一句印出來。"
@@ -25,9 +25,9 @@
       "title": "對照表",
       "goal": "數量那一行下面，要印出 `成績：找不到「計分」`：`成績` 需要的功能是 `計分`，`features` 裡卻沒有。其他畫面需要的功能都找得到，不用印。\n\n起始碼多了對照表 `needs`，用畫面查出它需要的功能，例如 `needs.get(\"首頁\")` 是 `登入`。用 for-each 走過 `screens`，查出每個畫面需要的功能，不在 `features` 裡就照上面的樣子印一行。",
       "instructions": "`features.contains(…)` 問功能清單裡有沒有，交回 `true` 或 `false`。要找的是「沒有」的，前面加 `!`（不是）就會反過來。\n\n`：`、`「`、`」` 都是全形，可以從目標複製。",
-      "expectedShape": "for (String screen : screens) {\n    String need = needs.get(screen);\n    if (…) {\n        System.out.println(screen + \"：找不到「\" + need + \"」\");\n    }\n}",
+      "expectedShape": "for (String screen : screens) {\n    if (…) {\n        …\n    }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": { "type": "output", "uses": [": screens", ".get(", ".contains("] },
       "hints": {
         "lead": "查出需要的功能，再問有沒有。",
         "plain": "一個畫面一個畫面對：先在對照表查出它需要什麼功能，再去功能清單找。找不到的，就是等一下會出問題的地方。"
@@ -39,7 +39,7 @@
       "title": "寫成方法",
       "goal": "`needs` 裡是 `計分`、`提示`，`have` 裡是 `提示` 時，`missing(needs, have)` 交回 `[計分]`。\n\n在 `Main` 裡寫一個方法 `static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have)`，交回一張新的清單，裝著 `needs` 裡有、`have` 裡沒有的項目。",
       "instructions": "這裡的 `needs` 是方法的參數，是一張清單，和 `main` 裡的對照表 `needs` 沒有關係。\n\n先 `new` 一個空的清單，用 for-each 走過 `needs`，`have` 裡沒有的就 `add` 進去，最後交回這張清單。全部都找得到的話，交回的就是空的清單 `[]`。\n\n這一步只看 `missing` 交回什麼，`main` 不用改。",
-      "expectedShape": "static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have) {\n    ArrayList<String> out = new ArrayList<>();\n    for (…) {\n        …\n    }\n    return out;\n}",
+      "expectedShape": "static ArrayList<String> missing(ArrayList<String> needs, ArrayList<String> have) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
       "form": "program",
       "check": { "type": "values", "exprs": ["Main.missing(new java.util.ArrayList<>(java.util.List.of(\"計分\", \"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))", "Main.missing(new java.util.ArrayList<>(java.util.List.of(\"提示\")), new java.util.ArrayList<>(java.util.List.of(\"提示\")))", "Main.missing(new java.util.ArrayList<>(java.util.List.of(\"登入\", \"貼紙\", \"課程\")), new java.util.ArrayList<>(java.util.List.of(\"課程\")))"] },
       "hints": {

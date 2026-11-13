@@ -17,7 +17,8 @@
       "check": {
         "type": "values",
         "exprs": ["sum"],
-        "variants": [ { "scores": "{90, 85}" } ]
+        "variants": [ { "scores": "{90, 85}" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "`ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5`⋯⋯",
@@ -47,10 +48,11 @@
       "title": "等第全是 D",
       "goal": "`scores` 是 `{72, 58, 65, 80, 49}` 時，修好後要印出：\n`平均：64.8`\n`72 C`\n`58 F`\n`65 D`\n`80 B`\n`49 F`\n\n等第是 90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F，現在卻把 60 分以上全部印成 D，也沒有 A。",
       "instructions": "`else if` 是從上往下一個一個問，第一個成立的就做，後面的都不問了。例如 `temp` 是 33 時，先問 `temp >= 20` 就停在那裡，輪不到後面的 `temp >= 30`。\n\n每個分數一行的格式照舊，例如 `72 C`。",
-      "expectedShape": "if (s >= 90) {\n    System.out.println(s + \" A\");\n} else if (…) {\n    …\n}",
+      "expectedShape": "if (…) {\n    System.out.println(s + \" …\");\n} else if (…) {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{95, 85, 75, 65, 55}" }, { "scores": "{90, 89, 80, 79, 70, 69, 60, 59}" } ]
+        "variants": [ { "scores": "{95, 85, 75, 65, 55}" }, { "scores": "{90, 89, 80, 79, 70, 69, 60, 59}" } ],
+        "uses": ["for", "else if"]
       },
       "hints": {
         "lead": "`else if` 由上而下求值，第一個為真的分支執行完就跳出⋯⋯",

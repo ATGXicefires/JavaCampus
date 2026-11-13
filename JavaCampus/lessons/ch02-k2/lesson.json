@@ -16,7 +16,8 @@
       "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"…\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "times": "100" }, { "times": "1" } ]
+        "variants": [ { "times": "100" }, { "times": "1" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "要重複的，放進 for 的大括號。",
@@ -32,7 +33,8 @@
       "expectedShape": "for (int i = 1; i <= times; i++) {\n    System.out.println(\"第 \" + … + \" 遍：…\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "times": "100" } ]
+        "variants": [ { "times": "100" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "把 i 接進字串。",
@@ -49,7 +51,8 @@
       "check": {
         "type": "values",
         "exprs": ["total"],
-        "variants": [ { "times": "100" } ]
+        "variants": [ { "times": "100" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "每一圈加一次。",

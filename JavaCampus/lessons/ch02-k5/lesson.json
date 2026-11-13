@@ -50,7 +50,8 @@
       "expectedShape": "for (int i = 1; i <= slides; i++) {\n    System.out.println(\"第 \" + i + \" 張：\" + … + \" 秒\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "slides": "10" } ]
+        "variants": [ { "slides": "10" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "第 i 張前面講完了 i - 1 張。",

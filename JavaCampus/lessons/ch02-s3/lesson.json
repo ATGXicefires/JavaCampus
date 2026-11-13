@@ -16,7 +16,8 @@
       "expectedShape": "for (int i = …; i <= times; i++) {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "times": "100" } ]
+        "variants": [ { "times": "100" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "`i` 從 0 到 `times`，共執行 `times + 1` 次⋯⋯",
@@ -33,7 +34,8 @@
       "check": {
         "type": "values",
         "exprs": ["total"],
-        "variants": [ { "times": "100" } ]
+        "variants": [ { "times": "100" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "`total = i` 每次迭代都覆寫 `total`，迴圈結束時只剩最後一次的值⋯⋯",

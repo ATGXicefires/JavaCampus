@@ -15,10 +15,11 @@
       "title": "又是全形",
       "goal": "`score` 是要判斷的分數，現在是 60，修好後要印出 `剛好及格`；`score` 不是 60 的時候，什麼都不印。\n\n起始碼想判斷 `score` 是不是剛好 60，現在跑起來卻是紅字。",
       "instructions": "編輯器最上面三行 `int score = 60;`、`int total = 312;` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接用 `score`、`total` 和 `days`。\n\n`=` 是「把右邊放進左邊的盒子」，`==`（兩個等號）才是在問「等不等於」，答案是 `true` 或 `false`。`if` 的括號裡要放問題，例如 `if (temp == 30)`。",
-      "expectedShape": "if (score … 60) {\n    System.out.println(\"剛好及格\");\n}",
+      "expectedShape": "if (score … 60) {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "59" }, { "score": "0" }, { "score": "100" } ]
+        "variants": [ { "score": "59" }, { "score": "0" }, { "score": "100" } ],
+        "uses": ["if"]
       },
       "hints": {
         "lead": "`incompatible types: int cannot be converted to boolean`，還有 `illegal character: '\\uff1b'`⋯⋯",
@@ -51,7 +52,8 @@
       "expectedShape": "for (int i = 1; i … days; i++) {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "days": "3" } ]
+        "variants": [ { "days": "3" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "`i < days` 在 `i == days` 時就結束，少執行一次⋯⋯",

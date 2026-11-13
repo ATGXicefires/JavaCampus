@@ -11,7 +11,7 @@
       "title": "不能存負數",
       "goal": "`new Ledger().deposit(350)` 要交回 `true`；`new Ledger().deposit(0)` 要交回 `false`，錢也不會存進去。\n\n在 `deposit` 裡把關（規則寫在方法裡，誰都繞不過去）：把它改成交回 `boolean`，收到 0 或負數就不存、交回 `false`；大於 0 才存進去、交回 `true`。",
       "instructions": "`balance` 是 `private`，外面要動錢，只能走 `deposit` 這一扇門。所以就在門口檢查：規則寫在 `deposit` 裡，誰都繞不過去。\n\n`return` 會馬上離開方法。不合規則就先 `return false;`，後面存錢的那一行就不會做到；合規則的話，錢要真的存進 `balance`，再交回 `true`。",
-      "expectedShape": "boolean deposit(int amount) {\n    if (…) {\n        return false;\n    }\n    …\n}",
+      "expectedShape": "boolean deposit(int amount) {\n    …\n}",
       "check": { "type": "values", "exprs": ["new Ledger().deposit(-350)", "new Ledger().deposit(0)", "new Ledger().deposit(350)", "Ledger book = null;", "(book = new Ledger()).deposit(350)", "book.deposit(-50)", "book.getBalance()"] },
       "hints": {
         "lead": "在修改狀態的方法裡驗證參數⋯⋯",
@@ -37,8 +37,12 @@
       "title": "差點算錯",
       "goal": "最後一行 `book.deposit(-350);` 手一滑打成負數，`deposit` 擋了下來、交回 `false`，畫面上卻什麼都沒印。存不進去的時候，要印出 `金額不對：-350`。\n\n用 `if` 接住 `deposit` 交回的 `false`，印出這個提醒。",
       "instructions": "`deposit` 交回 `false`，就是沒存進去。方法交回的 `boolean` 可以直接放進 `if` 的括號；`!` 是「不是」，`!false` 是 `true`，所以 `if (!…)` 就是「沒成功的話」。\n\n金額先放進一個盒子 `amount`，存的時候和印的時候都用它，兩邊就不會打成不一樣的數字。",
-      "expectedShape": "int amount = -350;\nif (…) {\n    System.out.println(\"金額不對：\" + amount);\n}",
-      "check": { "type": "output" },
+      "expectedShape": "int amount = -350;\nif (…) {\n    System.out.println(…);\n}",
+      "check": {
+        "type": "output",
+        "exprs": ["book.getBalance()", "new Ledger(100).withdraw(150)", "new Ledger(100).withdraw(50)", "new Ledger(100).deposit(-10)"],
+        "uses": ["class Ledger", "if", "book.deposit("]
+      },
       "hints": {
         "lead": "依回傳值處理失敗的情況⋯⋯",
         "plain": "⋯⋯白話：用 `if (!book.deposit(amount))` 接住存不進去的情況，印出提醒。"

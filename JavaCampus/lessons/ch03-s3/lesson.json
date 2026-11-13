@@ -17,7 +17,8 @@
       "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    System.out.println(\"第 \" + … + \" 格：\" + …);\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{90, 85}" } ]
+        "variants": [ { "scores": "{90, 85}" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "陣列索引是從 0 起算的位移量⋯⋯",
@@ -33,7 +34,8 @@
       "expectedShape": "System.out.println(\"最後一格是第 \" + (…) + \" 格\");",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{90, 85}" } ]
+        "variants": [ { "scores": "{90, 85}" } ],
+        "uses": ["scores.length"]
       },
       "hints": {
         "lead": "最後一個索引是 `length - 1`；放在串接裡要加括號⋯⋯",
@@ -45,11 +47,12 @@
       "id": "grade",
       "title": "順序很重要",
       "goal": "`score` 是要換成等第的分數，現在是 85，要印出 `85 分是 B`。\n\n用 `if`／`else if`／`else`（從上往下問，第一個成立的就做）照 `score` 印出等第：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
-      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。第一個成立的就做，後面的都不問了，所以條件要從高分往低分問。\n\n「以上」包含剛好那個分數：剛好 60 分是 D。",
-      "expectedShape": "if (score >= 90) {\n    System.out.println(score + \" 分是 A\");\n} else if (…) {\n    …\n}",
+      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。第一個成立的就做，後面的都不問了，所以條件要從高分往低分問。\n\n```\nif (temp >= 30) {\n    System.out.println(\"熱\");\n} else if (temp >= 20) {\n    System.out.println(\"舒服\");\n} else {\n    System.out.println(\"冷\");\n}\n```\n\n「以上」包含剛好那個分數（用 `>=`）：剛好 60 分是 D。印的時候把 `score` 和文字接起來，例如 `score + \" 分是 B\"`，`分是` 前後各一個半形空格。",
+      "expectedShape": "if (…) {\n    System.out.println(score + \" 分是 …\");\n} else if (…) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ]
+        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ],
+        "uses": ["else if"]
       },
       "hints": {
         "lead": "多分支選擇依序判斷，條件要從嚴到寬排列⋯⋯",

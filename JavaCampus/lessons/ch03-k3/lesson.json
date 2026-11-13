@@ -17,7 +17,8 @@
       "check": {
         "type": "values",
         "exprs": ["sum"],
-        "variants": [ { "scores": "{90, 85}" } ]
+        "variants": [ { "scores": "{90, 85}" } ],
+        "uses": ["for"]
       },
       "hints": {
         "lead": "例外訊息說索引 5 超出範圍。",

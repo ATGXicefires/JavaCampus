@@ -30,7 +30,8 @@
       "check": {
         "type": "values",
         "exprs": ["perHook", "left"],
-        "variants": [ { "gacha": "10" }, { "gacha": "12" } ]
+        "variants": [ { "gacha": "10" }, { "gacha": "12" } ],
+        "uses": ["/", "%"]
       },
       "hints": {
         "lead": "掛幾個用 /，剩幾個用 %。",

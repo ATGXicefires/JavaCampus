@@ -11,8 +11,8 @@
       "title": "小老師的設計圖",
       "goal": "印出兩行（滷肉和分號是 App 裡的兩個小老師）：\n`滷肉：「沒關係，再跑一次！」`\n`分號：「分號。」`\n\n寫 `class Mascot`：欄位 `name`、`line`，建構子 `Mascot(String name, String line)`，還有方法 `void speak()` 印出自己那一行（不加 `static`，是每個小老師自己的方法）。再 `new` 出兩個小老師，各呼叫一次 `speak()`。",
       "instructions": "`line` 放的是小老師的台詞，就是 `「」` 裡面那一句。建構子用 `this.name = name;` 這種寫法，把傳進來的值放進欄位。\n\n不加 `static` 的方法屬於物件：誰呼叫，就用誰自己的欄位。`roufan.speak()` 印的是滷肉的 `name` 和 `line`；換分號呼叫，印的就是分號的。\n\n`：` 和 `「」` 是全形，可以從這裡複製。",
-      "expectedShape": "class Mascot {\n    String name;\n    String line;\n\n    Mascot(String name, String line) {\n        …\n    }\n\n    void speak() {\n        System.out.println(…);\n    }\n}\n\nMascot roufan = new Mascot(…);\n…\nroufan.speak();\n…",
-      "check": { "type": "output" },
+      "expectedShape": "class Mascot {\n    …\n    Mascot(String name, String line) { … }\n    void speak() { … }\n}\n\nMascot roufan = new Mascot(…);\n…",
+      "check": { "type": "output", "uses": ["class Mascot", "void speak()", "new Mascot(", ".speak()"] },
       "hints": {
         "lead": "不寫 static，方法就屬於物件。",
         "plain": "`roufan.speak()` 用的是滷肉自己的 `name` 和 `line`，`semi.speak()` 用的是分號的。同一個方法，誰呼叫就說誰的話。"

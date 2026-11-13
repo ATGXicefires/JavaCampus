@@ -18,7 +18,8 @@
       "check": {
         "type": "values",
         "exprs": ["sum"],
-        "variants": [ { "stars": "{1, 1, 1, 1, 1}" } ]
+        "variants": [ { "stars": "{1, 1, 1, 1, 1}" } ],
+        "uses": ["total("]
       },
       "hints": {
         "lead": "照簽章給它一個 int[]。",
@@ -31,10 +32,11 @@
       "title": "排行榜",
       "goal": "`flavors` 和 `stars` 同一格是同一種口味。現在 `stars` 是 `{3, 4, 5, 2, 4}`，要印出 5 行：\n`原味 ★★★ 16%`\n`巧克力 ★★★★ 22%`\n`芋頭 ★★★★★ 27%`\n`花生 ★★ 11%`\n`黑糖 ★★★★ 22%`\n\n用 `for` 照 `flavors` 的順序，每種口味印一行：名字、星星、占總星數的百分比，中間用空格隔開。星星用 `repeat`，百分比用寫好的 `percent(stars[i], sum)`。",
       "instructions": "`flavors[i]` 是第 i 種口味的名字，`stars[i]` 是它的星數。照原本的順序印就好，不用排名次。\n\n`percent(int part, int whole)` 交回 `part` 占 `whole` 的百分之幾，是整數，後面自己接上 `%`。`★` 可以從這裡複製。",
-      "expectedShape": "for (int i = 0; i < flavors.length; i++) {\n    System.out.println(flavors[i] + \" \" + … + \" \" + … + \"%\");\n}",
+      "expectedShape": "for (…) {\n    System.out.println(… + \" \" + … + \"%\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "stars": "{5, 5, 5, 5, 5}" } ]
+        "variants": [ { "stars": "{5, 5, 5, 5, 5}" } ],
+        "uses": [".repeat(", "percent("]
       },
       "hints": {
         "lead": "一行一種口味。",

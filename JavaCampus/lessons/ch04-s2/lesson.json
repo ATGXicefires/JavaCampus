@@ -31,10 +31,11 @@
       "title": "完成的時候",
       "goal": "現在「讓電腦說話」的 `done[0]` 和 `total[0]` 都是 3，已經完成了。要印出：\n`讓電腦說話 ■■■ 3/3`\n`滷肉：「這一課完成了！」`\n`型別與重複 ■□□□ 1/4`\n\n每一課印完後，`done[i]` 等於 `total[i]` 的話，就呼叫學妹寫好的 `say`，讓滷肉說 `這一課完成了！`。",
       "instructions": "照 `say` 的簽章 `static void say(String who, String line)`：第一個給誰說的，第二個給說什麼。怎麼印是 `say` 的事，你只要照約定給對東西。\n\n「等不等於」用 `==`（兩個等號）。",
-      "expectedShape": "if (…) {\n    say(\"滷肉\", \"這一課完成了！\");\n}",
+      "expectedShape": "if (…) {\n    say(…);\n}",
       "check": {
         "type": "output",
-        "variants": [ { "done": "{3, 4}" } ]
+        "variants": [ { "done": "{3, 4}" } ],
+        "uses": ["say("]
       },
       "hints": {
         "lead": "直接呼叫既有的方法，不重寫它⋯⋯",

@@ -14,10 +14,11 @@
       "title": "五個等第",
       "goal": "`score` 是要換成等第的分數，現在是 85，所以要印出 `B`。\n\n用 `if`／`else if`／`else`（從上往下一個一個問，第一個成立的就做）把 `score` 換成等第，只印字母：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
       "instructions": "編輯器最上面兩行 `int score = 85;` 和 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `score` 和 `scores`。\n\n`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。\n\n```\nif (temp >= 30) {\n    System.out.println(\"熱\");\n} else if (temp >= 20) {\n    System.out.println(\"舒服\");\n} else {\n    System.out.println(\"冷\");\n}\n```\n\n`temp` 是 33 時，第一個問題就成立，印出 `熱`，後面都不問了。所以要從高的往低的問。「以上」包含剛好那個數：剛好 60 分是 D。",
-      "expectedShape": "if (score >= 90) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
+      "expectedShape": "if (…) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "72" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ]
+        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "72" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ],
+        "uses": ["else if"]
       },
       "hints": {
         "lead": "從高分往低分問。",
@@ -30,10 +31,11 @@
       "title": "整排都換",
       "goal": "現在 `scores` 是 `{72, 58, 65, 80, 49}`，要印出 5 行：\n`72 C`\n`58 F`\n`65 D`\n`80 B`\n`49 F`\n\n用 `for` 走過 `scores` 的每一格，把每個分數換成等第，印出分數、空格、等第。",
       "instructions": "起始碼的 `for` 每一圈會把一格的分數放進 `s`：第一圈 `s` 是 `scores[0]`，第二圈是 `scores[1]`⋯⋯在大括號裡用上一步那一串 `if`／`else if` 判斷 `s`，不是判斷 `score`。\n\n印的時候用 `+` 把分數和等第接起來，中間的空格寫在引號裡，例如 `s + \" C\"`。",
-      "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" A\");\n    } else if (…) {\n        …\n    }\n}",
+      "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    int s = scores[i];\n    if (…) {\n        System.out.println(s + \" A\");\n    } else if (…) {\n        …\n    }\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{100, 59}" }, { "scores": "{90, 89, 80, 79, 70, 69, 60, 59}" } ]
+        "variants": [ { "scores": "{100, 59}" }, { "scores": "{90, 89, 80, 79, 70, 69, 60, 59}" } ],
+        "uses": ["for", "else if"]
       },
       "hints": {
         "lead": "迴圈裡放上一步的 if。",

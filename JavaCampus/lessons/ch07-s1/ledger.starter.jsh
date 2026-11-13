@@ -2,5 +2,8 @@
 // balance = 0
 // balance = balance + 350
 // balance = balance + 120
-// 改寫成 Java：寫 class Ledger，欄位 private int balance，deposit(amount) 存入、getBalance() 交回餘額
-// 再 new 一本帳 book，存入 350 和 120
+class Ledger {
+    // 加上 private int balance、deposit(int amount) 和 getBalance()
+}
+
+// new 一本帳 book，存入 350 和 120

@@ -32,7 +32,8 @@
       "expectedShape": "System.out.println(\"掛 3 個掛勾：每個 \" + … + \" 個，剩 \" + … + \" 個\");",
       "check": {
         "type": "output",
-        "variants": [ { "gacha": "10" } ]
+        "variants": [ { "gacha": "10" } ],
+        "uses": ["/", "%"]
       },
       "hints": {
         "lead": "`int` 的 `/` 是整數除法，`%` 取餘數；乘除的優先順序高於串接的 `+`⋯⋯",
