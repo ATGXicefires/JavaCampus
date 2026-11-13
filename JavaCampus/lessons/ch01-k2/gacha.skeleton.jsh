@@ -1,3 +1,4 @@
-String laptop = "小白";
-int ____ = ____;
-System.out.println(____);
+int bonus = ____;
+int total = startGacha ____ bonus;
+System.out.println("相加：" + ____);
+System.out.println("串接：" + ____ + ____);

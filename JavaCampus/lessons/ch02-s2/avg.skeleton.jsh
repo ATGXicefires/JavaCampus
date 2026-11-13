@@ -1,4 +1,5 @@
-// 修好這份練習
-double half = 3.5;
-System.out.println("總共 " + (today + yesterday) + " 個");
-double avg = (today + yesterday) / ____;
+double targetAvg = 3.5;
+int sum = today + yesterday;
+double avg = ____ sum / days;
+double dayShare = ____ today / sum * 100;
+boolean metGoal = avg ____ targetAvg;

@@ -1,3 +1,14 @@
-// 段考筆記：字串變數字
-int score = Integer.____(input);
-System.out.println(score + " 分，再加 5 分是 " + (____) + " 分");
+try {
+    int score = Integer.____(input);
+    if (score < 0 || score > 100) {
+        System.out.println("分數超出範圍");
+    } else {
+        int bonusScore = score + 5;
+        if (bonusScore ____ 100) {
+            bonusScore = 100;
+        }
+        System.out.println(score + " 分，加 5 分後是 " + bonusScore + " 分");
+    }
+} ____ (NumberFormatException e) {
+    System.out.println("無法轉成數字");
+}

@@ -1,7 +1,14 @@
 int perWeek = perDay * days;
-boolean tooMany = perWeek >= 10;
+boolean overQuota = perWeek > budget;
+int diff = perWeek - budget;
+double dailyAvg = perWeek / 7.0;
+int nextQuota = budget;
 if (____) {
-    System.out.println("媽，明天便當多做一份。");
+    nextQuota = ____;
+    System.out.println("超標 " + diff + " 個，需要減量");
+} else if (____) {
+    System.out.println("剛好達標：0 個餘額");
 } ____ {
-    System.out.println("再觀察一週。");
+    int remain = budget - perWeek;
+    System.out.println("餘額 " + remain + " 個，週末每天 " + (remain ____ 2) + " 個，剩 " + (remain ____ 2) + " 個");
 }

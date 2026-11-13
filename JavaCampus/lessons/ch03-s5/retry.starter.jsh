@@ -1,2 +1,8 @@
-// 數出 scores 裡有幾個分數不到 60（要顯示「再試一次」按鈕的人數），存進 retry
+// 單次走訪 scores：統計 strong(90~100)、pass(60~89)、retry(0~59)、invalid 與合規平均 validAvg
+int strong = 0;
+int pass = 0;
 int retry = 0;
+int invalid = 0;
+int validSum = 0;
+int validCount = 0;
+double validAvg = 0.0;

@@ -6,52 +6,49 @@
   "notes": ["int-div", "cast"],
   "vars": [
     { "name": "today", "type": "int", "value": "3", "note": "今天抽到的扭蛋數" },
-    { "name": "yesterday", "type": "int", "value": "4", "note": "昨天抽到的扭蛋數" }
+    { "name": "yesterday", "type": "int", "value": "4", "note": "昨天抽到的扭蛋數" },
+    { "name": "days", "type": "int", "value": "3", "note": "統計的總天數" }
   ],
   "steps": [
     {
-      "id": "half",
-      "title": "3.5 個扭蛋",
-      "goal": "修好後，`half` 要裝著 `3.5`。\n\n這份練習現在一執行就紅字。它有三個錯，一步修一個，這一步先讓 `half` 裝得下 `3.5`。",
-      "instructions": "編輯器最上面兩行 `int today = 3;` 和 `int yesterday = 4;` 是題目先寫好的，練習裡可以直接用 `today` 和 `yesterday`。\n\n把有小數點的數字放進 `int` 盒子，小數點後面會掉，所以電腦不准，直接給紅字。例如 `int price = 9.9;` 會紅字，換成 `double price = 9.9;` 就可以。",
-      "expectedShape": "… half = …;",
-      "check": { "type": "values", "exprs": ["half"], "uses": ["double half"] },
-      "hints": {
-        "lead": "`incompatible types: possible lossy conversion from double to int`⋯⋯",
-        "plain": "⋯⋯白話：`int` 盒子只裝整數，`3.5` 放進去會掉東西，所以電腦不准。換成裝小數的盒子 `double`。"
-      },
-      "afterText": ""
-    },
-    {
       "id": "total",
-      "title": "總共 34 個？",
-      "goal": "`today` 是今天抽到的扭蛋數，現在是 3；`yesterday` 是昨天抽到的，現在是 4。修好後要印出 `總共 7 個`，現在印出來的卻是 `總共 34 個`。",
-      "instructions": "`+` 碰到字串就變成「接起來」，而且從左往右一個一個算。例如 `\"共 \" + 1 + 2`：`\"共 \" + 1` 先變成字串 `共 1`，再 `+ 2` 就是把 2 接在後面，變成 `共 12`。\n\n括號裡的會先算。例如 `\"答案 \" + (1 + 2)` 會先算出 3，再接進字串，印出 `答案 3`。",
-      "expectedShape": "System.out.println(\"總共 \" + … + \" 個\");",
+      "title": "型別錯誤與串接陷阱",
+      "goal": "這份練習同時犯了型別錯誤和字串串接陷阱，請一併修好：\n1. 將 `targetAvg` 改為 `double` 型別並保留 `3.5`\n2. 算出 `int sum = today + yesterday;` 與 `double remain = targetAvg * days - sum;`\n3. 印出：`共 7 個，距離目標還差 3.5 個`（依變數實際值變動）",
+      "instructions": "編輯器最上面的 `today`、`yesterday` 與 `days` 是題目先寫好的變數。\n\n把帶小數的數字放進 `int` 會直接編譯失敗（紅字），必須用 `double`。\n\n另外，寫成 `\"共 \" + today + yesterday` 時，`+` 從左往右碰到字串就變成文字拼接，會印出 `共 34 個`。請用 `(today + yesterday)` 或已經加好的 `sum`。",
+      "expectedShape": "double targetAvg = …;\nint sum = …;\ndouble remain = …;\nSystem.out.println(…);",
       "check": {
         "type": "output",
-        "variants": [ { "today": "5" }, { "yesterday": "6" } ]
+        "exprs": ["targetAvg", "sum", "remain"],
+        "variants": [
+          { "today": "5", "yesterday": "6", "days": "3" },
+          { "today": "1", "yesterday": "2", "days": "2" }
+        ],
+        "uses": ["double targetAvg"]
       },
       "hints": {
-        "lead": "`+` 由左往右結合：`\"總共 \" + today` 已經是字串，後面的 `+ yesterday` 也變成串接⋯⋯",
-        "plain": "⋯⋯白話：`+` 從左邊算過來，一碰到字串就變成接起來，3 和 4 就被一個一個接上去。要先加起來的兩個盒子，用括號包住：`(today + yesterday)`。"
+        "lead": "`double` 裝小數；先算出 `sum` 再接進字串。",
+        "plain": "把 `int targetAvg` 改成 `double targetAvg`，算出 `double remain = targetAvg * days - sum;`，再印 `\"共 \" + sum + \" 個，距離目標還差 \" + remain + \" 個\"`。"
       },
       "afterText": ""
     },
     {
       "id": "avg",
-      "title": "平均是 3？",
-      "goal": "`today` 是 3、`yesterday` 是 4，兩天平均抽到 3.5 個。修好後，`avg` 要是 3.5，現在算出來卻是 3.0，小數不見了。",
-      "instructions": "`=` 右邊先算完，才放進盒子：兩個 `int`（整數）相除，答案也是整數，小數在放進 `double` 盒子之前就丟掉了，放進去也找不回來。\n\n只要除法的其中一邊是小數，答案就會留下小數：`5 / 2` 是 `2`，`5 / 2.0` 是 `2.5`。也可以在數字前面加 `(double)`，把它先換成小數：`(double) 5 / 2` 也是 `2.5`。",
-      "expectedShape": "double avg = …;",
+      "title": "雙重截斷與達標判定",
+      "goal": "修好起手程式裡的兩處整數截斷錯誤，並補上達標檢查：\n1. `double avg`：`sum` 除以 `days` 的精確小數平均（例如 `7 / 3` 約 `2.333…`）\n2. `double dayShare`：`today` 佔總數 `sum` 的百分比（`today` 除以 `sum` 再乘以 100，例如 `3 / 7 * 100` 應約 `42.857…`，不能是 `0.0`）\n3. `boolean metGoal`：`avg` 是否大於等於 `targetAvg`（剛好等於也算達標）",
+      "instructions": "`(double) (sum / days)` 會先把括號裡的整數除法算完丟掉小數，才轉成 `.0`；而 `today / sum * 100` 由左往右先做整數除法，當 `today < sum` 時會先算出 `0`，乘 100 還是 `0.0`。\n\n必須在除法開始前就先把其中一邊轉成 `(double)`。",
+      "expectedShape": "double targetAvg = 3.5;\nint sum = today + yesterday;\ndouble avg = …;\ndouble dayShare = …;\nboolean metGoal = …;",
       "check": {
         "type": "values",
-        "exprs": ["avg"],
-        "variants": [ { "today": "5" }, { "yesterday": "6" } ]
+        "exprs": ["avg", "dayShare", "metGoal"],
+        "variants": [
+          { "today": "5", "yesterday": "6", "days": "3" },
+          { "today": "3", "yesterday": "4", "days": "2" },
+          { "today": "1", "yesterday": "2", "days": "3" }
+        ]
       },
       "hints": {
-        "lead": "`(today + yesterday) / 2` 是 `int` 運算，得到 3 之後才擴展成 `double` 的 3.0⋯⋯",
-        "plain": "⋯⋯白話：右邊先算完才放進盒子。`(today + yesterday) / 2` 是兩個整數相除，小數已經丟掉了。把其中一個寫成小數，例如把 `2` 寫成 `2.0`。"
+        "lead": "兩個除法前都要加 `(double)`；達標包含剛好等於，用 `>=`。",
+        "plain": "`double avg = (double) sum / days;`、`double dayShare = (double) today / sum * 100;`、`boolean metGoal = avg >= targetAvg;`"
       },
       "afterText": ""
     }

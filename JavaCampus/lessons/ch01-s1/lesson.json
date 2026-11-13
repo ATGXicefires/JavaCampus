@@ -4,44 +4,54 @@
   "route": "學長",
   "partner": "二弘OS",
   "notes": ["println", "quotes", "semicolon", "box", "int-string", "assign"],
-  "vars": [],
+  "vars": [
+    { "name": "count", "type": "int", "value": "7", "note": "扭蛋的數量" }
+  ],
   "steps": [
     {
       "id": "rewrite",
       "title": "改成白話",
-      "goal": "改成白話版，印出 `電腦會把引號裡的字，原封不動印出來`。現在印的是 `println 會呼叫 PrintStream 的 println 方法`。\n\n只改 `println`（讓電腦印出一行字）引號裡的那句話。",
-      "instructions": "這是原本那份術語版的範例。她看了三秒就走了。\n\n`System.out.println(…);` 會把括號裡的東西印在執行結果裡，印完換行。用一對半形雙引號 `\"` 包起來的一段文字叫**字串**，例如 `System.out.println(\"早安\");` 會印出 `早安`。最後的 `;` 是 Java 的句號，表示這句寫完了。\n\n只改引號裡的字，括號、引號和最後的 `;` 都留著。引號裡可以寫中文和全形標點，引號外面的符號都要用英文輸入法打。",
-      "expectedShape": "System.out.println(\"…\");",
+      "goal": "把原本寫滿術語的範例改成白話版，印出 `電腦會把引號裡的字，原封不動印出來`。",
+      "instructions": "編輯器最上面那行 `int count = 7;` 是後面步驟才會用到的題目變數。\n\n`System.out.println(…);` 會把括號裡的內容印出來並換行。用一對半形雙引號 `\"` 包起來的文字是**字串**，引號裡寫什麼就印出什麼。引號外面的括號和分號 `;` 都要用半形符號。",
+      "expectedShape": "// …\nSystem.out.println(\"…\");",
       "check": { "type": "output" },
       "hints": {
-        "lead": "`System.out` 是一個 `PrintStream`，`println(String)` 把引數寫進標準輸出串流，再補一個行分隔字元⋯⋯",
-        "plain": "⋯⋯白話：引號裡寫什麼，電腦就印什麼。只要換掉引號裡的那句話，兩邊的 `\"` 和最後的 `;` 都不用動。"
+        "lead": "`System.out` 是標準輸出串流，`println` 把字串寫出去並換行⋯⋯",
+        "plain": "⋯⋯白話：保留外面的 `System.out.println(\"…\");`，只把雙引號裡原本那句術語換成目標那句話。"
       },
       "afterText": "二弘（心想）：「⋯⋯這樣她應該看得懂。應該。」"
     },
     {
       "id": "box",
-      "title": "盒子",
-      "goal": "要印出 `扭蛋`。\n\n做一個叫 `box` 的 `String` 盒子，放進 `\"扭蛋\"`，再把它印出來。盒子就是變數：有名字、可以裝東西；`String` 是裝文字的盒子。",
-      "instructions": "範例 2 要講變數。原稿那句「宣告區域變數」刪掉，改成盒子的說法。\n\n做盒子的寫法是：盒子的種類、名字、`=`、內容，最後加分號。`=` 是「把右邊的東西放進左邊的盒子」，文字要用半形雙引號包起來。\n\n要印出盒子裡的東西，`println` 的括號裡寫盒子的名字，不加引號。例如 `String drink = \"紅茶\";` 之後寫 `System.out.println(drink);`，會印出 `紅茶`。",
-      "expectedShape": "String box = \"…\";\nSystem.out.println(…);",
-      "check": { "type": "output", "exprs": ["box"] },
+      "title": "盒子與加減",
+      "goal": "建立一個 `String box = \"扭蛋\";`，並利用題目的 `count` 印出兩行（以 `count` 為 7 為例）：\n`扭蛋有 7 個`\n`扭蛋加 1 個是 8 個`",
+      "instructions": "`+` 號遇到兩邊都是整數時會相加；只要碰到字串，就會由左往右變成文字串接。因此 `box + \"加 1 個是 \" + count + 1` 會把數字一個接一個串成 `71`。\n\n想先算出數字加法再串進句子，記得加上括號 `(count + 1)`，或是先存進另一個 `int` 變數。",
+      "expectedShape": "// …\nString box = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
+      "check": {
+        "type": "output",
+        "exprs": ["box"],
+        "variants": [ { "count": "3" }, { "count": "12" } ]
+      },
       "hints": {
-        "lead": "區域變數宣告：型別、識別字、指定運算子、初始值，以分號結束⋯⋯",
-        "plain": "⋯⋯白話：盒子的種類、盒子的名字、`=`、要放進去的東西、分號。印的時候括號裡放盒子的名字 `box`，不加引號。"
+        "lead": "字串串接由左往右執行，數字加法需要先用括號包住或先算完。",
+        "plain": "第一行印 `box + \"有 \" + count + \" 個\"`；第二行印 `box + \"加 1 個是 \" + (count + 1) + \" 個\"`。注意數字前後的空白也要放進引號裡。"
       },
       "afterText": "二弘（心想）：「扭蛋只是剛好想到的例子。跟她的書包沒有關係。」"
     },
     {
       "id": "gacha",
-      "title": "七個，然後八個",
-      "goal": "要印出兩行：\n`7`\n`8`\n\n做一個叫 `gacha` 的 `int` 盒子，放進 `7` 印出來；再把它換成 `8`，再印一次。`int` 是裝整數的盒子。",
-      "instructions": "範例 3 示範換掉盒子裡的東西。`int` 盒子的寫法跟 `String` 一樣，只是裡面裝整數，數字不用加引號。\n\n盒子做好以後，寫名字、`=`、新的值，就會把盒子裡原本的東西換掉。這時前面不用再寫 `int`：盒子已經在了，再寫一次 `int` 等於再做一個同名的盒子，電腦會給紅字。例如 `int age = 16;` 之後寫 `age = 17;`，`age` 裡就從 16 換成 17。\n\n程式從上往下一行一行跑，所以先印、再換、再印，才會印出兩個不同的數字。",
-      "expectedShape": "int gacha = …;\nSystem.out.println(…);\n… = …;\nSystem.out.println(…);",
-      "check": { "type": "output", "exprs": ["gacha"] },
+      "title": "覆寫的順序",
+      "goal": "建立 `int gacha = count;` 與 `int before = gacha;`。\n\n先讓 `gacha` 增加 1，印出 `原本 X 個，抽一次變 Y 個`（`X` 為 `before`，`Y` 為目前的 `gacha`）；\n接著再讓 `gacha` 增加 2，印出 `又抽兩次變 Z 個`（`Z` 為最後的 `gacha`）。",
+      "instructions": "程式由上往下執行，`=` 會先算出右邊的結果，再把新值覆寫進左邊的變數。\n\n因此 `before = gacha` 必須寫在改動 `gacha` **之前**，才能留住原本的數字；改動 `gacha` 時只要寫 `gacha = gacha + 1;`，不可再加 `int`。",
+      "expectedShape": "// …\nint gacha = …;\nint before = …;\ngacha = …;\nSystem.out.println(…);\ngacha = …;\nSystem.out.println(…);",
+      "check": {
+        "type": "output",
+        "exprs": ["before", "gacha"],
+        "variants": [ { "count": "5" }, { "count": "10" } ]
+      },
       "hints": {
-        "lead": "指定運算式 `gacha = 8` 覆寫既有變數的值；同一個範圍內重複宣告同名區域變數是編譯錯誤⋯⋯",
-        "plain": "⋯⋯白話：盒子只要做一次。第二次直接寫名字、`=`、新的值，盒子裡的 7 就換成 8 了。"
+        "lead": "先備份舊值進 `before`，再依序覆寫 `gacha`。",
+        "plain": "順序是：`int gacha = count;` -> `int before = gacha;` -> `gacha = gacha + 1;` -> 印第一行 -> `gacha = gacha + 2;` -> 印第二行。不要在 `gacha =` 前面重複寫 `int`。"
       },
       "afterText": "二弘（心想）：「她書包上是七個。⋯⋯這件事不需要寫進文件。」"
     }

@@ -1,5 +1,8 @@
-String laptop = "小白";
-int gacha = 7;
+int gacha = startGacha;
 System.out.println(gacha);
-____ = ____;
+gacha = ____;
+System.out.println(gacha);
+gacha = ____;
+System.out.println(gacha);
+gacha = ____;
 System.out.println(gacha);

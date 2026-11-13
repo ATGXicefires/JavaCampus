@@ -10,49 +10,59 @@
   "steps": [
     {
       "id": "boxes",
-      "title": "三種新盒子",
-      "goal": "做三個盒子：`double temp` 放 `33.5`、`boolean hot` 放 `true`、`String city` 放 `\"臺南\"`。\n\n`double` 是裝小數的盒子，`boolean` 是只裝 `true`（是）或 `false`（不是）的盒子。",
-      "instructions": "編輯器最上面那行 `int gacha = 8;` 是題目先寫好的，後面的步驟才會用到 `gacha`。\n\n盒子有分種類：`int` 裝整數、`String` 裝文字，再加上這次的 `double` 和 `boolean`。要放什麼，就選那一種盒子。寫法一樣是：盒子的種類、名字、`=`、內容，最後加分號。\n\n`true` 和 `false` 不用加引號，加了引號就變成文字了。例如 `double price = 12.5;`、`boolean open = false;`。",
-      "expectedShape": "double temp = …;\nboolean hot = …;\nString city = \"…\";",
-      "check": { "type": "values", "exprs": ["temp", "hot", "city"] },
+      "title": "新盒子與剩餘空間",
+      "goal": "建立四個變數，並算出書包還剩幾個空位：\n- `double temp = 33.5;`\n- `boolean hot = true;`\n- `String city = \"臺南\";`\n- `int bagCapacity = 15;`\n\n再用 `bagCapacity` 和題目的 `gacha` 算出剩餘空位，存進 `int freeSlots`。",
+      "instructions": "編輯器最上面那行 `int gacha = 8;` 是題目先寫好的變數。\n\n盒子有不同型別：`int` 裝整數、`double` 裝小數、`boolean` 只裝 `true` 或 `false`（不可加引號）、`String` 裝文字（要用半形雙引號 `\"` 包起來）。\n\n算剩餘空位時，寫成 `bagCapacity - gacha`，之後就算 `gacha` 換成別的數字，`freeSlots` 也會跟著重算。",
+      "expectedShape": "double temp = …;\nboolean hot = …;\nString city = \"…\";\nint bagCapacity = …;\nint freeSlots = …;",
+      "check": {
+        "type": "values",
+        "exprs": ["temp", "hot", "city", "freeSlots"],
+        "variants": [ { "gacha": "12" }, { "gacha": "0" } ]
+      },
       "hints": {
-        "lead": "有小數用 double，對或錯用 boolean。",
-        "plain": "盒子要配合裡面的東西：`33.5` 有小數點，放進 `double`；`true` 只有對和錯兩種，放進 `boolean`；`\"臺南\"` 是文字，放進 `String`。"
+        "lead": "小數用 double，是非用 boolean；空位是容量減去現有數量。",
+        "plain": "依序宣告 `temp`、`hot`、`city`、`bagCapacity`，最後寫 `int freeSlots = bagCapacity - gacha;`。"
       },
       "afterText": ""
     },
     {
       "id": "hooks",
-      "title": "掛勾",
-      "goal": "`gacha` 是書包上的扭蛋數，現在是 8：平分給 3 個掛勾，每個掛勾分到 2 個，還剩 2 個。\n\n用 `gacha` 算出這兩個數：每個分到幾個用 `/`（除法），存進 `int perHook`；還剩幾個用 `%`（除完剩下多少），存進 `int left`。",
-      "instructions": "兩個 `int`（整數）相除，答案也是整數：小數點後面直接丟掉，不會四捨五入。`%` 算的是除完剩下多少。\n\n例如 `7 / 2` 是 `3`，`7 % 2` 是 `1`：7 顆糖分給 2 個人，每人 3 顆，還剩 1 顆。",
-      "expectedShape": "int perHook = …;\nint left = …;",
+      "title": "掛勾與補滿進位",
+      "goal": "每個掛勾最多掛 3 個扭蛋。用 `gacha` 算出三個整數：\n1. `int fullHooks`：剛好掛滿 3 個的掛勾數\n2. `int left`：掛完滿組後剩下的扭蛋數\n3. `int neededHooks`：全部都要掛上去，**至少**需要幾個掛勾（有剩 1 或 2 個也要多算 1 個掛勾；`gacha` 為 0 時需要 0 個）",
+      "instructions": "兩個 `int` 相除（`/`）只取整數商、小數直接捨去；`%` 則算出除完剩下的餘數。\n\n至於「無條件進位」算出至少需要幾個掛勾：若每個掛勾上限是 `3`，當 `gacha` 整除 `3` 時不用多加，餘 `1` 或 `2` 時要多 `1` 個。常見寫法是整數進位公式 `(gacha + 2) / 3`，或是先算完 `fullHooks` 與 `left`，再用 `if (left > 0)` 多加 1。",
+      "expectedShape": "int fullHooks = …;\nint left = …;\nint neededHooks = …;",
       "check": {
         "type": "values",
-        "exprs": ["perHook", "left"],
-        "variants": [ { "gacha": "10" }, { "gacha": "12" } ],
+        "exprs": ["fullHooks", "left", "neededHooks"],
+        "variants": [
+          { "gacha": "0" },
+          { "gacha": "1" },
+          { "gacha": "9" },
+          { "gacha": "10" },
+          { "gacha": "11" }
+        ],
         "uses": ["/", "%"]
       },
       "hints": {
-        "lead": "掛幾個用 /，剩幾個用 %。",
-        "plain": "8 個扭蛋分給 3 個掛勾：每個掛 2 個，還剩 2 個。`gacha / 3` 算的是每個分到幾個，`gacha % 3` 算的是分完還剩幾個。"
+        "lead": "商數用 `/`，餘數用 `%`；無條件進位可以用 `(gacha + 2) / 3`。",
+        "plain": "`fullHooks = gacha / 3;`、`left = gacha % 3;`。`neededHooks` 可以寫成 `(gacha + 2) / 3`（試試代入 0、9、10、11 看結果是否完全符合）。"
       },
       "afterText": ""
     },
     {
       "id": "average",
-      "title": "除不盡",
-      "goal": "`double avg = gacha / 3;` 想算出每個掛勾平均掛幾個，但現在 `avg` 是 2.0，小數不見了。`gacha` 是 8 時，`avg` 應該是 2.666⋯。\n\n改好這一行，讓 `avg` 留下小數。`gacha` 和 `3` 都是 `int`（整數），兩個 `int` 相除，小數會直接丟掉。",
-      "instructions": "`=` 右邊先算完，才放進盒子：`gacha / 3` 先算出 2，放進 `double`（裝小數的盒子）時只會變成 2.0，丟掉的小數找不回來。\n\n要在除之前，就讓其中一邊變成小數。只要有一邊是小數，除出來就會留下小數：`7 / 2` 是 `3`，`7 / 2.0` 是 `3.5`。也可以在數字或盒子前面加 `(double)`，把它先換成小數：`(double) 7 / 2` 也是 `3.5`。",
-      "expectedShape": "double avg = …;",
+      "title": "除不盡與截斷順序",
+      "goal": "修好起手程式裡的兩處整數截斷錯誤：\n1. `double avg`：算出 `gacha` 個扭蛋平分到 3 個掛勾的精確小數平均（`gacha` 為 8 時約 `2.666…`）\n2. `double fillRate`：算出扭蛋數量佔書包上限 `15` 個的精確百分比（例如 `gacha` 為 8 時是 `53.333…`，不是 `0.0`）",
+      "instructions": "兩個 `int` 相除會先丟掉小數，而且是**先把右邊算完才放進左邊的 `double`**。\n\n陷阱 1：`(double) (gacha / 3)` 會先算括號內的整數除法，丟掉小數後才轉型。應該把 `(double)` 放在 `gacha` 前面，或把 `3` 寫成 `3.0`。\n陷阱 2：`gacha / 15 * 100` 由左往右先算 `gacha / 15`，當 `gacha < 15` 時會先變成 `0`，再乘 `100` 還是 `0.0`！應該先讓其中一邊成為 `double`（例如 `(double) gacha * 100 / 15` 或 `gacha * 100.0 / 15`）。",
+      "expectedShape": "double avg = …;\ndouble fillRate = …;",
       "check": {
         "type": "values",
-        "exprs": ["avg"],
-        "variants": [ { "gacha": "10" } ]
+        "exprs": ["avg", "fillRate"],
+        "variants": [ { "gacha": "7" }, { "gacha": "9" }, { "gacha": "15" } ]
       },
       "hints": {
-        "lead": "整數除以整數，小數會被丟掉。",
-        "plain": "`gacha` 和 `3` 都是整數，相除的答案也只留整數，放進 `double` 盒子時已經來不及了。把 `3` 寫成 `3.0`，或在前面加 `(double)`，讓其中一邊先變成小數。"
+        "lead": "先轉型再除法；百分比不能在轉成小數前就做整數除法。",
+        "plain": "第一行改為 `double avg = (double) gacha / 3;`；第二行改為 `double fillRate = (double) gacha * 100 / 15;`。"
       },
       "afterText": ""
     }

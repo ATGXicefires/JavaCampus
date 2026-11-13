@@ -10,53 +10,53 @@
   "steps": [
     {
       "id": "punish",
-      "title": "罰寫",
-      "goal": "`times` 是要罰寫的遍數，現在是 5，所以要印出 5 行 `我不會再用全形分號`。\n\n用 `for`（把同一件事重複做好幾遍）照 `times` 來數：`times` 是幾，就印幾行。",
-      "instructions": "編輯器最上面那行 `int times = 5;` 是題目先寫好的，你的程式可以直接用 `times`。\n\n`for` 的括號裡有三段，用分號隔開：從哪裡開始、做到什麼時候、每做完一次怎麼變。\n\n```\nfor (int i = 1; i <= times; i++) {\n    要重複做的事\n}\n```\n\n`int i = 1` 是從 1 開始數；`i <= times` 是還沒超過 `times` 就繼續做；`i++` 是每做完一次，`i` 就加一。所以大括號裡的事剛好做 `times` 次。",
-      "expectedShape": "for (int i = 1; i <= …; i++) {\n    System.out.println(\"…\");\n}",
+      "title": "編號與奇偶標記",
+      "goal": "用 `for` 從第 1 遍數到第 `times` 遍，依奇偶加上標記（以 `times` 為 5 為例）：\n`[奇] 第 1 遍：我不會再用全形分號`\n`[偶] 第 2 遍：我不會再用全形分號`\n⋯⋯\n`[奇] 第 5 遍：我不會再用全形分號`",
+      "instructions": "編輯器最上面那行 `int times = 5;` 是題目先寫好的變數。\n\n`for` 括號裡有三段：`for (int i = 1; i <= times; i++)`，讓 `i` 從 1 數到 `times`。\n\n在迴圈裡用 `i % 2 == 0` 判斷這一遍是不是偶數（`==` 才是比較相等，`=` 是放進去）。再用 `+` 把前綴、`i` 與後面的文字接起來，注意 `第 ` 與 ` 遍` 之間各有一個半形空格。",
+      "expectedShape": "for (int i = 1; i <= …; i++) {\n    if (…) {\n        System.out.println(…);\n    } else {\n        System.out.println(…);\n    }\n}",
       "check": {
         "type": "output",
-        "variants": [ { "times": "100" }, { "times": "1" } ],
+        "variants": [ { "times": "1" }, { "times": "4" }, { "times": "7" } ],
         "uses": ["for"]
       },
       "hints": {
-        "lead": "要重複的，放進 for 的大括號。",
-        "plain": "`for` 就像罰寫：從第 1 遍開始，寫到第 `times` 遍為止，每寫完一遍 `i` 就加一。大括號裡只要放一行 `println`，重複的事交給電腦。"
+        "lead": "用 `i % 2 == 0` 分辨偶數遍與奇數遍，再串接 `i`。",
+        "plain": "條件寫 `if (i % 2 == 0)` 印 `\"[偶] 第 \" + i + \" 遍：我不會再用全形分號\"`；`else` 印 `\"[奇] 第 \" + i + \" 遍：我不會再用全形分號\"`。"
       },
       "afterText": ""
     },
     {
-      "id": "number",
-      "title": "第幾遍",
-      "goal": "每一行前面加上編號。`times` 是 5，就印出：\n`第 1 遍：我不會再用全形分號`\n`第 2 遍：我不會再用全形分號`\n⋯⋯\n`第 5 遍：我不會再用全形分號`\n\n編號就是 `for` 裡的 `i`，用 `+` 把它接進字串裡。",
-      "instructions": "`+` 碰到字串就不是加法，是把兩邊接起來：`\"第 \" + 3` 會變成 `第 3`。\n\n`i` 每一圈都不一樣：第一圈是 1，第二圈是 2，所以每一行的編號會自己往上加。\n\n數字前後各有一個空格，空格要寫在引號裡面。",
-      "expectedShape": "for (int i = 1; i <= times; i++) {\n    System.out.println(\"第 \" + … + \" 遍：…\");\n}",
+      "id": "countdown",
+      "title": "倒數跳躍檢查",
+      "goal": "寫完後要抽查：從第 `times` 遍開始**倒數**到第 1 遍，每次往前跳 2 遍（步長減 2），每一遍印出 `檢查第 i 遍`。\n\n例如 `times` 是 5 時依序印出：\n`檢查第 5 遍`\n`檢查第 3 遍`\n`檢查第 1 遍`\n（若 `times` 是 6 則印 6、4、2）",
+      "instructions": "`for` 迴圈不一定只能 `i++`！\n- 起始值可以從 `int i = times` 開始\n- 繼續條件改成 `i >= 1`（只要還大於等於 1 就繼續）\n- 每次更新改成 `i -= 2`（每次減 2）",
+      "expectedShape": "for (int i = …; i >= …; …) {\n    System.out.println(…);\n}",
       "check": {
         "type": "output",
-        "variants": [ { "times": "100" } ],
+        "variants": [ { "times": "1" }, { "times": "6" }, { "times": "9" } ],
         "uses": ["for"]
       },
       "hints": {
-        "lead": "把 i 接進字串。",
-        "plain": "`+` 碰到字串就變成接起來：`\"第 \" + i + \" 遍：\"` 在第一圈是 `第 1 遍：`，第二圈是 `第 2 遍：`。數字前後的空格要寫在引號裡面。"
+        "lead": "初始值 `i = times`，條件 `i >= 1`，每次更新寫 `i -= 2`。",
+        "plain": "寫成 `for (int i = times; i >= 1; i -= 2)`，裡面印出 `\"檢查第 \" + i + \" 遍\"`。注意「第 」後面和「 遍」前面各一個空格。"
       },
       "afterText": ""
     },
     {
       "id": "total",
-      "title": "越寫越累",
-      "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯`times` 是 5，總共花 1 + 2 + 3 + 4 + 5 = 15 秒。\n\n用 `for` 把第 1 遍到第 `times` 遍花的秒數加起來，存進 `total`。",
-      "instructions": "`total` 一開始是 0，每一圈把這一遍花的秒數加進去。第 `i` 遍花 `i` 秒，`total += i` 就是把 `i` 加進 `total`，跟 `total = total + i` 一樣。\n\n這一步只看 `total`，印不印都可以。",
-      "expectedShape": "int total = 0;\nfor (…) {\n    total += …;\n}",
+      "title": "累計與平均秒數",
+      "goal": "第 1 遍花 1 秒、第 2 遍花 2 秒⋯⋯第 `i` 遍花 `i` 秒。用 `for` 從 1 跑到 `times` 算出三個統計值：\n1. `int total`：全部 `times` 遍的總秒數\n2. `int evenTotal`：只計算偶數遍（`i % 2 == 0`）的秒數總和\n3. `double avgSec`：每遍平均花幾秒（保留小數，例如 `times` 為 4 時是 `2.5`）",
+      "instructions": "`total` 和 `evenTotal` 一開始都是 `0`。在迴圈裡用 `total += i;` 累加每一遍的秒數；如果是偶數遍（`i % 2 == 0`），就再做 `evenTotal += i;`。\n\n迴圈跑完後再算 `avgSec`，記得先轉成 `double`（例如 `(double) total / times`），才不會因為兩個 `int` 相除而丟掉小數。",
+      "expectedShape": "int total = 0;\nint evenTotal = 0;\nfor (…) {\n    …\n}\ndouble avgSec = …;",
       "check": {
         "type": "values",
-        "exprs": ["total"],
-        "variants": [ { "times": "100" } ],
+        "exprs": ["total", "evenTotal", "avgSec"],
+        "variants": [ { "times": "1" }, { "times": "4" }, { "times": "10" }, { "times": "15" } ],
         "uses": ["for"]
       },
       "hints": {
-        "lead": "每一圈加一次。",
-        "plain": "`total` 是存秒數的盒子。第一圈加 1、第二圈加 2⋯⋯迴圈跑完，盒子裡就是全部的總和。寫成 `total = i` 的話，每一圈都會把前面的蓋掉。"
+        "lead": "迴圈內累計 `total` 與條件累計 `evenTotal`，迴圈外再轉型除出 `avgSec`。",
+        "plain": "迴圈裡：`total += i;` 和 `if (i % 2 == 0) { evenTotal += i; }`。迴圈結束後寫 `double avgSec = (double) total / times;`。"
       },
       "afterText": ""
     }

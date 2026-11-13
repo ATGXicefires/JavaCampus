@@ -1,0 +1,13 @@
+int maxGain = 0;
+for (int i = 0; i < scores.length - 1; i++) {
+    int diff = scores[i + 1] - scores[i];
+    if (diff > maxGain) {
+        maxGain = diff;
+    }
+    if (diff > 0) {
+        System.out.println("第 " + (i + 1) + " -> " + (i + 2) + " 次：+" + diff);
+    } else {
+        System.out.println("第 " + (i + 1) + " -> " + (i + 2) + " 次：" + diff);
+    }
+}
+System.out.println("最大進步：" + maxGain);

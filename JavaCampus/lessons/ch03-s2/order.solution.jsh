@@ -1,13 +1,23 @@
-// 成績頁：加總、平均、每個分數的等第
-int sum = 0;
+// 成績頁：合規平均、無效排除等第、安全相鄰進步次數
+int validSum = 0;
+int validCount = 0;
 for (int i = 0; i < scores.length; i++) {
-    sum += scores[i];
+    int s = scores[i];
+    if (s >= 0 && s <= 100) {
+        validSum += s;
+        validCount++;
+    }
 }
-double avg = (double) sum / scores.length;
+double avg = 0.0;
+if (validCount > 0) {
+    avg = (double) validSum / validCount;
+}
 System.out.println("平均：" + avg);
 for (int i = 0; i < scores.length; i++) {
     int s = scores[i];
-    if (s >= 90) {
+    if (s < 0 || s > 100) {
+        System.out.println(s + " 無效");
+    } else if (s >= 90) {
         System.out.println(s + " A");
     } else if (s >= 80) {
         System.out.println(s + " B");
@@ -19,3 +29,12 @@ for (int i = 0; i < scores.length; i++) {
         System.out.println(s + " F");
     }
 }
+int riseCount = 0;
+for (int i = 0; i < scores.length - 1; i++) {
+    int cur = scores[i];
+    int next = scores[i + 1];
+    if (cur >= 0 && cur <= 100 && next >= 0 && next <= 100 && next > cur) {
+        riseCount++;
+    }
+}
+System.out.println("連續進步次數：" + riseCount);

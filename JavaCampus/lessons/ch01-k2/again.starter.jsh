@@ -1,5 +1,3 @@
-// 又抽到一個了
-// 原本的程式留著，在下面把 gacha 換成 8，再印一次
-String laptop = "小白";
-int gacha = 7;
+// 追蹤扭蛋數量的變化（依序印出初始、+1、-2、+3 共 4 行）
+int gacha = startGacha;
 System.out.println(gacha);

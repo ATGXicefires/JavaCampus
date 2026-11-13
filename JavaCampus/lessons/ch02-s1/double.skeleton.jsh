@@ -1,2 +1,4 @@
-double avg = gacha / ____;
-System.out.println("double 盒子：兩個掛勾平均 " + avg + " 個");
+double perBagAvg = ____ gacha / packSize;
+double boxRate = ____ gacha / 20 * 100;
+System.out.println("每袋平均：" + perBagAvg + " 個");
+System.out.println("展示盒佔率：" + boxRate + "%");

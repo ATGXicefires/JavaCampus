@@ -5,55 +5,71 @@
   "partner": "亭瑄",
   "notes": ["types", "arith", "concat"],
   "vars": [
-    { "name": "gacha", "type": "int", "value": "8", "note": "扭蛋的數量" }
+    { "name": "gacha", "type": "int", "value": "8", "note": "扭蛋的數量" },
+    { "name": "packSize", "type": "int", "value": "3", "note": "每袋可裝幾個扭蛋" }
   ],
   "steps": [
     {
       "id": "size",
-      "title": "盒子的尺寸",
-      "goal": "`gacha` 是扭蛋的數量，現在是 8，所以要印出 `int 盒子：扭蛋有 8 個`。\n\n`println` 這行把 `8` 直接寫在引號裡了。改成用 `+`（把兩邊接起來）把 `gacha` 接進這句話，印出來的數字才會跟著 `gacha` 變。",
-      "instructions": "編輯器最上面那行 `int gacha = 8;` 是題目先寫好的，你的程式可以直接用 `gacha`。\n\n白板上的第一個例子。`+` 碰到字串就不是加法，是把兩邊接起來：`\"我有 \" + 3 + \" 支筆\"` 會變成 `我有 3 支筆`。盒子的名字要寫在引號外面，電腦才會拿出盒子裡的數字；寫在引號裡面，就只是普通的字。\n\n數字前後的空格要寫在引號裡面。",
-      "expectedShape": "System.out.println(\"int 盒子：扭蛋有 \" + … + \" 個\");",
+      "title": "括號與運算順序",
+      "goal": "白板第一個範例出了錯：它寫死 `8` 且沒加括號，導致 `gacha + bonus` 變成了字串串接。\n\n保留 `int bonus = 2;`，修好程式印出兩行（以 `gacha=8` 為例）：\n`原本 8 個，加 2 個共 10 個`\n`總價 480 元`（只有原本的 `gacha` 個付錢，每個 60 元，`bonus` 為免費贈品）",
+      "instructions": "編輯器最上面的 `gacha` 與 `packSize` 是題目先寫好的變數。\n\n`+` 號碰到字串就會從左往右變成串接，所以 `\"共 \" + gacha + bonus` 會把數字一個個接成 `82`。想先算出總和再串接，請加上括號 `(gacha + bonus)`；乘法 `*` 的優先順序高於 `+`，所以 `gacha * 60` 可以先算出總價。",
+      "expectedShape": "int bonus = 2;\nSystem.out.println(…);\nSystem.out.println(…);",
       "check": {
         "type": "output",
-        "variants": [ { "gacha": "10" } ]
+        "exprs": ["bonus"],
+        "variants": [
+          { "gacha": "5", "packSize": "3" },
+          { "gacha": "12", "packSize": "4" }
+        ]
       },
       "hints": {
-        "lead": "串接運算子 `+`：只要有一邊是 `String`，另一邊就會先轉成字串再接起來⋯⋯",
-        "plain": "⋯⋯白話：`+` 碰到字串就是把兩邊接起來。引號裡放固定的字，中間接上盒子的名字 `gacha`，印出來的數字就會跟著盒子變。"
+        "lead": "用 `(gacha + bonus)` 先做加法再串接；總價只算 `gacha * 60`。",
+        "plain": "第一行印 `\"原本 \" + gacha + \" 個，加 \" + bonus + \" 個共 \" + (gacha + bonus) + \" 個\"`；第二行印 `\"總價 \" + (gacha * 60) + \" 元\"`。"
       },
       "afterText": ""
     },
     {
       "id": "hooks",
-      "title": "掛勾",
-      "goal": "現在 `gacha` 是 8，平分給 3 個掛勾，每個分到 2 個、還剩 2 個，所以要印出 `掛 3 個掛勾：每個 2 個，剩 2 個`。\n\n用 `gacha` 算出這兩個數：每個分到幾個用 `/`（除法），還剩幾個用 `%`（除完剩下多少），再用 `+` 接進這句話。",
-      "instructions": "兩個 `int`（整數）相除，答案也是整數，小數直接丟掉；`%` 算的是除完剩下多少。例如 `7 / 2` 是 `3`，`7 % 2` 是 `1`。\n\n`/` 和 `%` 會比串接的 `+` 先算，所以可以直接寫在 `+` 的中間：`\"每人 \" + 7 / 2 + \" 個\"` 會印出 `每人 3 個`。",
-      "expectedShape": "System.out.println(\"掛 3 個掛勾：每個 \" + … + \" 個，剩 \" + … + \" 個\");",
+      "title": "分裝與動態進位",
+      "goal": "把 `gacha` 個扭蛋裝進每袋上限 `packSize` 個的袋子，算出三個整數並印出一行：\n- `int fullBags`：裝滿的袋數\n- `int left`：裝完滿袋後剩下的個數\n- `int totalBags`：要把全部扭蛋都裝進袋子，共需要幾個袋子（有剩餘也要多算 1 袋）\n\n印出格式（以 `gacha=8, packSize=3` 為例）：\n`裝滿 2 袋，剩 2 個，共需 3 袋`",
+      "instructions": "整數商數用 `gacha / packSize`，餘數用 `gacha % packSize`。\n\n計算總袋數時，`packSize` 可能會改變，所以進位公式不能寫死 `+ 2`，要寫成 `(gacha + packSize - 1) / packSize`（或是先算 `fullBags` 與 `left`，若 `left > 0` 再多加 1）。",
+      "expectedShape": "int fullBags = …;\nint left = …;\nint totalBags = …;\nSystem.out.println(…);",
       "check": {
         "type": "output",
-        "variants": [ { "gacha": "10" } ],
+        "exprs": ["fullBags", "left", "totalBags"],
+        "variants": [
+          { "gacha": "9", "packSize": "3" },
+          { "gacha": "10", "packSize": "3" },
+          { "gacha": "10", "packSize": "4" },
+          { "gacha": "1", "packSize": "5" }
+        ],
         "uses": ["/", "%"]
       },
       "hints": {
-        "lead": "`int` 的 `/` 是整數除法，`%` 取餘數；乘除的優先順序高於串接的 `+`⋯⋯",
-        "plain": "⋯⋯白話：`gacha / 3` 是每個掛勾分到幾個，`gacha % 3` 是分完剩下幾個。除法會比 `+` 先算，所以可以直接寫在串接的中間。"
+        "lead": "商數 `/`、餘數 `%`；動態無條件進位公式是 `(gacha + packSize - 1) / packSize`。",
+        "plain": "`fullBags = gacha / packSize;`、`left = gacha % packSize;`、`totalBags = (gacha + packSize - 1) / packSize;`，再用 `+` 把這三個變數串進規定格式裡。"
       },
       "afterText": ""
     },
     {
       "id": "double",
-      "title": "有小數的盒子",
-      "goal": "現在 `gacha` 是 8，平分給 2 個掛勾，要印出 `double 盒子：兩個掛勾平均 4.0 個`。\n\n`gacha` 是 7 的話，平均要是 3.5，小數要留下來；起始碼卻算成 3.0，小數不見了。",
-      "instructions": "`double` 是裝小數的盒子，印出來一定帶小數點：就算剛好整除，也會印出 `4.0`。\n\n兩個 `int`（整數）相除，答案也是整數，小數在放進 `double` 盒子之前就丟掉了。要讓其中一邊先變成小數，除出來才會留下小數：`5 / 2` 是 `2`，`5 / 2.0` 是 `2.5`。",
-      "expectedShape": "double avg = …;\nSystem.out.println(\"double 盒子：兩個掛勾平均 \" + avg + \" 個\");",
+      "title": "小數平均與展示盒佔率",
+      "goal": "修好起手程式裡的兩處整數截斷錯誤，算出兩個 `double` 並印出：\n1. `double perBagAvg`：平均每袋裝幾個（`gacha` 除以 `packSize`，保留小數）\n2. `double boxRate`：扭蛋佔 20 格展示盒上限的百分比（`gacha` 除以 20 再乘以 100）\n\n印出兩行（以 `gacha=8, packSize=3` 為例）：\n`每袋平均：2.6666666666666665 個`\n`展示盒佔率：40.0%`",
+      "instructions": "兩個 `int` 相除會直接捨去小數，而且是右邊整個式子先算完才存進左邊的 `double`。\n\n把 `(double)` 放在 `gacha` 前面（如 `(double) gacha / packSize` 與 `(double) gacha / 20 * 100`），就可以在除法開始前先把其中一邊換成小數。",
+      "expectedShape": "double perBagAvg = …;\ndouble boxRate = …;\nSystem.out.println(…);\nSystem.out.println(…);",
       "check": {
         "type": "output",
-        "variants": [ { "gacha": "9" } ]
+        "exprs": ["perBagAvg", "boxRate"],
+        "variants": [
+          { "gacha": "7", "packSize": "2" },
+          { "gacha": "10", "packSize": "4" },
+          { "gacha": "9", "packSize": "3" }
+        ]
       },
       "hints": {
-        "lead": "`int / int` 的結果型別是 `int`，指定給 `double` 之前就已經截斷了⋯⋯",
-        "plain": "⋯⋯白話：兩個整數相除，小數會先被丟掉，放進 `double` 也救不回來。把 `2` 寫成 `2.0`，答案才會留下小數。"
+        "lead": "兩個運算式的 `gacha` 前面都需要 `(double)` 先轉型。",
+        "plain": "改成 `double perBagAvg = (double) gacha / packSize;` 與 `double boxRate = (double) gacha / 20 * 100;`。"
       },
       "afterText": ""
     }

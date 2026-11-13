@@ -4,44 +4,57 @@
   "route": "學妹",
   "partner": "二弘",
   "notes": ["box", "int-string", "assign"],
-  "vars": [],
+  "vars": [
+    { "name": "startGacha", "type": "int", "value": "7", "note": "一開始書包上的扭蛋數" }
+  ],
   "steps": [
     {
       "id": "laptop",
-      "title": "小白",
-      "goal": "做一個叫 `laptop` 的 `String` 盒子，裡面放 `\"小白\"`。\n\n盒子就是變數：有名字、可以裝東西；`String` 是裝文字的盒子。",
-      "instructions": "PDF 第 2 頁：**變數就像一個有名字的盒子**。先做一個盒子、外面貼上名字，再把東西放進去；之後寫盒子的名字，就能拿出裡面的東西。\n\n做盒子的寫法是：盒子的種類、名字、`=`、內容，最後加分號。`=` 的意思是「把右邊的東西放進左邊的盒子」；文字要用半形雙引號 `\"` 包起來。\n\n例如 `String drink = \"紅茶\";` 是做一個叫 `drink` 的 `String` 盒子，裡面放「紅茶」。",
-      "expectedShape": "String laptop = \"…\";",
-      "check": { "type": "values", "exprs": ["laptop"] },
+      "title": "貼標籤的盒子",
+      "goal": "建立兩個 `String` 變數：`laptop` 放 `\"小白\"`，`owner` 放 `\"亭瑄\"`。\n\n再用 `+` 把變數接進句子裡，印出 `亭瑄的筆電是小白`。",
+      "instructions": "編輯器最上面那行 `int startGacha = 7;` 是後面步驟才會用到的題目變數。\n\nPDF 第 2 頁：**變數就像一個有名字的盒子**。建立變數的寫法是：型別、變數名稱、`=`、初始內容，最後加分號。`String` 是裝文字的型別，文字要用半形雙引號 `\"` 包起來。\n\n要拿出盒子裡的字來接成一句話，只要把變數名稱寫在引號外面，用 `+` 串起來，例如 `owner + \"的筆電是\" + laptop`。",
+      "expectedShape": "String laptop = \"…\";\nString owner = \"…\";\nSystem.out.println(…);",
+      "check": {
+        "type": "output",
+        "exprs": ["laptop", "owner"]
+      },
       "hints": {
-        "lead": "種類、名字、等號、內容。",
-        "plain": "`String` 是盒子的種類（裝文字的），`laptop` 是貼在盒子外面的名字，`=` 右邊是要放進去的東西。文字記得用半形雙引號包起來。"
+        "lead": "型別、名稱、=、內容；用 `+` 把變數和文字接起來。",
+        "plain": "先宣告 `String laptop = \"小白\";` 和 `String owner = \"亭瑄\";`，再寫 `System.out.println(owner + \"的筆電是\" + laptop);`。變數名稱不要放進引號裡，放進去就只會印出英文單字本身。"
       },
       "afterText": "亭瑄（心想）：「小白，你現在是一個盒子了。」"
     },
     {
       "id": "gacha",
-      "title": "扭蛋有幾個",
-      "goal": "要印出 `7`。\n\n做一個叫 `gacha` 的 `int` 盒子，放進 `7`，再把它印出來。`int` 是裝整數的盒子。",
-      "instructions": "PDF 的下一個例子是扭蛋。`int` 盒子的寫法跟 `String` 一樣：種類、名字、`=`、內容、分號。數字不用加引號：`7` 是可以拿來算的數字，`\"7\"` 是長得像 7 的文字。\n\n要印出盒子裡的東西，`println` 的括號裡寫盒子的名字，不加引號。例如做好 `int age = 16;` 之後，`System.out.println(age);` 會印出 `16`；寫成 `System.out.println(\"age\");` 只會印出 `age` 這三個字母。",
-      "expectedShape": "int gacha = …;\nSystem.out.println(…);",
-      "check": { "type": "output", "exprs": ["gacha"] },
-      "hints": {
-        "lead": "數字不用引號。",
-        "plain": "`int` 盒子只裝整數。`7` 是數字，`\"7\"` 是一個長得像 7 的字，兩個不一樣。印的時候括號裡寫盒子的名字 `gacha`，不要加引號。"
+      "title": "相加與串接",
+      "goal": "題目給了 `startGacha`（預設 7）。宣告一個 `int bonus = 2;`，再用它們算出兩者相加的結果存進 `int total`。\n\n接著印出兩行（以 `startGacha` 為 7 時為例）：\n`相加：9`\n`串接：72`",
+      "instructions": "`int` 是裝整數的型別，數字不用加引號。`+` 號遇到兩邊都是數字時會做**加法**；只要碰到字串，就會變成**串接**，而且運算會從左往右執行。\n\n例如 `\"結果：\" + 3 + 2` 會先變成 `\"結果：3\"`，再接上 `2` 變成 `\"結果：32\"`；如果想先算數字相加，可以用已經算好的 `total` 變數，或是加上括號 `\"結果：\" + (3 + 2)`。",
+      "expectedShape": "int bonus = …;\nint total = …;\nSystem.out.println(\"相加：\" + …);\nSystem.out.println(\"串接：\" + …);",
+      "check": {
+        "type": "output",
+        "exprs": ["bonus", "total"],
+        "variants": [ { "startGacha": "5" }, { "startGacha": "12" } ]
       },
-      "afterText": "亭瑄（心想）：「7 個⋯⋯我書包上剛好也是 7 個耶。」"
+      "hints": {
+        "lead": "`+` 由左往右算，碰到字串就不再做加法。",
+        "plain": "第一行印 `\"相加：\" + total`（或 `\"相加：\" + (startGacha + bonus)`），會先得到總和再接上去；第二行直接寫 `\"串接：\" + startGacha + bonus`，讓兩個數字一個一個接在字串後面。"
+      },
+      "afterText": "亭瑄（心想）：「7 加 2 變成 72⋯⋯難怪少一對括號差這麼多。」"
     },
     {
       "id": "again",
-      "title": "又抽到一個",
-      "goal": "要印出兩行：\n`7`\n`8`\n\n原本的程式留著，在下面用 `=`（把右邊的東西放進盒子）把 `gacha` 換成 `8`，再印一次。",
-      "instructions": "又抽到一個了。盒子做好以後，寫盒子的名字、`=`、新的值，就會把盒子裡原本的東西換掉。例如 `int age = 16;` 之後寫 `age = 17;`，`age` 裡就從 16 換成 17。\n\n盒子已經做好了，這次前面**不用再寫** `int`。\n\n程式從上往下跑。第一次印的時候盒子裡還是 7，換成 8 以後再印一次，才會印出 8。",
-      "expectedShape": "int gacha = 7;\nSystem.out.println(gacha);\n… = …;\nSystem.out.println(…);",
-      "check": { "type": "output", "exprs": ["gacha"] },
+      "title": "覆寫與累積順序",
+      "goal": "宣告 `int gacha = startGacha;` 並先印出一次 `gacha`。\n\n接著依序更新 `gacha` 並各印一次（共印 4 行）：\n1. 多抽到 1 個（加 1 存回 `gacha`）\n2. 送給朋友 2 個（減 2 存回 `gacha`）\n3. 又抽到 3 個（加 3 存回 `gacha`）",
+      "instructions": "變數建立之後，想把舊的值換掉，只要寫 `變數名稱 = 新算式;`，前面**不能再寫** `int`（再寫一次 `int` 會被電腦當成重複建立同名盒子）。\n\nJava 會先把 `=` 右邊算完，再存進左邊的變數。所以 `gacha = gacha + 1;` 的意思是：拿出目前 `gacha` 裡的數字加 1，再覆寫回 `gacha`。程式由上往下執行，每改完一次印出一次，數字才會照順序變化。",
+      "expectedShape": "int gacha = startGacha;\nSystem.out.println(gacha);\ngacha = …;\nSystem.out.println(gacha);\n…",
+      "check": {
+        "type": "output",
+        "exprs": ["gacha"],
+        "variants": [ { "startGacha": "5" }, { "startGacha": "10" } ]
+      },
       "hints": {
-        "lead": "盒子已經有了。不用再寫 int。",
-        "plain": "再寫一次 `int gacha` 等於再做一個同名的盒子，電腦會說名字重複了。要換掉盒子裡的東西，只要寫名字、`=`、新的值。"
+        "lead": "用舊的值算完再放回同一個盒子：`gacha = gacha + 1;`。",
+        "plain": "千萬別寫死 `gacha = 8;`，因為 `startGacha` 可能會換數字！依序寫 `gacha = gacha + 1;`、`gacha = gacha - 2;`、`gacha = gacha + 3;`，每次改完就 `System.out.println(gacha);`。"
       },
       "afterText": "PDF 的頁尾寫著：「很好。翻下一頁。」"
     }

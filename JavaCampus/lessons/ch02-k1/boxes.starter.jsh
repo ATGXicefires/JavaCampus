@@ -1,1 +1,2 @@
-// 做三個盒子：double temp 放 33.5、boolean hot 放 true、String city 放 臺南
+// 建立 double temp = 33.5, boolean hot = true, String city = "臺南", int bagCapacity = 15
+// 再用 bagCapacity 和 gacha 算出剩餘空位 freeSlots

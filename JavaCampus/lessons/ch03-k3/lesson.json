@@ -10,35 +10,46 @@
   "steps": [
     {
       "id": "crash",
-      "title": "它停在哪一行",
-      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`，修好後 `sum` 要是五個分數的總和 324。\n\n起始碼現在一執行，加總的 `for` 就跌倒了，這叫例外（程式跑到一半出錯停下來）。看例外訊息找出原因，修好 `for` 那一行。",
-      "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n先按「執行」。這次不是紅字：紅字是程式還沒跑，電腦就看不懂；例外是程式跑到一半才跌倒。下面的例外訊息會說它停在哪一行、出了什麼事。\n\n例如 `int[] cups = {3, 8};` 只有第 0 格和第 1 格，去拿 `cups[2]` 就是開一格不存在的櫃子，程式會在那一行跌倒，訊息會說索引 2 超出範圍。\n\n這一步只看 `sum`，平均不對是下一步的事。",
-      "expectedShape": "for (int i = 0; i … scores.length; i++) {\n    sum += scores[i];\n}",
+      "title": "越界與除以零雙重陷阱",
+      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`。\n\n修好起始碼的兩個例外陷阱與一個運算錯誤：\n1. 修復 `for` 迴圈的陣列索引越界（讓 `sum` 正確算出 324）。\n2. 修復整數除法截斷，讓 `double avg` 保留小數（現在應為 `64.8`）。\n3. 保護空陣列（`scores.length == 0`）：不可發生除以零或算出 `NaN`，空陣列時 `avg` 必須是 `0.0`，並照樣印出 `平均：0.0`。",
+      "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n先按「執行」，看看例外訊息停在哪一行。5 格陣列的索引是 `0` 到 `4`，寫 `i <= scores.length` 會多跑到索引 `5` 而跌倒。\n\n此外，就算把迴圈修好了，如果陣列是空的（`scores.length == 0`）：\n- `sum / scores.length` 會丟出除以零例外（`ArithmeticException`）。\n- `(double) sum / scores.length` 則會算出 `0.0 / 0`，結果變成 `NaN`（不是數字）！\n\n所以計算 `avg` 之前一定要先用 `if` 檢查 `scores.length > 0`。",
+      "expectedShape": "int sum = 0;\nfor (…) {\n    sum += scores[i];\n}\ndouble avg = 0.0;\nif (…) {\n    avg = …;\n}\nSystem.out.println(\"平均：\" + avg);",
       "check": {
-        "type": "values",
-        "exprs": ["sum"],
-        "variants": [ { "scores": "{90, 85}" } ],
+        "type": "output",
+        "exprs": ["sum", "avg"],
+        "variants": [
+          { "scores": "{90, 85}" },
+          { "scores": "{60}" },
+          { "scores": "{}" }
+        ],
         "uses": ["for"]
       },
       "hints": {
-        "lead": "例外訊息說索引 5 超出範圍。",
-        "plain": "5 格的陣列只有 0 到 4 號。`i <= scores.length` 會讓 `i` 走到 5，去開一格不存在的櫃子，程式就跌倒了。把 `<=` 改成 `<`。"
+        "lead": "把 <= 改成 < 擋掉越界，再用 if (scores.length > 0) 保護除法並用 (double) 保留小數。",
+        "plain": "條件寫 `i < scores.length` 就不會走到不存在的那一格；算平均前先確認 `scores.length > 0`，再用 `(double) sum / scores.length`，否則 `avg` 維持 `0.0`。"
       },
       "afterText": ""
     },
     {
-      "id": "average",
-      "title": "平均怪怪的",
-      "goal": "算 `avg` 的那一行（`double avg = sum / scores.length;`）把小數弄丟了，現在印出 `平均：64.0`。`scores` 是 `{72, 58, 65, 80, 49}` 時，應該印出 `平均：64.8`。\n\n修好這一行，讓 `avg` 留下小數。",
-      "instructions": "`sum` 和 `scores.length` 都是 `int`。兩個 `int` 相除，答案也是整數，小數點後面直接丟掉：324 除以 5 只剩 64，放進 `double` 盒子也只是 64.0。\n\n要在除之前，就先把其中一邊換成小數。`(double)` 會把緊接在它後面的東西換成小數：`7 / 2` 是 `3`，`(double) 7 / 2` 是 `3.5`。",
-      "expectedShape": "double avg = …;\nSystem.out.println(\"平均：\" + avg);",
+      "id": "delta",
+      "title": "相鄰進步量不越界",
+      "goal": "我們想比較「相鄰兩次小考」的分數變化（`scores[i + 1] - scores[i]`），並找出最大進步幅度 `int maxGain`。\n\n起始碼在最後一圈存取 `scores[i + 1]` 時跌倒了，請修好並完整實作：\n1. 安全走訪每一對相鄰成績（長度為 `0` 或 `1` 時不可跌倒）。\n2. 依序印出每次變化：\n   - 變化量 `diff > 0` 時印 `第 (i + 1) -> (i + 2) 次：+diff`（例如 `第 2 -> 3 次：+7`）\n   - 變化量 `diff <= 0` 時印 `第 (i + 1) -> (i + 2) 次：diff`（例如 `第 1 -> 2 次：-14` 或 `0`）\n3. `maxGain` 記錄所有相鄰變化中最大的正進步幅度；若全無進步（全部退步或持平）或陣列長度 `< 2`，`maxGain` 為 `0`。\n4. 最後印出一行：`最大進步：maxGain`。",
+      "instructions": "這一步重新開始，專門處理相鄰兩格的索引安全。\n\n當迴圈同時存取 `scores[i]` 和 `scores[i + 1]` 時，若 `scores.length` 是 5，最後一對是 `scores[3]` 和 `scores[4]`，所以 `i` 最多只能走到 `scores.length - 2`，也就是條件要寫成 `i < scores.length - 1`！\n\n這個條件也天然保護了空陣列（`0 - 1 = -1`）與長度為 1（`1 - 1 = 0`）：`i < 0` 或 `i < -1` 一開始就不成立，迴圈直接跑 0 次，完全不會越界。\n\n注意：`maxGain` 一開始設為 `0`，只有當 `diff > maxGain` 時才更新，這樣全部退步或長度 `< 2` 時就會正確保持 `0`。",
+      "expectedShape": "int maxGain = 0;\nfor (…) {\n    int diff = …;\n    if (…) {\n        maxGain = diff;\n    }\n    if (…) {\n        System.out.println(\"第 \" + … + \" -> \" + … + \" 次：+\" + diff);\n    } else {\n        …\n    }\n}\nSystem.out.println(\"最大進步：\" + maxGain);",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{90, 85}" } ]
+        "exprs": ["maxGain"],
+        "variants": [
+          { "scores": "{90, 80, 70}" },
+          { "scores": "{60, 60, 75}" },
+          { "scores": "{85}" },
+          { "scores": "{}" }
+        ],
+        "uses": ["for"]
       },
       "hints": {
-        "lead": "又是整數除以整數。",
-        "plain": "`sum` 和 `scores.length` 都是整數，相除的答案會丟掉小數，64.8 就變成 64。讓其中一個先變成 `double`，例如 `(double) sum / scores.length`。"
+        "lead": "同時用到 i 與 i + 1 時，迴圈條件要寫 i < scores.length - 1。",
+        "plain": "`i < scores.length - 1` 讓最後一圈停在倒數第二格，這樣 `scores[i + 1]` 剛好是最後一格；長度為 0 或 1 時迴圈也不會執行。記得對 `diff > 0` 補上 `\"+\"` 號。"
       },
       "afterText": ""
     }

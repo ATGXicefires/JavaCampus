@@ -1,2 +1,3 @@
-// 印出 scores 第一格和最後一格的分數，一個一行
-// 最後一格的編號用 scores.length 算出來
+// 依 scores.length 分三種情況計算 endSum 與 endDiff，並印出結果
+int endSum = 0;
+int endDiff = 0;

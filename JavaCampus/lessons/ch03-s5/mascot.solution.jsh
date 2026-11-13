@@ -1,9 +1,13 @@
 for (int i = 0; i < scores.length; i++) {
     int s = scores[i];
-    if (s >= 90) {
+    if (s < 0 || s > 100) {
+        System.out.println(s + " 分 滷肉：「這個分數有問題！」");
+    } else if (s >= 90) {
         System.out.println(s + " 分 滷肉：「太強了！」");
+    } else if (s >= 70) {
+        System.out.println(s + " 分 滷肉：「很穩喔！」");
     } else if (s >= 60) {
-        System.out.println(s + " 分 滷肉：「不錯喔！」");
+        System.out.println(s + " 分 滷肉：「低空飛過！」");
     } else {
         System.out.println(s + " 分 滷肉：「沒關係，再跑一次！」");
     }

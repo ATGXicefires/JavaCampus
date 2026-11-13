@@ -1,12 +1,20 @@
-// 段考筆記：等第（從高分往低分問）
-if (score >= 90) {
-    System.out.println(score + " 分是 A");
-} else if (score >= 80) {
-    System.out.println(score + " 分是 B");
-} else if (score >= 70) {
-    System.out.println(score + " 分是 C");
-} else if (score >= 60) {
-    System.out.println(score + " 分是 D");
+int finalScore = -1;
+if (score < 0 || score > 100 || bonus < 0) {
+    System.out.println("分數無效");
 } else {
-    System.out.println(score + " 分是 F");
+    finalScore = score + bonus;
+    if (finalScore > 100) {
+        finalScore = 100;
+    }
+    if (finalScore >= 90) {
+        System.out.println(finalScore + " 分是 A");
+    } else if (finalScore >= 80) {
+        System.out.println(finalScore + " 分是 B");
+    } else if (finalScore >= 70) {
+        System.out.println(finalScore + " 分是 C");
+    } else if (finalScore >= 60) {
+        System.out.println(finalScore + " 分是 D");
+    } else {
+        System.out.println(finalScore + " 分是 F");
+    }
 }

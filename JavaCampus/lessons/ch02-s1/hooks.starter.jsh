@@ -1,1 +1,2 @@
-// 白板範例 2：把 gacha 個扭蛋平分到 3 個掛勾，印出每個分到幾個、還剩幾個
+// 白板範例 2：把 gacha 個扭蛋裝進每袋上限 packSize 個的袋子
+// 算出 fullBags、left、totalBags 並印出結果

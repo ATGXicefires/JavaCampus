@@ -1,4 +1,6 @@
-if (score >= 90) {
+if (score < 0 || score > 100) {
+    System.out.println("無效分數");
+} else if (score >= 90) {
     System.out.println("A");
 } else if (score >= 80) {
     System.out.println("B");

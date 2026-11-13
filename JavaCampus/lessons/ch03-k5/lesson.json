@@ -5,59 +5,56 @@
   "partner": "小芸",
   "notes": ["parse-int", "try-catch"],
   "vars": [
-    { "name": "input", "type": "String", "value": "\"85\"", "note": "答題框收到的字串" },
-    { "name": "total", "type": "int", "value": "240", "note": "成績的總分" },
-    { "name": "count", "type": "int", "value": "3", "note": "成績的筆數" }
+    { "name": "input", "type": "String", "value": "\"85\"", "note": "單筆答題框收到的字串" },
+    { "name": "inputs", "type": "String[]", "value": "{\"85\", \"缺考\", \"-5\", \"92\", \"abc\", \"105\"}", "note": "多筆答題框收到的混合字串" }
   ],
   "steps": [
     {
-      "id": "parse",
-      "title": "字變成數字",
-      "goal": "`input` 是答題框收到的字串，現在是 `\"85\"`，要把它變成能拿來算的數字 85。\n\n用 `Integer.parseInt`（把字串換成 `int`）把 `input` 變成數字，存進 `int score`。",
-      "instructions": "編輯器最上面三行 `String input = \"85\";`、`int total = 240;` 和 `int count = 3;` 是題目先寫好的，你的程式可以直接用 `input`、`total` 和 `count`。\n\n答題框拿到的東西都是字串，就算長得像數字也一樣：`\"85\"` 是「8」和「5」兩個字，不能拿來加減。\n\n`Integer.parseInt(…)` 會讀括號裡的字串，換成真正的數字。例如 `int n = Integer.parseInt(\"7\");`，`n` 就是數字 7，可以拿來算。",
-      "expectedShape": "int score = …;",
-      "check": {
-        "type": "values",
-        "exprs": ["score"],
-        "variants": [ { "input": "\"62\"" } ],
-        "uses": ["Integer.parseInt"]
-      },
-      "hints": {
-        "lead": "Integer.parseInt(input)。",
-        "plain": "`\"85\"` 是兩個字，`85` 才是數字。`Integer.parseInt` 會讀那段字，把它換成真正的數字，換好的放進 `int` 盒子。"
-      },
-      "afterText": ""
-    },
-    {
-      "id": "catch",
-      "title": "打了國字",
-      "goal": "現在 `input` 是 `\"85\"`，要印出 `收到：85`；`input` 換不成數字的時候（例如打了國字 `八十`），要印 `要輸入數字喔，例如 80`。\n\n用 `try`／`catch`（先試試看，跌倒了就改做備案）：在 `try` 裡把 `input` 換成數字並印出來，換不成時在 `catch` 裡印那句提示。",
-      "instructions": "新生打的不一定是數字。`Integer.parseInt` 看不懂的時候，程式會跌倒，丟出一個叫 `NumberFormatException` 的例外。\n\n```\ntry {\n    可能跌倒的程式\n} catch (NumberFormatException e) {\n    跌倒時要做的事\n}\n```\n\n`try` 裡的程式跌倒了，不會整個停掉，而是直接跳到 `catch` 的大括號；沒跌倒，`catch` 裡的事就不會做。`catch` 的括號寫要接住哪一種例外。",
-      "expectedShape": "try {\n    …\n} catch (… e) {\n    …\n}",
+      "id": "parseOne",
+      "title": "字串解析與雙重防呆",
+      "goal": "`input` 是答題框收到的字串，現在是 `\"85\"`。\n\n準備 `int score = -1;`，在 `try` 裡用 `Integer.parseInt(input)` 解析數字，並依三種情況處理：\n1. 非數字字串（如 `\"八十\"`、`\"abc\"`、`\"\"`）：由 `catch (NumberFormatException e)` 接住，印出 `格式錯誤`，且 `score` 保持 `-1`。\n2. 轉成數字但不在 `0`～`100`（含 0 與 100）：印出 `超出範圍`，且把 `score` 設回 `-1`。\n3. `0`～`100` 的有效分數：印出 `收到：score`（此時 `score` 為解析出的分數）。",
+      "instructions": "編輯器最上面兩行 `String input = \"85\";` 和 `String[] inputs = ...;` 是題目先寫好的，你的程式可以直接使用。\n\n答題框拿到的是字串，不能直接拿來比大小或加減，必須先用 `Integer.parseInt(input)` 轉成 `int`。\n\n但 `Integer.parseInt` 碰到非數字字串會跌倒並丟出 `NumberFormatException`；就算轉成功，也可能是 `-5` 或 `105` 這種不合理分數！\n\n注意順序：先把解析結果存進一個暫存變數（例如 `int parsed = Integer.parseInt(input);`），檢查是否在 `0`～`100` 之間；合法才放進 `score` 並印出 `收到：...`，否則印 `超出範圍` 讓 `score` 維持 `-1`。",
+      "expectedShape": "int score = -1;\ntry {\n    int parsed = …;\n    if (…) {\n        System.out.println(\"超出範圍\");\n    } else {\n        score = parsed;\n        System.out.println(\"收到：\" + score);\n    }\n} catch (… e) {\n    System.out.println(\"格式錯誤\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "input": "\"八十\"" }, { "input": "\"62\"" }, { "input": "\"abc\"" } ],
+        "exprs": ["score"],
+        "variants": [
+          { "input": "\"0\"" },
+          { "input": "\"100\"" },
+          { "input": "\"-5\"" },
+          { "input": "\"101\"" },
+          { "input": "\"八十\"" },
+          { "input": "\"abc\"" },
+          { "input": "\"\"" }
+        ],
         "uses": ["try", "catch", "Integer.parseInt"]
       },
       "hints": {
-        "lead": "可能跌倒的放進 try。",
-        "plain": "`try` 是「試試看」：裡面的程式跌倒了，不會整個停掉，而是跳到 `catch` 去做備案。`catch` 的括號寫要接住哪一種例外，這裡是 `NumberFormatException`。"
+        "lead": "用暫存變數接住 Integer.parseInt(input)，合法（0～100）才寫進 score，非數字交給 catch。",
+        "plain": "如果直接把 `Integer.parseInt(input)` 寫進 `score`，遇到 `105` 時別忘了要把 `score` 設回 `-1`；用 `int parsed` 先檢查再賦值更不容易出錯。"
       },
       "afterText": ""
     },
     {
-      "id": "zero",
-      "title": "還沒有成績",
-      "goal": "`total` 是成績的總分、`count` 是成績的筆數。現在 `total` 是 240、`count` 是 3，要印出 `平均：80`；`count` 是 0 的時候，改印 `還沒有成績`。\n\n用 `total / count` 算出平均印出來。`count` 是 0 時這個除法會跌倒，用 `try`／`catch` 接住它。",
-      "instructions": "平均直接用整數算就好，不用小數。\n\n整數除以 0 沒有答案，程式會跌倒，丟出的例外叫 `ArithmeticException`。接住它的寫法跟上一步一樣，只是 `catch` 的括號裡換成這個名字。",
-      "expectedShape": "try {\n    …\n} catch (… e) {\n    …\n}",
+      "id": "cleanAll",
+      "title": "混合資料清理與安全平均",
+      "goal": "現在 `inputs` 是一排混有非數字與異常值的字串：`{\"85\", \"缺考\", \"-5\", \"92\", \"abc\", \"105\"}`。\n\n走訪 `inputs` 的每一格，用 `try / catch (NumberFormatException e)` 清理資料並計算：\n1. `int validCount`：格式正確且在 `0`～`100`（含 0 與 100）的有效筆數。\n2. `int invalidCount`：格式錯誤（拋出 `NumberFormatException`）或數字超出 `0`～`100` 的失敗筆數。\n3. `int safeAvg`：只針對有效分數計算的整數平均（無條件捨去小數）；若沒有任何有效資料（`validCount == 0`），必須安全回傳預設值 `0`（不可發生除以零！）。\n\n最後印出一行：`合法：validCount 筆，失敗：invalidCount 筆，平均：safeAvg`。",
+      "instructions": "這一步重新開始，把單筆清理放進迴圈裡處理整批資料。\n\n重點在於 `try / catch` 要放在 `for` 迴圈「裡面」，而不是包在整個 `for` 外面！\n- 如果把 `try` 包在 `for` 外面，只要第 2 格 `\"缺考\"` 跌倒，整個迴圈就會立刻跳出，後面的 `\"92\"` 就再也讀不到了。\n- 把 `try / catch` 放在 `for` 裡面，每一格跌倒只會走進那一圈的 `catch` 做 `invalidCount++`，下一圈照常繼續！\n\n迴圈結束後算 `safeAvg` 時，先檢查 `validCount > 0` 再做 `validSum / validCount`（或用 `try / catch (ArithmeticException e)` 保護），無有效資料時維持 `0`。",
+      "expectedShape": "int validCount = 0;\nint invalidCount = 0;\nint validSum = 0;\nfor (…) {\n    try {\n        int s = …;\n        if (…) {\n            invalidCount++;\n        } else {\n            validSum += s;\n            validCount++;\n        }\n    } catch (… e) {\n        invalidCount++;\n    }\n}\nint safeAvg = 0;\nif (…) {\n    safeAvg = …;\n}\nSystem.out.println(\"合法：\" + validCount + \" 筆，失敗：\" + invalidCount + \" 筆，平均：\" + safeAvg);",
       "check": {
         "type": "output",
-        "variants": [ { "count": "0" }, { "count": "4" } ]
+        "exprs": ["validCount", "invalidCount", "safeAvg"],
+        "variants": [
+          { "inputs": "{\"100\", \"0\", \"abc\", \"101\", \"-1\"}" },
+          { "inputs": "{\"缺考\", \"-5\", \"200\"}" },
+          { "inputs": "{}" },
+          { "inputs": "{\"90\", \"80\", \"70\"}" }
+        ],
+        "uses": ["for", "try", "catch", "Integer.parseInt"]
       },
       "hints": {
-        "lead": "除以零是 ArithmeticException。",
-        "plain": "整數除以 0 會跌倒，丟出 `ArithmeticException`。把除法放進 `try`，在 `catch (ArithmeticException e)` 裡印出還沒有成績。也可以先用 `if` 檢查 `count` 是不是 0。"
+        "lead": "把 try-catch 放在 for 迴圈裡面，每一格獨立解析與分流；結束後先檢查 validCount > 0 再除法。",
+        "plain": "迴圈裡遇到 `NumberFormatException` 或超出 `0`～`100` 都算 `invalidCount++`；只有合法分數才累加 `validSum` 與 `validCount`。最後 `validCount == 0` 時跳過除法讓 `safeAvg` 維持 `0`。"
       },
       "afterText": ""
     }

@@ -6,57 +6,61 @@
   "notes": ["array", "index", "else-if"],
   "vars": [
     { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" },
-    { "name": "score", "type": "int", "value": "85", "note": "要換成等第的分數" }
+    { "name": "score", "type": "int", "value": "85", "note": "要加上加權後判斷等第的分數" },
+    { "name": "bonus", "type": "int", "value": "5", "note": "平時表現加分（加權後最高不超過 100）" }
   ],
   "steps": [
     {
       "id": "lockers",
-      "title": "置物櫃",
-      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`，要印出 5 行：\n`第 0 格：72`\n`第 1 格：58`\n⋯⋯\n`第 4 格：49`\n\n用 `for` 走過 `scores` 的每一格，印出格子的編號（索引，從 0 開始）和那一格的分數。",
-      "instructions": "編輯器最上面兩行 `int[] scores = {72, 58, 65, 80, 49};` 和 `int score = 85;` 是題目先寫好的，你的程式可以直接用 `scores` 和 `score`。\n\n這份筆記把編號和分數一起印出來，讓人一眼看到編號從 0 開始。\n\n`for` 的 `i` 從 0 開始、每一圈加一，條件寫 `i < scores.length`（`length` 是總共有幾格），`i` 就剛好走過每一格的編號；`scores[i]` 是那一格的分數。",
-      "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    System.out.println(\"第 \" + … + \" 格：\" + …);\n}",
+      "title": "置物櫃巡檢與極值索引",
+      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`。\n\n走訪 `scores` 並算出最高分 `int max` 與最高分所在的索引 `int maxIndex`：\n- 若 `scores.length == 0`（空陣列）：`max = 0`、`maxIndex = -1`，只印一行 `置物櫃是空的`。\n- 若非空陣列：\n  1. 依序印出每一格：`第 i 格：scores[i]`（例如 `第 0 格：72`）。\n  2. 走訪時記下最大值 `max` 與它**第一次出現的索引** `maxIndex`（同分時保留較前面的索引，也就是只用嚴格大於 `>` 更新）。\n  3. 迴圈結束後印出兩行：\n     `最後一格是第 (scores.length - 1) 格`\n     `最高分在第 maxIndex 格：max 分`",
+      "instructions": "編輯器最上面三行 `int[] scores = ...;`、`int score = 85;` 和 `int bonus = 5;` 是題目先寫好的，你的程式可以直接使用。\n\n注意兩個常見錯誤：\n- 如果陣列全為負數（例如 `{-10, -5, -20}`），`max` 一開始設為 `0` 會錯把 `0` 當成最大值！正確做法是在確定 `scores.length > 0` 後，把 `max = scores[0]`、`maxIndex = 0` 當起點。\n- 算式 `scores.length - 1` 放進字串串接時要加括號：`\"最後一格是第 \" + (scores.length - 1) + \" 格\"`，不然 `+` 先串接字串後碰到 `-` 會編譯錯誤。",
+      "expectedShape": "int max = 0;\nint maxIndex = -1;\nif (…) {\n    System.out.println(\"置物櫃是空的\");\n} else {\n    max = …;\n    maxIndex = 0;\n    for (…) {\n        System.out.println(\"第 \" + i + \" 格：\" + scores[i]);\n        if (…) {\n            …\n        }\n    }\n    System.out.println(\"最後一格是第 \" + (…) + \" 格\");\n    System.out.println(\"最高分在第 \" + maxIndex + \" 格：\" + max + \" 分\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{90, 85}" } ],
-        "uses": ["for"]
+        "exprs": ["max", "maxIndex"],
+        "variants": [
+          { "scores": "{90, 85}" },
+          { "scores": "{60, 90, 90}" },
+          { "scores": "{-10, -5, -20}" },
+          { "scores": "{75}" },
+          { "scores": "{}" }
+        ],
+        "uses": ["for", "scores.length"]
       },
       "hints": {
-        "lead": "陣列索引是從 0 起算的位移量⋯⋯",
-        "plain": "⋯⋯白話：把編號和分數一起印出來，一眼就看得出編號從 0 開始。`i` 是編號，`scores[i]` 是那一格的分數。"
-      },
-      "afterText": ""
-    },
-    {
-      "id": "last",
-      "title": "最後一格",
-      "goal": "現在 `scores` 有 5 格，最後一格的編號是 4，要在下面再印一行 `最後一格是第 4 格`。\n\n這個編號用 `scores.length - 1`（格數減一）算出來。",
-      "instructions": "編號從 0 開始，所以 5 格的編號是 0 到 4，最後一格的編號比格數少一。\n\n算式放進字串中間時要加括號：`\"共 \" + (3 - 1) + \" 格\"` 會先算 `3 - 1`，印出 `共 2 格`。不加括號的話，`+` 會先把字串和 3 接起來，接著碰到 `-` 就是紅字。",
-      "expectedShape": "System.out.println(\"最後一格是第 \" + (…) + \" 格\");",
-      "check": {
-        "type": "output",
-        "variants": [ { "scores": "{90, 85}" } ],
-        "uses": ["scores.length"]
-      },
-      "hints": {
-        "lead": "最後一個索引是 `length - 1`；放在串接裡要加括號⋯⋯",
-        "plain": "⋯⋯白話：5 格的最後一格是 4 號，用 `scores.length - 1` 算。放進字串中間時要加括號，不然 `-` 會碰到字串。"
+        "lead": "非空陣列時以 `scores[0]` 與 `0` 初始化 `max` 和 `maxIndex`，用嚴格大於 `>` 保留首次最高分索引⋯⋯",
+        "plain": "⋯⋯白話：先檢查 `scores.length == 0`，不然 `scores[0]` 會越界；非空時把 `max` 先設為第 0 格，才不怕整排都是負分，同分時用 `>` 才不會被後面的同分蓋掉。"
       },
       "afterText": ""
     },
     {
       "id": "grade",
-      "title": "順序很重要",
-      "goal": "`score` 是要換成等第的分數，現在是 85，要印出 `85 分是 B`。\n\n用 `if`／`else if`／`else`（從上往下問，第一個成立的就做）照 `score` 印出等第：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
-      "instructions": "`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。第一個成立的就做，後面的都不問了，所以條件要從高分往低分問。\n\n```\nif (temp >= 30) {\n    System.out.println(\"熱\");\n} else if (temp >= 20) {\n    System.out.println(\"舒服\");\n} else {\n    System.out.println(\"冷\");\n}\n```\n\n「以上」包含剛好那個分數（用 `>=`）：剛好 60 分是 D。印的時候把 `score` 和文字接起來，例如 `score + \" 分是 B\"`，`分是` 前後各一個半形空格。",
-      "expectedShape": "if (…) {\n    System.out.println(score + \" 分是 …\");\n} else if (…) {\n    …\n} else {\n    …\n}",
+      "title": "無效排除、加權封頂與等第",
+      "goal": "`score` 是原始分數（現在是 `85`），`bonus` 是平時加分（現在是 `5`）。\n\n算出加權後分數 `int finalScore` 並依序印出等第：\n1. 先檢查原始輸入是否合理：若 `score < 0`、`score > 100` 或 `bonus < 0`，視為無效輸入，`finalScore` 設為 `-1`，並只印出 `分數無效`。\n2. 原始輸入合法時，計算 `finalScore = score + bonus`，但最高封頂在 `100`（若超過 100 則只算 `100`）。\n3. 依 `finalScore` 印出 `finalScore 分是 X`（90 以上 A、80 以上 B、70 以上 C、60 以上 D、0～59 F）。",
+      "instructions": "這一步重新開始，練習「先驗證原始輸入，再計算加權與上限封頂」。\n\n如果先把 `score + bonus` 加完才檢查 `< 0` 或 `> 100`，會出大事：\n- 當 `score` 是 `-1`、`bonus` 是 `10` 時，加完會變成 `9`，原本無效的分數就偷偷變合法了！\n- 當 `score` 是 `98`、`bonus` 是 `5` 時，它其實是合法分數，只是加完要封頂成 `100`，不能被當成無效分數擋掉。\n\n所以順序一定是：先檢查原始 `score` 與 `bonus` 合法性 -> 相加並封頂於 `100` -> `else if` 從高分往低分判斷等第。",
+      "expectedShape": "int finalScore = -1;\nif (…) {\n    System.out.println(\"分數無效\");\n} else {\n    finalScore = …;\n    if (…) {\n        …\n    }\n    if (…) {\n        System.out.println(finalScore + \" 分是 A\");\n    } else if (…) {\n        …\n    } else {\n        System.out.println(finalScore + \" 分是 F\");\n    }\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ],
+        "exprs": ["finalScore"],
+        "variants": [
+          { "score": "101", "bonus": "0" },
+          { "score": "-1", "bonus": "10" },
+          { "score": "80", "bonus": "-5" },
+          { "score": "98", "bonus": "5" },
+          { "score": "85", "bonus": "5" },
+          { "score": "89", "bonus": "0" },
+          { "score": "75", "bonus": "5" },
+          { "score": "70", "bonus": "0" },
+          { "score": "55", "bonus": "5" },
+          { "score": "59", "bonus": "0" },
+          { "score": "0", "bonus": "0" }
+        ],
         "uses": ["else if"]
       },
       "hints": {
-        "lead": "多分支選擇依序判斷，條件要從嚴到寬排列⋯⋯",
-        "plain": "⋯⋯白話：從 90 分開始往下問，第一個成立的就是答案。95 分停在 A，60 分停在 D，59 分走到最後的 F。"
+        "lead": "輸入防呆須置於加權前，封頂邏輯置於加權後，等第分支由高到低排列⋯⋯",
+        "plain": "⋯⋯白話：先擋掉原始 `score < 0 || score > 100 || bonus < 0`；合法才加上 `bonus`，超過 100 就壓回 100，最後再照 90、80、70、60 往下分級。"
       },
       "afterText": ""
     }

@@ -1,4 +1,4 @@
-// 修好這份練習
-double half = 3.5;
-System.out.println("總共 " + (today + yesterday) + " 個");
-double avg = (today + yesterday) / 2;
+double targetAvg = 3.5;
+int sum = today + yesterday;
+double remain = targetAvg * days - sum;
+System.out.println("共 " + sum + " 個，距離目標還差 " + remain + " 個");

@@ -1,9 +1,10 @@
-// 成績頁：加總、平均、每個分數的等第
-int sum = 0;
+// 成績頁：加總、平均、每個分數的等第（目前有越界、未排除無效分數與除零問題）
+int validSum = 0;
+int validCount = 0;
 for (int i = 0; i <= scores.length; i++) {
-    sum += scores[i];
+    validSum += scores[i];
 }
-double avg = sum / scores.length;
+double avg = validSum / scores.length;
 System.out.println("平均：" + avg);
 for (int i = 0; i < scores.length; i++) {
     int s = scores[i];

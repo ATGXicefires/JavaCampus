@@ -1,5 +1,8 @@
-String s = "梁亭瑄天才";
+String bangs = "";
+int bangCount = 0;
 for (int i = 1; i <= spins; i++) {
-    s += "！";
-    System.out.println(s);
+    bangs += "！";
+    bangCount += i;
+    System.out.println("[" + i + "/" + spins + "] 梁亭瑄天才" + bangs);
 }
+System.out.println("總共轉了 " + spins + " 圈，共 " + bangCount + " 個！");
