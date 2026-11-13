@@ -1,13 +1,19 @@
 static boolean isPrime(int n) {
-    if (n < 2) {
+    if (n <= 1) {
         return false;
     }
-    int d = 2;
-    while (d < n) {
+    if (n == 2) {
+        return true;
+    }
+    if (n % 2 == 0) {
+        return false;
+    }
+    int d = 3;
+    while (d <= n / d) {
         if (n % d == 0) {
             return false;
         }
-        d++;
+        d += 2;
     }
     return true;
 }

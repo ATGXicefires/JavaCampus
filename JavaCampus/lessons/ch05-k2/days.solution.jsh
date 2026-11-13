@@ -1,6 +1,10 @@
-int saved = 0;
+int saved = start;
 int days = 0;
-while (saved < price) {
-    saved += perDay;
-    days++;
+if (saved < price && earn - cost <= 0) {
+    days = -1;
+} else {
+    while (saved < price) {
+        saved += earn - cost;
+        days++;
+    }
 }

@@ -1,7 +1,9 @@
 static int total(int[] counts) {
     int sum = 0;
     for (int i = 0; i < counts.length; i++) {
-        sum += ____;
+        if (counts[i] > ____) {
+            sum += ____;
+        }
     }
-    return ____;
+    return sum;
 }

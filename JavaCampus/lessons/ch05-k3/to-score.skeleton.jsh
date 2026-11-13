@@ -1,25 +1,14 @@
-static double average(int[] a) {
-    int sum = 0;
-    for (int i = 0; i < a.length; i++) {
-        sum += a[i];
-    }
-    return (double) sum / a.length;
-}
-
-static int passCount(int[] a) {
-    int count = 0;
-    for (int i = 0; i < a.length; i++) {
-        if (a[i] >= 60) {
-            count++;
-        }
-    }
-    return count;
-}
-
 static int toScore(String s) {
+    if (s == null) {
+        return -1;
+    }
     try {
-        return Integer.parseInt(s);
+        int score = Integer.parseInt(s.____());
+        if (score < 0 || score ____ 100) {
+            return -1;
+        }
+        return score;
     } catch (____ e) {
-        return ____;
+        return -1;
     }
 }

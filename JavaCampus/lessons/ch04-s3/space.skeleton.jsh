@@ -1,3 +1,13 @@
+static String normalize(String text) {
+    if (text == null) {
+        return "";
+    }
+    return text.____().toLowerCase();
+}
+
 static boolean isCorrect(String typed, String answer) {
-    return typed.trim().____(answer);
+    if (answer == null) {
+        return false;
+    }
+    return normalize(typed).____(answer);
 }

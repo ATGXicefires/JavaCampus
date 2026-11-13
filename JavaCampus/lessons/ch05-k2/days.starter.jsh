@@ -1,4 +1,4 @@
-// 用 while 一天一天存，算出要存幾天才夠買，存進 days
-// saved 記目前存了多少錢，days 記存了幾天
-int saved = 0;
+// 目標 price 元、原本有 start 元、每天存入 earn 元、每天花掉 cost 元
+// 算出還需要幾天才能存到至少 price 元，結果存在 days（若永遠存不到，設為 -1）
+int saved = start;
 int days = 0;

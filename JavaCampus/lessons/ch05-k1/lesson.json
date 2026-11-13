@@ -7,41 +7,87 @@
   "vars": [],
   "steps": [
     {
-      "id": "pass",
-      "title": "及格線",
-      "goal": "`isPass(60)` 要交回 `true`，`isPass(59)` 要交回 `false`：剛好 60 分也算及格。\n\n寫一個方法 `static boolean isPass(int score)`（`boolean` 表示只交回 `true` 或 `false`）：`score` 60 分以上交回 `true`，不到 60 交回 `false`。",
-      "instructions": "名字前面寫 `boolean` 的方法，只回答一個是非題，例如「及格了嗎？」。這種方法的名字常用 `is` 開頭，一看就知道在問什麼。\n\n比大小的答案本身就是 `true` 或 `false`，可以直接交回去，不用寫 `if`。例如 `return age >= 18;`：`age` 是 20 時交回 `true`，是 15 時交回 `false`。\n\n60 分剛好在及格和不及格的分界上，叫做**邊界**。bug 最喜歡躲在邊界：`>=` 寫成 `>`，就只有剛好 60 分會錯。寫好以後，可以印出 `isPass(59)`、`isPass(60)`、`isPass(61)` 看看對不對。",
-      "expectedShape": "static boolean isPass(int score) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isPass(59)", "isPass(60)", "isPass(61)", "isPass(0)", "isPass(100)"] },
+      "id": "valid",
+      "title": "合法資料檢查",
+      "goal": "先擋掉打錯的成績或缺席次數：分數 `score` 必須在 `0` 到 `100` 之間（含 0 與 100），而且缺席次數 `absent` 必須在 `0` 到 `18` 之間（含 0 與 18）。\n\n寫一個方法 `static boolean isValid(int score, int absent)`：兩項資料都在合法範圍內才交回 `true`，否則交回 `false`。",
+      "instructions": "名字前面寫 `boolean` 的方法，只回答一個是非題。\n\n合法的輸入要同時滿足四個邊界條件：`score` 不小於 0、不大於 100，而且 `absent` 不小於 0、不大於 18（一學期最多 18 週）。\n\n`a && b` 要兩邊都是 `true`，整體才是 `true`；只要有一邊不成立，答案就是 `false`。寫完可以試測 `-1`、`0`、`100`、`101` 和缺席 `-1`、`18`、`19` 等邊界值。",
+      "expectedShape": "static boolean isValid(int score, int absent) {\n    return …;\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isValid(60, 0)",
+          "isValid(0, 0)",
+          "isValid(100, 18)",
+          "isValid(-1, 0)",
+          "isValid(101, 0)",
+          "isValid(60, -1)",
+          "isValid(60, 19)"
+        ],
+        "uses": ["&&"]
+      },
       "hints": {
-        "lead": "60 分也算及格。",
-        "plain": "`score >= 60` 的答案就是 `true` 或 `false`，直接交回去就好，不用寫 `if`。注意是 `>=`：剛好 60 分也要算及格。"
+        "lead": "四個邊界條件都要同時成立，用 && 接起來。",
+        "plain": "分數合法是 `score >= 0 && score <= 100`，缺席合法是 `absent >= 0 && absent <= 18`，兩者用 `&&` 串起來直接 `return` 就好。"
       },
       "afterText": ""
     },
     {
-      "id": "valid",
-      "title": "不合理的分數",
-      "goal": "`isValid(100)` 要交回 `true`，`isValid(101)` 要交回 `false`：剛好 0 或 100 分都還算合理。\n\n寫一個方法 `static boolean isValid(int score)`：`score` 在 0 到 100 之間交回 `true`；小於 0 或大於 100 是打錯了，交回 `false`。兩個條件都要成立，用 `&&`（而且）接起來。",
-      "instructions": "合理的分數要同時滿足兩個條件：不小於 0，也不大於 100。\n\n`a && b` 要 `a` 和 `b` 兩邊都是 `true`，答案才是 `true`；只要有一邊是 `false`，答案就是 `false`。例如 `temp >= 20 && temp <= 28` 是在問「溫度在 20 到 28 度之間嗎？」：`temp` 是 25 時是 `true`，是 30 時是 `false`。",
-      "expectedShape": "static boolean isValid(int score) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isValid(-1)", "isValid(0)", "isValid(60)", "isValid(100)", "isValid(101)"], "uses": ["&&"] },
+      "id": "pass",
+      "title": "及格與補考門檻",
+      "goal": "有時候分數剛好差一點，或雖考高分卻缺席過多。\n\n保留上一步的 `isValid`，再新增兩個方法：\n1. `static boolean isPass(int score, int absent)`：資料須先合法（呼叫 `isValid`），且 `score >= 60`（剛好 60 算及格），而且缺席次數不超過 3 次（`absent <= 3`），才交回 `true`。\n2. `static boolean canRetake(int score, int absent)`：資料須合法、尚未及格但分數在 `40` 到 `59` 之間（含 40 與 59），而且缺席次數不超過 3 次（`absent <= 3`），才交回 `true`。",
+      "instructions": "方法裡可以呼叫同一個檔案裡定義好的方法。先用 `isValid(score, absent)` 擋掉不合理資料，就不用在每個方法重複寫 `0..100` 和 `0..18` 的檢查。\n\n注意「不超過 3 次」代表 3 次也算通過，第 4 次才扣考。已經 `>= 60` 分的人已經及格，不屬於補考名單，`canRetake` 要交回 `false`；低於 40 分直接死當，`canRetake` 也要交回 `false`。",
+      "expectedShape": "static boolean isPass(int score, int absent) {\n    return …;\n}\n\nstatic boolean canRetake(int score, int absent) {\n    return …;\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isPass(60, 0)",
+          "isPass(60, 3)",
+          "isPass(60, 4)",
+          "isPass(59, 0)",
+          "isPass(101, 0)",
+          "isPass(80, -1)",
+          "canRetake(39, 0)",
+          "canRetake(40, 0)",
+          "canRetake(59, 3)",
+          "canRetake(59, 4)",
+          "canRetake(60, 0)",
+          "canRetake(-1, 0)"
+        ],
+        "uses": ["isValid(", "&&"]
+      },
       "hints": {
-        "lead": "兩個條件都要成立用 &&。",
-        "plain": "合理的分數要「大於等於 0」**而且**「小於等於 100」。`&&` 就是「而且」：兩邊都成立，答案才是 `true`。"
+        "lead": "兩個方法都要先用 isValid(score, absent) 把關，再檢查分數與缺席上限。",
+        "plain": "`isPass` 是 `isValid(score, absent) && score >= 60 && absent <= 3`；`canRetake` 是 `isValid(score, absent) && score >= 40 && score <= 59 && absent <= 3`。"
       },
       "afterText": ""
     },
     {
       "id": "judge",
-      "title": "提早交回",
-      "goal": "`judge(-5)` 要交回 `分數打錯了`，`judge(60)` 要交回 `及格`，`judge(59)` 要交回 `不及格`。\n\n寫一個方法 `static String judge(int score)`：分數不合理（`isValid` 交回 `false`）就馬上交回 `分數打錯了`；合理的話，再用 `isPass` 決定交回 `及格` 還是 `不及格`。`return` 一執行，方法就結束了。",
-      "instructions": "先把不合理的分數擋掉，一碰到就 `return`，這叫提早 `return`。走得到下面的，一定是合理的分數，接下來只要分及格和不及格。\n\n`!` 會把答案反過來，例如 `isPass(50)` 是 `false`，`!isPass(50)` 就是 `true`。",
-      "expectedShape": "static String judge(int score) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["judge(-5)", "judge(0)", "judge(59)", "judge(60)", "judge(100)", "judge(101)"], "uses": ["isValid(", "isPass("] },
+      "title": "綜合評定",
+      "goal": "寫一個方法 `static String judge(int score, int absent)`，依照以下順序回傳結果：\n1. 若 `isValid(score, absent)` 為 `false`，立即交回 `\"資料有誤\"`。\n2. 若 `isPass(score, absent)` 為 `true`，交回 `\"及格\"`。\n3. 若 `canRetake(score, absent)` 為 `true`，交回 `\"可補考\"`。\n4. 其餘情況交回 `\"重修\"`。",
+      "instructions": "把不合法的資料放在最前面用 `!isValid(...)` 提早 `return`，走得到下面的就一定是合法資料，再依序判斷及格與補考。\n\n缺席超過 3 次時，就算考了 80 分，`isPass` 和 `canRetake` 都會是 `false`，最後自然會走到 `\"重修\"`（扣考）。",
+      "expectedShape": "static String judge(int score, int absent) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "judge(-1, 0)",
+          "judge(101, 0)",
+          "judge(60, -1)",
+          "judge(60, 19)",
+          "judge(60, 0)",
+          "judge(60, 3)",
+          "judge(60, 4)",
+          "judge(59, 3)",
+          "judge(40, 0)",
+          "judge(39, 0)",
+          "judge(0, 0)",
+          "judge(100, 18)"
+        ],
+        "uses": ["isValid(", "isPass(", "canRetake("]
+      },
       "hints": {
-        "lead": "不合理的先擋掉。",
-        "plain": "`return` 一執行，方法就結束了。所以先問「分數合不合理」，不合理就馬上交回 `分數打錯了`；走得到下面的，一定是合理的分數。`!` 是把答案反過來。"
+        "lead": "用 !isValid 先擋掉錯誤資料，再依序用 isPass 與 canRetake 分流。",
+        "plain": "依序寫三個 `if (...) return ...;`：先問 `!isValid(score, absent)` 回傳 `\"資料有誤\"`，再問 `isPass(score, absent)` 回傳 `\"及格\"`，再問 `canRetake(score, absent)` 回傳 `\"可補考\"`，最後 `return \"重修\";`。"
       },
       "afterText": ""
     }

@@ -1,4 +1,7 @@
 static int max(int[] a) {
+    if (a == null || a.length == 0) {
+        return Integer.MIN_VALUE;
+    }
     int best = a[0];
     for (int i = 1; i < a.length; i++) {
         if (a[i] > best) {
@@ -9,6 +12,9 @@ static int max(int[] a) {
 }
 
 static int min(int[] a) {
+    if (a == null || a.length == 0) {
+        return Integer.MAX_VALUE;
+    }
     int best = a[0];
     for (int i = 1; i < a.length; i++) {
         if (a[i] < best) {
@@ -18,4 +24,11 @@ static int min(int[] a) {
     return best;
 }
 
-System.out.println("最高和最低差了 " + (max(myScores) ____ min(myScores)) + " 分");
+static int range(int[] a) {
+    if (a == null || a.length == 0) {
+        return ____;
+    }
+    return ____(a) - ____(a);
+}
+
+System.out.println("最高和最低差了 " + range(myScores) + " 分");

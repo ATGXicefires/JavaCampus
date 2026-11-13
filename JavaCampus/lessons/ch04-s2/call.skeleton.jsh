@@ -1,13 +1,34 @@
-// 她寫好的方法
-static String bar(int done, int total) {
-    return "■".repeat(done) + "□".repeat(total - done);
+// 她寫好的方法，不要改
+static String bar(int done, int total, int width) {
+    if (width <= 0) {
+        return "";
+    }
+    int filled;
+    if (total <= 0 || done <= 0) {
+        filled = 0;
+    } else if (done >= total) {
+        filled = width;
+    } else {
+        filled = done * width / total;
+    }
+    return "█".repeat(filled) + "░".repeat(width - filled);
 }
 
 static void say(String who, String line) {
     System.out.println(who + "：「" + line + "」");
 }
 
-// 每一課印一行：課名、進度條、完成數/總數
+static int calcPercent(int done, int total) {
+    if (total <= 0 || done <= 0) {
+        return ____;
+    }
+    if (done >= total) {
+        return ____;
+    }
+    return done * 100 / total;
+}
+
 for (int i = 0; i < units.length; i++) {
-    System.out.println(units[i] + " " + bar(____, ____) + " " + done[i] + "/" + total[i]);
+    int p = calcPercent(done[i], total[i]);
+    System.out.println(units[i] + " " + bar(____, ____, 6) + " " + done[i] + "/" + total[i] + " (" + p + "%)");
 }

@@ -5,38 +5,61 @@
   "partner": "小芸",
   "notes": ["while"],
   "vars": [
-    { "name": "price", "type": "int", "value": "50", "note": "扭蛋一次多少錢" },
-    { "name": "perDay", "type": "int", "value": "15", "note": "每天存多少錢" }
+    { "name": "price", "type": "int", "value": "100", "note": "扭蛋機目標總金額" },
+    { "name": "start", "type": "int", "value": "25", "note": "一開始已經存好的錢" },
+    { "name": "earn", "type": "int", "value": "30", "note": "每天存進來的零用錢" },
+    { "name": "cost", "type": "int", "value": "12", "note": "每天固定扣掉的交通餐費" }
   ],
   "steps": [
     {
       "id": "days",
-      "title": "要存幾天",
-      "goal": "扭蛋一次 `price` 元，每天存 `perDay` 元。現在 `price` 是 50、`perDay` 是 15，要存 4 天才夠買。\n\n用 `while`（條件還成立，就再做一次）一天一天存，算出要存幾天，存進 `days`。存的錢剛好等於價錢也算夠。",
-      "instructions": "編輯器最上面兩行 `int price = 50;` 和 `int perDay = 15;` 是題目先寫好的，你的程式可以直接用 `price` 和 `perDay`。\n\n不知道要做幾次的時候，用 `while`：括號裡的條件還成立，就把大括號裡的事再做一次；條件不成立了，就停下來。\n\n```\nwhile (條件) {\n    條件還成立時，重複做的事\n}\n```\n\n這一題的條件是「存的錢還不夠買」：存 3 天是 45 元，還不夠；存 4 天是 60 元，夠了，迴圈就停在 4 天。",
-      "expectedShape": "while (…) {\n    …\n}",
+      "title": "扣掉花費要存幾天",
+      "goal": "目標金額是 `price` 元，你原本已經存了 `start` 元。每天存入 `earn` 元、同時花掉 `cost` 元，也就是每天淨成長 `earn - cost` 元。\n\n算出需要幾天才能存到至少 `price` 元（剛好等於也算夠），把天數存進 `days`：\n- 如果一開始就已經達標（`start >= price`），需要 `0` 天。\n- 如果還沒達標，而且每天淨成長 `<= 0`（永遠存不到目標），直接把 `days` 設為 `-1`，不要跑無窮迴圈。\n- 其餘情況，用 `while` 一天一天累加直到達標。",
+      "instructions": "編輯器最上面四行 `price`、`start`、`earn`、`cost` 是題目先寫好的。\n\n現實生活中存錢不是只進不出：每天存的 `earn` 扣掉花費 `cost` 才是淨成長。要是每天存入還不夠抵銷花費（`earn - cost <= 0`），錢不會變多甚至變少，如果傻傻寫 `while (saved < price)` 就會卡成無窮迴圈。\n\n因此要用判斷式先把不可能達成的情況擋掉：先確認是不是「還沒達標且淨成長 `<= 0`」，是的話直接令 `days = -1`；否則再用 `while (saved < price)` 一天一天模擬存錢（每次加上 `earn - cost` 並讓 `days++`）。",
+      "expectedShape": "int saved = start;\nint days = 0;\nif (…) {\n    …\n} else {\n    while (…) {\n        …\n    }\n}",
       "check": {
         "type": "values",
         "exprs": ["days"],
-        "variants": [ { "price": "100" }, { "perDay": "20" }, { "price": "60" }, { "price": "0" } ],
+        "variants": [
+          { "price": "100", "start": "100" },
+          { "price": "100", "start": "120", "earn": "5", "cost": "20" },
+          { "earn": "12", "cost": "12" },
+          { "earn": "10", "cost": "15" },
+          { "price": "80", "start": "10", "earn": "25", "cost": "10" },
+          { "price": "70", "start": "10", "earn": "25", "cost": "10" }
+        ],
         "uses": ["while"]
       },
       "hints": {
-        "lead": "錢還不夠，就再存一天。",
-        "plain": "`while (saved < price)` 的意思是：存的錢還比價錢少，就繼續。每一圈存一天的錢 `saved += perDay`，天數加一 `days++`。錢夠了，迴圈自己會停。"
+        "lead": "先判斷是否已經達標，再擋掉淨成長 <= 0 的無窮迴圈陷阱。",
+        "plain": "若 `saved < price && earn - cost <= 0`，直接 `days = -1;`；否則進 `while (saved < price)`，每圈做 `saved += earn - cost;` 與 `days++;`。若一開始 `saved >= price`，`while` 不會執行，`days` 維持 0。"
       },
       "afterText": ""
     },
     {
       "id": "method",
-      "title": "寫成方法",
-      "goal": "`daysToSave(50, 15)` 要交回 4：`price` 是 50、`perDay` 是 15 時，要存 4 天。\n\n寫一個方法 `static int daysToSave(int price, int perDay)`，把上一步的算法搬進去，交回要存幾天。",
-      "instructions": "把上一步的算法包成方法，價錢和每天存多少改成由參數給。方法裡的 `price` 和 `perDay` 是參數：呼叫 `daysToSave(80, 20)` 時，`price` 就是 80、`perDay` 就是 20，跟最上面那兩行的值無關。\n\n價錢是 0 的話，條件一開始就不成立，`while` 一次都不會跑，交回 0 天。",
-      "expectedShape": "static int daysToSave(int price, int perDay) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["daysToSave(50, 15)", "daysToSave(30, 30)", "daysToSave(0, 10)"], "uses": ["while"] },
+      "title": "封裝方法與負數防呆",
+      "goal": "寫一個方法 `static int daysToSave(int price, int start, int earn, int cost)`，依照以下優先順序回傳結果：\n1. 若任一參數小於 0（`price < 0 || start < 0 || earn < 0 || cost < 0`），代表資料有誤，交回 `-1`。\n2. 若一開始已達標（`start >= price`），交回 `0`。\n3. 若每天淨成長 `<= 0`（`earn - cost <= 0`），永遠存不到，交回 `-1`。\n4. 其餘情況，用 `while` 一天一天存直到 `saved >= price`，交回天數。",
+      "instructions": "把上一步的模擬邏輯包成方法，並且多加一層參數合法性檢查。注意判斷順序很重要：例如 `daysToSave(50, 80, 10, 20)`，雖然每日淨成長是負的，但因為起始已經有 80 元早就買得起了，所以要先判 `start >= price` 交回 `0`，不能誤判成 `-1`。\n\n目標 `price` 為 `0`、起始 `start` 為 `0` 時，也算已經達標，交回 `0`。",
+      "expectedShape": "static int daysToSave(int price, int start, int earn, int cost) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "daysToSave(100, 25, 30, 12)",
+          "daysToSave(97, 25, 30, 12)",
+          "daysToSave(50, 50, 20, 5)",
+          "daysToSave(50, 80, 10, 20)",
+          "daysToSave(100, 10, 20, 20)",
+          "daysToSave(100, 10, 15, 20)",
+          "daysToSave(-10, 0, 20, 5)",
+          "daysToSave(50, -5, 20, 5)",
+          "daysToSave(0, 0, 10, 5)"
+        ],
+        "uses": ["while"]
+      },
       "hints": {
-        "lead": "上一步的程式，包進方法裡。",
-        "plain": "方法的參數 `price` 和 `perDay` 取代題目給的盒子。上一步的 `saved`、`days` 和 `while` 都搬進方法裡，兩個盒子在方法裡從 0 開始，最後 `return days;`。"
+        "lead": "依序做三個提早 return：負數參數 -> 已達標 -> 淨成長 <= 0，最後才跑 while。",
+        "plain": "先擋 `price < 0 || start < 0 || earn < 0 || cost < 0` 回傳 `-1`；再擋 `start >= price` 回傳 `0`；再擋 `earn - cost <= 0` 回傳 `-1`；最後用 `while (saved < price)` 計算並回傳 `days`。"
       },
       "afterText": ""
     }

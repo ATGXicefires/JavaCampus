@@ -8,14 +8,25 @@
   "steps": [
     {
       "id": "fix",
-      "title": "露錯字了",
-      "goal": "`hint(answer)` 該只露出答案的第一個字，其他每個字換成一個 `＿`。修好後，`hint(\"吃滷肉飯\")` 要交回 `吃＿＿＿`，`hint(\"滷\")` 要交回 `滷`。\n\n現在 `hint(\"吃滷肉飯\")` 交回的卻是 `滷＿＿＿＿`：露出的是第二個字，`＿` 也多了一個；只有一個字的答案還會跌倒。",
-      "instructions": "`substring(開始, 結束)` 從編號「開始」那個字，切到編號「結束」那個字之前，編號從 0 開始：`\"小白貓\".substring(1, 3)` 是 `白貓`。\n\n`\"＿\".repeat(3)` 會把 `＿` 重複 3 次，交回 `＿＿＿`。",
-      "expectedShape": "static String hint(String answer) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")", "hint(\"滷\")"], "uses": [".substring(", ".repeat("] },
+      "title": "防護空值與空白遮罩",
+      "goal": "原本的 `hint(answer)` 只硬切 `substring(1, 2)`，不只露錯字、底線多一格，遇到單字元、空字串或 `null` 還會直接當機。\n\n請修好 `static String hint(String answer)`，符合以下規則：\n1. 若 `answer` 是 `null`，直接交回 `\"\"`。\n2. 去掉 `answer` 前後的全形與半形空白；若清理後是空字串 `\"\"`，直接交回 `\"\"`。\n3. 保留第 1 個字元不變。\n4. 從第 2 個字元開始逐字處理：若該字元是半形空白 `' '` 或全形空白 `'　'`，輸出保留為半形空白 `' '`；其餘每個字元換成半形底線 `'_'`。\n\n例如：`\"Java\"` 交回 `\"J___\"`、`\"Hello World\"` 交回 `\"H____ _____\"`、`\"  A  \"` 交回 `\"A\"`。",
+      "instructions": "先處理 `null` 與去空白後的空字串防護，才能安全使用 `charAt(0)` 或 `substring(0, 1)`，避免 `StringIndexOutOfBoundsException`。\n\n去除前後全半形空白可以用 `.strip()`，再用 `for` 迴圈從索引 1 走到 `clean.length() - 1`，用 `clean.charAt(i)` 判斷該拼空白還是 `'_'`。",
+      "expectedShape": "static String hint(String answer) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "hint(\"Java\")",
+          "hint(\"吃滷肉飯\")",
+          "hint(\"Hello World\")",
+          "hint(\"  A  \")",
+          "hint(\"\")",
+          "hint(\"　　\")",
+          "hint(null)"
+        ]
+      },
       "hints": {
-        "lead": "`substring(beginIndex, endIndex)`：索引從 0 起算，不含 endIndex⋯⋯",
-        "plain": "⋯⋯白話：`substring(1, 2)` 切到的是第二個字，第一個字是 `substring(0, 1)`。後面的格數要扣掉露出來的那個字：`answer.length() - 1`。"
+        "lead": "先擋 `null` 與清理後空字串，再保留首字、迴圈處理索引 1 之後的每個字元。",
+        "plain": "先寫 `if (answer == null) return \"\";`，把 `answer.strip()` 存成 `clean`，空的就回傳 `\"\"`；接著用 `String result = clean.substring(0, 1);`，迴圈看 `clean.charAt(i)` 是空白就接 `' '`，否則接 `'_'`。"
       },
       "afterText": ""
     }

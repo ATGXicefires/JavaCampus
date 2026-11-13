@@ -8,44 +8,69 @@
   "steps": [
     {
       "id": "check",
-      "title": "比對",
-      "goal": "`check(true, true)` 和 `check(false, false)` 要交回 `PASS`，`check(true, false)` 要交回 `FAIL`。\n\n寫一個方法 `static String check(boolean actual, boolean expected)`：`actual`（實際算出來的結果）和 `expected`（預期的結果）一樣就交回 `PASS`，不一樣就交回 `FAIL`。",
-      "instructions": "起始碼上面是她寫好的 `isPass`、`max`、`showBadge`，都是對的；這一題要幫它們做測試。\n\n測試就是拿一組資料給程式算，再把算出來的結果和應該得到的結果比一比：一樣是 PASS，不一樣是 FAIL。拿來測程式的資料叫**測資**；`check` 就是負責「比一比」的小工具。",
-      "expectedShape": "static String check(boolean actual, boolean expected) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["check(true, true)", "check(true, false)", "check(false, true)", "check(false, false)"] },
+      "title": "布林與整數比對工具",
+      "goal": "起手程式上面是她寫好的 `isPass`、`max`、`showBadge`（都是正確版本）。為了幫它們做壓力測試，請寫兩個同名的比對方法（方法重載）：\n1. `static String check(boolean actual, boolean expected)`：兩個布林值相等回傳 `\"PASS\"`，不相等回傳 `\"FAIL\"`。\n2. `static String check(int actual, int expected)`：兩個整數相等回傳 `\"PASS\"`，不相等回傳 `\"FAIL\"`。",
+      "instructions": "同一個方法名稱 `check`，只要參數型別不同（一個收 `boolean`，一個收 `int`），Java 就能自動辨識要呼叫哪一個，這叫做方法重載。\n\n有了整數版的 `check`，待會比對 `max` 和 `myMax` 時就能直接交給 `check(myMax(a), max(a))`，不用另外先比較再轉成布林。",
+      "expectedShape": "static String check(boolean actual, boolean expected) {\n    …\n}\n\nstatic String check(int actual, int expected) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "check(true, true)",
+          "check(true, false)",
+          "check(false, true)",
+          "check(false, false)",
+          "check(5, 5)",
+          "check(-3, -3)",
+          "check(-3, 0)",
+          "check(0, 1)"
+        ]
+      },
       "hints": {
-        "lead": "比較兩個 `boolean`，回傳對應的字串⋯⋯",
-        "plain": "⋯⋯白話：實際的結果和預期的一樣就是 PASS，不一樣就是 FAIL。兩個 `boolean` 可以直接用 `==` 比。"
+        "lead": "寫兩個同名 check 方法，各自用 == 比對 actual 與 expected。",
+        "plain": "布林版與整數版都寫 `return actual == expected ? \"PASS\" : \"FAIL\";`（或用 `if` / `else` 各自回傳）。"
       },
       "afterText": ""
     },
     {
       "id": "boundary",
-      "title": "邊界全部測一遍",
-      "goal": "拿 `{59, 60, 61, 0, 100}` 這五個分數當測資（拿來測程式的資料），每個都測一次，要印出 5 行：\n`isPass(59) PASS`\n`isPass(60) PASS`\n`isPass(61) PASS`\n`isPass(0) PASS`\n`isPass(100) PASS`\n\n把測資放進 `int[] tests`，每個分數預期的結果（60 分以上是 `true`）放進 `boolean[] expected`，再用迴圈把每一組交給 `isPass` 和 `check`，各印一行。",
-      "instructions": "60 分剛好在及格和不及格的分界上，叫做**邊界**。bug 最喜歡躲在邊界：`>=` 寫成 `>`，就只有剛好 60 分會錯。所以要測 59、60、61 這種貼著邊界的分數，再加上最低的 0 和最高的 100。\n\n兩個陣列一樣長，同一個 `i` 對同一組：`tests[i]` 是分數，`expected[i]` 是它預期的結果。上面她寫的 `isPass` 是對的，預期結果填對的話，五行都會是 PASS。",
-      "expectedShape": "int[] tests = {…};\nboolean[] expected = {…};\nfor (…) {\n    System.out.println(\"isPass(\" + … + \") \" + check(…));\n}",
-      "check": { "type": "output", "uses": ["isPass(", "check(", "for"] },
+      "title": "及格線與徽章邊界全測",
+      "goal": "拿一組涵蓋上下界與異常值的分數 `{59, 60, 61, 0, 100, -1, 101}` 測 `isPass`，再拿 4 組測資 `(5, 5, 60)`、`(5, 5, 59)`、`(4, 5, 100)`、`(0, 0, 100)` 測 `showBadge`，依序印出 11 行：\n`isPass(59) PASS`\n`isPass(60) PASS`\n`isPass(61) PASS`\n`isPass(0) PASS`\n`isPass(100) PASS`\n`isPass(-1) PASS`\n`isPass(101) PASS`\n`showBadge(5,5,60) PASS`\n`showBadge(5,5,59) PASS`\n`showBadge(4,5,100) PASS`\n`showBadge(0,0,100) PASS`",
+      "instructions": "測試不能只測順風局：除了 59、60、61 貼近及格邊界，還要測 0、100、-1、101 的範圍邊界；徽章也要測 `total == 0` 與 `done < total` 的防呆。\n\n使用平行陣列搭配 `for` 迴圈呼叫 `check(isPass(...), ...)` 和 `check(showBadge(...), ...)` 印出結果，全部都會是 `PASS`。",
+      "expectedShape": "int[] passTests = {…};\nboolean[] passExpected = {…};\nfor (…) {\n    System.out.println(\"isPass(\" + … + \") \" + check(…));\n}\n\nint[] d = {…};\nint[] tot = {…};\nint[] sc = {…};\nboolean[] badgeExpected = {…};\nfor (…) {\n    System.out.println(\"showBadge(\" + … + \") \" + check(…));\n}",
+      "check": {
+        "type": "output",
+        "exprs": ["check(true, false)", "check(-1, -1)"],
+        "uses": ["isPass(", "showBadge(", "check(", "for"]
+      },
       "hints": {
-        "lead": "以兩個平行陣列存放測資與預期結果⋯⋯",
-        "plain": "⋯⋯白話：測資放一個陣列，預期的答案放另一個，同一個 `i` 對同一組。每一組印一行結果。"
+        "lead": "準備兩組平行陣列與兩個 for 迴圈，分別測試 isPass 的 7 個邊界與 showBadge 的 4 個邊界。",
+        "plain": "`passExpected` 為 `{false, true, true, false, true, false, false}`；`badgeExpected` 為 `{true, false, false, false}`（因為 `0, 0, 100` 沒有課程不能亮徽章）。"
       },
       "afterText": ""
     },
     {
       "id": "my-max",
-      "title": "自己寫一份對照",
-      "goal": "接在上一步的 5 行後面，再印出 3 行：\n`第 1 組 PASS`\n`第 2 組 PASS`\n`第 3 組 PASS`\n\n自己寫一個找最大值的方法 `static int myMax(int[] a)`，拿三組測資 `{-3, -7}`、`{5}`、`{62, 41, 34}` 給 `max` 和 `myMax` 各算一次，用 `check` 比對兩邊交回的數一不一樣，每組印一行。",
-      "instructions": "這三組測資都很刁鑽：全部是負數、只有一格、最大的在最前面。找最大值的程式寫錯的話，最容易在這種地方露出馬腳。\n\n`myMax` 的找法：先把第一格當成目前最大，再一格一格比，遇到更大的就換掉。\n\n`check` 收的是兩個 `boolean`，所以先用 `==` 比出兩邊一不一樣，再交給 `check`，預期的結果是 `true`。",
-      "expectedShape": "static int myMax(int[] a) {\n    …\n}\n\n…\nSystem.out.println(\"第 1 組 \" + check(…));",
+      "title": "手寫 myMax 與對偶壓力測試",
+      "goal": "自己寫一個獨立的 `static int myMax(int[] a)`（不能呼叫她寫的 `max`，且需處理 `null` 或空陣列回傳 `Integer.MIN_VALUE`），接著用二維陣列準備以下 6 組壓力測資（全負數、單元素、重複最大值、全負重複、首項最大、含 0 負數）：\n`{{-30, -5, -18}, {42}, {9, 9, 3, 9}, {-100, -100, -200}, {62, 41, 34}, {0, -1, -50}}`\n\n接在上一步的 11 行輸出之後，用迴圈對這 6 組測資呼叫 `check(myMax(cases[i]), max(cases[i]))` 進行對偶交叉測試，依序印出：\n`第 1 組 PASS`\n`第 2 組 PASS`\n`第 3 組 PASS`\n`第 4 組 PASS`\n`第 5 組 PASS`\n`第 6 組 PASS`",
+      "instructions": "這種「自己另外寫一份對照實作，拿同一批極端測資跑兩邊比對結果」的驗證方法叫對偶測試（Differential Testing）。\n\n`myMax` 必須嚴謹處理三種最容易寫爆的狀況：空陣列、全負數（不可初始化成 `0`）、以及最大值重複出現。組號從 `1` 開始編號（`i + 1`）。",
+      "expectedShape": "static int myMax(int[] a) {\n    …\n}\n\nint[][] cases = {…};\nfor (…) {\n    System.out.println(\"第 \" + … + \" 組 \" + check(myMax(…), max(…)));\n}",
       "check": {
         "type": "output",
-        "exprs": ["myMax(new int[]{-3, -7})", "myMax(new int[]{5})", "myMax(new int[]{62, 41, 34})", "myMax(new int[]{34, 41, 62})"],
-        "uses": ["myMax(", "check("]
+        "exprs": [
+          "myMax(new int[]{-30, -5, -18})",
+          "myMax(new int[]{42})",
+          "myMax(new int[]{9, 9, 3, 9})",
+          "myMax(new int[]{-100, -100, -200})",
+          "myMax(new int[]{62, 41, 34})",
+          "myMax(new int[]{0, -1, -50})",
+          "myMax(new int[]{})",
+          "myMax(null)"
+        ],
+        "uses": ["myMax(", "max(", "check("]
       },
       "hints": {
-        "lead": "以獨立實作作為測試的對照組⋯⋯",
-        "plain": "⋯⋯白話：自己另外寫一份找最大值的方法，拿同一組資料給兩邊算，答案一樣就是 PASS。三組都挑刁鑽的。"
+        "lead": "myMax 先擋 null 與空陣列，再以陣列首元素當起點線性掃描；用二維陣列與 for 迴圈對偶比對。",
+        "plain": "`myMax` 先判 `if (a == null || a.length == 0) return Integer.MIN_VALUE;`，再以 `int best = a[0];` 往後比較更新。迴圈裡印出 `\"第 \" + (i + 1) + \" 組 \" + check(myMax(cases[i]), max(cases[i]))`。"
       },
       "afterText": ""
     }

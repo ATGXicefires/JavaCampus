@@ -8,14 +8,30 @@
   "steps": [
     {
       "id": "note",
-      "title": "錯誤較少的版本",
-      "goal": "修好後要印出 `true`。\n\n起始碼是照著一張手寫紙條打進去的，現在一執行就紅字。",
-      "instructions": "`youCanDoIt()` 是一個 `boolean` 方法：名字前面的 `boolean` 表示它只交回 `true` 或 `false`。最後一行呼叫它，把交回來的值印出來。\n\n紅字可能不只一個。從最上面那個開始修，修好一個就再執行一次。",
-      "expectedShape": "static boolean youCanDoIt() {\n    …\n}\nSystem.out.println(…);",
-      "check": { "type": "output", "exprs": ["youCanDoIt()"], "uses": ["return true"] },
+      "title": "語法與邏輯雙重除錯",
+      "goal": "紙條上抄來的 `canPass(String name, int score, int absent, boolean extraCredit)` 方法除了打字錯誤，還混進了短路順序、邊界與運算優先序的邏輯錯誤。請全部修好，最後印出 `true`。\n\n正確的及格判定規則：\n1. `name` 不可為 `null`，且去掉前後空白後不可為空字串。\n2. `score` 必須在 `0` 到 `100` 之間（含 0 與 100）。\n3. `absent` 必須在 `0` 到 `3` 之間（含 0 與 3，缺席 3 次內仍算過關，4 次以上扣考）。\n4. 符合以上 1～3 項前提，且（`score >= 60` **或者** `extraCredit` 為 `true` 同時 `score >= 50`）才交回 `true`，否則交回 `false`。",
+      "instructions": "先從紅字（編譯錯誤）修起：注意關鍵字大小寫與全形／半形分號。\n\n紅字修完能執行之後，還要逐行抓出三個隱藏的邏輯地雷：\n1. **短路順序**：用 `&&` 檢查非空時，一定要先把 `name != null` 寫在左邊，否則傳入 `null` 時右邊的 `name.trim()` 會先爆炸。\n2. **邊界條件**：60 分及格是 `>= 60`、缺席不超過 3 次是 `<= 3`，多了一個或少了一個等號就會在邊界翻車。\n3. **運算優先序**：`&&` 會比 `||` 先算，如果沒有用括號把「一般及格或補救條件」包起來，當 `score >= 60` 時右邊的 `absent <= 3` 會被短路跳過，變成缺席 10 次也過關！",
+      "expectedShape": "static boolean canPass(String name, int score, int absent, boolean extraCredit) {\n    …\n}\nSystem.out.println(canPass(\"亭瑄\", 60, 3, false));",
+      "check": {
+        "type": "output",
+        "exprs": [
+          "canPass(null, 80, 0, true)",
+          "canPass(\"   \", 80, 0, true)",
+          "canPass(\"小芸\", 60, 3, false)",
+          "canPass(\"小芸\", 60, 4, false)",
+          "canPass(\"小芸\", 80, 5, true)",
+          "canPass(\"小芸\", 59, 0, false)",
+          "canPass(\"小芸\", 50, 2, true)",
+          "canPass(\"小芸\", 49, 0, true)",
+          "canPass(\"小芸\", 101, 0, true)",
+          "canPass(\"小芸\", -1, 0, true)",
+          "canPass(\"小芸\", 80, -1, false)"
+        ],
+        "uses": ["&&", "||"]
+      },
       "hints": {
-        "lead": "先是 `not a statement`，再來是 `illegal character: '\\uff1b'`；關鍵字區分大小寫⋯⋯",
-        "plain": "⋯⋯白話：行尾的 `；` 是全形，換成半形的 `;`。`Return` 的 R 要小寫：Java 的 `return` 只有小寫這一種寫法。"
+        "lead": "先修全形分號與 Return 大小寫，再依序修正 null 短路順序、>= 60 / <= 3 邊界，以及 || 與 && 的括號。",
+        "plain": "條件應改為 `name != null && !name.trim().isEmpty()`；內部檢查 `score >= 0 && score <= 100 && absent >= 0 && absent <= 3`；最後回傳 `(score >= 60 || (extraCredit && score >= 50))`。"
       },
       "afterText": ""
     }

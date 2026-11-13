@@ -1,2 +1,6 @@
-// 寫一個方法 review(int sweetness)，依甜度交回評語
-// 甜度 1～2：可以。3～4：甜。5：太甜。
+// 寫一個方法 static String review(int sweetness, int star)
+// 1. 若甜度或星等不在 1～5，交回 "資料異常"
+// 2. star >= 4 且 sweetness <= 3 -> "招牌必點"
+// 3. sweetness >= 5 -> "太甜小心"
+// 4. star <= 2 -> "尚待改進"
+// 5. 其餘 -> "表現普通"

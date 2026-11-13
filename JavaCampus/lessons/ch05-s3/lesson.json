@@ -10,33 +10,58 @@
   "steps": [
     {
       "id": "row",
-      "title": "一列",
-      "goal": "`n` 是要乘到幾，現在是 9，所以 2 的那一列要印出一行：\n`2x1=2 2x2=4 2x3=6 2x4=8 2x5=10 2x6=12 2x7=14 2x8=16 2x9=18`\n\n用 `for` 從 1 乘到 `n`，把每一項接成一行再印出來，項和項之間空一格。",
-      "instructions": "編輯器最上面那行 `int n = 9;` 是題目先寫好的，你的程式可以直接用 `n`。\n\n乘號是小寫英文字母 `x`，要算乘法時用 `*`。行尾多一個空格沒關係。",
-      "expectedShape": "for (…) {\n    …\n}\nSystem.out.println(…);",
+      "title": "任意一列與精準空白",
+      "goal": "寫一個方法 `static String multRow(int base, int limit)`，回傳 `base` 從 `1` 乘到 `limit` 的那一列字串：\n- 若 `limit <= 0`，交回空字串 `\"\"`。\n- 否則每一項格式為 `base + \"x\" + j + \"=\" + (base * j)`，項與項之間用一個半形空白隔開，**開頭與結尾都不可有多餘空白**（例如 `multRow(2, 3)` 必須精確交回 `\"2x1=2 2x2=4 2x3=6\"`）。\n\n最後若 `n > 0`，印出 `multRow(2, n)`；若 `n <= 0`，不要印出任何東西。",
+      "instructions": "編輯器最上面那行 `int n = 9;` 是題目先寫好的。\n\n為了同時支援任意乘數 `base`（含負數或大於 9 的數）與任意長度 `limit`，把乘法一列的邏輯抽成多參數方法。若 `j > 1` 才在前面補一個空白，就能保證行尾不會多出多餘空格。",
+      "expectedShape": "static String multRow(int base, int limit) {\n    …\n}\nif (n > 0) {\n    System.out.println(…);\n}",
       "check": {
         "type": "output",
-        "variants": [ { "n": "3" }, { "n": "1" } ]
+        "exprs": [
+          "multRow(2, 5)",
+          "multRow(7, 3)",
+          "multRow(4, 1)",
+          "multRow(3, 0)",
+          "multRow(3, -2)"
+        ],
+        "variants": [
+          { "n": "3" },
+          { "n": "1" },
+          { "n": "0" },
+          { "n": "-2" }
+        ],
+        "uses": ["multRow("]
       },
       "hints": {
-        "lead": "用字串累加組出一列，行尾的空白不影響比對⋯⋯",
-        "plain": "⋯⋯白話：準備一個空字串，每一圈接上一個 `2x1=2 `，最後整列印一次。乘法會比 `+` 先算。"
+        "lead": "先擋 limit <= 0 回傳空字串，再用 j > 1 控制項間空白，避免尾端多空白。",
+        "plain": "`if (limit <= 0) return \"\";` 接著在 `for (int j = 1; j <= limit; j++)` 裡，若 `j > 1` 先 `line += \" \";`，再接上 `base + \"x\" + j + \"=\" + (base * j)`。"
       },
       "afterText": ""
     },
     {
       "id": "table",
-      "title": "整張表",
-      "goal": "現在 `n` 是 9，要印出 9 行：第 1 行是 `1x1=1` 到 `1x9=9`，第 2 行是 `2x1=2` 到 `2x9=18`，一直到第 9 行是 `9x1=9` 到 `9x9=81`。\n\n用巢狀迴圈（迴圈裡再放一個迴圈）印出整張表：外面的迴圈決定是誰的那一列，裡面的迴圈照上一步的格式畫完那一列。",
-      "instructions": "表的大小跟著 `n` 走：有 `n` 列，每列 `n` 項。\n\n迴圈裡面可以再放一個迴圈。外面的迴圈每跑一圈，裡面的迴圈就從頭跑完一整輪：\n\n```\nfor (int a = 1; a <= 2; a++) {\n    for (int b = 1; b <= 3; b++) {\n        System.out.println(a + \"-\" + b);\n    }\n}\n```\n\n會依序印出 `1-1`、`1-2`、`1-3`、`2-1`、`2-2`、`2-3`。",
-      "expectedShape": "for (…) {\n    …\n    for (…) {\n        …\n    }\n    System.out.println(…);\n}",
+      "title": "多參數矩形乘法表",
+      "goal": "保留上一步的 `multRow`，再寫一個方法 `static void printTable(int rows, int cols)`：\n- 若 `rows <= 0` 或 `cols <= 0`，什麼都不印（直接結束方法）。\n- 否則印出 `rows` 列，第 `i` 列（從 1 到 `rows`）印出 `i` 從 `1` 乘到 `cols` 的結果（每列格式與 `multRow` 一致，無尾端空白）。\n\n最後呼叫 `printTable(n, n);` 印出 `n × n` 乘法表。",
+      "instructions": "表的大小不再限制只能正方形：呼叫 `printTable(3, 4)` 要印出 3 列、每列 4 項；呼叫 `printTable(0, 4)` 或 `printTable(3, -1)` 則不能印出任何東西。\n\n外層迴圈控制列號 `i` 從 1 走到 `rows`，每一圈可呼叫 `multRow(i, cols)` 並印出，或使用雙層 `for` 迴圈自行組合字串再印出。",
+      "expectedShape": "static void printTable(int rows, int cols) {\n    …\n}\nprintTable(n, n);",
       "check": {
         "type": "output",
-        "variants": [ { "n": "3" }, { "n": "1" } ]
+        "exprs": [
+          "printTable(3, 4)",
+          "printTable(1, 5)",
+          "printTable(0, 4)",
+          "printTable(3, -1)"
+        ],
+        "variants": [
+          { "n": "3" },
+          { "n": "1" },
+          { "n": "0" },
+          { "n": "-1" }
+        ],
+        "uses": ["for", "printTable("]
       },
       "hints": {
-        "lead": "巢狀迴圈：外層控制列，內層控制欄⋯⋯",
-        "plain": "⋯⋯白話：上一步把 2 寫死了。外面再包一個迴圈，讓 2 變成從 1 數到 `n` 的 `i`，就是整張表。每一列開始前，`line` 要重新從空字串開始。"
+        "lead": "先擋掉 rows <= 0 || cols <= 0，再用迴圈從 1 跑到 rows，逐列印出 multRow(i, cols)。",
+        "plain": "`if (rows <= 0 || cols <= 0) return;` 接著 `for (int i = 1; i <= rows; i++) { System.out.println(multRow(i, cols)); }`，最後呼叫 `printTable(n, n);`。"
       },
       "afterText": ""
     }

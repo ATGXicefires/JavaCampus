@@ -1,9 +1,7 @@
 // 術科練習：寫一個方法 static boolean isPrime(int n)
-// n 是質數就交回 true，不是就交回 false；用 while 從 2 開始試除
+// 1. 處理邊界：n <= 1 不是質數、n == 2 是質數、大於 2 的偶數不是質數
+// 2. 用 while 從 d = 3 開始每次加 2 試除，直到 d <= n / d
 static boolean isPrime(int n) {
-    // 先處理邊界：1 以下（含 1）不是質數
+    // 在這裡實作
 
-    // 用 while 從 2 開始試除，找到能整除的就提前回傳 false
-
-    return true;
 }

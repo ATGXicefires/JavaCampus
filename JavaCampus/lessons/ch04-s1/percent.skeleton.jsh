@@ -1,14 +1,19 @@
 static int total(int[] counts) {
     int sum = 0;
     for (int i = 0; i < counts.length; i++) {
-        sum += counts[i];
+        if (counts[i] > 0) {
+            sum += counts[i];
+        }
     }
     return sum;
 }
 
 static int percent(int part, int whole) {
-    if (whole == ____) {
-        return 0;
+    if (whole <= 0 || part <= 0) {
+        return ____;
     }
-    return part * 100 / ____;
+    if (part >= whole) {
+        return ____;
+    }
+    return ____ * 100 / whole;
 }

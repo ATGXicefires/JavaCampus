@@ -1,3 +1,3 @@
 static boolean showBadge(int done, int total, int score) {
-    return done == total && score >= 60;
+    return total > 0 && done == total && score >= 60 && score <= 100;
 }

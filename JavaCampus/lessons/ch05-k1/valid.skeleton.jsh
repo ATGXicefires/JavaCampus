@@ -1,7 +1,3 @@
-static boolean isPass(int score) {
-    return score >= 60;
-}
-
-static boolean isValid(int score) {
-    return score >= 0 ____ score <= 100;
+static boolean isValid(int score, int absent) {
+    return score >= 0 && score <= 100 && absent >= 0 ____ absent <= 18;
 }

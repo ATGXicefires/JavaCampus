@@ -1,4 +1,4 @@
-// 已經寫好的方法，直接呼叫就好，不用改
+// 學長寫好的工具方法，照簽章呼叫就好，不要改
 static int total(int[] counts) {
     int sum = 0;
     for (int i = 0; i < counts.length; i++) {
@@ -14,4 +14,5 @@ static int percent(int part, int whole) {
     return part * 100 / whole;
 }
 
-// 呼叫 total，把 stars 交給它，算出總共幾顆星，存進 sum
+// 請實作 static String bestAndWorst(String[] names, int[] counts)
+// 並在最後宣告 String reportSummary = bestAndWorst(flavors, stars);

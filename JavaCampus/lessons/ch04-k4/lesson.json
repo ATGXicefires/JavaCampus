@@ -11,36 +11,52 @@
   "steps": [
     {
       "id": "sum",
-      "title": "總共幾顆星",
-      "goal": "`stars` 是各口味得到幾顆星，現在是 `{3, 4, 5, 2, 4}`，總共是 18 顆。\n\n呼叫起始碼裡寫好的 `total`，把 `stars` 交給它，交回來的總和存進 `int sum`。`total` 的方法簽章（名字、要給什麼、交回什麼）是 `static int total(int[] counts)`。",
-      "instructions": "編輯器最上面兩行 `String[] flavors = {\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"};` 和 `int[] stars = {3, 4, 5, 2, 4};` 是題目先寫好的，你的程式可以直接用 `flavors` 和 `stars`。\n\n`static int total(int[] counts)` 像一份約定：名字是 `total`，要給它一個 `int[]`（一排整數），它交回一個 `int`，也就是總和。照約定給對東西就能用，不用看它裡面怎麼寫。\n\n呼叫時寫名字，把要給的東西放進括號，交回來的值可以直接放進盒子，例如 `int p = percent(3, 4);`。",
-      "expectedShape": "int sum = …;",
+      "title": "雙陣列極值與總星數摘要",
+      "goal": "`flavors` 和 `stars` 同一格是同一種口味。請實作方法 `static String bestAndWorst(String[] names, int[] counts)`，統計總星數並找出最高與最低星等口味，最後在方法外宣告 `String reportSummary = bestAndWorst(flavors, stars);`。\n\n規則如下：\n1. 有效筆數 `n` 取 `names.length` 與 `counts.length` 較小者；若 `n == 0`，直接交回 `\"無資料\"`。\n2. 總星數必須呼叫起始碼裡學長寫好的 `total(...)` 計算（若兩陣列長度不同，先將前 `n` 筆放進新陣列交給 `total`；等長時直接交給 `total(counts)`）。\n3. 找出星數最高和最低的口味：**若星數相同並列，保留最先出現（索引較小）的那一種**。\n4. 交回格式：`\"總星數：<總和>，最高：<最高口味>(<最高星數>★)，最低：<最低口味>(<最低星數>★)\"`（預設資料應回傳 `\"總星數：18，最高：芋頭(5★)，最低：花生(2★)\"`）。",
+      "instructions": "編輯器最上面兩行 `flavors` 與 `stars` 是題目先寫好的變數，可以直接使用。\n\n起始碼上面有學長寫好的 `total(int[] counts)` 與 `percent(int part, int whole)`。照方法簽章給對參數就能用，不必改動它。\n\n要記錄最高與最低，可先假設第 0 格同時是目前最高與最低的索引，再從第 1 格開始比：`>` 和 `<` 才更新，並列時就不會被後面的覆蓋。",
+      "expectedShape": "static String bestAndWorst(String[] names, int[] counts) {\n    …\n}\n\nString reportSummary = …;",
       "check": {
         "type": "values",
-        "exprs": ["sum"],
-        "variants": [ { "stars": "{1, 1, 1, 1, 1}" } ],
+        "exprs": [
+          "reportSummary",
+          "bestAndWorst(new String[]{\"A\", \"B\", \"C\"}, new int[]{4, 4, 2})",
+          "bestAndWorst(new String[]{\"單一\"}, new int[]{3})",
+          "bestAndWorst(new String[]{}, new int[]{})"
+        ],
+        "variants": [
+          { "stars": "{5, 5, 5, 5, 5}" },
+          { "stars": "{1, 2, 1, 2, 1}" }
+        ],
         "uses": ["total("]
       },
       "hints": {
-        "lead": "照簽章給它一個 int[]。",
-        "plain": "`total(int[] counts)` 說：給我一排整數，我交回總和。把 `stars` 交給它，交回來的放進 `sum`。"
+        "lead": "先防護空陣列與長度不齊，再呼叫 `total`，同時用兩個索引變數追蹤最高與最低。",
+        "plain": "用 `int maxIdx = 0, minIdx = 0;`，迴圈從 1 走到 `n - 1`，只有 `counts[i] > counts[maxIdx]` 才換 `maxIdx`，`counts[i] < counts[minIdx]` 才換 `minIdx`，這樣並列就會保留先出現的口味。"
       },
       "afterText": ""
     },
     {
       "id": "rank",
-      "title": "排行榜",
-      "goal": "`flavors` 和 `stars` 同一格是同一種口味。現在 `stars` 是 `{3, 4, 5, 2, 4}`，要印出 5 行：\n`原味 ★★★ 16%`\n`巧克力 ★★★★ 22%`\n`芋頭 ★★★★★ 27%`\n`花生 ★★ 11%`\n`黑糖 ★★★★ 22%`\n\n用 `for` 照 `flavors` 的順序，每種口味印一行：名字、星星、占總星數的百分比，中間用空格隔開。星星用 `repeat`，百分比用寫好的 `percent(stars[i], sum)`。",
-      "instructions": "`flavors[i]` 是第 i 種口味的名字，`stars[i]` 是它的星數。照原本的順序印就好，不用排名次。\n\n`percent(int part, int whole)` 交回 `part` 占 `whole` 的百分之幾，是整數，後面自己接上 `%`。`★` 可以從這裡複製。",
-      "expectedShape": "for (…) {\n    System.out.println(… + \" \" + … + \"%\");\n}",
+      "title": "門檻篩選與佔比排行榜",
+      "goal": "寫一個方法 `static void printFeatured(String[] names, int[] counts, int minStars)`，只印出星數達到門檻的口味與佔比，並在方法外呼叫 `printFeatured(flavors, stars, 4);`。\n\n規則如下：\n1. 有效筆數 `n` 取 `names.length` 與 `counts.length` 較小者；先呼叫學長的 `total` 算出這 `n` 筆的總星數 `sum`。\n2. 依序檢查每種口味：只印出 `counts[i] >= minStars` 的口味，格式為 `\"<口味> <★重複次數> <百分比>%\"`（若 `counts[i]` 小於 0，★不重複；百分比請呼叫學長的 `percent(counts[i], sum)`，若 `counts[i] < 0` 傳 0）。\n3. 若沒有任何口味達到 `minStars`（包含空陣列），印出一行 `\"沒有符合門檻的口味\"`。",
+      "instructions": "呼叫 `percent(int part, int whole)` 會交回整數百分比，後面自己接上 `%`。\n\n記一個布林變數或計數器記錄「有沒有印過任何一行」，迴圈結束後如果都沒印，就印出 `沒有符合門檻的口味`。",
+      "expectedShape": "static void printFeatured(String[] names, int[] counts, int minStars) {\n    …\n}\n\nprintFeatured(…);",
       "check": {
         "type": "output",
-        "variants": [ { "stars": "{5, 5, 5, 5, 5}" } ],
-        "uses": [".repeat(", "percent("]
+        "exprs": [
+          "printFeatured(flavors, stars, 5)",
+          "printFeatured(flavors, stars, 6)",
+          "printFeatured(new String[]{}, new int[]{}, 3)"
+        ],
+        "variants": [
+          { "stars": "{1, 2, 3, 2, 1}" },
+          { "stars": "{5, 5, 5, 5, 5}" }
+        ],
+        "uses": ["total(", "percent("]
       },
       "hints": {
-        "lead": "一行一種口味。",
-        "plain": "用 `for` 走過每一種口味：名字是 `flavors[i]`，星星是 `\"★\".repeat(stars[i])`，百分比交給 `percent(stars[i], sum)`，三段用空格接起來。"
+        "lead": "用旗標或計數器記住是否有口味通過門檻，迴圈後若為 0 則印提示訊息。",
+        "plain": "在迴圈裡檢查 `if (counts[i] >= minStars)`，符合就印出 `names[i]`、`\"★\".repeat(Math.max(0, counts[i]))` 與 `percent(..., sum) + \"%\"`，並把計數器加一；迴圈結束若計數器為 0 就印無符合訊息。"
       },
       "afterText": ""
     }

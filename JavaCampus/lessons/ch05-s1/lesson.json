@@ -7,28 +7,60 @@
   "vars": [],
   "steps": [
     {
-      "id": "four",
-      "title": "四年一閏",
-      "goal": "`isLeap(2024)` 要交回 `true`，`isLeap(2023)` 要交回 `false`：2024 年是閏年，2023 年不是。\n\n寫一個方法 `static boolean isLeap(int year)`（`boolean` 表示只交回 `true` 或 `false`）：`year` 能被 4 整除就是閏年，交回 `true`；不能就交回 `false`。",
-      "instructions": "名字前面寫 `boolean` 的方法，只回答一個是非題。比較的答案本身就是 `true` 或 `false`，可以直接 `return`，例如 `return n > 0;`。\n\n「能被 4 整除」就是除以 4 沒有餘數。`%` 是取餘數：`7 % 3` 是 `1`，`9 % 3` 是 `0`。",
+      "id": "leap",
+      "title": "完整閏年規則",
+      "goal": "寫一個方法 `static boolean isLeap(int year)`，實作完整的西元閏年判斷：\n- 年份必須是正整數（`year > 0`），0 年與負數年份一律交回 `false`。\n- 符合「（能被 4 整除，而且不能被 100 整除）**或者**（能被 400 整除）」才是閏年，交回 `true`；否則交回 `false`。",
+      "instructions": "不要只寫 `year % 4 == 0`：像 1900、2100 這種整百的年份不是閏年，只有 400 的倍數（例如 2000、2400）才是。\n\n還要留意運算優先序陷阱：`&&` 會比 `||` 先算！如果不加括號把 `||` 的兩邊包起來，當 `year` 是 `0` 或 `-400` 時，右邊的 `year % 400 == 0` 會成立，導致沒有擋住 `year <= 0`。",
       "expectedShape": "static boolean isLeap(int year) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isLeap(2024)", "isLeap(2023)", "isLeap(2028)", "isLeap(2026)"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isLeap(2000)",
+          "isLeap(1900)",
+          "isLeap(2024)",
+          "isLeap(2023)",
+          "isLeap(2100)",
+          "isLeap(2400)",
+          "isLeap(0)",
+          "isLeap(-4)",
+          "isLeap(-400)"
+        ],
+        "uses": ["&&", "||"]
+      },
       "hints": {
-        "lead": "整除即餘數為 0：`year % 4 == 0`⋯⋯",
-        "plain": "⋯⋯白話：「能被 4 整除」就是除以 4 剛好沒有剩：`year % 4 == 0`。"
+        "lead": "正年份條件必須用括號包住後面的「四年一閏、百年不閏、四百年再閏」。",
+        "plain": "寫成 `year > 0 && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)`；外層括號不能省略，否則 `0` 和 `-400` 會誤判成 `true`。"
       },
       "afterText": ""
     },
     {
-      "id": "century",
-      "title": "百年不閏",
-      "goal": "現在的 `isLeap(1900)` 會交回 `true`，但 1900 年不是閏年，要交回 `false`。改好後，`isLeap(2000)` 要交回 `true`，`isLeap(2024)` 還是 `true`。\n\n修改 `isLeap` 的 `return` 那一行，加上規則：能被 100 整除的不是閏年，但能被 400 整除的又是。條件用 `&&`（而且）和 `||`（或者）組起來。",
-      "instructions": "`a && b` 是「而且」：兩邊都成立，答案才是 `true`。`a || b` 是「或者」：有一邊成立，答案就是 `true`。例如 `day == 6 || day == 7` 是「星期六或星期日」。\n\n「不能被 100 整除」就是除以 100 的餘數不是 0；「不等於」寫成 `!=`。\n\n`&&` 和 `||` 寫在同一行時，`&&` 會先算，就像乘法比加法先算。",
-      "expectedShape": "static boolean isLeap(int year) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isLeap(1900)", "isLeap(2000)", "isLeap(2100)", "isLeap(2400)", "isLeap(2024)", "isLeap(2023)"] },
+      "id": "days-in-month",
+      "title": "某月天數與下一個閏年",
+      "goal": "保留上一步的 `isLeap`，再實作兩個方法：\n1. `static int daysInMonth(int year, int month)`：若 `year <= 0` 或 `month` 不在 `1..12` 之間，交回 `-1`；1、3、5、7、8、10、12 月交回 `31`；4、6、9、11 月交回 `30`；2 月依 `isLeap(year)` 交回 `29` 或 `28`。\n2. `static int nextLeap(int year)`：找出嚴格大於 `year` 的下一個西元閏年（若 `year < 0`，從西元 1 年開始往後找，例如 `nextLeap(0)` 與 `nextLeap(-4)` 都交回 `4`）。",
+      "instructions": "兩個方法都重用你剛寫好的 `isLeap`。\n\n在 `nextLeap` 中，不能只是把 `year` 湊成 4 的倍數就回傳，因為遇到像 `1896` 的下一個 4 的倍數 `1900` 時，1900 並不是閏年，必須跳過去找到 `1904`！用 `while` 一年一年往後檢查 `!isLeap(y)` 最不容易出錯。",
+      "expectedShape": "static int daysInMonth(int year, int month) {\n    …\n}\n\nstatic int nextLeap(int year) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "daysInMonth(2024, 2)",
+          "daysInMonth(1900, 2)",
+          "daysInMonth(2000, 2)",
+          "daysInMonth(2023, 4)",
+          "daysInMonth(2023, 12)",
+          "daysInMonth(2023, 0)",
+          "daysInMonth(2023, 13)",
+          "daysInMonth(0, 2)",
+          "nextLeap(2024)",
+          "nextLeap(1896)",
+          "nextLeap(1996)",
+          "nextLeap(0)",
+          "nextLeap(-4)"
+        ],
+        "uses": ["isLeap("]
+      },
       "hints": {
-        "lead": "四年一閏、百年不閏、四百年再閏：用 `&&`、`||` 組合條件⋯⋯",
-        "plain": "⋯⋯白話：「能被 4 整除，而且不能被 100 整除」，或者「能被 400 整除」。前半用 `&&`，兩半之間用 `||`。"
+        "lead": "daysInMonth 先擋不合法年與月，2 月呼叫 isLeap；nextLeap 從目標下一年逐年用 while 搜尋。",
+        "plain": "`nextLeap` 令 `int y = year < 0 ? 1 : year + 1;`，接著 `while (!isLeap(y)) { y++; } return y;`。這樣遇到 1900 會自動跳過直到 1904。"
       },
       "afterText": ""
     }

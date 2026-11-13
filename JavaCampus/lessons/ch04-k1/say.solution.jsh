@@ -1,6 +1,14 @@
 static void say(String who, String line) {
-    System.out.println(who + "：「" + line + "」");
+    String speaker = who.trim();
+    if (speaker.isEmpty()) {
+        speaker = "滷肉";
+    }
+    String msg = line.trim();
+    if (msg.isEmpty()) {
+        msg = "……";
+    }
+    System.out.println(speaker + "：「" + msg + "」");
 }
 
-say("滷肉", "沒關係，再跑一次！");
-say("分號", "分號。");
+say("滷肉", "歡迎來到小白！");
+say("  ", "分號別忘記。");

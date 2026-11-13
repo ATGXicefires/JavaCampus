@@ -1,2 +1,3 @@
-// 寫一個方法 bar(int done, int total)：完成的每課一個 ■，剩下的每課一個 □，接起來交回
-// 例如 bar(3, 5) 要交回 ■■■□□
+// 寫一個方法 static String bar(int done, int total, int width)
+// 用 "█" 與 "░" 畫出長度為 width 的動態比例進度條
+// 需處理 width <= 0、total <= 0、done <= 0 及 done >= total 的邊界情況
