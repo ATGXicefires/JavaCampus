@@ -8,27 +8,70 @@
   "steps": [
     {
       "id": "lock",
-      "title": "鎖起來",
-      "goal": "`new` 一個扭蛋包 `bag`、加 8 個扭蛋之後，`bag.getCount()` 要交回 `8`。\n\n寫 `class GachaBag`：欄位 `private int count`（`private`：只有這個類別自己能開的抽屜），方法 `void add()` 加一個、`int getCount()` 交回數量。再 `new` 一個 `bag`，呼叫 8 次 `add()`。",
-      "instructions": "欄位前面加了 `private`，就只有這個類別自己的方法能讀、能改，外面碰不到。外面想看、想改，都要透過類別自己開放的方法：`add()` 讓外面照規矩加，一次只能加一個；`getCount()` 把數量交出去讓外面看，這種方法叫 getter。\n\n```\nclass Locker {\n    private int number = 7;\n\n    int getNumber() {\n        return number;\n    }\n}\n\nLocker locker = new Locker();\nSystem.out.println(locker.getNumber());\n```\n\n最後一行印出 `7`。寫成 `locker.number` 的話，會被編譯器擋下來。",
-      "expectedShape": "class GachaBag {\n    …\n    void add() { … }\n    int getCount() { … }\n}\n\nGachaBag bag = new GachaBag();\n…",
-      "check": { "type": "values", "exprs": ["bag.getCount()", "new GachaBag().getCount()"], "uses": ["private int count"] },
+      "title": "帶密碼鎖的扭蛋包",
+      "goal": "寫 `class GachaBag` 用密碼鎖保護扭蛋數量。全部欄位都要是 `private`，並建立 `GachaBag bag = new GachaBag(\"0718\");`、解鎖後呼叫 8 次 `bag.add()`，使 `bag.getCount()` 為 `8`。\n\n規格如下：\n- 建構子 `GachaBag(String pin)`：若 `pin` 是 `null` 或空字串 `\"\"`，預設為 `\"0000\"`；否則存為密碼。初始數量為 `0`、未開鎖、未鎖死、連續錯誤次數為 `0`。\n- `boolean unlock(String input)`：若已鎖死，直接交回 `false`（連正確密碼也拒絕）。若密碼相符，設為開鎖、連續錯誤次數歸零並交回 `true`；若不符，設為未開鎖、連續錯誤次數加 1，達到 3 次時設為鎖死，交回 `false`。\n- `void lock()`：設為未開鎖。\n- `boolean add()`：只有「未鎖死且已開鎖」時才將數量加 1 並交回 `true`；否則不改數量並交回 `false`。\n- `int getCount()`、`boolean isOpened()`、`boolean isLockedOut()`：各自交回目前數量、是否開鎖、是否鎖死。",
+      "instructions": "真正的封裝不只是把欄位加 `private` 後寫個 getter，而是讓物件自己守住規則：外面拿不到密碼與狀態欄位，只能透過你開放的方法互動。\n\n狀態轉換要特別注意順序：\n1. `unlock(String input)` 一進來先檢查「是不是已經鎖死了」，已鎖死就直接 `return false;`。\n2. 比對字串內容要用 `pin.equals(input)`，不要用 `==`。\n3. 只要開鎖成功，記得把連續錯誤次數歸零，否則先前錯 2 次再成功、下次又錯 1 次就會誤鎖。\n4. `add()` 必須同時確認 `!lockedOut && opened`。",
+      "expectedShape": "class GachaBag {\n    private …\n    GachaBag(String pin) { … }\n    boolean unlock(String input) { … }\n    void lock() { … }\n    boolean add() { … }\n    int getCount() { … }\n    boolean isOpened() { … }\n    boolean isLockedOut() { … }\n}\n\nGachaBag bag = new GachaBag(\"0718\");\n…",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "bag.getCount()",
+          "bag.isOpened()",
+          "GachaBag _b = null;",
+          "(_b = new GachaBag(\"1234\")).add()",
+          "_b.getCount()",
+          "_b.unlock(\"0000\")",
+          "_b.unlock(\"0000\")",
+          "_b.isLockedOut()",
+          "_b.unlock(\"1234\")",
+          "{ _b.lock(); }",
+          "_b.add()",
+          "_b.unlock(\"9999\")",
+          "_b.unlock(\"9999\")",
+          "_b.unlock(\"9999\")",
+          "_b.isLockedOut()",
+          "_b.unlock(\"1234\")",
+          "_b.isOpened()",
+          "_b.add()",
+          "new GachaBag(null).unlock(\"0000\")"
+        ],
+        "uses": ["private"]
+      },
       "hints": {
-        "lead": "外面只能用方法。",
-        "plain": "`count` 鎖在扭蛋包裡面，只有 `GachaBag` 自己的方法能改它。`add()` 讓它加一，`getCount()` 把數量交出來。加 8 個就叫 8 次 `add()`，用 `for` 比較快。"
+        "lead": "把狀態轉換守在方法裡，外面就繞不過去。",
+        "plain": "所有欄位都寫 `private`。`unlock` 先擋已鎖死，再用 `pin.equals(input)` 判斷對錯；答對就開鎖並把錯誤次數歸零，答錯就累計次數、滿 3 次設成鎖死。`add()` 要檢查已開鎖且未鎖死才加 1。"
       },
       "afterText": ""
     },
     {
       "id": "outside",
-      "title": "從外面改不了",
-      "goal": "最後一行 `bag.count = 99;` 想從外面直接改數量，現在是紅字：`count` 是 `private`，外面碰不到。修好後，`bag.getCount()` 要交回 `9`：原本的 8 個再加 1 個。\n\n刪掉這一行，改成用 `add()` 再加一個。",
-      "instructions": "`private` 的欄位，外面連讀都不行，更不能直接改。紅字的意思是：`count` 只有 `GachaBag` 自己的程式能用。\n\n外面想多一個扭蛋，只能照扭蛋包開放的方法來，呼叫 `add()`。`add()` 一次只加一個，扭蛋包就不會被人從外面一下改成 99 個。",
-      "expectedShape": "bag.…();",
-      "check": { "type": "values", "exprs": ["bag.getCount()", "new GachaBag().getCount()"], "uses": ["private int count"] },
+      "title": "從外面改不了與重設流程",
+      "goal": "起始碼最後一行 `bag.count = 99;` 想直接從外面改欄位，因為 `count` 是 `private` 而出現紅字。請修正外層操作，並為扭蛋包加上管理碼重設流程，使 `bag.getCount()` 為 `9`。\n\n規格如下：\n- 刪掉 `bag.count = 99;`，改用 `bag.add();` 再放入第 9 個扭蛋。\n- 新增 `boolean resetLock(String masterCode, String newPin)`：只有當 `\"MASTER-07\".equals(masterCode)` 且 `newPin != null && !newPin.isEmpty()` 時，才將密碼換成 `newPin`、解除鎖死、連續錯誤次數歸零、設為未開鎖（需用新密碼重新 `unlock`），並交回 `true`；否則什麼都不改，交回 `false`。",
+      "instructions": "`private` 擋住了從外面直接竄改 `bag.count` 的企圖。但萬一真的輸錯 3 次鎖死了，還是需要一個受控管的重設窗口。\n\n寫 `resetLock` 時也要把關：管理碼不對、或新密碼是 `null` / 空字串，都不能解除鎖死，也不能把原本密碼蓋掉；重設成功後要設成未開鎖，讓使用者必須用新密碼重新通過驗證。",
+      "expectedShape": "boolean resetLock(String masterCode, String newPin) {\n    …\n}\n…\nbag.add();",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "bag.getCount()",
+          "GachaBag _r = null;",
+          "{ _r = new GachaBag(\"1111\"); _r.unlock(\"0\"); _r.unlock(\"0\"); _r.unlock(\"0\"); }",
+          "_r.isLockedOut()",
+          "_r.resetLock(\"WRONG\", \"2222\")",
+          "_r.isLockedOut()",
+          "_r.resetLock(\"MASTER-07\", \"\")",
+          "_r.resetLock(\"MASTER-07\", null)",
+          "_r.resetLock(\"MASTER-07\", \"2222\")",
+          "_r.isLockedOut()",
+          "_r.unlock(\"1111\")",
+          "_r.unlock(\"2222\")",
+          "_r.add()",
+          "_r.getCount()"
+        ],
+        "uses": ["private"]
+      },
       "hints": {
-        "lead": "照規矩，用 add()。",
-        "plain": "`private` 的欄位，外面連看都不行，更不能直接改。想多一個扭蛋，就照扭蛋包開放的方法 `bag.add();`。"
+        "lead": "刪掉非法欄位存取，並用管理碼與新密碼檢查守住重設流程。",
+        "plain": "刪掉 `bag.count = 99;`，改成 `bag.add();`。在 `resetLock` 裡檢查 `\"MASTER-07\".equals(masterCode)` 且 `newPin != null && !newPin.isEmpty()`，條件成立才更新密碼與三個狀態欄位。"
       },
       "afterText": ""
     }

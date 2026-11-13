@@ -1,27 +1,42 @@
-interface Checker {
-    boolean check(String typed);
-}
-
-class ExactChecker implements Checker {
+class ExactChecker implements ____ {
     String answer;
+    boolean ignoreCase;
 
-    ExactChecker(String answer) {
+    ExactChecker(String answer, boolean ignoreCase) {
         this.answer = answer;
+        this.ignoreCase = ignoreCase;
     }
 
     public boolean check(String typed) {
-        return typed.____().equals(answer);
+        if (answer == null || typed == null) {
+            return false;
+        }
+        ____
     }
 }
 
-class OptionChecker ____ Checker {
-    String letter;
+class RangeChecker implements ____ {
+    double target;
+    double tolerance;
 
-    OptionChecker(String letter) {
-        this.letter = letter;
+    RangeChecker(double target, double tolerance) {
+        this.target = target;
+        this.tolerance = Math.abs(tolerance);
     }
 
     public boolean check(String typed) {
-        return typed.equals(letter);
+        ____
+    }
+}
+
+class KeywordChecker implements ____ {
+    String[] keywords;
+
+    KeywordChecker(String[] keywords) {
+        ____
+    }
+
+    public boolean check(String typed) {
+        ____
     }
 }

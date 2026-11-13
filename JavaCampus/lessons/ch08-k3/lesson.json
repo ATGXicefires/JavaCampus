@@ -8,27 +8,51 @@
   "steps": [
     {
       "id": "paths",
-      "title": "兩個子類別",
-      "goal": "`new DesignPath().describe()` 要交回 `廣設科：畫我喜歡的東西`，`new CodePath().describe()` 要交回 `資訊科：把我畫的東西變成會動的`。\n\n寫 `DesignPath` 和 `CodePath`，都繼承起始碼的 `Path`。建構子 `DesignPath()` 用 `super(\"廣設科\")`、`CodePath()` 用 `super(\"資訊科\")` 交出名字，再覆寫 `describe()` 交回上面那兩句，方法上面加一行 `@Override`（請編譯器確認父類別真的有這個方法）。",
-      "instructions": "`@Override` 寫在覆寫的方法上面一行，等於請編譯器幫你確認：父類別真的有這個方法，名字和參數都對得上。對得上就照常執行；對不上，編譯器會直接紅字。\n\n```\n@Override\nString bark() {\n    return \"嗚汪\";\n}\n```\n\n`Path` 的建構子要一個名字，所以子類別的建構子用 `super(…)` 把自己的名字交上去。",
-      "expectedShape": "class DesignPath extends Path {\n    DesignPath() { … }\n    String describe() { … }\n}\n\nclass CodePath extends Path {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new DesignPath().describe()", "new CodePath().describe()"], "uses": ["class DesignPath extends Path", "class CodePath extends Path", "super(", "@Override"] },
+      "title": "兩條路的多型推薦",
+      "goal": "寫兩個繼承 `Path` 的子類別 `DesignPath` 與 `CodePath`，搭配父類別 `Path.recommend(Path[], int)` 運作：\n1. `DesignPath(int weeklyHours)`：透過 `super(\"廣設科\", weeklyHours)` 初始化。\n   - `@Override boolean isSuitable(int enthusiasm)`：當 `enthusiasm >= 60 && weeklyHours >= 5` 回傳 `true`，否則 `false`。\n   - `@Override String describe(int enthusiasm)`：回傳 `name + \"：畫我喜歡的東西（熱情 \" + enthusiasm + \"%）\"`。\n2. `CodePath(int weeklyHours)`：透過 `super(\"資訊科\", weeklyHours)` 初始化。\n   - `@Override boolean isSuitable(int enthusiasm)`：當 `enthusiasm >= 70 && weeklyHours >= 8` 回傳 `true`，否則 `false`。\n   - `@Override String describe(int enthusiasm)`：回傳 `name + \"：把我畫的東西變成會動的（每週 \" + weeklyHours + \" 小時）\"`。",
+      "instructions": "起始碼的 `Path` 已經寫好 `name`、`weeklyHours`（小於 0 會歸零），以及靜態方法 `Path.recommend(Path[] paths, int enthusiasm)`：它會依序檢查每個非 `null` 的路線，回傳第一個 `isSuitable(enthusiasm)` 為 `true` 的 `describe(enthusiasm)`；若都不適合則回傳 `\"先留在原地觀察\"`。\n\n在兩個子類別的覆寫方法上方都加上 `@Override`，請編譯器確認方法名稱與參數型別都和父類別完全一致。",
+      "expectedShape": "class DesignPath extends Path {\n    DesignPath(int weeklyHours) { … }\n\n    @Override\n    boolean isSuitable(int enthusiasm) { … }\n\n    @Override\n    String describe(int enthusiasm) { … }\n}\n\nclass CodePath extends Path {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new DesignPath(5).isSuitable(60)",
+          "new DesignPath(4).isSuitable(90)",
+          "new CodePath(8).isSuitable(69)",
+          "new CodePath(8).isSuitable(70)",
+          "Path.recommend(new Path[]{new CodePath(8), new DesignPath(6)}, 65)",
+          "Path.recommend(new Path[]{new CodePath(8), new DesignPath(6)}, 80)",
+          "Path.recommend(new Path[]{null, new CodePath(4), new DesignPath(3)}, 90)"
+        ],
+        "uses": ["class DesignPath extends Path", "class CodePath extends Path", "@Override", "super("]
+      },
       "hints": {
-        "lead": "兩個子類別，各寫一個 describe()。",
-        "plain": "同一個 `Path`，分出兩條路：各自交出自己的名字，各自寫自己的 `describe()`。交回的字可以直接用 `name` 接上去。"
+        "lead": "各自用 `super(...)` 傳入科別與時數，再用 `@Override` 覆寫兩個方法。",
+        "plain": "條件門檻：`DesignPath` 要熱情 >= 60 且時數 >= 5；`CodePath` 要熱情 >= 70 且時數 >= 8。`describe` 回傳文字時可直接讀取繼承來的 `name` 和 `weeklyHours`。"
       },
       "afterText": ""
     },
     {
       "id": "typo",
-      "title": "打錯字的那一條",
-      "goal": "起始碼多了第三條路 `StayPath`，方法名稱打成了 `descripe()`，上面的 `@Override` 現在是紅字。修好後，`new StayPath().describe()` 要交回 `留下來：先試試看`。\n\n改好這個方法，讓 `@Override` 真的覆寫到父類別的 `describe()`。",
-      "instructions": "紅字說：加了 `@Override`，父類別裡卻找不到一模一樣的方法可以覆寫。名字差一個字母、大小寫不一樣、參數不一樣，都只是多了一個新方法。\n\n沒有 `@Override` 的話，打錯字的程式照樣能跑，只是 `describe()` 悄悄用了父類別的 `還不知道`；加了它，編譯器才會直接說出來。",
-      "expectedShape": "@Override\nString …() {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new StayPath().describe()", "new Path(\"測試\").describe()"], "uses": ["@Override"] },
+      "title": "診斷失靈的第三條路",
+      "goal": "起始碼新增了第三條路 `StayPath`，正確規格如下：\n1. `StayPath(int weeklyHours)` 以 `\"留下來\"` 交給父類別作為 `name`。\n2. `isSuitable(int enthusiasm)`：只要 `enthusiasm >= 50` 就回傳 `true`（不論 `weeklyHours` 為何）。\n3. `describe(int enthusiasm)`：回傳 `\"留下來：先試試看（每週 \" + weeklyHours + \" 小時）\"`。\n4. 透過 `Path` 型別變數或 `Path.recommend(...)` 呼叫時，必須正確派遣到 `StayPath` 的版本。\n\n目前的 `StayPath` 雖然能編譯，但有幾個繼承缺陷導致呼叫結果不對。請幫每個預期覆寫的方法加上 `@Override` 讓編譯器診斷，並排除可能發生的欄位遮蔽（shadowing）問題。",
+      "instructions": "沒有寫 `@Override` 時，方法名稱拼錯、大小寫不同、或參數型別差一點（例如把 `int` 寫成 `double`），編譯器都會當成「多載了一個新方法」而靜靜放行，造成多型呼叫時依然跑進父類別的舊版本。\n\n另外，若子類別不小心宣告了與父類別同名的欄位，子類別的方法讀到的會是自己那份未初始化的欄位（變成 `null`），而不是 `super(...)` 存進父類別的那份。",
+      "expectedShape": "class StayPath extends Path {\n    StayPath(int weeklyHours) { … }\n\n    @Override\n    boolean isSuitable(int enthusiasm) { … }\n\n    @Override\n    String describe(int enthusiasm) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new StayPath(4).isSuitable(50)",
+          "new StayPath(4).isSuitable(49)",
+          "new StayPath(4).describe(55)",
+          "((Path) new StayPath(4)).isSuitable(55)",
+          "((Path) new StayPath(4)).describe(55)",
+          "Path.recommend(new Path[]{new CodePath(8), new StayPath(3)}, 55)",
+          "new Path(\"測試\", 2).describe(55)"
+        ],
+        "uses": ["@Override"]
+      },
       "hints": {
-        "lead": "名字要和父類別一模一樣。",
-        "plain": "`descripe` 打錯一個字母（`b` 打成 `p`），就變成另一個新方法，`describe()` 還是用父類別的 `還不知道`。`@Override` 像是請人幫忙對名字：對不上就直接說出來。"
+        "lead": "先為兩個覆寫方法補上 `@Override` 看編譯錯誤，再檢查 `StayPath` 裡的同名欄位。",
+        "plain": "三個陷阱都在 `StayPath` 裡：多了會遮蔽父類別 `name` 的同名欄位、方法名稱拼錯、以及參數型別寫成 `double` 而非 `int`。補上 `@Override` 後編譯器就會指出簽章不符的地方。"
       },
       "afterText": ""
     }

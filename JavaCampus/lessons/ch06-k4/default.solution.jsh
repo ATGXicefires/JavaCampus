@@ -3,20 +3,26 @@ class Mascot {
     String line;
 
     Mascot(String name, String line) {
-        if (name == null) {
+        if (name == null || name.trim().isEmpty()) {
             this.name = "新同學";
         } else {
-            this.name = name;
+            this.name = name.trim();
         }
-        this.line = line;
+        this.line = line == null ? "" : line;
     }
-}
 
-Mascot[] mascots = {new Mascot("滷肉", "沒關係，再跑一次！"), new Mascot("分號", "分號。"), new Mascot(null, "嗨")};
-for (int i = 0; i < mascots.length; i++) {
-    if (mascots[i].name == null) {
-        System.out.println("還沒取名");
-    } else {
-        System.out.println(mascots[i].name + "：" + mascots[i].name.length() + " 個字");
+    boolean hasName(String target) {
+        if (target == null || this.name == null) {
+            return false;
+        }
+        return this.name.equals(target.trim());
+    }
+
+    boolean copyLineFrom(Mascot other) {
+        if (other == null || other.line == null || other.line.trim().isEmpty()) {
+            return false;
+        }
+        this.line = other.line;
+        return true;
     }
 }

@@ -1,13 +1,25 @@
 class Gacha {
     String name;
-    String ____;
-}
+    String color;
+    int price;
+    int stock;
 
-Gacha a = new Gacha();
-a.name = "麻糬";
-a.color = "白色";
-Gacha b = ____ Gacha();
-b.name = "黑糖";
-b.color = "咖啡色";
-System.out.println("扭蛋：" + a.name + "（" + a.color + "）");
-System.out.println("扭蛋：" + b.name + "（" + b.color + "）");
+    Gacha(String name, String color, int price, int stock) {
+        if (name == null || name.trim().isEmpty()) {
+            this.name = "未命名";
+        } else {
+            this.name = name;
+        }
+        if (color == null || color.trim().isEmpty()) {
+            this.color = "透明";
+        } else {
+            this.color = color;
+        }
+        this.price = ____;
+        this.stock = ____;
+    }
+
+    int totalValue() {
+        return ____;
+    }
+}

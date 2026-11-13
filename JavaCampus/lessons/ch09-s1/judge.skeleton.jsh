@@ -1,34 +1,17 @@
-interface Checker {
-    boolean check(String typed);
-}
+class Judge {
+    Checker[] checkers;
+    int[] weights;
 
-class ExactChecker implements Checker {
-    String answer;
-
-    ExactChecker(String answer) {
-        this.answer = answer;
+    Judge(Checker[] checkers, int[] weights) {
+        this.checkers = checkers;
+        this.weights = weights;
     }
 
-    public boolean check(String typed) {
-        return typed.trim().equals(answer);
-    }
-}
-
-class OptionChecker implements Checker {
-    String letter;
-
-    OptionChecker(String letter) {
-        this.letter = letter;
+    String grade(String[] answers) {
+        ____
     }
 
-    public boolean check(String typed) {
-        return typed.equals(letter);
+    static String checkOne(Checker checker, String typed) {
+        return ____;
     }
-}
-
-static String judge(____ c, String typed) {
-    if (c.check(typed)) {
-        return "答對了";
-    }
-    return "再試一次";
 }

@@ -2,9 +2,17 @@ class Sketch {
     String month;
     String title;
 
-    // 寫建構子 Sketch(String month, String title)
-
-    // 覆寫 public String toString()，交回「月份：名稱」，例如 9月：提案簡報的插圖
+    // 寫建構子 Sketch(String month, String title)（含 null/空白防呆與 trim）
+    // 覆寫 public String toString()
 }
 
-// 再用 for 照 months 和 titles 把每一張 new 出來，一張印一行
+class Folder {
+    String name;
+    Sketch[] items;
+
+    // 寫建構子 Folder(String name, Sketch[] items)
+    // 實作 countByMonth(String targetMonth)、filterMonth(String targetMonth)
+    // 覆寫 public String toString()
+}
+
+// 依照 months 和 titles 建立 Sketch[]，放進 new Folder("亭瑄的草圖", sketches) 後印出

@@ -8,22 +8,32 @@ class Question {
     }
 
     boolean check(String typed) {
+        if (typed == null || answer == null) {
+            return false;
+        }
         return typed.equals(answer);
     }
 }
 
 class FillQuestion extends Question {
+    String answer;
+
     FillQuestion(String text, String answer) {
         super(text, answer);
     }
 
-    // 中間多打了空白也算對
-    boolean Check(String typed) {
-        return typed.replace(" ", "").equals(answer);
+    boolean Check(CharSequence typed) {
+        if (typed == null || answer == null) {
+            return false;
+        }
+        String cleanTyped = typed.toString().replace(" ", "");
+        String cleanAnswer = answer.replace(" ", "");
+        return cleanTyped.equalsIgnoreCase(cleanAnswer);
     }
 
     String toSting() {
-        return "填空題：" + answer;
+        int len = answer == null ? 0 : answer.replace(" ", "").length();
+        return "填空題：" + text + "（答案 " + len + " 字）";
     }
 }
 

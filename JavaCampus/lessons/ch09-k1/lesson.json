@@ -8,27 +8,56 @@
   "steps": [
     {
       "id": "button",
-      "title": "約定",
-      "goal": "畫出一個按鈕，就是印出一行 `[ 開始學習 ]`。\n\n寫 `interface Drawable`（介面，一張約定：只說要會 `draw()`，不管怎麼畫），裡面只有 `void draw();`。再寫 `class Button implements Drawable`（答應照這張約定做），在 `draw()` 印出這一行。最後 `new` 一個按鈕，呼叫它的 `draw()`。",
-      "instructions": "`interface` 只寫方法的名字、參數和回傳型別，不寫內容，所以 `void draw();` 直接用分號結尾，沒有大括號。\n\n類別後面寫 `implements` 和介面的名字，就是答應照這張約定做：約定裡的方法每一個都要寫出來，大括號裡寫自己的做法。例如：\n\n```\ninterface Alarm {\n    void ring();\n}\n\nclass Phone implements Alarm {\n    public void ring() {\n        System.out.println(\"鈴鈴鈴\");\n    }\n}\n```\n\n介面裡的方法都是 `public`，實作的時候前面也要寫 `public`。",
-      "expectedShape": "interface Drawable { … }\n\nclass Button implements Drawable {\n    public void draw() { … }\n}\n\n…",
-      "check": { "type": "output", "exprs": ["new Button().draw()"], "uses": ["interface Drawable", "class Button implements Drawable"] },
+      "title": "定下元件契約與按鈕",
+      "goal": "定義畫面元件契約 `interface Drawable`，包含兩個方法：\n- `String render(int maxWidth);`（依最大寬度繪製單行字串）\n- `boolean isReady();`（回傳元件是否處於可用或完成狀態）\n\n再寫 `class Button implements Drawable`，建構子為 `Button(String label, boolean enabled)`，規則如下：\n1. 將 `label` 視為文字（若為 `null` 當成 `\"\"`，再做 `trim()` 去掉前後空白）。\n2. `isReady()`：只有當 `enabled` 為 `true` 且清理後的 `label` 非空字串時才回傳 `true`，否則回傳 `false`。\n3. `render(int maxWidth)`：\n   - 若 `maxWidth < 5`（連外框 `\"[ \"`、`\" ]\"` 加 1 個字都放不下），直接回傳 `\"\"`。\n   - 若清理後的 `label` 為空，顯示基礎字樣改為 `\"按鈕\"`。\n   - 若 `!enabled`，顯示文字加上 `\"(停用)\"`；否則為基礎字樣。\n   - 內容區可用寬度為 `cap = maxWidth - 4`：若顯示文字長度超過 `cap`，當 `cap >= 2` 時保留前 `cap - 1` 字再接 `\"…\"`，當 `cap == 1` 時取第 1 個字。\n   - 最後回傳 `\"[ \" + 顯示內容 + \" ]\"`。",
+      "instructions": "`interface` 只宣告方法簽章（名稱、參數與回傳型別），不寫大括號；實作類別寫 `implements Drawable`，並將介面裡的方法宣告為 `public`。\n\n處理文字邊界時先檢查 `null`，再 `trim()`。截斷字串可用 `substring(0, len)`，例如 `\"開始學習\".substring(0, 2)` 是 `\"開始\"`。注意 `\"…\"` 是全形單一刪節號字元（長度為 1），可從目標複製。",
+      "expectedShape": "interface Drawable {\n    String render(int maxWidth);\n    boolean isReady();\n}\n\nclass Button implements Drawable {\n    …\n    Button(String label, boolean enabled) { … }\n    public boolean isReady() { … }\n    public String render(int maxWidth) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Button(\" 開始學習 \", true).render(20)",
+          "new Button(\" 開始學習 \", true).isReady()",
+          "new Button(\"開始學習進階版\", true).render(8)",
+          "new Button(\"開始學習\", true).render(5)",
+          "new Button(\"開始學習\", true).render(4)",
+          "new Button(\"送出\", false).render(20)",
+          "new Button(\"送出\", false).isReady()",
+          "new Button(\"   \", true).render(20)",
+          "new Button(null, true).isReady()"
+        ],
+        "uses": ["interface Drawable", "implements Drawable"]
+      },
       "hints": {
-        "lead": "照約定寫 draw()，前面加 public。",
-        "plain": "`Drawable` 像一張約定：只寫「要會畫」，不管怎麼畫。`Button` 答應了這張約定，就要寫出自己的 `draw()`。"
+        "lead": "先清理字串與邊界條件，再計算內容上限 maxWidth - 4。",
+        "plain": "先把 `null` 轉成空字串並 `trim()`，保留原始長度是否為空供 `isReady()` 判斷；繪製時空字串替換成 `\"按鈕\"`，停用時加上 `\"(停用)\"`，最後再依 `maxWidth - 4` 決定是否截斷。"
       },
       "afterText": ""
     },
     {
       "id": "bar",
-      "title": "進度條也照約定",
-      "goal": "按鈕 `[ 開始學習 ]` 下面再畫一條進度條：做完的格數 `done` 是 3、總格數 `total` 是 5 時，畫出 `■■■□□`，做完的是 `■`，剩下的是 `□`。\n\n寫 `class ProgressBar implements Drawable`：欄位 `int done`、`int total`，建構子 `ProgressBar(int done, int total)`，`draw()` 照這兩個欄位印出進度條。最後用 `new ProgressBar(3, 5)` 做一條，呼叫它的 `draw()`。",
-      "instructions": "`■` 和 `□` 可以從目標複製。\n\n字串的 `repeat` 會把字串重複好幾次，例如 `\"=\".repeat(4)` 是 `====`。做完幾格就重複幾個 `■`；剩下幾格，用 `total` 和 `done` 算出來，再重複那麼多個 `□`。\n\n上一步畫按鈕的程式留著，按鈕和進度條各畫一次。",
-      "expectedShape": "class ProgressBar implements Drawable {\n    …\n\n    public void draw() {\n        …\n    }\n}",
-      "check": { "type": "output", "exprs": ["new ProgressBar(3, 5).draw()", "new ProgressBar(1, 4).draw()"], "uses": ["class ProgressBar implements Drawable"] },
+      "title": "進度條的百分比與寬度",
+      "goal": "保留 `Drawable` 與 `Button`，新增 `class ProgressBar implements Drawable`，建構子為 `ProgressBar(int done, int total)`：\n1. 建構時做數值邊界保護：若 `total <= 0`，將 `done` 與 `total` 都記為 `0`；否則將 `done` 限制在 `0` 到 `total` 之間（小於 `0` 視為 `0`，大於 `total` 視為 `total`）。\n2. `isReady()`：當 `total > 0` 且夾限後的 `done == total`（進度 100%）時回傳 `true`，否則回傳 `false`。\n3. `render(int maxWidth)`：\n   - 若 `maxWidth <= 0`，回傳 `\"\"`。\n   - 計算整數百分比 `pct`：`total <= 0 ? 0 : (done * 100) / total`，後綴字串為 `\" \" + pct + \"%\"`。\n   - 進度格寬度 `barWidth = maxWidth - suffix.length()`。若 `barWidth <= 0`（連 1 格都畫不下），若 `maxWidth >= (pct + \"%\").length()` 則只回傳 `pct + \"%\"`，否則回傳 `\"\"`。\n   - 若 `barWidth > 0`，實心格數 `filled = total <= 0 ? 0 : (done * barWidth) / total`，空心格數 `empty = barWidth - filled`，回傳 `\"■\".repeat(filled) + \"□\".repeat(empty) + suffix`。",
+      "instructions": "`\"■\".repeat(n)` 與 `\"□\".repeat(n)` 可重複字元（`n == 0` 時回傳空字串）。\n\n注意先乘再除才不會在整數除法裡提早歸零：例如 `(done * barWidth) / total`，若寫成 `(done / total) * barWidth` 會因為整數除法先變成 `0`。",
+      "expectedShape": "class ProgressBar implements Drawable {\n    …\n    ProgressBar(int done, int total) { … }\n    public boolean isReady() { … }\n    public String render(int maxWidth) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new ProgressBar(3, 5).render(10)",
+          "new ProgressBar(3, 5).isReady()",
+          "new ProgressBar(5, 5).isReady()",
+          "new ProgressBar(8, 5).render(10)",
+          "new ProgressBar(8, 5).isReady()",
+          "new ProgressBar(-2, 5).render(10)",
+          "new ProgressBar(1, 0).render(10)",
+          "new ProgressBar(1, 0).isReady()",
+          "new ProgressBar(1, 2).render(4)",
+          "new ProgressBar(1, 2).render(2)"
+        ],
+        "uses": ["implements Drawable"]
+      },
       "hints": {
-        "lead": "repeat 畫出一排格子。",
-        "plain": "同一張約定，進度條有自己的畫法：做完幾格就重複幾個 `■`，剩下的用 `□` 補滿。第四章的 `repeat` 正好用得上。"
+        "lead": "建構子先夾限 done 與 total，繪製時先扣除百分比後綴長度。",
+        "plain": "先把不合理的 `total` 和超出範圍的 `done` 在建構子收好，後面 `isReady()` 和 `render()` 就能安心計算。記得整數計算要先乘後除。"
       },
       "afterText": ""
     }

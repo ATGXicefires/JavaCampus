@@ -1,21 +1,31 @@
 class Mascot {
     String name;
     String line;
+    int speakCount;
+    String lastListener;
 
     Mascot(String name, String line) {
-        this.name = name;
-        this.line = line;
+        if (name == null || name.trim().isEmpty()) {
+            this.name = "未命名";
+        } else {
+            this.name = name.trim();
+        }
+        this.line = line == null ? "" : line;
     }
 
-    void speak() {
-        System.out.println(name + "：「" + line + "」");
-    }
-
-    // 交回名字有幾個字；名字是 null 就交回 0
+    // Bug 1：name 為 null 時會拋出 NullPointerException
     int nameLength() {
         return name.length();
     }
-}
 
-Mascot roufan = new Mascot("滷肉", "沒關係，再跑一次！");
-roufan.speak();
+    // Bug 2：user 為 null 時會崩潰；誤宣告區域變數遮蔽欄位；漏掉 speakCount 累加；name 可能為 null
+    String greet(String user) {
+        String lastListener = user.trim();
+        return name + "：「" + lastListener + "，嗨！」";
+    }
+
+    // Bug 3：狀態重置不完整
+    void resetStats() {
+        speakCount = 0;
+    }
+}

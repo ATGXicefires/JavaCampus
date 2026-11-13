@@ -8,40 +8,95 @@
   "steps": [
     {
       "id": "blueprint",
-      "title": "設計圖",
-      "goal": "印出一行 `小白（筆電）`：前面是名字，括號裡是種類。\n\n寫 `class Item`（`Item` 的設計圖），欄位（每個 `Item` 自己的盒子）有 `String name` 和 `String kind`。再用 `new` 照設計圖做出一個 `Item`，名字設成 `小白`、種類設成 `筆電`，照這個格式印出來。",
-      "instructions": "`class` 是一張設計圖：說好一個 `Item` 有哪些欄位。欄位是設計圖裡的盒子，照設計圖做出來的每個東西都各有一份。\n\n```\nclass Item {\n    String name;\n    String kind;\n}\n```\n\n設計圖還不是真的東西。`Item laptop = new Item();` 才是照著設計圖做出一個真的 `Item`（叫做**物件**），放進 `laptop` 這個盒子。用 `.` 拿它自己的欄位：`laptop.name = \"…\";` 是把名字放進它的 `name`。\n\n括號 `（）` 是全形的，可以從這裡複製。",
-      "expectedShape": "class Item {\n    …\n}\n\nItem laptop = new Item();\n…\nSystem.out.println(…);",
-      "check": { "type": "output", "uses": ["class Item", "String name", "String kind", "new Item(", ".name =", ".kind ="] },
+      "title": "設計圖與建構保護",
+      "goal": "寫出 `class Item`（欄位 `String name`、`String kind`、`int price`、`int stock`，建構子 `Item(String name, String kind, int price, int stock)` 與方法 `int totalValue()`），並建立 `laptop`（\"小白\"、\"筆電\"、32000、1）與 `usb`（\"阿隨\"、\"USB\"、450、2）。",
+      "instructions": "建構子必須處理欄位預設與下限保護：\n- 若 `name` 為 `null` 或去掉前後空白後為空字串（`name.trim().isEmpty()`），設為 `\"未命名\"`；否則保留原 `name`。\n- 若 `kind` 為 `null` 或去掉前後空白後為空字串，設為 `\"未分類\"`；否則保留原 `kind`。\n- 若 `price < 0`，設為 `0`。\n- 若 `stock < 0`，設為 `0`。\n\n`totalValue()` 回傳單價乘以庫存（`price * stock`）。參數與欄位同名時，欄位要寫 `this.name`、`this.kind`、`this.price`、`this.stock`。",
+      "expectedShape": "class Item {\n    …\n    Item(String name, String kind, int price, int stock) {\n        …\n    }\n    int totalValue() {\n        …\n    }\n}\n\nItem laptop = new Item(…);\nItem usb = new Item(…);",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "laptop.name",
+          "laptop.kind",
+          "laptop.totalValue()",
+          "usb.name",
+          "usb.kind",
+          "usb.totalValue()",
+          "new Item(\"  \", null, -500, -3).name",
+          "new Item(\"  \", null, -500, -3).kind",
+          "new Item(\"  \", null, -500, -3).price",
+          "new Item(\"  \", null, -500, -3).stock",
+          "new Item(\"  \", null, -500, -3).totalValue()"
+        ],
+        "uses": ["class Item", "this.name", "this.price"]
+      },
       "hints": {
-        "lead": "先寫設計圖，再 new。",
-        "plain": "`class Item` 只是設計圖。`new Item()` 才真的做出一個，放進 `laptop` 這個盒子。`laptop.name` 是這一個的名字，用 `.` 拿得到。"
+        "lead": "建構子用 this 區分欄位與參數，並在存入前先檢查邊界。",
+        "plain": "先把 `name` 和 `kind` 的 `null` 或空白換成預設文字，再把小於 0 的 `price` 與 `stock` 歸 0；最後建出 `laptop` 與 `usb` 兩個各自獨立的物件。"
       },
       "afterText": ""
     },
     {
-      "id": "another",
-      "title": "再做一個",
-      "goal": "印出兩行：\n`小白（筆電）`\n`阿隨（USB）`\n\n再 `new` 一個 `Item`，名字設成 `阿隨`、種類設成 `USB`，照同樣的格式印出來。",
-      "instructions": "同一張設計圖可以用很多次。",
-      "expectedShape": "Item usb = new Item();\n…\nSystem.out.println(…);",
-      "check": { "type": "output", "uses": ["class Item", "new Item(", ".name = \"阿隨\"", ".kind = \"USB\""] },
+      "id": "stock-ops",
+      "title": "進貨與領用",
+      "goal": "幫 `Item` 加上 `boolean restock(int n)`（進貨）與 `boolean sell(int n)`（領用），讓庫存能安全異動並回傳是否成功。",
+      "instructions": "兩個方法都要直接操作這個物件自己的 `stock`：\n- `restock(int n)`：若 `n <= 0`，不改變 `stock` 並回傳 `false`；否則 `stock` 加上 `n` 並回傳 `true`。\n- `sell(int n)`：若 `n <= 0` 或 `n > stock`（庫存不足），不改變 `stock` 並回傳 `false`；否則 `stock` 減去 `n` 並回傳 `true`。",
+      "expectedShape": "boolean restock(int n) {\n    …\n}\n\nboolean sell(int n) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Item _it = null;",
+          "(_it = new Item(\"阿隨\", \"USB\", 450, 2)).restock(3)",
+          "_it.stock",
+          "_it.restock(0)",
+          "_it.restock(-2)",
+          "_it.stock",
+          "_it.sell(4)",
+          "_it.stock",
+          "_it.sell(2)",
+          "_it.sell(0)",
+          "_it.sell(-1)",
+          "_it.stock",
+          "_it.sell(1)",
+          "_it.stock",
+          "_it.totalValue()",
+          "new Item(\"小白\", \"筆電\", 32000, 2).totalValue()"
+        ]
+      },
       "hints": {
-        "lead": "同一張設計圖，再 new 一次。",
-        "plain": "再 `new Item()` 一次，放進另一個盒子 `usb`，設定它自己的名字和種類，再印出來。"
+        "lead": "不合法的數量要先擋下並提早 return false。",
+        "plain": "`restock` 擋掉 `n <= 0`；`sell` 擋掉 `n <= 0` 或 `n > stock`。只有合法時才改動 `stock` 並回傳 `true`。"
       },
       "afterText": ""
     },
     {
-      "id": "own",
-      "title": "各自一份",
-      "goal": "原本的兩行後面，要再多印出兩行，小白改了名字，阿隨不受影響：\n`小白二號（筆電）`\n`阿隨（USB）`\n\n把小白的名字改成 `小白二號`，再把兩個都印一次。",
-      "instructions": "改完以後，輸出會有四行：前兩行是改之前，後兩行是改之後。",
-      "expectedShape": "laptop.name = \"…\";\nSystem.out.println(…);\nSystem.out.println(…);",
-      "check": { "type": "output", "uses": ["class Item", "new Item(", ".name = \"小白二號\""] },
+      "id": "transfer",
+      "title": "各自一份與庫存轉移",
+      "goal": "幫 `Item` 加上 `boolean transferTo(Item target, int n)`，從自己轉出 `n` 個庫存到 `target`。",
+      "instructions": "兩個物件各有各的 `stock`，轉移時要同時保護自己與對方：\n- 若 `target == null`、`target == this`（不能自己轉給自己）、`n <= 0` 或 `n > stock`（自己庫存不足），兩邊的 `stock` 都不變動並回傳 `false`。\n- 否則將自己的 `stock` 減 `n`、對方的 `target.stock` 加 `n`，並回傳 `true`。",
+      "expectedShape": "boolean transferTo(Item target, int n) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Item _a = null;",
+          "Item _b = null;",
+          "(_a = new Item(\"主機\", \"筆電\", 30000, 5)).stock",
+          "(_b = new Item(\"備品\", \"筆電\", 30000, 1)).stock",
+          "_a.transferTo(null, 1)",
+          "_a.transferTo(_a, 1)",
+          "_a.transferTo(_b, 0)",
+          "_a.transferTo(_b, -2)",
+          "_a.transferTo(_b, 6)",
+          "_a.stock",
+          "_b.stock",
+          "_a.transferTo(_b, 3)",
+          "_a.stock",
+          "_b.stock",
+          "_b.totalValue()"
+        ]
+      },
       "hints": {
-        "lead": "每個物件的欄位各自一份。",
-        "plain": "`laptop` 和 `usb` 是照同一張設計圖做的兩個東西，各有各的名字。改了 `laptop.name`，`usb.name` 不會跟著變。"
+        "lead": "先檢查目標物件與數量是否合法，再同時更新兩邊的庫存。",
+        "plain": "先把 `target == null || target == this || n <= 0 || n > stock` 擋掉回傳 `false`，通過檢查再做 `stock -= n;` 和 `target.stock += n;`。"
       },
       "afterText": ""
     }

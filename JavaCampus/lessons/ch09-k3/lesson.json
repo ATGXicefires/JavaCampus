@@ -8,27 +8,53 @@
   "steps": [
     {
       "id": "sections",
-      "title": "同一個約定",
-      "goal": "備審資料的每一節都有標題和內容：`new Project().title()` 交回 `專題製作`，`new License().body()` 交回 `電腦軟體設計`。\n\n起始碼已經寫好了 `interface Section`（每一節都要照的約定，裡面有 `String title();` 和 `String body();`）和範例 `Project`（`專題製作`／`小白學程式`）。照著寫兩個類別實作 `Section`，各自用 `title()`／`body()` 交回自己的標題／內容：`License` 是 `乙級證照`／`電腦軟體設計`，`Statement` 是 `自傳`／`把術語翻成人話`。",
-      "instructions": "起始碼的 `interface Section` 是一張約定：每一節都要會用 `title()` 交回標題、用 `body()` 交回內容，交回什麼由每一節自己決定。約定裡只寫方法的名字和回傳型別，直接用分號結尾。\n\n`class Project implements Section` 是寫好的範例：兩個方法都要寫出來，用 `return` 交回自己的字，前面還要加 `public`。\n\n`new Project().title()` 是做出一個 `Project`，馬上問它的 `title()`。這一步不用印出來，只看這些方法交回什麼。",
-      "expectedShape": "class License implements Section {\n    public String title() { … }\n    public String body() { … }\n}\n\nclass Statement implements Section {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new Project().title()", "new License().title()", "new License().body()", "new Statement().title()", "new Statement().body()"], "uses": ["interface Section", "class License implements Section", "class Statement implements Section"] },
+      "title": "多樣化的段落實作",
+      "goal": "起始碼已定好 `interface Section` 契約，包含 `title()`、`format()`、`priority()`、`lineCount()`、`isEmpty()`。請實作兩個具體段落類別：\n1. `class TextSection implements Section`，建構子 `TextSection(String title, String body, int priority)`：\n   - `title` 若為 `null` 或 `trim()` 為空，預設為 `\"未命名\"`，否則取 `trim()`。\n   - `body` 若為 `null` 視為 `\"\"`，否則取 `trim()`。\n   - `isEmpty()`：當清理後的 `body` 為空字串時回傳 `true`。\n   - `lineCount()`：若 `isEmpty()` 回傳 `0`；否則計算 `body` 以 `\"\\n\"` 分割後的行數（`body.split(\"\\n\", -1).length`）。\n   - `format()`：若 `isEmpty()` 回傳 `\"\"`；否則回傳 `\"【\" + title() + \"】\\n\" + body`。\n2. `class BulletSection implements Section`，建構子 `BulletSection(String title, String[] points, int priority)`：\n   - `title` 處理規則同上。\n   - 過濾 `points`（若為 `null` 視為 0 項）：略過 `null` 與 `trim()` 後為空的項目，只保留有效項目的 `trim()` 結果。\n   - `isEmpty()`：有效項目數為 `0` 時回傳 `true`。\n   - `lineCount()`：回傳有效項目的個數。\n   - `format()`：若 `isEmpty()` 回傳 `\"\"`；否則第一行為 `\"【\" + title() + \"】\"`，底下依序每項一行 `\"1. \" + 第一項`、`\"2. \" + 第二項`……（用 `\"\\n\"` 串接，最後不留多餘換行）。",
+      "instructions": "兩個類別實作 `Section` 時，介面裡所有五個方法都要寫出來並加上 `public`。\n\n在 `BulletSection` 建構子中，可以先數出有幾個有效項目，再建立對應長度的 `String[]` 儲存清理後的條目；這樣後面 `lineCount()` 與 `format()` 都能直接使用乾淨的陣列。\n\n全形括號 `【`、`】` 可從目標複製。",
+      "expectedShape": "class TextSection implements Section {\n    …\n    TextSection(String title, String body, int priority) { … }\n    public String title() { … }\n    public String format() { … }\n    public int priority() { … }\n    public int lineCount() { … }\n    public boolean isEmpty() { … }\n}\n\nclass BulletSection implements Section {\n    …\n    BulletSection(String title, String[] points, int priority) { … }\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new TextSection(\" 自傳 \", \"第一行\\n第二行\", 2).lineCount()",
+          "new TextSection(\" 自傳 \", \"第一行\\n第二行\", 2).format()",
+          "new TextSection(null, \"   \", 1).isEmpty()",
+          "new TextSection(null, \"   \", 1).format()",
+          "new TextSection(\"\", \"單行內容\", 3).title()",
+          "new BulletSection(\"證照\", new String[]{\"乙級軟體設計\", null, \"  \", \" APCS 4級 \"}, 1).lineCount()",
+          "new BulletSection(\"證照\", new String[]{\"乙級軟體設計\", null, \"  \", \" APCS 4級 \"}, 1).format()",
+          "new BulletSection(\"空清單\", new String[]{\" \", null}, 1).isEmpty()",
+          "new BulletSection(\"空清單\", null, 1).format()"
+        ],
+        "uses": ["interface Section", "class TextSection implements Section", "class BulletSection implements Section"]
+      },
       "hints": {
-        "lead": "三節，同一個約定。",
-        "plain": "備審資料的每一節長得都一樣：一個標題、一段內容。約定好這兩個方法，每一節各自填上自己的字。"
+        "lead": "先在建構子清理字串與過濾無效項目，再依 isEmpty() 決定 format() 與 lineCount()。",
+        "plain": "`TextSection` 用 `body.split(\"\\n\", -1).length` 算行數；`BulletSection` 在建構子把 `null` 和空白字串濾掉後，有效項目數就是 `lineCount()`，跑迴圈就能編號成 `1. ...`、`2. ...`。"
       },
       "afterText": ""
     },
     {
       "id": "page",
-      "title": "排成一頁",
-      "goal": "每一節印兩行，例如 `【專題製作】` 下一行是 `小白學程式`。四節依序印完，最後兩行是 `【志願】` 和 `資訊工程系（臺北）`。\n\n再加一節 `Goal`，標題是 `志願`，內容是 `資訊工程系（臺北）`。把 `Project`、`License`、`Statement`、`Goal` 各 `new` 一個，依序放進 `Section[] page`（型別寫介面，四節都裝得進去），用迴圈印出整頁，標題前後加上 `【` 和 `】`。",
-      "instructions": "陣列的型別寫介面 `Section[]`，四節都答應了 `Section` 這張約定，所以放得進同一排。迴圈裡同一句 `page[i].title()`，輪到哪一節，就交回哪一節的標題。\n\n`【`、`】` 和內容裡的 `（`、`）` 都是全形，可以從目標複製。",
-      "expectedShape": "Section[] page = {…};\nfor (…) {\n    System.out.println(\"【\" + … + \"】\");\n    System.out.println(…);\n}",
-      "check": { "type": "output", "exprs": ["new Goal().title()", "new Goal().body()"], "uses": ["class Goal implements Section", "Section[]", "for"] },
+      "title": "頁面組裝器：過濾、排序與行數彙總",
+      "goal": "保留 `Section`、`TextSection` 與 `BulletSection`，新增頁面組裝器 `class PortfolioPage`，建構子 `PortfolioPage(Section[] rawSections, int maxLines)`：\n1. **過濾**：跳過 `rawSections` 中的 `null` 以及 `isEmpty()` 為 `true` 的空白段落（`rawSections` 為 `null` 視為空陣列；`maxLines < 0` 視為 `0`）。\n2. **穩定排序**：將有效段落依 `priority()` **由小到大**排列；若兩個段落 `priority()` 相同，必須維持原本陣列中的先後順序。\n3. **行數預算篩選**：依排序後的順序逐段檢查，若「目前累計行數 + 該段 `lineCount()` <= `maxLines`」，就收錄這一段並累加行數；若會超過 `maxLines`，就跳過這一段繼續檢查下一段。\n\n請提供三個公開／套件方法：\n- `int includedCount()`：回傳實際收錄的段落數。\n- `int usedLines()`：回傳實際收錄段落的 `lineCount()` 總和。\n- `String render()`：將所有實際收錄的段落依序呼叫 `format()`，段落之間以 `\"\\n---\\n\"` 分隔；若沒有收錄任何段落回傳 `\"\"`。",
+      "instructions": "整個 `PortfolioPage` 只依賴介面 `Section`（呼叫 `isEmpty()`、`priority()`、`lineCount()`、`format()`），完全不需判斷具體類別是 `TextSection` 還是 `BulletSection`。\n\n為了確保 `priority()` 相同時順序不變，可使用穩定的排序法（例如插入排序，或氣泡排序只在 `a.priority() > b.priority()` 時交換）。",
+      "expectedShape": "class PortfolioPage {\n    …\n    PortfolioPage(Section[] rawSections, int maxLines) { … }\n    int includedCount() { … }\n    int usedLines() { … }\n    String render() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new PortfolioPage(new Section[]{new TextSection(\"自傳\", \"第一行\\n第二行\\n第三行\", 2), null, new TextSection(\"空白\", \"\", 1), new BulletSection(\"證照\", new String[]{\"乙級\", \"多益\"}, 1), new TextSection(\"志願\", \"資工系\", 2)}, 5).includedCount()",
+          "new PortfolioPage(new Section[]{new TextSection(\"自傳\", \"第一行\\n第二行\\n第三行\", 2), null, new TextSection(\"空白\", \"\", 1), new BulletSection(\"證照\", new String[]{\"乙級\", \"多益\"}, 1), new TextSection(\"志願\", \"資工系\", 2)}, 5).usedLines()",
+          "new PortfolioPage(new Section[]{new TextSection(\"自傳\", \"第一行\\n第二行\\n第三行\", 2), null, new TextSection(\"空白\", \"\", 1), new BulletSection(\"證照\", new String[]{\"乙級\", \"多益\"}, 1), new TextSection(\"志願\", \"資工系\", 2)}, 5).render()",
+          "new PortfolioPage(new Section[]{new TextSection(\"B\", \"b1\\nb2\", 1), new TextSection(\"A\", \"a1\", 1)}, 10).render()",
+          "new PortfolioPage(new Section[]{new TextSection(\"超長\", \"1\\n2\\n3\", 1)}, 2).includedCount()",
+          "new PortfolioPage(new Section[]{new TextSection(\"超長\", \"1\\n2\\n3\", 1)}, 2).render()",
+          "new PortfolioPage(null, 5).usedLines()"
+        ],
+        "uses": ["Section[]"]
+      },
       "hints": {
-        "lead": "一個迴圈，一節一節印。",
-        "plain": "四節都照同一個約定，所以排版只要寫一次：先印標題，再印內容，迴圈把每一節走過一遍。"
+        "lead": "先過濾再穩定排序，最後依 maxLines 貪婪挑選並計算 usedLines。",
+        "plain": "把非空有效段落收進暫存陣列後，做一次穩定排序（只有前一個 `priority()` 嚴格大於後一個才交換）。接著從頭走訪：放得下就收錄並累加 `usedLines`，放不下就跳過看下一段。"
       },
       "afterText": ""
     }

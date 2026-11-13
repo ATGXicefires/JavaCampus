@@ -1,38 +1,26 @@
-abstract class Screen {
-    void show() {
-        System.out.println("== 小白學程式 ==");
-        body();
-        System.out.println("—— 滷肉和分號陪你寫 ——");
+class StreakProgress extends ____ {
+    int days;
+    int goalDays;
+
+    StreakProgress(String owner, int days, int goalDays) {
+        super(owner);
+        this.days = days;
+        this.goalDays = goalDays;
     }
 
-    abstract void body();
-}
-
-class LessonScreen extends Screen {
-    void body() {
-        System.out.println("今天的課：for 迴圈");
+    String title() {
+        return "連續打卡";
     }
-}
 
-class QuizScreen extends Screen {
-    void body() {
-        System.out.println("第 1 題：if-else 像什麼？");
+    String[] details() {
+        ____
     }
-}
 
-class StickerScreen extends Screen {
-    void body() {
-        System.out.println("貼紙：已收集 8 張");
+    int completionPercent() {
+        return ____;
     }
 }
 
-class ResultScreen ____ Screen {
-    void body() {
-        System.out.println("答對 4 題，共 5 題");
-    }
+static int averageCompletion(ProgressScreen[] screens) {
+    ____
 }
-
-new LessonScreen().show();
-new QuizScreen().show();
-new StickerScreen().show();
-new ResultScreen().show();

@@ -1,16 +1,34 @@
 class Draft {
+    static final int MAX_LEN = 20;
     private String text = "";
+    private int editCount;
 
-    void type(String s) {
+    boolean type(String s) {
+        if (s == null || s.isEmpty() || text.length() + s.length() > MAX_LEN) {
+            return false;
+        }
         text += s;
+        editCount++;
+        return true;
     }
 
     void clear() {
-        text = "";
+        if (!text.isEmpty()) {
+            text = "";
+            editCount++;
+        }
     }
 
     String preview() {
         return text;
+    }
+
+    int getEditCount() {
+        return editCount;
+    }
+
+    int remainingChars() {
+        return MAX_LEN - text.length();
     }
 }
 

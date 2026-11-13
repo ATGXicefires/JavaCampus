@@ -1,11 +1,14 @@
 interface Cheer {
-    void say();
+    String sender();
+    String message(int round);
 }
 
-class Me implements Cheer {
-    ____ void ____() {
-        System.out.println("學長面試加油！你一定可以！");
+class Me implements ____ {
+    public String sender() {
+        return ____;
+    }
+
+    public String message(int round) {
+        ____
     }
 }
-
-new Me().say();

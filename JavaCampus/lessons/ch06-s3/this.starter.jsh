@@ -2,16 +2,27 @@ class Mascot {
     String name;
     String line;
 
+    // Bug：參數遮蔽了欄位，且未處理 null / 空白
     Mascot(String name, String line) {
-        // 把傳進來的名字和台詞放進欄位
         name = name;
         line = line;
     }
 
-    void speak() {
-        System.out.println(name + "：「" + line + "」");
+    // Bug：只改到了區域參數 name
+    void rename(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            name = name.trim();
+        }
+    }
+
+    // Bug：只改到了區域參數 line
+    void updateLine(String line) {
+        if (line != null) {
+            line = line;
+        }
+    }
+
+    String speakText() {
+        return name + "：「" + line + "」";
     }
 }
-
-Mascot roufan = new Mascot("滷肉", "沒關係，再跑一次！");
-roufan.speak();

@@ -1,24 +1,77 @@
 abstract class Screen {
-    void show() {
-        System.out.println("== 小白學程式 ==");
-        body();
-        System.out.println("—— 滷肉和分號陪你寫 ——");
+    final int width;
+
+    Screen(int width) {
+        this.width = Math.max(12, width);
     }
 
-    abstract void body();
+    final String render() {
+        String rawHeader = header();
+        String safeHeader = (rawHeader == null || rawHeader.trim().isEmpty()) ? "小白學程式" : rawHeader.trim();
+        String out = "[ " + safeHeader + " ]";
+        String sub = subtitle();
+        if (sub != null && !sub.trim().isEmpty()) {
+            out += "\n> " + sub.trim();
+        }
+        String rawBody = body();
+        String safeBody = (rawBody == null || rawBody.trim().isEmpty()) ? "(無內容)" : rawBody.trim();
+        out += "\n" + safeBody + "\n" + "-".repeat(width);
+        return out;
+    }
+
+    abstract String header();
+
+    abstract String body();
+
+    String subtitle() {
+        return "";
+    }
 }
 
 class LessonScreen extends Screen {
-    void body() {
-        System.out.println("今天的課：for 迴圈");
+    String topic;
+
+    LessonScreen(int width, String topic) {
+        super(width);
+        this.topic = topic;
+    }
+
+    String header() {
+        return "課程";
+    }
+
+    String subtitle() {
+        return "章節：物件導向";
+    }
+
+    String body() {
+        if (topic == null || topic.trim().isEmpty()) {
+            return "";
+        }
+        return "主題：" + topic.trim();
     }
 }
 
 class QuizScreen extends Screen {
-    void body() {
-        System.out.println("第 1 題：if-else 像什麼？");
+    int number;
+    String question;
+
+    QuizScreen(int width, int number, String question) {
+        super(width);
+        this.number = number;
+        this.question = question;
+    }
+
+    String header() {
+        return number <= 0 ? "隨堂測驗" : "第 " + number + " 題";
+    }
+
+    String body() {
+        return question;
     }
 }
 
-// 先 new 一個 LessonScreen、再 new 一個 QuizScreen，各 show() 一次
-new Screen().show();
+// 1. 移除下方錯誤的 new Screen(20)
+// 2. 新增 class SummaryScreen extends Screen
+// 3. 完成 class ScreenRouter
+Screen broken = new Screen(20);

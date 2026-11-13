@@ -1,12 +1,14 @@
 abstract class Screen {
-    void show() {
-        System.out.println("== 小白學程式 ==");
-        // 在這裡呼叫 body()
-        System.out.println("—— 滷肉和分號陪你寫 ——");
+    final int width;
+
+    Screen(int width) {
+        // 若 width < 12 強制夾成 12
+        this.width = 0;
     }
 
-    // 把 body() 寫成 abstract（沒有內容，留給子類別寫）
+    // 寫出 final String render() 作為樣板方法
+    // 並宣告 abstract String header();、abstract String body();
+    // 以及預設勾子 String subtitle()
 }
 
-// 寫 class LessonScreen extends Screen，在 body() 印出 今天的課：for 迴圈
-// 最後 new 一個 LessonScreen，呼叫它的 show()
+// 寫出 LessonScreen extends Screen 與 QuizScreen extends Screen

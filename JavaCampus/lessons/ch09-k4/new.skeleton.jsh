@@ -1,24 +1,41 @@
-abstract class Screen {
-    void show() {
-        System.out.println("== 小白學程式 ==");
-        body();
-        System.out.println("—— 滷肉和分號陪你寫 ——");
+class SummaryScreen extends ____ {
+    int passed;
+    int total;
+
+    SummaryScreen(int width, int passed, int total) {
+        super(width);
+        ____
     }
 
-    abstract void body();
-}
+    String header() {
+        return "學習結算";
+    }
 
-class LessonScreen extends Screen {
-    void body() {
-        System.out.println("今天的課：for 迴圈");
+    String subtitle() {
+        return ____;
+    }
+
+    String body() {
+        return "完成 " + passed + " / " + total + " 題";
     }
 }
 
-class QuizScreen extends Screen {
-    void body() {
-        System.out.println("第 1 題：if-else 像什麼？");
+class ScreenRouter {
+    Screen[] screens;
+
+    ScreenRouter(Screen[] screens) {
+        this.screens = screens == null ? new Screen[0] : screens;
+    }
+
+    int count() {
+        ____
+    }
+
+    String renderAt(int index) {
+        ____
+    }
+
+    String renderAll() {
+        ____
     }
 }
-
-new ____().show();
-new ____().show();

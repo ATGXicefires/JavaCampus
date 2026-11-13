@@ -8,40 +8,83 @@
   "steps": [
     {
       "id": "max",
-      "title": "掛不下了",
-      "goal": "最多裝 12 個。一開始有 11 個，`new GachaBag(11).add()` 還放得下，要交回 `true`；一開始就有 12 個，`new GachaBag(12).add()` 要交回 `false`。\n\n加上 `static final int MAX = 12;`（整個類別共用、設定好就不能再改的常數），和建構子 `GachaBag(int count)` 把一開始有幾個存進欄位 `count`。`add()` 改成交回 `boolean`：還不到 `MAX` 個就加一個、交回 `true`；已經有 `MAX` 個就不加、交回 `false`。",
-      "instructions": "`static final` 是兩個字合在一起：`static` 是整個類別共用一份，`final` 是設定一次就不能再改。常數的名字習慣全部大寫，例如 `static final int SEATS = 30;`，類別裡的方法直接寫 `SEATS` 就能用。\n\n`new GachaBag(11)` 會把 11 交給建構子。建構子的參數和欄位都叫 `count`，存進欄位要寫成 `this.count`。\n\n規則寫在 `add()` 裡，外面想加扭蛋只能叫 `add()`，誰都繞不過去。`return` 會馬上離開方法：已經滿了就先 `return false;`，後面加一個的那行就不會做到，數量停在 `MAX`。",
-      "expectedShape": "static final int MAX = …;\n…\nGachaBag(int count) {\n    …\n}\nboolean add() {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new GachaBag(11).add()", "new GachaBag(12).add()", "GachaBag bag = null;", "(bag = new GachaBag(11)).add()", "bag.getCount()", "bag.add()", "bag.getCount()"], "uses": ["static final int MAX"] },
+      "title": "上限與進度鉗制",
+      "goal": "扭蛋包最多裝 `12` 個、最少 `0` 個。加上 `static final int MAX = 12;`、`private int count`、建構子 `GachaBag(int count)`，並實作三個保護容量範圍的方法：\n- `boolean add()`：未滿 `MAX` 時數量加 1 並交回 `true`；已滿則不加並交回 `false`。\n- `int addUpTo(int n)`：嘗試一次放入 `n` 個，最多放到 `MAX` 為止，交回實際放入了幾個；若 `n <= 0` 不放入，交回 `0`。\n- `int take(int n)`：嘗試取出 `n` 個，最多拿到 `0` 為止，交回實際拿出了幾個；若 `n <= 0` 不取出，交回 `0`。\n- `int getCount()`：交回目前數量。",
+      "instructions": "`static final int MAX = 12;` 是整個類別共用的常數，設定好就不能改。\n\n在 `addUpTo` 和 `take` 裡做「進度鉗制」：先擋掉 `n <= 0`，再計算還能放多少（`MAX - count`）或還能拿多少（`count`），實際變動量取兩者較小的那個，這樣無論給多大數字都不會超出 `0..MAX`。",
+      "expectedShape": "class GachaBag {\n    static final int MAX = …;\n    private int …;\n    GachaBag(int count) { … }\n    boolean add() { … }\n    int addUpTo(int n) { … }\n    int take(int n) { … }\n    int getCount() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new GachaBag(11).add()",
+          "new GachaBag(12).add()",
+          "GachaBag _b = null;",
+          "(_b = new GachaBag(9)).addUpTo(5)",
+          "_b.getCount()",
+          "_b.addUpTo(-2)",
+          "_b.addUpTo(0)",
+          "_b.take(4)",
+          "_b.getCount()",
+          "_b.take(20)",
+          "_b.getCount()",
+          "_b.take(-3)",
+          "_b.take(0)"
+        ],
+        "uses": ["static final int MAX", "private"]
+      },
       "hints": {
-        "lead": "滿了就不加。",
-        "plain": "`add()` 先問一句：已經到 `MAX` 了嗎？到了就交回 `false`，什麼都不做；還沒滿才加一個，交回 `true`。"
+        "lead": "用剩餘空間與現有數量當成夾子，讓數量永遠夾在 0 到 MAX。",
+        "plain": "`addUpTo(n)` 先看 `n <= 0` 回傳 0；能放的空間是 `MAX - count`，實際放 `Math.min(n, MAX - count)`。`take(n)` 先看 `n <= 0` 回傳 0；最多只能拿 `count`，實際拿 `Math.min(n, count)`。"
       },
       "afterText": ""
     },
     {
       "id": "start",
-      "title": "一開始就太多",
-      "goal": "一開始就給太多或給負數，也要放合理的數量：`new GachaBag(20).getCount()` 要交回 `12`，`new GachaBag(-3).getCount()` 要交回 `0`。\n\n建構子 `GachaBag(int count)` 也要把關（先檢查收到的數量，再決定放多少）：超過 `MAX` 只放 `MAX` 個，負數放 0，其他照收到的數量放。",
-      "instructions": "`add()` 擋得住一個一個加，可是 `new GachaBag(20)` 是在建構子裡一次放進去，根本沒經過 `add()`。所以建構子也要把關：存進 `this.count` 之前，先看收到的 `count` 合不合理。",
-      "expectedShape": "GachaBag(int count) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new GachaBag(20).getCount()", "new GachaBag(-3).getCount()", "new GachaBag(5).getCount()"] },
+      "title": "建構子鉗制與不可變標籤",
+      "goal": "這一步接續上一步的 `GachaBag`，補上建構子防呆與 `final` 標籤欄位：\n- 在建構子 `GachaBag(int count)` 把初始數量鉗制在 `0..MAX`：超過 `MAX` 只放 `MAX` 個，小於 `0` 放 `0`，其餘照放；標籤預設為 `\"基本款\"`。\n- 新增 `private final String label;` 與建構子 `GachaBag(String label, int count)`：若 `label` 為 `null` 或空白（`isBlank()`）則存成 `\"未命名\"`，否則存 `label.trim()`；`count` 同樣鉗制在 `0..MAX`。\n- 新增 `String getLabel()` 交回標籤。",
+      "instructions": "只有 `add()`、`addUpTo()` 和 `take()` 把關還不夠，若有人一開始就 `new GachaBag(20)` 或 `new GachaBag(-3)`，不合法的數字還是會跑進欄位。\n\n標籤在建立扭蛋包的那一刻就決定好，之後不能改，所以用 `private final String label;` 保護。兩個建構子可以讓 `GachaBag(int count)` 呼叫 `this(\"基本款\", count);`，把鉗制與標籤處理寫在一處就好。",
+      "expectedShape": "private final String …;\nGachaBag(int count) { … }\nGachaBag(String label, int count) { … }\nString getLabel() { … }",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new GachaBag(20).getCount()",
+          "new GachaBag(-3).getCount()",
+          "new GachaBag(5).getCount()",
+          "new GachaBag(5).getLabel()",
+          "new GachaBag(\" 貓咪款 \", 15).getLabel()",
+          "new GachaBag(\" 貓咪款 \", 15).getCount()",
+          "new GachaBag(null, -5).getLabel()",
+          "new GachaBag(\"   \", -5).getLabel()",
+          "new GachaBag(null, -5).getCount()"
+        ],
+        "uses": ["private final String"]
+      },
       "hints": {
-        "lead": "建構子也要把關。",
-        "plain": "太多就只放 `MAX` 個，負數就放 0，其他照給的放。三種情況用 `if`／`else if`／`else` 分開。"
+        "lead": "在建構子存進欄位之前，就把不合法的數字與空標籤擋下來。",
+        "plain": "寫兩個建構子：`GachaBag(int count)` 呼叫 `this(\"基本款\", count);`；在 `GachaBag(String label, int count)` 檢查 `label == null || label.isBlank()` 設成 `\"未命名\"`，否則 `label.trim()`；`count` 小於 0 設 0、大於 `MAX` 設 `MAX`。"
       },
       "afterText": ""
     },
     {
       "id": "final",
-      "title": "改不了的上限",
-      "goal": "最後一行 `GachaBag.MAX = 20;` 想把上限改成 20，可是 `MAX` 是 `final`（設定一次就不能再改），現在是紅字。修好後要印出 `最多 12 個`。\n\n刪掉這一行，改成讀 `GachaBag.MAX`，把上限印出來。",
-      "instructions": "`MAX` 是 `static final`，屬於整個 `GachaBag` 類別：從外面用類別的名字加 `.` 來讀，寫成 `GachaBag.MAX`，不用先 `new` 一個扭蛋包。\n\n`final` 只能讀，不能改，紅字說的就是這件事。",
-      "expectedShape": "System.out.println(\"最多 \" + … + \" 個\");",
-      "check": { "type": "output", "uses": ["static final int MAX", "GachaBag.MAX"] },
+      "title": "改不了的上限與剩餘空間",
+      "goal": "起始碼最後一行 `GachaBag.MAX = 20;` 試圖修改 `final` 常數，導致紅字編譯失敗。請修正錯誤並完成剩餘容量方法與輸出：\n1. 刪掉 `GachaBag.MAX = 20;`。\n2. 在 `GachaBag` 加上 `int remainingSpace()`（交回還能再放幾個，即 `MAX - count`）和 `boolean isFull()`（已滿交回 `true`，否則 `false`）。\n3. 建立 `GachaBag bag = new GachaBag(\"新年款\", 9);`，印出兩行：\n`最多 12 個`（使用 `GachaBag.MAX`）\n`新年款：已放 9 個，還能放 3 個`",
+      "instructions": "`static final` 常數只能讀，不能從任何地方重新指派。想知道上限，直接讀 `GachaBag.MAX`；想知道目前這個扭蛋包還剩幾格，讓物件用自己的 `remainingSpace()` 算給你看。",
+      "expectedShape": "int remainingSpace() { … }\nboolean isFull() { … }\n…\nGachaBag bag = new GachaBag(\"新年款\", 9);\nSystem.out.println(\"最多 \" + GachaBag.MAX + \" 個\");\nSystem.out.println(…);",
+      "check": {
+        "type": "output",
+        "exprs": [
+          "new GachaBag(9).remainingSpace()",
+          "new GachaBag(12).remainingSpace()",
+          "new GachaBag(12).isFull()",
+          "new GachaBag(11).isFull()",
+          "bag.getLabel()",
+          "bag.getCount()"
+        ],
+        "uses": ["static final int MAX", "GachaBag.MAX"]
+      },
       "hints": {
-        "lead": "final 只能讀，不能改。",
-        "plain": "`final` 是寫死的：設定一次就不能再改。要用它，直接讀 `GachaBag.MAX` 就好。"
+        "lead": "final 常數只能讀取不能賦值，並透過方法公開剩餘空間。",
+        "plain": "刪掉 `GachaBag.MAX = 20;`。補上 `remainingSpace()` 交回 `MAX - count`、`isFull()` 交回 `count >= MAX`。建立 `bag` 後分兩行印出上限與狀態。"
       },
       "afterText": ""
     }

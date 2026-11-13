@@ -3,7 +3,33 @@
 // balance = balance + 350
 // balance = balance + 120
 class Ledger {
-    // 加上 private int balance、deposit(int amount) 和 getBalance()
+    // 宣告 private final String owner 與 private int balance, entryCount, totalDeposited
+
+    Ledger() {
+    }
+
+    Ledger(String owner) {
+    }
+
+    boolean deposit(int amount) {
+        return false;
+    }
+
+    int getBalance() {
+        return 0;
+    }
+
+    int getEntryCount() {
+        return 0;
+    }
+
+    int getTotalDeposited() {
+        return 0;
+    }
+
+    String getOwner() {
+        return "";
+    }
 }
 
-// new 一本帳 book，存入 350 和 120
+// 建立 Ledger book = new Ledger("阿嬤小吃店");，存入 350 和 120

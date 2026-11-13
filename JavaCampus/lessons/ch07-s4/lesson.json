@@ -8,27 +8,67 @@
   "steps": [
     {
       "id": "menu",
-      "title": "價目表",
-      "goal": "印出三行價目表：\n`滷肉飯 35 元`\n`虱目魚湯 60 元`\n`年菜套餐 880 元`\n\n寫 `class Menu`，用 `static final`（整個類別共用、設定好就不能再改）把這三個價錢定成常數，再用這些常數印出價目表，一行一道。",
-      "instructions": "`static final` 是兩個字合在一起：`static` 是整個類別共用一份，`final` 是設定一次就不能再改。合起來就是常數，例如 `static final int SEATS = 30;`。從類別外面讀，寫成類別名字加 `.`，像 `Menu.LU_ROU_FAN`。\n\n常數的名字習慣全部大寫，單字之間用 `_` 隔開，例如 `NEW_YEAR_SET`。",
-      "expectedShape": "class Menu {\n    static final int LU_ROU_FAN = …;\n    …\n}\n\nSystem.out.println(…);",
-      "check": { "type": "output", "uses": ["static final int LU_ROU_FAN", "static final int MILKFISH_SOUP", "static final int NEW_YEAR_SET", "Menu.LU_ROU_FAN", "Menu.MILKFISH_SOUP", "Menu.NEW_YEAR_SET"] },
+      "title": "不可變定價與點餐計價",
+      "goal": "寫 `class Menu` 用 `static final` 固定三道菜的基準價格，實作點餐計價並印出價目表：\n- 常數：`static final int LU_ROU_FAN = 35;`、`static final int MILKFISH_SOUP = 60;`、`static final int NEW_YEAR_SET = 880;`。\n- 靜態方法 `static int calcOrder(int riceQty, int soupQty, int setQty)`：若任何數量 `< 0`，一律拒絕並交回 `-1`；否則加總金額，若總額滿 `1000` 元（含 `1000`）打九折（算式 `total * 9 / 10`，整數捨去小數），未滿 `1000` 照原價交回。\n- 最後印出三行價目表：\n`滷肉飯 35 元`\n`虱目魚湯 60 元`\n`年菜套餐 880 元`",
+      "instructions": "`static final` 宣告的常數屬於類別且設定後不可變，方法裡計算請直接引用 `LU_ROU_FAN`、`MILKFISH_SOUP`、`NEW_YEAR_SET`（類別外讀寫成 `Menu.LU_ROU_FAN`）。\n\n注意折扣邊界：剛好 `1000` 元也要打九折（`total >= 1000`），而 `999` 元以下不打折。",
+      "expectedShape": "class Menu {\n    static final int LU_ROU_FAN = …;\n    static final int MILKFISH_SOUP = …;\n    static final int NEW_YEAR_SET = …;\n    static int calcOrder(int riceQty, int soupQty, int setQty) { … }\n}\n\nSystem.out.println(…);",
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Menu.calcOrder(0, 0, 0)",
+          "Menu.calcOrder(2, 1, 0)",
+          "Menu.calcOrder(0, 0, 1)",
+          "Menu.calcOrder(1, 0, 1)",
+          "Menu.calcOrder(0, 2, 1)",
+          "Menu.calcOrder(2, 1, 1)",
+          "Menu.calcOrder(-1, 0, 0)",
+          "Menu.calcOrder(0, -1, 0)",
+          "Menu.calcOrder(0, 0, -1)"
+        ],
+        "uses": [
+          "static final int LU_ROU_FAN",
+          "static final int MILKFISH_SOUP",
+          "static final int NEW_YEAR_SET",
+          "Menu.LU_ROU_FAN",
+          "Menu.MILKFISH_SOUP",
+          "Menu.NEW_YEAR_SET"
+        ]
+      },
       "hints": {
-        "lead": "`static final` 宣告類別層級的常數，命名慣例為全大寫⋯⋯",
-        "plain": "⋯⋯白話：價目表寫死在 `Menu` 裡，誰都改不了。名字全部大寫，單字之間用 `_` 隔開。"
+        "lead": "用 static final 鎖定單價，再在 calcOrder 裡做負數防呆與滿千九折。",
+        "plain": "先檢查 `if (riceQty < 0 || soupQty < 0 || setQty < 0) { return -1; }`。算出 `total` 後，若 `total >= 1000` 回傳 `total * 9 / 10`，否則回傳 `total`。"
       },
       "afterText": ""
     },
     {
       "id": "raise",
-      "title": "有人想漲價",
-      "goal": "最後一行 `Menu.NEW_YEAR_SET = 980;` 想直接改年菜的價錢，現在是紅字：`NEW_YEAR_SET` 是 `final`，不能改。年菜今年漲 100 元，價目表後面要多印一行 `年菜套餐（今年）980 元`。\n\n刪掉這一行，改成用 `Menu.NEW_YEAR_SET` 另外算出今年的價錢，印出來。",
-      "instructions": "常數不能改，但可以拿來算：用它加上漲的錢，算出來的是另一個新的數字，常數本身還是 880。\n\n算式放在字串中間要加括號，例如 `\"共 \" + (3 + 4) + \" 個\"` 印出 `共 7 個`；不加括號會先接成字串，變成 `共 34 個`。括號 `（）` 是全形的，可以從這裡複製。",
-      "expectedShape": "System.out.println(\"年菜套餐（今年）\" + (…) + \" 元\");",
-      "check": { "type": "output", "uses": ["static final int NEW_YEAR_SET", "Menu.NEW_YEAR_SET +"] },
+      "title": "final 原價不能改與漲價限制",
+      "goal": "起始碼裡有兩處試圖重新指派 `final` 欄位（`basePrice += delta;` 和 `Menu.NEW_YEAR_SET = 980;`），導致紅字編譯錯誤。請修復錯誤並完成 `class Dish` 的漲價限制：\n1. 在 `Dish` 裡保留 `private final String name;` 與 `private final int basePrice;` 不可變原價，並加上 `private int extra;`。\n2. 建構子 `Dish(String name, int basePrice)`：若 `name` 為 `null` 或空白（`isBlank()`）設為 `\"無名菜色\"`，否則 `name.trim()`；若 `basePrice <= 0` 防呆為 `1`，否則用傳入值。\n3. `boolean adjustExtra(int delta)`：只允許在原價的 20% 上限內調整（`0 <= delta && delta <= basePrice * 20 / 100`），合法才把 `extra` 設為 `delta` 並交回 `true`；否則維持原本 `extra` 不變並交回 `false`（絕不能嘗試修改 `basePrice`）。\n4. `int currentPrice()` 交回 `basePrice + extra`，加上 `int getBasePrice()` 與 `String getName()`。\n5. 刪掉 `Menu.NEW_YEAR_SET = 980;`，建立 `Dish newYear = new Dish(\"年菜套餐\", Menu.NEW_YEAR_SET);` 並呼叫 `newYear.adjustExtra(100);`，在價目表後多印一行：\n`年菜套餐（今年）980 元`",
+      "instructions": "`final` 保護了基準原價：不管是類別常數 `Menu.NEW_YEAR_SET`，還是物件實例裡的 `private final int basePrice`，設定後都不能被重新指派。\n\n想做季節加價，正確做法是保留 `basePrice` 不動，把合法範圍內的調價記在另一個 `private int extra` 欄位，結帳時回傳 `basePrice + extra`。",
+      "expectedShape": "class Dish {\n    private final String name;\n    private final int basePrice;\n    private int extra;\n    Dish(String name, int basePrice) { … }\n    boolean adjustExtra(int delta) { … }\n    int currentPrice() { … }\n    int getBasePrice() { … }\n    String getName() { … }\n}\n\nDish newYear = new Dish(\"年菜套餐\", Menu.NEW_YEAR_SET);\nnewYear.adjustExtra(100);\nSystem.out.println(\"年菜套餐（今年）\" + newYear.currentPrice() + \" 元\");",
+      "check": {
+        "type": "output",
+        "exprs": [
+          "newYear.currentPrice()",
+          "newYear.getBasePrice()",
+          "newYear.getName()",
+          "Dish _d = null;",
+          "(_d = new Dish(\"年菜套餐\", 880)).adjustExtra(176)",
+          "_d.currentPrice()",
+          "_d.adjustExtra(177)",
+          "_d.currentPrice()",
+          "_d.adjustExtra(-10)",
+          "_d.currentPrice()",
+          "_d.getBasePrice()",
+          "new Dish(\"  \", -50).getBasePrice()",
+          "new Dish(null, 0).getName()",
+          "Menu.calcOrder(0, 2, 1)"
+        ],
+        "uses": ["static final int NEW_YEAR_SET", "final int basePrice"]
+      },
       "hints": {
-        "lead": "`cannot assign a value to static final variable NEW_YEAR_SET`⋯⋯",
-        "plain": "⋯⋯白話：常數不能改，但可以拿來算：`Menu.NEW_YEAR_SET + 100` 就是今年的價錢。放進字串中間記得加括號。"
+        "lead": "不要動 final 原價，把合法加價存在 extra 裡並守住 20% 上限。",
+        "plain": "刪掉 `basePrice += delta;` 和 `Menu.NEW_YEAR_SET = 980;`。在 `adjustExtra` 檢查 `if (delta < 0 || delta > basePrice * 20 / 100) { return false; }`，合法才 `extra = delta;` 並回傳 `true`；`currentPrice()` 回傳 `basePrice + extra`。"
       },
       "afterText": ""
     }

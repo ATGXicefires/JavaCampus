@@ -1,19 +1,51 @@
 class Glasses {
-    boolean clean;
+    int smudges = 40;
+    int wipeCount = 0;
+    int wearMinutes = 0;
+    boolean clothReady = true;
 
-    String view() {
-        if (clean) {
-            return "世界很清楚";
-        }
-        return "世界霧霧的";
+    boolean isClear() {
+        return smudges <= 20;
     }
 
-    void wipe() {
-        clean = true;
+    String view() {
+        return isClear() ? "世界很清楚" : "世界霧霧的";
+    }
+
+    void wear(int minutes) {
+        if (minutes <= 0) {
+            return;
+        }
+        this.wearMinutes += minutes;
+        this.smudges = Math.min(100, this.smudges + minutes / 5);
+    }
+
+    boolean wipe() {
+        if (!clothReady) {
+            return false;
+        }
+        smudges = Math.max(0, smudges - 30);
+        wipeCount++;
+        if (wipeCount % 3 == 0) {
+            clothReady = false;
+        }
+        return true;
+    }
+
+    void washCloth() {
+        this.clothReady = true;
+    }
+
+    void resetDaily() {
+        wearMinutes = 0;
+        wipeCount = 0;
+        smudges = 0;
+        clothReady = true;
+    }
+
+    String summary() {
+        return "配戴 " + wearMinutes + " 分鐘，擦拭 " + wipeCount + " 次，" + view();
     }
 }
 
-Glasses g = new Glasses();
-System.out.println(g.view());
-g.wipe();
-System.out.println(g.view());
+// TODO：心跳加速的原因。之後再處理。

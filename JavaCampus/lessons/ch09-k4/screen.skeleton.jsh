@@ -1,17 +1,59 @@
 abstract class Screen {
-    void show() {
-        System.out.println("== 小白學程式 ==");
-        body();
-        System.out.println("—— 滷肉和分號陪你寫 ——");
+    final int width;
+
+    Screen(int width) {
+        this.width = Math.max(12, width);
     }
 
-    ____ void body();
-}
+    final String render() {
+        ____
+    }
 
-class LessonScreen ____ Screen {
-    void body() {
-        System.out.println("今天的課：for 迴圈");
+    abstract String header();
+
+    abstract String body();
+
+    String subtitle() {
+        return "";
     }
 }
 
-new LessonScreen().show();
+class LessonScreen extends ____ {
+    String topic;
+
+    LessonScreen(int width, String topic) {
+        super(width);
+        this.topic = topic;
+    }
+
+    String header() {
+        return "課程";
+    }
+
+    String subtitle() {
+        return "章節：物件導向";
+    }
+
+    String body() {
+        return ____;
+    }
+}
+
+class QuizScreen extends ____ {
+    int number;
+    String question;
+
+    QuizScreen(int width, int number, String question) {
+        super(width);
+        this.number = number;
+        this.question = question;
+    }
+
+    String header() {
+        return ____;
+    }
+
+    String body() {
+        return question;
+    }
+}

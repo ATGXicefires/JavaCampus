@@ -8,8 +8,27 @@ class Mascot {
     }
 }
 
-Mascot[] mascots = {new Mascot("滷肉", "沒關係，再跑一次！"), new Mascot("分號", "分號。"), new Mascot(null, "嗨")};
-// 印出每個小老師名字的字數；名字是 null 就印 還沒取名
-for (int i = 0; i < mascots.length; i++) {
-    System.out.println(mascots[i].name + "：" + mascots[i].name.length() + " 個字");
+Mascot[] mascots = {
+    new Mascot("滷肉", "再跑一次！"),
+    null,
+    new Mascot(null, "嗨"),
+    new Mascot("分號", null)
+};
+
+// Bug：未處理 list 為 null、陣列中有 null 元素、或 name 為 null/空白的情況
+static int validCount(Mascot[] list) {
+    int count = 0;
+    for (int i = 0; i < list.length; i++) {
+        if (!list[i].name.trim().isEmpty()) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// Bug：m、m.name、m.line 都可能是 null 或空白
+static String describe(Mascot m) {
+    String showName = m.name.trim().isEmpty() ? "未取名" : m.name;
+    String showLine = m.line.trim().isEmpty() ? "（安靜）" : m.line;
+    return showName + "：" + showLine;
 }

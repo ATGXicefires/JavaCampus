@@ -8,27 +8,61 @@
   "steps": [
     {
       "id": "checkers",
-      "title": "判斷的約定",
-      "goal": "`new ExactChecker(\"選午餐\").check(\" 選午餐\")` 交回 `true`，前面多打的空白不算；`new OptionChecker(\"B\").check(\"A\")` 交回 `false`。\n\n起始碼已經寫好了 `interface Checker`（約定：只規定要有 `check`，不管怎麼判斷），裡面只有 `boolean check(String typed);`，`typed` 是使用者打的答案。寫兩個類別實作它：填空題的 `ExactChecker(String answer)`，`typed` 去掉前後空白後和 `answer` 完全一樣才對；選擇題的 `OptionChecker(String letter)`，`typed` 和選項代號 `letter` 一樣就對。",
-      "instructions": "起始碼的 `interface Checker` 是一張約定，只寫方法的名字、參數和回傳型別，不寫內容。類別寫 `implements Checker`，就是答應照約定做：要寫出自己的 `check`，前面加 `public`。\n\n兩個類別都用建構子收下正確答案，存在欄位裡給 `check` 用；`trim()` 會去掉字串前後的空白。這一步不用印出來，只看 `check` 交回 `true` 還是 `false`。\n\n字串要用 `equals` 比，不能用 `==`：`==` 比的是兩邊是不是同一個盒子，字一樣、盒子不同的時候，也會交回 `false`。",
-      "expectedShape": "class ExactChecker implements Checker {\n    …\n    public boolean check(String typed) { … }\n}\n\nclass OptionChecker implements Checker {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new ExactChecker(\"選午餐\").check(\" 選午餐\")", "new OptionChecker(\"B\").check(\"B\")", "new OptionChecker(\"B\").check(\"A\")", "new ExactChecker(\"選午餐\").check(\"選晚餐\")", "new OptionChecker(\"B\").check(new String(\"B\"))"], "uses": ["interface Checker", "class ExactChecker implements Checker", "class OptionChecker implements Checker"] },
+      "title": "三種批改策略實作",
+      "goal": "起始碼已定好策略介面 `interface Checker { boolean check(String typed); }`。請實作三種不同題型的批改策略類別：\n1. `class ExactChecker implements Checker`，建構子 `ExactChecker(String answer, boolean ignoreCase)`：\n   - 若 `answer` 或 `typed` 為 `null`，直接回傳 `false`。\n   - 兩者各自去掉前後空白（`trim()`）後比對：若 `ignoreCase` 為 `true` 則忽略大小寫（`equalsIgnoreCase`），否則精準比對（`equals`）。\n2. `class RangeChecker implements Checker`，建構子 `RangeChecker(double target, double tolerance)`：\n   - 若 `tolerance < 0`，先取絕對值 `Math.abs(tolerance)`。\n   - `check(String typed)`：若 `typed` 為 `null` 或 `trim()` 後為空，回傳 `false`。嘗試用 `Double.parseDouble(typed.trim())` 轉成數值並用 `try-catch` 攔截 `NumberFormatException`（非數字不崩潰、回傳 `false`）；若值或 `target` 為 `NaN` 或無窮大（`Infinite`）也回傳 `false`。最後檢查 `Math.abs(val - target) <= tolerance + 1e-9`。\n3. `class KeywordChecker implements Checker`，建構子 `KeywordChecker(String[] keywords)`：\n   - 過濾 `keywords` 中的 `null` 與空白字串，僅保留有效關鍵字（去前後空白並轉小寫）。\n   - `check(String typed)`：若 `typed` 為 `null` 或沒有任何有效關鍵字，回傳 `false`。須**同時包含全部**有效關鍵字（忽略大小寫）才回傳 `true`。",
+      "instructions": "這就是策略模式（Strategy Pattern）：同樣實作 `Checker` 介面，每一種策略各自封裝一套判斷邏輯與邊界防護。\n\n轉浮點數時務必包在 `try { ... } catch (NumberFormatException e)` 裡，否則遇到 `\"12px\"` 或 `\"abc\"` 會直接拋出例外中止程式；另外也要用 `Double.isNaN(val)` 與 `Double.isInfinite(val)` 排除 `\"NaN\"`、`\"Infinity\"` 等特殊字串。",
+      "expectedShape": "class ExactChecker implements Checker {\n    …\n    ExactChecker(String answer, boolean ignoreCase) { … }\n    public boolean check(String typed) { … }\n}\n\nclass RangeChecker implements Checker {\n    …\n    RangeChecker(double target, double tolerance) { … }\n    public boolean check(String typed) { … }\n}\n\nclass KeywordChecker implements Checker {\n    …\n    KeywordChecker(String[] keywords) { … }\n    public boolean check(String typed) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new ExactChecker(\" System.out \", false).check(\"System.out \")",
+          "new ExactChecker(\"Java\", false).check(\"java\")",
+          "new ExactChecker(\"Java\", true).check(\" jAvA \")",
+          "new ExactChecker(null, true).check(\"abc\")",
+          "new RangeChecker(10.0, 0.5).check(\" 10.5 \")",
+          "new RangeChecker(10.0, -0.5).check(\"9.5\")",
+          "new RangeChecker(10.0, 0.5).check(\"10.6\")",
+          "new RangeChecker(10.0, 0.5).check(\"abc\")",
+          "new RangeChecker(10.0, 0.5).check(\"NaN\")",
+          "new KeywordChecker(new String[]{\"interface\", null, \" implements \"}).check(\"Class A IMPLEMENTS Interface\")",
+          "new KeywordChecker(new String[]{\"interface\", \"implements\"}).check(\"only interface\")",
+          "new KeywordChecker(new String[]{\"  \", null}).check(\"anything\")"
+        ],
+        "uses": [
+          "class ExactChecker implements Checker",
+          "class RangeChecker implements Checker",
+          "class KeywordChecker implements Checker",
+          "try",
+          "catch"
+        ]
+      },
       "hints": {
-        "lead": "以介面定義行為，由不同類別提供實作⋯⋯",
-        "plain": "⋯⋯白話：「怎麼判斷對錯」先講好，叫 `check`。填空題和選擇題各寫各的判斷，但對外都長得一樣。"
+        "lead": "Exact 用 trim+equals/equalsIgnoreCase，Range 用 try-catch 擋非數字與 NaN，Keyword 需全部命中。",
+        "plain": "`RangeChecker` 在 `try` 裡呼叫 `Double.parseDouble` 後先排除 `NaN` 與 `Infinite`，再比對差距；`KeywordChecker` 建構時先濾掉無效字詞，如果最後有效關鍵字數量是 0，一律回傳 `false`。"
       },
       "afterText": ""
     },
     {
       "id": "judge",
-      "title": "畫面怎麼改都不會壞",
-      "goal": "`judge(new ExactChecker(\"選午餐\"), \"選午餐\")` 交回 `答對了`，`judge(new OptionChecker(\"B\"), \"A\")` 交回 `再試一次`。\n\n寫一個方法 `static String judge(Checker c, String typed)`：`c` 判斷 `typed` 是對的就交回 `答對了`，錯的就交回 `再試一次`。參數 `c` 的型別寫介面 `Checker`，哪一種判斷都傳得進來。",
-      "instructions": "參數的型別寫介面 `Checker`，不寫哪一種實作：答應了 `Checker` 這張約定的，`ExactChecker`、`OptionChecker` 都能傳進來，以後多了新題型也一樣。\n\n`judge` 裡只要叫 `c.check(typed)`，傳進來的是哪一種，就用哪一種自己的判斷。同一句話、各做各的，這叫多型。這一步不用印出來，只看 `judge` 交回什麼。",
-      "expectedShape": "static String judge(Checker c, String typed) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["judge(new ExactChecker(\"選午餐\"), \"選午餐\")", "judge(new OptionChecker(\"B\"), \"A\")", "judge(new OptionChecker(\"B\"), \"B\")"], "uses": ["judge(Checker"] },
+      "title": "批次評分引擎 Judge",
+      "goal": "保留三種 `Checker` 策略，實作批次評分引擎 `class Judge`：\n1. 建構子 `Judge(Checker[] checkers, int[] weights)`：\n   - 有效處理區間長度 `n` 取 `checkers` 與 `weights` 較短者（若任一為 `null` 則 `n = 0`）。\n   - 遍歷 `0 .. n - 1`：若 `checkers[i] == null` 或 `weights[i] <= 0`，該題視為無效題目，直接忽略不計入題數與總分。\n2. `String grade(String[] answers)`：\n   - 若無任何有效題目，回傳 `\"無有效題目\"`。\n   - 逐一對有效題目比對 `answers` 對應索引的作答（若 `answers == null` 或 `i >= answers.length`，該題作答視為 `null` 即不通過）。\n   - 統計獲得分數 `earned`、總分 `total`、答對題數 `correctCount`、有效題數 `validCount`，整數百分比 `pct = (earned * 100) / total`。\n   - 回傳格式：`\"得分 \" + earned + \"/\" + total + \" (\" + pct + \"%)，答對 \" + correctCount + \"/\" + validCount + \" 題\"`。\n3. 另提供靜態方法 `static String checkOne(Checker checker, String typed)`：若 `checker != null && checker.check(typed)` 回傳 `\"答對了\"`，否則回傳 `\"再試一次\"`。",
+      "instructions": "`Judge` 完全只依賴 `Checker` 介面（多型陣列 `Checker[]`），因此任何實作 `Checker` 的策略都能直接交給 `Judge` 批次評分。\n\n注意「題目陣列與配分陣列長度不同」、「答案陣列比題目少」、「配分出現 0 或負數」等邊界條件，並小心 `validCount == 0` 時不要除以零。",
+      "expectedShape": "class Judge {\n    …\n    Judge(Checker[] checkers, int[] weights) { … }\n    String grade(String[] answers) { … }\n    static String checkOne(Checker checker, String typed) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Judge(new Checker[]{new ExactChecker(\"Java\", true), new RangeChecker(3.0, 0.5), new KeywordChecker(new String[]{\"class\", \"public\"})}, new int[]{20, 30, 50}).grade(new String[]{\" java \", \"3.5\", \"public class Main\"})",
+          "new Judge(new Checker[]{new ExactChecker(\"Java\", true), new RangeChecker(3.0, 0.5), new KeywordChecker(new String[]{\"class\", \"public\"})}, new int[]{20, 30, 50}).grade(new String[]{\"java\", \"wrong\"})",
+          "new Judge(new Checker[]{new ExactChecker(\"Java\", false), null, new RangeChecker(10, 1)}, new int[]{40, 20, -5}).grade(new String[]{\"Python\", \"x\", \"10\"})",
+          "new Judge(new Checker[]{null, new ExactChecker(\"A\", false)}, new int[]{10, 0}).grade(new String[]{\"A\", \"A\"})",
+          "Judge.checkOne(new RangeChecker(5.0, 0.5), \"4.5\")",
+          "Judge.checkOne(null, \"A\")"
+        ],
+        "uses": ["Checker[]"]
+      },
       "hints": {
-        "lead": "依賴介面而非實作，呼叫端不受實作替換影響⋯⋯",
-        "plain": "⋯⋯白話：`judge` 只認得 `Checker` 這張約定，不管是哪一種題目。之後多了新題型，`judge` 一行都不用改。"
+        "lead": "用 Math.min 決定檢查長度，跳過 null checker 與非正數配分，小心 answers 長度不足。",
+        "plain": "配對 `checkers[i]` 和 `weights[i]` 時，只有兩者都有效（非 `null` 且配分 `> 0`）才算一題有效題；去 `answers[i]` 拿答案前要先確認 `answers != null && i < answers.length`。"
       },
       "afterText": ""
     }

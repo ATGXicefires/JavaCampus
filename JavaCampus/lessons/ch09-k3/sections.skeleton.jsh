@@ -1,35 +1,63 @@
-interface Section {
-    String title();
+class TextSection implements ____ {
+    String title;
+    String body;
+    int priority;
 
-    String body();
+    TextSection(String title, String body, int priority) {
+        this.title = (title == null || title.trim().isEmpty()) ? "未命名" : title.trim();
+        this.body = body == null ? "" : body.trim();
+        this.priority = priority;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public int priority() {
+        return priority;
+    }
+
+    public boolean isEmpty() {
+        return ____;
+    }
+
+    public int lineCount() {
+        return ____;
+    }
+
+    public String format() {
+        ____
+    }
 }
 
-class Project implements Section {
+class BulletSection implements ____ {
+    String title;
+    String[] points;
+    int priority;
+
+    BulletSection(String title, String[] points, int priority) {
+        this.title = (title == null || title.trim().isEmpty()) ? "未命名" : title.trim();
+        this.priority = priority;
+        ____
+    }
+
     public String title() {
-        return "專題製作";
+        return title;
     }
 
-    public String body() {
-        return "小白學程式";
-    }
-}
-
-class License ____ Section {
-    public String title() {
-        return "乙級證照";
+    public int priority() {
+        return priority;
     }
 
-    public String body() {
-        return "電腦軟體設計";
-    }
-}
-
-class Statement implements Section {
-    public String title() {
-        return "自傳";
+    public boolean isEmpty() {
+        return points.length == 0;
     }
 
-    public String body() {
-        return "____";
+    public int lineCount() {
+        return points.length;
+    }
+
+    public String format() {
+        ____
     }
 }

@@ -1,13 +1,33 @@
-class MyPlan {
-    String name = "梁亭瑄";
-    String department = "資訊科";
-    String hobby = "繼續畫畫";
+class Plan {
+    String owner;
+    int weeklyHours;
+
+    Plan(String owner, int weeklyHours) {
+        this.owner = owner;
+        this.weeklyHours = weeklyHours;
+    }
 
     @Override
     public String toString() {
-        return name + "的計畫：" + department + "，" + hobby;
+        return owner + "的計畫";
     }
 }
 
-MyPlan plan = new MyPlan();
+class MyPlan extends Plan {
+    String department;
+    String hobby;
+
+    MyPlan(String owner, int weeklyHours, String department, String hobby) {
+        super(owner, weeklyHours);
+        this.department = department;
+        this.hobby = hobby;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "：" + department + "，" + hobby + "（每週 " + weeklyHours + " 小時）";
+    }
+}
+
+MyPlan plan = new MyPlan("梁亭瑄", 8, "資訊科", "繼續畫畫");
 System.out.println(plan);

@@ -10,27 +10,65 @@
   "steps": [
     {
       "id": "lunch",
-      "title": "午餐的約定",
-      "goal": "`new LuRouFan().eat()` 交回 `吃滷肉飯`，`new KongRouFan().eat()` 交回 `吃控肉飯`。\n\n起始碼已經寫好了 `interface Lunch`（約定：只說中午要吃，不管吃什麼），裡面只有 `String eat();`。寫 `LuRouFan` 和 `KongRouFan` 兩個類別實作它，`eat()` 各自交回上面那句。",
-      "instructions": "編輯器最上面那行 `String[] days = {\"星期一\", \"星期二\", \"星期三\", \"星期四\", \"星期五\"};` 是題目先寫好的，下一步才會用到。\n\n起始碼的 `interface Lunch` 是一張約定，只說「中午要吃」：`String eat();` 只有名字和回傳型別，直接用分號結尾。吃什麼由答應這張約定的類別決定：寫了 `implements Lunch`，就要寫出自己的 `public String eat()`，用 `return` 交回要吃的東西。\n\n`new LuRouFan().eat()` 是做出一個 `LuRouFan`，馬上問它的 `eat()`。這一步不用印出來，只看 `eat()` 交回什麼。",
-      "expectedShape": "class LuRouFan implements Lunch {\n    public String eat() { … }\n}\n\nclass KongRouFan implements Lunch {\n    …\n}",
-      "check": { "type": "values", "exprs": ["new LuRouFan().eat()", "new KongRouFan().eat()"], "uses": ["interface Lunch", "class LuRouFan implements Lunch", "class KongRouFan implements Lunch"] },
+      "title": "多規則餐點計價與標籤契約",
+      "goal": "起始碼已定義介面 `interface Lunch`，包含 `name()`、`price()`、`calories()`、`isVegetarian()` 四個方法。請實作三個餐點類別：\n1. `class LuRouFan implements Lunch`，建構子 `LuRouFan(boolean large, boolean addEgg)`：\n   - `name()`：基礎為 `\"滷肉飯\"`，若 `large` 加上 `\"(大)\"`，若 `addEgg` 加上 `\"+蛋\"`（例如兩者皆是則為 `\"滷肉飯(大)+蛋\"`）。\n   - `price()`：基礎 `45` 元，大碗 `+15` 元，加蛋 `+15` 元。\n   - `calories()`：基礎 `420` 大卡，大碗 `+180`，加蛋 `+80`。\n   - `isVegetarian()`：回傳 `false`。\n2. `class Bento implements Lunch`，建構子 `Bento(String mainDish, int basePrice, boolean extraVeg)`：\n   - `mainDish` 若為 `null` 或 `trim()` 為空，預設為 `\"招牌\"`，否則取 `trim()`。\n   - `name()`：主菜名稱接上 `\"便當\"`，若 `extraVeg` 再接上 `\"+青菜\"`。\n   - `price()`：`Math.max(0, basePrice)` 加上（`extraVeg ? 20 : 0`）。\n   - `calories()`：`650 + (extraVeg ? 50 : 0)`。\n   - `isVegetarian()`：當清理後的主菜名稱包含 `\"素\"`（`contains(\"素\")`）時回傳 `true`，否則 `false`。\n3. `class SaladBowl implements Lunch`，建構子 `SaladBowl(int toppings)`：\n   - `toppings` 若小於 `0` 視為 `0`。\n   - `name()`：回傳 `\"沙拉碗(\" + count + \"配料)\"`。\n   - `price()`：基礎 `80` 元加上每份配料 `15` 元；若配料達 `3` 份以上（`>= 3`），總價打 9 折（`raw * 9 / 10` 整數運算）。\n   - `calories()`：`220 + count * 60`。\n   - `isVegetarian()`：回傳 `true`。",
+      "instructions": "編輯器最上方的 `days` 陣列會在下一步用到。\n\n三個類別都實作同一張 `Lunch` 契約，介面裡的四個方法在類別中都要加上 `public`。\n\n注意 `SaladBowl` 的 9 折要用整數運算 `(raw * 9) / 10`，先乘再除才不會誤差歸零。",
+      "expectedShape": "class LuRouFan implements Lunch {\n    …\n    LuRouFan(boolean large, boolean addEgg) { … }\n    public String name() { … }\n    public int price() { … }\n    public int calories() { … }\n    public boolean isVegetarian() { … }\n}\n\nclass Bento implements Lunch { … }\nclass SaladBowl implements Lunch { … }",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new LuRouFan(true, true).name()",
+          "new LuRouFan(true, true).price()",
+          "new LuRouFan(false, false).calories()",
+          "new LuRouFan(false, false).isVegetarian()",
+          "new Bento(\" 養生素雞 \", 90, true).name()",
+          "new Bento(\" 養生素雞 \", 90, true).price()",
+          "new Bento(\" 養生素雞 \", 90, true).isVegetarian()",
+          "new Bento(null, -20, false).name()",
+          "new Bento(null, -20, false).price()",
+          "new SaladBowl(2).price()",
+          "new SaladBowl(3).name()",
+          "new SaladBowl(3).price()",
+          "new SaladBowl(-1).calories()",
+          "new SaladBowl(0).isVegetarian()"
+        ],
+        "uses": [
+          "interface Lunch",
+          "class LuRouFan implements Lunch",
+          "class Bento implements Lunch",
+          "class SaladBowl implements Lunch"
+        ]
+      },
       "hints": {
-        "lead": "介面規定行為，類別各自實作⋯⋯",
-        "plain": "⋯⋯白話：`Lunch` 只說「中午要吃」，吃滷肉飯還是控肉飯，由實作的類別決定。"
+        "lead": "三個實作類別各自處理名字組裝、加料計價、折扣門檻與素食判定。",
+        "plain": "記得為每個類別補齊 `name()`、`price()`、`calories()`、`isVegetarian()` 四個 `public` 方法，並把負數價錢與負數配料都用 `Math.max(0, ...)` 擋好。"
       },
       "afterText": ""
     },
     {
       "id": "week",
-      "title": "約定不變，內容可以換",
-      "goal": "`days` 裡是 `星期一` 到 `星期五`，要印出五行，滷肉飯和控肉飯輪流：\n`星期一：吃滷肉飯`\n`星期二：吃控肉飯`\n`星期三：吃滷肉飯`\n`星期四：吃控肉飯`\n`星期五：吃滷肉飯`\n\n把五天的午餐依序放進 `Lunch[] week`（型別寫介面，兩種午餐都裝得進去），再用 `for` 配上 `days`，一天印一行。",
-      "instructions": "陣列的型別寫介面 `Lunch[]`，答應了 `Lunch` 的類別都放得進去。迴圈裡都是同一句 `week[i].eat()`，那天放的是滷肉飯就交回 `吃滷肉飯`，放的是控肉飯就交回 `吃控肉飯`。\n\n`days[i]` 和 `week[i]` 是同一天。冒號是全形的 `：`，可以從目標複製。",
-      "expectedShape": "Lunch[] week = { … };\nfor (…) {\n    System.out.println(days[i] + \"：\" + …);\n}",
-      "check": { "type": "output", "uses": ["Lunch[]", "for", ".eat()"] },
+      "title": "週午餐統計報表與預算超支判斷",
+      "goal": "保留 `Lunch` 與三個餐點類別，撰寫多型統計報表類別 `class WeekReport`，建構子 `WeekReport(String[] dayNames, Lunch[] meals, int budget)`：\n1. `budget` 若小於 `0` 視為 `0`；有效天數 `n` 取 `dayNames` 與 `meals` 較短的長度（任一為 `null` 則 `n = 0`）。\n2. 提供四個統計方法：\n   - `int totalCost()`：所有有效天數中有訂餐（`meals[i] != null`）的 `price()` 總和。\n   - `int totalCalories()`：所有有效天數中有訂餐的 `calories()` 總和。\n   - `int vegDays()`：有訂餐且 `isVegetarian()` 為 `true` 的天數。\n   - `boolean isOverBudget()`：當 `totalCost() > budget` 時回傳 `true`（剛好等於預算不算超支）。\n3. `String summary()`：\n   - 對每一天 `i`（`0 .. n - 1`），若 `dayNames[i]` 為 `null` 或 `trim()` 空則顯示 `\"第\" + (i + 1) + \"天\"`，否則取 `dayNames[i].trim()`。\n   - 若 `meals[i] == null`，該行印成 `day + \"：未訂餐\"`；否則印成 `day + \"：\" + meals[i].name() + \" (\" + meals[i].price() + \"元)\"`。\n   - 最後附上一行總結：`\"總計：\" + totalCost() + \"元 / \" + totalCalories() + \"大卡 / 素食\" + vegDays() + \"天\" + (isOverBudget() ? \" [超預算]\" : \" [預算內]\")`（若 `n == 0` 直接回傳此總結行）。\n\n最後請使用題目變數 `days`，依序安排這五天的菜單：`LuRouFan(true, true)`、`Bento(\"雞腿\", 90, false)`、`SaladBowl(3)`、`Bento(\"養生素食\", 85, true)`、`LuRouFan(false, false)`，建立預算 `400` 元的 `WeekReport`，並印出 `summary()`。",
+      "instructions": "`WeekReport` 只認識介面 `Lunch`，無論陣列放的是滷肉飯、便當、沙拉碗還是 `null`，都用同一個多型迴圈統計花費、熱量與素食天數。\n\n注意冒號為全形 `：`、括號 `(...)` 與 `[...]` 為半形，空白位置請照目標格式對齊。",
+      "expectedShape": "class WeekReport {\n    …\n    WeekReport(String[] dayNames, Lunch[] meals, int budget) { … }\n    int totalCost() { … }\n    int totalCalories() { … }\n    int vegDays() { … }\n    boolean isOverBudget() { … }\n    String summary() { … }\n}\n\nLunch[] menu = { … };\nSystem.out.println(new WeekReport(days, menu, 400).summary());",
+      "check": {
+        "type": "output",
+        "variants": [
+          { "days": "{\"星期一\", \"星期二\"}" },
+          { "days": "{\"週一\", \"週二\", \"週三\"}" }
+        ],
+        "exprs": [
+          "new WeekReport(new String[]{\"週一\", \"週二\"}, new Lunch[]{new LuRouFan(false, false), null}, 45).isOverBudget()",
+          "new WeekReport(new String[]{\"週一\", \"週二\"}, new Lunch[]{new LuRouFan(false, false), null}, 45).summary()",
+          "new WeekReport(new String[]{\"週一\", \"週二\"}, new Lunch[]{new SaladBowl(3), new Bento(\"素排\", 80, false)}, 100).vegDays()",
+          "new WeekReport(new String[]{\"週一\", \"週二\"}, new Lunch[]{new SaladBowl(3), new Bento(\"素排\", 80, false)}, 100).isOverBudget()",
+          "new WeekReport(null, new Lunch[]{new LuRouFan(true, false)}, 100).summary()"
+        ],
+        "uses": ["Lunch[]", "class WeekReport"]
+      },
       "hints": {
-        "lead": "以介面型別的陣列統一呼叫⋯⋯",
-        "plain": "⋯⋯白話：每天都是同一句 `eat()`，吃到什麼看那天放了哪一種午餐。約定不變，內容可以換。"
+        "lead": "取 dayNames 與 meals 較短長度，記得處理 null 餐點與剛好等於預算的邊界。",
+        "plain": "`WeekReport` 裡面只要檢查 `meals[i] != null`，就可以統一呼叫介面方法 `price()`、`calories()`、`isVegetarian()`。最後印出報表時把題目變數 `days` 傳給 `WeekReport`，就會自動跟著 `days` 的長度變化。"
       },
       "afterText": ""
     }

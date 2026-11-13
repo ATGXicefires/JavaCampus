@@ -8,7 +8,15 @@ class Question {
     }
 
     boolean check(String typed) {
+        if (typed == null || answer == null) {
+            return false;
+        }
         return typed.equals(answer);
+    }
+
+    @Override
+    public String toString() {
+        return ____;
     }
 }
 
@@ -17,15 +25,20 @@ class FillQuestion extends Question {
         super(text, answer);
     }
 
-    // 中間多打了空白也算對
     @Override
     boolean check(String typed) {
-        return typed.replace(" ", "").equals(answer);
+        if (typed == null || answer == null) {
+            return false;
+        }
+        String cleanTyped = typed.replace(" ", "");
+        String cleanAnswer = answer.replace(" ", "");
+        return cleanTyped.equalsIgnoreCase(cleanAnswer);
     }
 
     @Override
-    public String ____() {
-        return "填空題：" + answer;
+    ____ String toString() {
+        int len = answer == null ? 0 : answer.replace(" ", "").length();
+        return "填空題：" + text + "（答案 " + len + " 字）";
     }
 }
 

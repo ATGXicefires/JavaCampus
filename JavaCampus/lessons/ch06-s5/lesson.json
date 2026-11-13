@@ -4,49 +4,88 @@
   "route": "學長",
   "partner": "亭瑄",
   "notes": ["array-loop", "nested", "constructor"],
-  "vars": [
-    { "name": "n", "type": "int", "value": "4", "note": "三角形的層數" }
-  ],
+  "vars": [],
   "steps": [
     {
-      "id": "count-above",
-      "title": "第一題：陣列與方法",
-      "goal": "`a` 是 `{72, 58, 65}`、`line` 是 60 時，`countAbove(a, line)` 要交回 2：72 和 65 都大於等於 60。\n\n寫一個方法 `static int countAbove(int[] a, int line)`，數出 `a` 裡有幾個數字大於等於 `line`，交回這個數；空的陣列交回 0。",
-      "instructions": "編輯器最上面那行 `int n = 4;` 是題目先寫好的，第二題才會用到。\n\n模擬題用到第 1～6 章，這一題考陣列和方法。",
-      "expectedShape": "static int countAbove(int[] a, int line) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["countAbove(new int[]{72, 58, 65}, 60)", "countAbove(new int[]{}, 60)", "countAbove(new int[]{60}, 60)"] },
-      "hints": {
-        "lead": "計數器：條件為真時遞增，空陣列回傳 0⋯⋯",
-        "plain": "⋯⋯白話：準備一個從 0 開始的盒子，`a[i] >= line` 就數一個。空的陣列一次都不會數，剛好交回 0。"
-      },
-      "afterText": ""
-    },
-    {
-      "id": "triangle",
-      "title": "第二題：迴圈",
-      "goal": "`n` 是三角形的層數，現在是 4，要印出 4 行：\n`*`\n`**`\n`***`\n`****`\n\n用巢狀迴圈（迴圈裡再放一個迴圈）畫出 `n` 層的三角形：第幾層就印幾顆 `*`，星星之間不空格。",
-      "instructions": "編輯器最上面那行 `int n = 4;` 是題目先寫好的，你的程式可以直接用 `n`。\n\n外面的迴圈每跑一圈，裡面的迴圈就從頭跑完一輪。例如這樣會畫出 2 行、每行 3 個 `□`：\n\n```\nfor (int r = 1; r <= 2; r++) {\n    String row = \"\";\n    for (int c = 1; c <= 3; c++) {\n        row += \"□\";\n    }\n    System.out.println(row);\n}\n```",
-      "expectedShape": "for (…) {\n    …\n    for (…) {\n        …\n    }\n    System.out.println(…);\n}",
-      "check": {
-        "type": "output",
-        "variants": [ { "n": "2" } ]
-      },
-      "hints": {
-        "lead": "內層迴圈的次數依外層變數而定⋯⋯",
-        "plain": "⋯⋯白話：第 `i` 層畫 `i` 顆，所以裡面的迴圈數到 `i` 為止。"
-      },
-      "afterText": ""
-    },
-    {
       "id": "student",
-      "title": "第三題：類別",
-      "goal": "`new Student(\"亭瑄\", 62).pass()` 要交回 `true`，`new Student(\"阿成\", 59).pass()` 要交回 `false`。\n\n寫 `class Student`：欄位 `String name`、`int score`，建構子 `Student(String name, int score)`，方法 `boolean pass()` 在 `score` 60 分以上（剛好 60 也算）交回 `true`，不到 60 交回 `false`。",
-      "instructions": "`new Student(\"亭瑄\", 62)` 照設計圖做出一個學生，建構子把 `\"亭瑄\"` 和 62 放進這個學生自己的 `name` 和 `score`；接著 `.pass()` 問的就是這個學生及格了沒。\n\n`pass()` 不加 `static`，用的是物件自己的 `score`，所以不用再傳參數。",
-      "expectedShape": "class Student {\n    …\n    Student(String name, int score) { … }\n    boolean pass() { … }\n}",
-      "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()", "new Student(\"小明\", 60).pass()"] },
+      "title": "第一題：防禦複製與成績評等",
+      "goal": "寫出 `class Student`（欄位 `String name`、`int[] scores`），建構子做空白姓名保護、陣列複製與 `0..100` 箝制，並實作 `double average()` 與 `boolean pass()`。",
+      "instructions": "期末模擬題改為實作一套「班級成績單系統」，第一部分規格如下：\n- `Student(String name, int[] scores)`：\n  - `name` 若為 `null` 或去掉前後空白後為空，設為 `\"無名氏\"`；否則設為 `name.trim()`。\n  - 若 `scores == null`，`this.scores` 設為長度 `0` 的空陣列 `new int[0]`；否則**複製一份新陣列**（避免外部改動原本陣列影響此學生），並將每個分數限制在 `0..100`（小於 `0` 歸 `0`，大於 `100` 固定為 `100`）。\n- `double average()`：若 `scores.length == 0` 回傳 `0.0`，否則回傳所有科目的平均分數（`double`）。\n- `boolean pass()`：同時滿足「`scores.length > 0`」、「`average() >= 60.0`」且「沒有任何一科低於 `40` 分」才回傳 `true`，否則回傳 `false`。",
+      "expectedShape": "class Student {\n    …\n    Student(String name, int[] scores) {\n        …\n    }\n    double average() {\n        …\n    }\n    boolean pass() {\n        …\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Student(\"  亭瑄  \", new int[]{70, 80, 90}).name",
+          "new Student(\"  亭瑄  \", new int[]{70, 80, 90}).average()",
+          "new Student(\"  亭瑄  \", new int[]{70, 80, 90}).pass()",
+          "new Student(\"阿成\", new int[]{100, 100, 39}).pass()",
+          "new Student(\"邊界\", new int[]{40, 80}).pass()",
+          "new Student(\"小華\", new int[]{59, 60}).pass()",
+          "new Student(null, null).name",
+          "new Student(null, null).average()",
+          "new Student(null, null).pass()",
+          "int[] _raw = {120, -10};",
+          "Student _st = null;",
+          "(_st = new Student(\"測試\", _raw)).average()",
+          "_raw[0] = 0;",
+          "_st.average()"
+        ],
+        "uses": ["class Student", "this.name"]
+      },
       "hints": {
-        "lead": "類別：欄位、建構子、實例方法⋯⋯",
-        "plain": "⋯⋯白話：兩個欄位、一個用 `this` 的建構子，`pass()` 交回 `score >= 60`。"
+        "lead": "建構子一定要新開陣列逐格複製，才不會和外部共用同一排格子⋯⋯",
+        "plain": "⋯⋯白話：建構子裡用 `new int[scores.length]` 複製每一格並把值夾在 `0..100`。`pass()` 除了看平均 `>= 60.0`，還要用迴圈確認沒有任何一科 `< 40`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "gradebook",
+      "title": "第二題：班級成績單統計",
+      "goal": "寫出 `class GradeBook` 管理 `Student[] students`：提供 `countPass()`、`countAbove(double line)` 與 `topStudentName()`，並安全處理 `null` 與無成績學生。",
+      "instructions": "物件協作規格如下：\n- `GradeBook(Student[] students)`：若 `students == null` 設為長度 `0` 的空陣列，否則複製一份 `Student[]` 陣列保存。\n- `int countPass()`：統計所有非 `null` 且 `pass()` 為 `true` 的學生人數。\n- `int countAbove(double line)`：統計所有非 `null`、**至少有一科成績**（`scores.length > 0`）且 `average() >= line` 的學生人數。\n- `String topStudentName()`：找出所有非 `null` 且至少有一科成績（`scores.length > 0`）的學生中，`average()` 最高者的 `name`（並列取先出現者）；若沒有任何符合條件的學生，回傳 `\"無\"`。",
+      "expectedShape": "class GradeBook {\n    …\n    GradeBook(Student[] students) { … }\n    int countPass() { … }\n    int countAbove(double line) { … }\n    String topStudentName() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new GradeBook(null).countPass()",
+          "new GradeBook(null).topStudentName()",
+          "new GradeBook(new Student[]{null, new Student(\"空\", new int[]{})}).topStudentName()",
+          "new GradeBook(new Student[]{null, new Student(\"空\", new int[]{})}).countAbove(0.0)",
+          "GradeBook _gb = null;",
+          "(_gb = new GradeBook(new Student[]{null, new Student(\"空\", new int[]{}), new Student(\"阿成\", new int[]{30, 50}), new Student(\"亭瑄\", new int[]{85, 95}), new Student(\"同分\", new int[]{90, 90})})).countPass()",
+          "_gb.countAbove(40.0)",
+          "_gb.topStudentName()"
+        ],
+        "uses": ["class GradeBook", "Student[]"]
+      },
+      "hints": {
+        "lead": "無成績的學生 average() 是 0.0，統計時必須用 scores.length > 0 排除⋯⋯",
+        "plain": "⋯⋯白話：先擋掉 `s == null || s.scores.length == 0`，再比較 `s.average()`；找最高分用 `Student best = null;` 記目前最高者，用嚴格 `>` 保留先出現的並列者。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "curve",
+      "title": "第三題：全班調分與及格轉變統計",
+      "goal": "幫 `Student` 加上 `void addBonus(int bonus)`，並幫 `GradeBook` 加上 `int boostAll(int bonus)`，回傳這次調分後「從不及格變成及格」的人數。",
+      "instructions": "規則如下：\n- 在 `Student` 加上 `void addBonus(int bonus)`：若 `bonus <= 0` 不做任何事；否則將 `scores` 每一科都加上 `bonus`，上限為 `100`（超過 `100` 固定為 `100`）。\n- 在 `GradeBook` 加上 `int boostAll(int bonus)`：若 `bonus <= 0` 回傳 `0`；否則依序對每位非 `null` 學生檢查調分前是否 `pass()`，呼叫 `s.addBonus(bonus)` 後再檢查是否 `pass()`，統計**調分前不及格、調分後變成及格**的人數並回傳。",
+      "expectedShape": "void addBonus(int bonus) {\n    …\n}\n\nint boostAll(int bonus) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "GradeBook _gb2 = null;",
+          "(_gb2 = new GradeBook(new Student[]{null, new Student(\"空\", new int[]{}), new Student(\"A\", new int[]{55, 60}), new Student(\"B\", new int[]{35, 90}), new Student(\"C\", new int[]{80, 90})})).countPass()",
+          "_gb2.boostAll(-3)",
+          "_gb2.boostAll(5)",
+          "_gb2.countPass()",
+          "_gb2.boostAll(5)",
+          "_gb2.countPass()",
+          "_gb2.topStudentName()"
+        ]
+      },
+      "hints": {
+        "lead": "在呼叫 addBonus 之前先記下原本的 pass() 結果，調分後再比對一次⋯⋯",
+        "plain": "⋯⋯白話：`boolean before = s.pass(); s.addBonus(bonus); if (!before && s.pass()) newlyPassed++;`，原本就及格或原本沒成績的不會被重複計算。"
       },
       "afterText": ""
     }

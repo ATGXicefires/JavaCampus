@@ -1,5 +1,5 @@
 class Gacha {
-    // 加上 String name 和 String color 兩個欄位
+    // 加上欄位：String name, String color, int price, int stock
+    // 加上建構子 Gacha(String name, String color, int price, int stock)（含空白與負數保護）
+    // 加上方法 int totalValue()
 }
-
-// 用 new 做出兩顆扭蛋：麻糬（白色）、黑糖（咖啡色），各印一行

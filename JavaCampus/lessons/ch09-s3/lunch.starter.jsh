@@ -1,6 +1,11 @@
 interface Lunch {
-    String eat();
+    String name();
+    int price();
+    int calories();
+    boolean isVegetarian();
 }
 
-// 寫 LuRouFan 和 KongRouFan 兩個類別實作 Lunch
-// LuRouFan 的 eat() 交回 吃滷肉飯，KongRouFan 的 eat() 交回 吃控肉飯
+// 請實作三個餐點類別：
+// 1. class LuRouFan implements Lunch
+// 2. class Bento implements Lunch
+// 3. class SaladBowl implements Lunch

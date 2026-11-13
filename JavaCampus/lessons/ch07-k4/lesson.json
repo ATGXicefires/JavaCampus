@@ -8,27 +8,68 @@
   "steps": [
     {
       "id": "heart",
-      "title": "真心話放在 private",
-      "goal": "不管心裡在想什麼，`new Heart().status()` 都只交回 `沒事`，`new Heart().whatAreYouDoing()` 只交回 `在幹嘛`。\n\n寫 `class Heart`：欄位 `private String real` 放你真正想說的話（`private`：只有這個類別自己能開的抽屜），方法 `String status()` 和 `String whatAreYouDoing()` 各交回上面那一句。",
-      "instructions": "`real` 放什麼都可以，自己打一句。它是 `private`，外面讀不到，也不會被印出來。\n\n外面只能透過你開放的方法認識 `Heart`：方法交回什麼，別人就只看到什麼。",
-      "expectedShape": "class Heart {\n    …\n    String status() { … }\n    String whatAreYouDoing() { … }\n}",
-      "check": { "type": "values", "exprs": ["new Heart().status()", "new Heart().whatAreYouDoing()"], "uses": ["private String real"] },
+      "title": "真心話與勇氣進度鉗制",
+      "goal": "寫 `class Heart`，把真心話和勇氣進度都鎖在 `private` 裡面：\n- 欄位一律為 `private`：真心話 `real`（可自訂字串）、勇氣目標步數 `totalSteps`、目前進度 `progress`（初始為 `0`）。\n- 建構子 `Heart()` 預設目標為 `5` 步；`Heart(int totalSteps)` 若收到 `<= 0` 一律防呆為 `1`，否則用傳入的步數。\n- `void advance(int delta)`：依 `delta`（可正可負）調整進度，並嚴格鉗制在 `0..totalSteps` 之間（小於 `0` 變 `0`，超過 `totalSteps` 變 `totalSteps`）。\n- `int getProgress()` 與 `int getTotalSteps()`：各自交回目前進度與目標步數。\n- `String whatAreYouDoing()`：一律交回 `\"在幹嘛\"`。\n- `String status()`：只有當 `progress == totalSteps` 時交回 `\"其實很想你\"`，否則一律交回 `\"沒事\"`。",
+      "instructions": "外面永遠拿不到 `real`，也無法直接把 `progress` 改到負數或超過上限。\n\n進度鉗制（Clamp）很常用：先做 `progress += delta;`，如果 `< 0` 就設為 `0`，如果 `> totalSteps` 就設為 `totalSteps`。這樣 `advance` 就能安全接受正數推進或負數退縮。",
+      "expectedShape": "class Heart {\n    private …\n    Heart() { … }\n    Heart(int totalSteps) { … }\n    void advance(int delta) { … }\n    int getProgress() { … }\n    int getTotalSteps() { … }\n    String status() { … }\n    String whatAreYouDoing() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Heart().status()",
+          "new Heart().whatAreYouDoing()",
+          "new Heart().getTotalSteps()",
+          "new Heart(0).getTotalSteps()",
+          "new Heart(-3).getTotalSteps()",
+          "Heart _h = null;",
+          "{ _h = new Heart(4); _h.advance(10); }",
+          "_h.getProgress()",
+          "_h.status()",
+          "{ _h.advance(-2); }",
+          "_h.getProgress()",
+          "_h.status()",
+          "{ _h.advance(-99); }",
+          "_h.getProgress()"
+        ],
+        "uses": ["private"]
+      },
       "hints": {
-        "lead": "外面只看得到開放的方法。",
-        "plain": "`private` 的 `real` 誰都拿不到。開放給外面的只有兩個方法，一個交回 `沒事`，一個交回 `在幹嘛`。裡面放什麼，自己決定給人看多少，這就是封裝。"
+        "lead": "用 private 守住進度範圍，再決定外部能看到哪句狀態。",
+        "plain": "無參數建構子可用 `this(5);`；`Heart(int totalSteps)` 若 `totalSteps <= 0` 設為 1。`advance(int delta)` 加減後分別把 `< 0` 夾成 `0`、`> totalSteps` 夾成 `totalSteps`。`status()` 看 `progress == totalSteps` 決定回傳哪一句。"
       },
       "afterText": ""
     },
     {
       "id": "draft",
-      "title": "打了又刪",
-      "goal": "打了 `學長`、清空、再打 `新年快樂` 之後，`draft.preview()` 要交回 `新年快樂`。\n\n寫 `class Draft`：`private String text`（一開始是空字串）、`void type(String s)` 接在後面、`void clear()` 清空、`String preview()` 交回目前的內容。再 `new` 一個 `draft`，照這個順序呼叫。",
-      "instructions": "照順序呼叫：`type(\"學長\")`、`clear()`、`type(\"新年快樂\")`。\n\n空字串 `\"\"` 是一對引號，中間什麼都沒有。字串也能用 `+=` 接在後面：`a += \"好\";` 跟 `a = a + \"好\";` 一樣。清空就是把空字串放回去。",
-      "expectedShape": "class Draft {\n    …\n    void type(String s) { … }\n    void clear() { … }\n    String preview() { … }\n}\n\nDraft draft = new Draft();\n…",
-      "check": { "type": "values", "exprs": ["draft.preview()", "Draft _d = null;", "(_d = new Draft()).type(\"嗨\")", "_d.preview()", "_d.clear()", "_d.preview()"], "uses": ["private String text"] },
+      "title": "打了又刪的草稿檢核",
+      "goal": "寫 `class Draft` 加上字數限制與修改次數檢核，並建立 `Draft draft = new Draft();`，依序呼叫 `type(\"學長\")`、`clear()`、`type(\"新年快樂\")`：\n- 常數 `static final int MAX_LEN = 20;`，其餘欄位（內容 `text`、修改次數 `editCount`）皆為 `private`。\n- `boolean type(String s)`：若 `s == null || s.isEmpty()`，或接上去後長度超過 `MAX_LEN`（`text.length() + s.length() > MAX_LEN`），都拒絕整段加入、不增加修改次數並交回 `false`；合法才接在 `text` 後面、修改次數加 1 並交回 `true`。\n- `void clear()`：若目前 `text` 不是空的才清空為 `\"\"` 並讓修改次數加 1；已經是空的就不做任何事（不增加次數）。\n- `String preview()` 交回目前文字、`int getEditCount()` 交回修改次數、`int remainingChars()` 交回還能打幾個字（`MAX_LEN - text.length()`）。",
+      "instructions": "檢核規則寫在 `type` 和 `clear` 裡面，就能確保草稿永遠不會變成 `null` 或超過 20 個字，而且無效操作（例如空字串或對空草稿按清空）也不會灌水修改次數。",
+      "expectedShape": "class Draft {\n    static final int MAX_LEN = …;\n    private …\n    boolean type(String s) { … }\n    void clear() { … }\n    String preview() { … }\n    int getEditCount() { … }\n    int remainingChars() { … }\n}\n\nDraft draft = new Draft();\n…",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "draft.preview()",
+          "draft.getEditCount()",
+          "draft.remainingChars()",
+          "Draft _d = null;",
+          "(_d = new Draft()).type(null)",
+          "_d.type(\"\")",
+          "_d.getEditCount()",
+          "{ _d.clear(); }",
+          "_d.getEditCount()",
+          "_d.type(\"12345678901234567890\")",
+          "_d.remainingChars()",
+          "_d.type(\"a\")",
+          "_d.preview()",
+          "_d.getEditCount()",
+          "{ _d.clear(); }",
+          "_d.preview()",
+          "_d.getEditCount()"
+        ],
+        "uses": ["private", "static final int MAX_LEN"]
+      },
       "hints": {
-        "lead": "打了又刪，只剩最後打的。",
-        "plain": "`type` 把字接在後面，`clear` 把內容換回空字串，`preview` 交回現在寫著的東西。"
+        "lead": "無效輸入先擋掉再動欄位與次數；空草稿清空不算一次修改。",
+        "plain": "`type` 先檢查 `s == null || s.isEmpty() || text.length() + s.length() > MAX_LEN`，成立就回傳 `false`。`clear` 檢查 `!text.isEmpty()` 才清空並 `editCount++`。"
       },
       "afterText": ""
     }

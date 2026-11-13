@@ -1,12 +1,26 @@
 interface Drawable {
-    void draw();
+    ____ render(int maxWidth);
+    boolean ____();
 }
 
-class Button ____ Drawable {
-    ____ void draw() {
-        System.out.println("[ 開始學習 ]");
+class Button implements ____ {
+    String text;
+    boolean enabled;
+
+    Button(String label, boolean enabled) {
+        this.text = ____;
+        this.enabled = enabled;
+    }
+
+    public boolean isReady() {
+        return ____;
+    }
+
+    public String render(int maxWidth) {
+        if (maxWidth < 5) {
+            return "";
+        }
+        ____
+        return "[ " + display + " ]";
     }
 }
-
-Button start = new Button();
-start.draw();

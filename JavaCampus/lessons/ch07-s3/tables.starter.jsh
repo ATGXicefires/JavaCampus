@@ -1,5 +1,29 @@
 class Table {
-    // 加上 private int amount、static int todayTotal、order(int price) 和 getAmount()
+    // 宣告 private static 欄位：todayTotal、todayOrders
+    // 宣告 private 欄位：amount、itemCount
+
+    boolean order(int price) {
+        return false;
+    }
+
+    int getAmount() {
+        return 0;
+    }
+
+    int getItemCount() {
+        return 0;
+    }
+
+    static int getTodayTotal() {
+        return 0;
+    }
+
+    static int getTodayOrders() {
+        return 0;
+    }
+
+    static void resetDay() {
+    }
 }
 
-// new 兩桌：t1 點 80 和 35，t2 點 120
+// 建立 t1、t2：t1 點 80 和 35，t2 點 120

@@ -1,51 +1,21 @@
-interface Section {
-    String title();
+class PortfolioPage {
+    Section[] included;
+    int linesUsed;
 
-    String body();
-}
-
-class Project implements Section {
-    public String title() {
-        return "專題製作";
+    PortfolioPage(Section[] rawSections, int maxLines) {
+        int limit = Math.max(0, maxLines);
+        ____
     }
 
-    public String body() {
-        return "小白學程式";
-    }
-}
-
-class License implements Section {
-    public String title() {
-        return "乙級證照";
+    int includedCount() {
+        return included.length;
     }
 
-    public String body() {
-        return "電腦軟體設計";
-    }
-}
-
-class Statement implements Section {
-    public String title() {
-        return "自傳";
+    int usedLines() {
+        return linesUsed;
     }
 
-    public String body() {
-        return "把術語翻成人話";
+    String render() {
+        ____
     }
-}
-
-class Goal implements Section {
-    public String title() {
-        return "志願";
-    }
-
-    public String body() {
-        return "____";
-    }
-}
-
-Section[] page = {new Project(), new License(), new Statement(), new Goal()};
-for (int i = 0; i < page.length; i++) {
-    System.out.println("【" + page[i].title() + "】");
-    System.out.println(page[i].____());
 }

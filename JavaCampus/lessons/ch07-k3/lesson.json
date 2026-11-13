@@ -10,35 +10,65 @@
   "steps": [
     {
       "id": "total",
-      "title": "每一天各自算",
-      "goal": "`daily` 是寒假每天提到「學長」的次數，現在是 `{3, 5, 4, 8, 7, 9, 12}`。每一天都 `new` 出來以後，`Day.total` 要是全部加起來的 `48`。\n\n寫 `class Day`：欄位 `int mentions`、建構子 `Day(int mentions)`，和一個 `static int total`（`static` 的欄位整個類別只有一份）。每 `new` 一天，就把那天的次數加進 `total`。再用 `for` 照 `daily` 把每一天都 `new` 出來。",
-      "instructions": "編輯器最上面那行 `int[] daily = {3, 5, 4, 8, 7, 9, 12};` 是題目先寫好的，你的程式可以直接用 `daily`。`daily[0]` 是第 1 天。\n\n一般的欄位每個物件各一份；`static` 的欄位屬於整個類別，大家共用同一份。例如：\n\n```\nclass Visitor {\n    static int count;\n\n    Visitor() {\n        count++;\n    }\n}\n```\n\n`new Visitor()` 三次，三個訪客都加進同一個 `count`，從外面讀 `Visitor.count` 是 3。`Day` 也一樣：`mentions` 每一天各一份，`total` 只有一份。每次執行都從乾淨的狀態開始，`total` 不會跨次累加。",
-      "expectedShape": "class Day {\n    …\n    Day(int mentions) { … }\n}\n\nfor (…) {\n    new Day(…);\n}",
+      "title": "實例各自獨立，static 共享統計",
+      "goal": "`daily` 是寒假每天提到「學長」的次數，現在是 `{3, 5, 4, 8, 7, 9, 12}`。寫 `class Day` 區分每一天自己的次數與整個寒假共用的統計：\n- 欄位一律設為 `private`：實例欄位記這一天的次數；`static` 欄位記全體總次數、總天數與單日最高次數。\n- 建構子 `Day(int mentions)`：若 `mentions < 0` 一律防呆為 `0`；存進這一天的次數，並累加到總次數、總天數加 1，以及更新單日最高次數。\n- 實例方法 `int getMentions()` 交回這一天的次數。\n- 靜態方法 `static int getTotal()`、`static int getDayCount()`、`static int getMaxMentions()`，以及 `static void resetAll()`（將總次數、總天數、單日最高全歸零）。\n- 用 `for` 走過 `daily` 把每一天都 `new` 出來。",
+      "instructions": "編輯器最上面那行 `int[] daily = {3, 5, 4, 8, 7, 9, 12};` 是題目先寫好的，你的程式可以直接用 `daily`。\n\n一般的欄位每個物件各有一份：`d1.getMentions()` 和 `d2.getMentions()` 互不干擾；加上 `static` 的欄位屬於整個類別，所有 `new` 出來的 `Day` 都共用同一份統計，外面再透過 `static` 方法讀取或重設，誰都無法從外面亂改數值。",
+      "expectedShape": "class Day {\n    private static …\n    private int …\n    Day(int mentions) { … }\n    int getMentions() { … }\n    static int getTotal() { … }\n    static int getDayCount() { … }\n    static int getMaxMentions() { … }\n    static void resetAll() { … }\n}\n\nfor (…) {\n    new Day(…);\n}",
       "check": {
         "type": "values",
-        "exprs": ["Day.total"],
-        "variants": [ { "daily": "{1, 1}" } ],
-        "uses": ["static int total", "new Day("]
+        "exprs": [
+          "Day.getTotal()",
+          "Day.getDayCount()",
+          "Day.getMaxMentions()",
+          "{ Day.resetAll(); }",
+          "Day.getTotal()",
+          "Day.getDayCount()",
+          "Day.getMaxMentions()",
+          "Day _d1 = null;",
+          "Day _d2 = null;",
+          "{ _d1 = new Day(4); _d2 = new Day(-2); }",
+          "_d1.getMentions()",
+          "_d2.getMentions()",
+          "Day.getTotal()",
+          "Day.getDayCount()",
+          "Day.getMaxMentions()"
+        ],
+        "variants": [
+          { "daily": "{1, 1}" },
+          { "daily": "{0, -2, 6}" }
+        ],
+        "uses": ["private", "static", "new Day("]
       },
       "hints": {
-        "lead": "static 是大家共用的那一份。",
-        "plain": "`mentions` 每一天各一份；`total` 加了 `static`，整個 `Day` 只有一份，每一天都往同一個地方加。在建構子裡寫 `total += mentions;`，每 `new` 一天就加一次。"
+        "lead": "實例各自保留自己的次數，類別層級的 static 欄位共同累計並用方法保護。",
+        "plain": "所有欄位都寫 `private`，總計、天數和最高紀錄三個加上 `static`。建構子先用 `if (mentions < 0) { mentions = 0; }` 防呆，再更新實例與三個 `static` 欄位。`resetAll()` 把三個 `static` 欄位都設為 0。"
       },
       "afterText": ""
     },
     {
       "id": "running",
-      "title": "每天的累計",
-      "goal": "`daily` 現在有 7 天，要印出 7 行：\n`第 1 天：3 次，累計 3 次`\n`第 2 天：5 次，累計 8 次`\n⋯⋯\n`第 7 天：12 次，累計 48 次`\n\n在 `for` 裡每 `new` 一天，就印出一行：第幾天、那天的次數、到那天為止的累計。",
-      "instructions": "這一步接著用上一步的程式，改 `for` 裡面就好。\n\n`d.mentions` 是 `d` 那一天自己的次數。`Day.total` 是大家共用的那一份：每 `new` 一天，建構子就把那天的次數加進去，所以剛 `new` 完讀 `Day.total`，就是到那天為止的累計。",
-      "expectedShape": "Day d = new Day(…);\nSystem.out.println(\"第 \" + … + \" 天：\" + … + \" 次，累計 \" + … + \" 次\");",
+      "title": "每日累計與平均",
+      "goal": "接續上一步的 `Day`，補上平均方法並把每天與總結印出來：\n1. 新增靜態方法 `static double getAverage()`：若 `dayCount == 0` 交回 `0.0`，否則交回 `(double) total / dayCount`。\n2. 修改 `for` 迴圈，每 `new` 一天就印一行：\n`第 1 天：3 次，累計 3 次`\n`第 2 天：5 次，累計 8 次`\n⋯⋯\n3. 迴圈結束後，印出一行總結：\n`共 7 天，合計 48 次，單日最高 12 次`",
+      "instructions": "這一步接續上一步的 `Day` 類別，補上 `getAverage()` 並調整下方的迴圈。\n\n算平均要特別防兩個坑：\n1. 沒半天資料（`dayCount == 0`）時不能直接除，要回傳 `0.0`。\n2. 兩個 `int` 相除會直接捨去小數，記得先轉成 `(double)` 再除。",
+      "expectedShape": "static double getAverage() {\n    …\n}\n…\nfor (…) {\n    Day d = new Day(…);\n    System.out.println(\"第 \" + … + \" 天：\" + … + \" 次，累計 \" + … + \" 次\");\n}\nSystem.out.println(\"共 \" + … + \" 天，合計 \" + … + \" 次，單日最高 \" + … + \" 次\");",
       "check": {
         "type": "output",
-        "variants": [ { "daily": "{1, 2}" } ]
+        "exprs": [
+          "Day.getAverage()",
+          "{ Day.resetAll(); }",
+          "Day.getAverage()",
+          "{ new Day(3); new Day(4); }",
+          "Day.getAverage()"
+        ],
+        "variants": [
+          { "daily": "{1, 2}" },
+          { "daily": "{5, -3, 4}" }
+        ],
+        "uses": ["static double getAverage"]
       },
       "hints": {
-        "lead": "d.mentions 是那一天的，Day.total 是大家的。",
-        "plain": "每 `new` 一天就印一行：那一天自己的 `d.mentions`，和到目前為止的 `Day.total`。"
+        "lead": "除以 0 先擋掉，整數相除前先轉成 double。",
+        "plain": "`getAverage()` 先判斷 `dayCount == 0` 回傳 `0.0`，再回傳 `(double) total / dayCount`。迴圈裡用 `d.getMentions()` 和 `Day.getTotal()` 印每天，迴圈外用 `Day.getDayCount()`、`Day.getTotal()`、`Day.getMaxMentions()` 印總結。"
       },
       "afterText": ""
     }

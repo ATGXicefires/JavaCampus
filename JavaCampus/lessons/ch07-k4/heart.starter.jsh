@@ -1,2 +1,28 @@
-// 寫 class Heart：用 private String real 放你真正想說的話
-// status() 只交回 沒事，whatAreYouDoing() 只交回 在幹嘛
+class Heart {
+    // 宣告 private 欄位：real、totalSteps、progress
+
+    Heart() {
+    }
+
+    Heart(int totalSteps) {
+    }
+
+    void advance(int delta) {
+    }
+
+    int getProgress() {
+        return 0;
+    }
+
+    int getTotalSteps() {
+        return 0;
+    }
+
+    String status() {
+        return "";
+    }
+
+    String whatAreYouDoing() {
+        return "";
+    }
+}

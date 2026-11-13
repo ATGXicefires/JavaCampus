@@ -8,27 +8,52 @@
   "steps": [
     {
       "id": "screen",
-      "title": "抽象的畫面",
-      "goal": "印出三行，依序是標題列、內容、頁尾：\n`== 小白學程式 ==`\n`今天的課：for 迴圈`\n`—— 滷肉和分號陪你寫 ——`\n\n起始碼先寫好了 `abstract class Screen`（抽象類別：共用的寫在這裡）與標題列、頁尾：在 `void show()` 裡補上 `body()` 的呼叫，再把 `body()` 寫成 `abstract`（沒有內容，留給子類別寫）。再寫 `class LessonScreen extends Screen`，`body()` 印出內容那一行。最後 `new` 一個 `LessonScreen` 呼叫 `show()`。",
-      "instructions": "每個畫面的標題列和頁尾都一樣，寫在 `Screen` 的 `show()` 裡一次就好。中間的內容每個畫面不同，先寫成 `abstract void body();`：只有名字，沒有大括號，直接用分號結尾。\n\n`LessonScreen extends Screen` 繼承了 `Screen`，直接就有寫好的 `show()`，只要補上自己的 `body()`。`show()` 裡呼叫 `body()` 的時候，用的就是 `LessonScreen` 寫的那一個。",
-      "expectedShape": "abstract class Screen {\n    void show() { … }\n    abstract void body();\n}\n\nclass LessonScreen extends Screen {\n    void body() { … }\n}\n\n…",
-      "check": { "type": "output", "uses": ["abstract class Screen", "abstract void body()", "class LessonScreen extends Screen"] },
+      "title": "鎖住外框流程的樣板方法",
+      "goal": "請完成樣板方法模式（Template Method）：\n1. 在 `abstract class Screen` 中：\n   - 建構子 `Screen(int width)` 將寬度儲存起來（若 `width < 12` 強制夾成 `12`，避免外框過窄）。\n   - 定義抽象方法 `abstract String header();` 與 `abstract String body();`，並定義預設勾子方法 `String subtitle() { return \"\"; }`。\n   - 實作 `final String render()` 作為不可覆寫的外框樣板方法：\n     - 第一行：`\"[ \" + safeHeader + \" ]\"`（若 `header()` 為 `null` 或 `trim()` 為空，預設為 `\"小白學程式\"`）。\n     - 選填副標行：呼叫 `subtitle()`，若非 `null` 且 `trim()` 非空，加上一行 `\"> \" + subtitle().trim()`；否則省略這一行。\n     - 內容行：呼叫 `body()`，若為 `null` 或 `trim()` 為空，統一補成 `\"(無內容)\"`，否則取 `body().trim()`。\n     - 頁尾分隔行：`\"-\".repeat(width)`。\n     - 各行以 `\"\\n\"` 串接回傳。\n2. 實作兩個子類別 `extends Screen`：\n   - `LessonScreen(int width, String topic)`：`header()` 回傳 `\"課程\"`、`subtitle()` 回傳 `\"章節：物件導向\"`、`body()` 當 `topic` 為 `null` 或 `trim()` 為空時回傳 `\"\"`（交由父類別保護），否則回傳 `\"主題：\" + topic.trim()`。\n   - `QuizScreen(int width, int number, String question)`：`header()` 當 `number <= 0` 時回傳 `\"隨堂測驗\"`，否則回傳 `\"第 \" + number + \" 題\"`；不覆寫 `subtitle()`；`body()` 直接回傳 `question`。",
+      "instructions": "樣板方法 `final String render()` 放在抽象父類別裡，加上 `final` 可以防止子類別擅自改寫外框順序或拿掉邊界防呆。\n\n子類別只需要實作 `header()`、`body()`（與選填的 `subtitle()`）這些變化點，就能保證所有畫面的寬度下限、空內容保護與頁尾格式完全一致。",
+      "expectedShape": "abstract class Screen {\n    final int width;\n    Screen(int width) { … }\n    final String render() { … }\n    abstract String header();\n    abstract String body();\n    String subtitle() { … }\n}\n\nclass LessonScreen extends Screen {\n    …\n}\n\nclass QuizScreen extends Screen {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new LessonScreen(16, \" 介面與抽象 \").render()",
+          "new LessonScreen(5, \"\").render()",
+          "new LessonScreen(12, null).render()",
+          "new QuizScreen(15, 2, \" 抽象類別能直接 new 嗎？ \").render()",
+          "new QuizScreen(10, 0, \"   \").render()"
+        ],
+        "uses": ["abstract class Screen", "final String render()", "abstract String body()", "extends Screen"]
+      },
       "hints": {
-        "lead": "共用的寫一次，不同的留給子類別。",
-        "plain": "每個畫面的標題列和頁尾都一樣，寫在 `Screen` 一次就好。中間的內容每個畫面不同，先空著寫成 `abstract`，等子類別來填。"
+        "lead": "父類別用 final render() 控制順序與預設值，子類別只負責提供原始內容。",
+        "plain": "`Screen` 建構子先把 `width` 夾在至少 12，`render()` 再依序處理 `header()`、`subtitle()`（有字才印）、`body()`（空字變 `(無內容)`）與 `\"-\".repeat(width)`。"
       },
       "afterText": ""
     },
     {
       "id": "new",
-      "title": "不能直接 new",
-      "goal": "修好後印出兩個畫面，先是 `今天的課：for 迴圈`，再是 `第 1 題：if-else 像什麼？`，每個上下都有標題列和頁尾。\n\n起始碼多寫好了 `QuizScreen`，但最後一行 `new Screen().show();` 是紅字：`Screen` 是抽象類別，不能直接 `new`。把這一行改成先 `new` 一個 `LessonScreen`、再 `new` 一個 `QuizScreen`，各 `show()` 一次。",
-      "instructions": "抽象類別還沒寫完：`Screen` 的 `body()` 只有名字、沒有內容，`new` 出來也不知道中間要印什麼，所以不能 `new Screen()`。要 `new` 的是已經寫好 `body()` 的子類別。\n\n`new LessonScreen().show();` 一行做兩件事：做出一個 `LessonScreen`，馬上叫它 `show()`。",
-      "expectedShape": "new …().show();\nnew …().show();",
-      "check": { "type": "output", "uses": ["new LessonScreen().show()", "new QuizScreen().show()"] },
+      "title": "多型畫面切換與抽象約束",
+      "goal": "起始碼已經準備好 `Screen`、`LessonScreen`、`QuizScreen`，但最後有一行錯誤示範 `new Screen(20)`（抽象類別不能直接實例化）。請修正並完成：\n1. 移除錯誤的 `new Screen(20)`。\n2. 新增 `class SummaryScreen extends Screen`，建構子 `SummaryScreen(int width, int passed, int total)`：\n   - 若 `total < 0` 視為 `0`；將 `passed` 夾在 `0` 到 `total` 之間。\n   - `header()` 回傳 `\"學習結算\"`。\n   - `subtitle()`：若 `total > 0 && passed == total` 回傳 `\"全部通過\"`，否則回傳 `\"繼續練習\"`。\n   - `body()` 回傳 `\"完成 \" + passed + \" / \" + total + \" 題\"`。\n3. 完成 `class ScreenRouter`，建構子 `ScreenRouter(Screen[] screens)`（`screens` 為 `null` 視為空陣列）：\n   - `int count()`：統計陣列中非 `null` 的畫面數量。\n   - `String renderAt(int index)`：若 `index` 超出陣列範圍（`< 0` 或 `>= length`）或該格是 `null`，回傳 `\"(無效畫面)\"`；否則回傳 `screens[index].render()`。\n   - `String renderAll()`：將所有非 `null` 畫面的 `render()` 結果以 `\"\\n\\n\"`（中間空一行）串接回傳；若沒有有效畫面回傳 `\"\"`。",
+      "instructions": "抽象類別不能直接 `new`，但可以當成陣列型別 `Screen[]` 與方法參數型別，透過多型統一呼叫樣板方法 `render()`。",
+      "expectedShape": "class SummaryScreen extends Screen {\n    …\n    SummaryScreen(int width, int passed, int total) { … }\n    …\n}\n\nclass ScreenRouter {\n    …\n    ScreenRouter(Screen[] screens) { … }\n    int count() { … }\n    String renderAt(int index) { … }\n    String renderAll() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new SummaryScreen(14, 5, 5).render()",
+          "new SummaryScreen(14, 8, 5).render()",
+          "new SummaryScreen(14, -1, 3).render()",
+          "new SummaryScreen(14, 2, 0).render()",
+          "new ScreenRouter(new Screen[]{new LessonScreen(12, \"多型\"), null, new QuizScreen(12, 1, \"甚麼是抽象\"), new SummaryScreen(12, 1, 1)}).count()",
+          "new ScreenRouter(new Screen[]{new LessonScreen(12, \"多型\"), null, new SummaryScreen(12, 1, 1)}).renderAt(1)",
+          "new ScreenRouter(new Screen[]{new LessonScreen(12, \"多型\"), null, new SummaryScreen(12, 1, 1)}).renderAt(5)",
+          "new ScreenRouter(new Screen[]{new LessonScreen(12, \"多型\"), null, new SummaryScreen(12, 1, 1)}).renderAt(2)",
+          "new ScreenRouter(new Screen[]{new LessonScreen(12, \"多型\"), null, new SummaryScreen(12, 1, 1)}).renderAll()",
+          "new ScreenRouter(null).renderAll()"
+        ],
+        "uses": ["extends Screen", "Screen[]"]
+      },
       "hints": {
-        "lead": "new 子類別，不要 new Screen。",
-        "plain": "`Screen` 的內容還空著，就像只有外框的畫面，所以不能直接拿來用。要 `new` 已經填好內容的子類別。"
+        "lead": "移除 new Screen(...)，在 SummaryScreen 夾限數值，並讓 ScreenRouter 用 Screen[] 多型分派。",
+        "plain": "把不能編譯的 `new Screen(20)` 刪掉；`SummaryScreen` 建構子先修正負數與超過 `total` 的 `passed`；`ScreenRouter` 照索引檢查範圍與 `null` 後呼叫 `render()`。"
       },
       "afterText": ""
     }

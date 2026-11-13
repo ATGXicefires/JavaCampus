@@ -8,27 +8,54 @@
   "steps": [
     {
       "id": "screen",
-      "title": "放在同一排",
-      "goal": "依序畫出三個元件，一個一行（滷肉是 App 裡的小老師）：\n`[ 開始學習 ]`\n`■■■□□`\n`滷肉：「歡迎回來！」`\n\n再寫小老師的元件 `class MascotView implements Drawable`，`draw()` 印出最後那一行。把按鈕、進度條 `new ProgressBar(3, 5)`、小老師依序放進 `Drawable[] screen`（型別寫介面，答應了 `Drawable` 的都裝得進去），用 `for` 一個一個呼叫 `draw()`。",
-      "instructions": "陣列的型別寫成介面 `Drawable[]`：按鈕、進度條、小老師是不同的類別，但都答應了 `Drawable` 這張約定，所以能放進同一排。\n\n迴圈裡都是同一句 `screen[i].draw()`，輪到誰就照誰自己的寫法畫：輪到按鈕畫按鈕，輪到進度條畫進度條。同一句話、各做各的，這叫多型。\n\n`：`、`「`、`」` 都是全形，可以從目標複製。",
-      "expectedShape": "class MascotView implements Drawable {\n    public void draw() { … }\n}\n\nDrawable[] screen = { … };\nfor (…) {\n    …\n}",
-      "check": { "type": "output", "exprs": ["new MascotView().draw()"], "uses": ["class MascotView implements Drawable", "Drawable[] screen", "for"] },
+      "title": "多型面板與元件統計",
+      "goal": "起始碼已經準備好 `Drawable`、`Button` 與 `ProgressBar`。請完成兩個類別：\n1. `class MascotView implements Drawable`，建構子 `MascotView(String speaker, String message)`：\n   - `speaker` 若為 `null` 或 `trim()` 後為空，預設為 `\"滷肉\"`；否則取 `trim()` 後結果。\n   - 記錄是否有有效訊息（`message != null && !message.trim().isEmpty()`）；若無有效訊息，訊息文字改用 `\"…\"`。\n   - `isReady()`：有有效訊息時回傳 `true`，否則回傳 `false`。\n   - `render(int maxWidth)`：先組合成 `speaker + \"：「\" + msg + \"」\"`。若 `maxWidth <= 0` 回傳 `\"\"`；長度不超過 `maxWidth` 原樣回傳；超過時，若 `maxWidth >= 2` 取前 `maxWidth - 1` 字加 `\"…\"`，若 `maxWidth == 1` 取第 1 個字。\n2. `class Panel`（多型容器面板），建構子 `Panel(Drawable[] items, int width)`（`items` 為 `null` 視同空陣列，`width < 0` 視為 `0`）：\n   - `int readyCount()`：走訪 `items`（略過 `null` 元素），統計 `isReady()` 為 `true` 的元件個數。\n   - `String renderAll()`：依序對每個非 `null` 元件呼叫 `render(width)`，略過回傳 `\"\"` 的元件，把其餘各行用 `\"\\n\"` 串接回傳（首尾不加多餘換行；若沒有任何可繪製內容則回傳 `\"\"`）。",
+      "instructions": "陣列型別寫成介面 `Drawable[]`，就能把 `Button`、`ProgressBar`、`MascotView` 裝進同一個陣列，透過多型用同一個迴圈呼叫 `isReady()` 與 `render(width)`。\n\n注意陣列本身可能是 `null`，陣列裡的某一格也可能是 `null`，走訪時都要先判斷 `item != null` 才呼叫方法。\n\n全形冒號 `：` 與引號 `「`、`」` 可直接從目標複製。",
+      "expectedShape": "class MascotView implements Drawable {\n    …\n    MascotView(String speaker, String message) { … }\n    public boolean isReady() { … }\n    public String render(int maxWidth) { … }\n}\n\nclass Panel {\n    …\n    Panel(Drawable[] items, int width) { … }\n    int readyCount() { … }\n    String renderAll() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new MascotView(null, \"歡迎回來！\").render(20)",
+          "new MascotView(\"分號\", \"早安，準備開始今天的練習吧\").render(8)",
+          "new MascotView(\"滷肉\", \"   \").isReady()",
+          "new MascotView(\"滷肉\", \"   \").render(20)",
+          "new Panel(new Drawable[]{new Button(\"開始\", true), null, new ProgressBar(3, 5), new MascotView(\"滷肉\", \"加油\")}, 14).readyCount()",
+          "new Panel(new Drawable[]{new Button(\"開始\", true), null, new ProgressBar(3, 5), new MascotView(\"滷肉\", \"加油\")}, 14).renderAll()",
+          "new Panel(new Drawable[]{new Button(\"開始\", true), new ProgressBar(1, 2)}, 4).renderAll()",
+          "new Panel(null, 10).readyCount()",
+          "new Panel(new Drawable[0], 10).renderAll()"
+        ],
+        "uses": ["implements Drawable", "Drawable[]"]
+      },
       "hints": {
-        "lead": "同一句 draw()，各自畫各自的。",
-        "plain": "三種元件都答應了同一張約定，所以可以排在同一排。迴圈只管說「畫」，按鈕畫按鈕，進度條畫進度條。"
+        "lead": "陣列元素與參數都要先做 null 防護，空字串結果不加入換行串接。",
+        "plain": "`Panel` 不需要知道元件是按鈕還是進度條，只要逐一檢查不為 `null`，就呼叫 `isReady()` 或 `render(width)`。串接多行時，只有在前一次已經有內容時才先補上 `\"\\n\"`。"
       },
       "afterText": ""
     },
     {
       "id": "title",
-      "title": "多一個元件",
-      "goal": "畫面最上面多一行標題 `== 小白學程式 ==`，下面照舊是按鈕、進度條和小老師。\n\n加一個 `class Title implements Drawable`，`draw()` 印出標題這一行，再把 `new Title()` 放在 `screen` 陣列的最前面。迴圈不用改。",
-      "instructions": "多了一種元件，畫的那段程式一個字都不用動。",
-      "expectedShape": "class Title implements Drawable {\n    …\n}\n\nDrawable[] screen = {new Title(), …};",
-      "check": { "type": "output", "exprs": ["new Title().draw()"], "uses": ["class Title implements Drawable", "Drawable[] screen", "for"] },
+      "title": "擴充標題元件與切換摘要",
+      "goal": "不修改原本的 `Button`、`ProgressBar`、`MascotView` 與 `Panel.renderAll()` 迴圈邏輯，完成兩項擴充：\n1. 新增 `class TitleBanner implements Drawable`，建構子 `TitleBanner(String title)`：\n   - `isReady()`：當傳入的 `title` 非 `null` 且 `trim()` 後非空字串時為 `true`，否則 `false`。\n   - 顯示標題若為空則用預設值 `\"未命名\"`，否則取 `title.trim()`。\n   - `render(int maxWidth)`：外框格式為 `\"== \" + 內容 + \" ==\"`（外框佔 6 字元）。若 `maxWidth < 7` 回傳 `\"\"`；否則 `cap = maxWidth - 6`，若標題長度超過 `cap`（`cap >= 2` 取前 `cap - 1` 字加 `\"…\"`，`cap == 1` 取第 1 字）截斷後再套外框。\n2. 在 `Panel` 中新增 `String summary()`：\n   - 計算非 `null` 元件總數 `total` 與已就緒數 `ready`。\n   - 組合為 `\"就緒 \" + ready + \"/\" + total`；若 `renderAll()` 非空字串，再用 `\"\\n\"` 接上 `renderAll()` 一起回傳，否則只回傳首行狀態。",
+      "instructions": "新增實作 `Drawable` 的 `TitleBanner` 後，不用修改 `Panel` 裡的任何多型走訪邏輯，它就能直接放進 `Drawable[]` 一起渲染，這正是面向介面設計的擴充優勢。\n\n在 `summary()` 中注意 `total` 只算非 `null` 的元件個數。",
+      "expectedShape": "class TitleBanner implements Drawable {\n    …\n    TitleBanner(String title) { … }\n    public boolean isReady() { … }\n    public String render(int maxWidth) { … }\n}\n\n// 在 Panel 中加入：\nString summary() { … }",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new TitleBanner(\" 小白學程式 \").render(20)",
+          "new TitleBanner(\"小白學程式進階課程\").render(11)",
+          "new TitleBanner(\"ABC\").render(7)",
+          "new TitleBanner(\"ABC\").render(6)",
+          "new TitleBanner(\"  \").isReady()",
+          "new TitleBanner(\"  \").render(20)",
+          "new Panel(new Drawable[]{new TitleBanner(\"首頁\"), new Button(\"開始\", true), null, new ProgressBar(5, 5), new MascotView(\"滷肉\", \"\")}, 14).summary()",
+          "new Panel(new Drawable[]{null, new Button(\"開始\", false)}, 4).summary()"
+        ],
+        "uses": ["implements Drawable", "Drawable[]"]
+      },
       "hints": {
-        "lead": "新元件也照約定，迴圈不用動。",
-        "plain": "只要新的元件也答應了 `Drawable` 這張約定，放進陣列就會被畫出來。要改的只有陣列裡放了什麼。"
+        "lead": "TitleBanner 外框佔 6 個字元，summary() 重用 readyCount() 與 renderAll()。",
+        "plain": "`TitleBanner` 的 `maxWidth < 7` 才代表連 1 個字都放不下；寫 `Panel.summary()` 時可以直接呼叫 `readyCount()` 和 `renderAll()`，再另外數出非 `null` 元件總數即可。"
       },
       "afterText": ""
     }

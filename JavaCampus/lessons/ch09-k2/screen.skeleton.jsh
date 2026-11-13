@@ -1,34 +1,40 @@
-interface Drawable {
-    void draw();
-}
+class MascotView implements ____ {
+    String speaker;
+    String message;
+    boolean hasMessage;
 
-class Button implements Drawable {
-    public void draw() {
-        System.out.println("[ 開始學習 ]");
+    MascotView(String speaker, String message) {
+        this.speaker = (speaker == null || speaker.trim().isEmpty()) ? "滷肉" : speaker.trim();
+        this.hasMessage = message != null && !message.trim().isEmpty();
+        this.message = hasMessage ? message.trim() : "…";
+    }
+
+    public boolean isReady() {
+        return ____;
+    }
+
+    public String render(int maxWidth) {
+        if (maxWidth <= 0) {
+            return "";
+        }
+        ____
     }
 }
 
-class ProgressBar implements Drawable {
-    int done;
-    int total;
+class Panel {
+    Drawable[] items;
+    int width;
 
-    ProgressBar(int done, int total) {
-        this.done = done;
-        this.total = total;
+    Panel(Drawable[] items, int width) {
+        this.items = items == null ? new Drawable[0] : items;
+        this.width = Math.max(0, width);
     }
 
-    public void draw() {
-        System.out.println("■".repeat(done) + "□".repeat(total - done));
+    int readyCount() {
+        ____
     }
-}
 
-class MascotView implements Drawable {
-    public void draw() {
-        System.out.println("滷肉：「歡迎回來！」");
+    String renderAll() {
+        ____
     }
-}
-
-Drawable[] screen = {new Button(), new ProgressBar(3, 5), new ____()};
-for (int i = 0; i < screen.length; i++) {
-    screen[i].____();
 }

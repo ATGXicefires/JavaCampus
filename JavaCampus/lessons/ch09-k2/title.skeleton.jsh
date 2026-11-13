@@ -1,40 +1,20 @@
-interface Drawable {
-    void draw();
-}
+class TitleBanner implements ____ {
+    String title;
+    boolean hasTitle;
 
-class Button implements Drawable {
-    public void draw() {
-        System.out.println("[ 開始學習 ]");
+    TitleBanner(String title) {
+        this.hasTitle = title != null && !title.trim().isEmpty();
+        this.title = hasTitle ? title.trim() : "未命名";
+    }
+
+    public boolean isReady() {
+        return ____;
+    }
+
+    public String render(int maxWidth) {
+        ____
     }
 }
 
-class ProgressBar implements Drawable {
-    int done;
-    int total;
-
-    ProgressBar(int done, int total) {
-        this.done = done;
-        this.total = total;
-    }
-
-    public void draw() {
-        System.out.println("■".repeat(done) + "□".repeat(total - done));
-    }
-}
-
-class MascotView implements Drawable {
-    public void draw() {
-        System.out.println("滷肉：「歡迎回來！」");
-    }
-}
-
-class Title ____ Drawable {
-    public void draw() {
-        System.out.println("== 小白學程式 ==");
-    }
-}
-
-Drawable[] screen = {new ____(), new Button(), new ProgressBar(3, 5), new MascotView()};
-for (int i = 0; i < screen.length; i++) {
-    screen[i].draw();
-}
+// 在 Panel 類別裡加上 String summary() 方法
+____

@@ -1,33 +1,61 @@
 class Path {
     String name;
+    int weeklyHours;
 
-    Path(String name) {
-        this.name = name;
+    Path(String name, int weeklyHours) {
+        this.name = (name == null || name.isBlank()) ? "未定" : name.trim();
+        this.weeklyHours = weeklyHours < 0 ? 0 : weeklyHours;
     }
 
-    String describe() {
-        return "還不知道";
+    boolean isSuitable(int enthusiasm) {
+        return false;
+    }
+
+    String describe(int enthusiasm) {
+        return name + "：還不知道";
+    }
+
+    static String recommend(Path[] paths, int enthusiasm) {
+        if (paths == null) {
+            return "先留在原地觀察";
+        }
+        for (Path p : paths) {
+            if (p != null && p.isSuitable(enthusiasm)) {
+                return p.describe(enthusiasm);
+            }
+        }
+        return "先留在原地觀察";
     }
 }
 
 class DesignPath extends Path {
-    DesignPath() {
-        super("廣設科");
-    }
-
-    @____
-    String describe() {
-        return name + "：畫我喜歡的東西";
-    }
-}
-
-class CodePath ____ Path {
-    CodePath() {
-        super("資訊科");
+    DesignPath(int weeklyHours) {
+        super(____);
     }
 
     @Override
-    String describe() {
-        return name + "：把我畫的東西變成會動的";
+    boolean isSuitable(int enthusiasm) {
+        return ____;
+    }
+
+    @Override
+    String describe(int enthusiasm) {
+        return ____;
+    }
+}
+
+class CodePath extends Path {
+    CodePath(int weeklyHours) {
+        super(____);
+    }
+
+    @Override
+    boolean isSuitable(int enthusiasm) {
+        return ____;
+    }
+
+    @Override
+    String describe(int enthusiasm) {
+        return ____;
     }
 }

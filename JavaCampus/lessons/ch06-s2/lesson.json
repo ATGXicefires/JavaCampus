@@ -1,6 +1,6 @@
 {
   "id": "ch06-s2",
-  "title": "class Gift",
+  "title": "Mascot 狀態機",
   "route": "學長",
   "partner": "二弘OS",
   "notes": ["constructor", "this", "obj-method"],
@@ -8,40 +8,109 @@
   "steps": [
     {
       "id": "blueprint",
-      "title": "禮物的設計圖",
-      "goal": "`new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\")` 做出來的卡片，`to` 要是 `梁亭瑄`，`from` 要是 `吳二弘`，`message` 要是 `嗨`。\n\n寫 `class Gift`：三個 `String` 欄位 `to`、`from`、`message`，和建構子 `Gift(String to, String from, String message)`（`new` 的那一刻第一個執行的方法），用 `this` 把傳進來的值放進欄位。",
-      "instructions": "建構子的名字和類別一樣，前面不寫回傳型別。`new Gift(…)` 括號裡的三個值，會照順序交給參數 `to`、`from`、`message`。\n\n參數和欄位同名的時候，`this.to` 是這張卡片自己的欄位，`to` 是傳進來的參數。所以 `this.to = to;` 就是把傳進來的值放進自己的欄位。",
-      "expectedShape": "class Gift {\n    …\n    Gift(String to, String from, String message) {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").to", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").from", "new Gift(\"梁亭瑄\", \"吳二弘\", \"嗨\").message", "new Gift(\"小明\", \"小華\", \"生日快樂\").to", "new Gift(\"小明\", \"小華\", \"生日快樂\").from", "new Gift(\"小明\", \"小華\", \"生日快樂\").message"] },
+      "title": "建構狀態與基礎互動",
+      "goal": "照類別骨架完成 `class Mascot` 的雙建構子、`String speak()` 與 `void rest(int minutes)`，並將 `energy` 與 `mood` 嚴格維持在 `0..100`。",
+      "instructions": "規則如下：\n- `Mascot(String name, String line, int energy, int mood)`：若 `name` 為 `null` 或去掉前後空白後為空，設為 `\"小老師\"`；若 `line` 為 `null` 設為 `\"\"`；`energy` 與 `mood` 若小於 `0` 歸 `0`、大於 `100` 固定為 `100`；`level` 固定從 `1` 開始。\n- `Mascot(String name, String line)`：直接以預設值 `energy = 60`、`mood = 50` 建構。\n- `String speak()`：若 `energy < 10` 不變動數值，回傳 `name + \"：「……（沒力了）」\"`；否則 `energy -= 10`、`mood` 加 `5`（上限 `100`），回傳 `name + \"：「\" + line + \"」\"`。\n- `void rest(int minutes)`：若 `minutes <= 0` 不處理；每滿 10 分鐘恢復 `5` 點 `energy` 與 `2` 點 `mood`（上限 `100`）。",
+      "expectedShape": "class Mascot {\n    …\n    Mascot(String name, String line, int energy, int mood) { … }\n    Mascot(String name, String line) { … }\n    String speak() { … }\n    void rest(int minutes) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Mascot _a = null;",
+          "(_a = new Mascot(\"  \", null, -20, 150)).name",
+          "_a.line",
+          "_a.energy",
+          "_a.mood",
+          "_a.level",
+          "_a.speak()",
+          "_a.rest(35)",
+          "_a.energy",
+          "_a.mood",
+          "_a.rest(-10)",
+          "_a.energy",
+          "_a.speak()",
+          "_a.energy",
+          "_a.mood",
+          "Mascot _b = null;",
+          "(_b = new Mascot(\"滷肉\", \"再跑一次！\")).energy",
+          "_b.mood",
+          "_b.speak()",
+          "_b.energy",
+          "_b.mood"
+        ],
+        "uses": ["class Mascot", "this.name"]
+      },
       "hints": {
-        "lead": "建構子以 `this.欄位 = 參數` 初始化同名欄位⋯⋯",
-        "plain": "⋯⋯白話：三個欄位，建構子收三個參數，用 `this.to = to;` 這樣一個一個放好。"
+        "lead": "雙建構子可用 this(name, line, 60, 50) 共用檢查邏輯，數值箝制在 0..100⋯⋯",
+        "plain": "⋯⋯白話：四參數建構子把 `name`/`line` 擋好並把 `energy`、`mood` 夾在 `0..100`，兩參數建構子直接呼叫它。`speak()` 體力不到 10 就不扣也不加心情。"
       },
       "afterText": ""
     },
     {
-      "id": "open",
-      "title": "打開卡片",
-      "goal": "打開卡片要印出三行：\n`給 梁亭瑄`\n`感謝你這學期的 contribution。你的 code review 意見（雖然大部分是在抱怨）讓這個專案變得更好。`\n`—— 吳二弘`\n\n幫 `Gift` 加上方法 `void open()`，照順序印出給誰、卡片內容、誰寫的這三行。再 `new` 一張 `to` 是 `梁亭瑄`、`from` 是 `吳二弘`、`message` 是上面那段內容的卡片，呼叫它的 `open()`。",
-      "instructions": "不加 `static` 的方法屬於物件：`card.open()` 用的是 `card` 自己的 `to`、`message`、`from`，所以 `open()` 不用參數。\n\n卡片內容和 `——` 可以從目標複製。",
-      "expectedShape": "void open() {\n    …\n}\n\nGift card = new Gift(…);\ncard.open();",
-      "check": { "type": "output", "uses": ["class Gift", "void open()", "new Gift(", ".open()"] },
+      "id": "study",
+      "title": "學習耗能與狀態回報",
+      "goal": "幫 `Mascot` 加上 `boolean study(int hours)` 與 `String status()`，實作體力不足拒絕學習、高心情額外升級與狀態文字輸出。",
+      "instructions": "規則如下：\n- `boolean study(int hours)`：\n  - 若 `hours <= 0`，回傳 `false` 且不變動任何欄位。\n  - 需要體力 `hours * 20`。若 `energy < hours * 20`（體力不足），拒絕學習：`mood` 減 `5`（最低到 `0`），`energy` 與 `level` 不變，回傳 `false`。\n  - 體力足夠時：`energy -= hours * 20`；若**學習前**的 `mood >= 80`，`level` 加 `hours + 1`，否則加 `hours`；接著 `mood` 加 `hours * 10`（上限 `100`），回傳 `true`。\n- `String status()`：回傳 `name + \"（Lv.\" + level + \"）體力 \" + energy + \"／心情 \" + mood`。",
+      "expectedShape": "boolean study(int hours) {\n    …\n}\n\nString status() {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Mascot _s = null;",
+          "(_s = new Mascot(\"分號\", \"分號。\", 50, 75)).study(0)",
+          "_s.study(-2)",
+          "_s.study(3)",
+          "_s.energy",
+          "_s.mood",
+          "_s.study(2)",
+          "_s.energy",
+          "_s.mood",
+          "_s.level",
+          "_s.rest(60)",
+          "_s.status()",
+          "_s.study(1)",
+          "_s.level",
+          "_s.status()",
+          "Mascot _z = null;",
+          "(_z = new Mascot(\"測試\", \"嗨\", 10, 3)).study(1)",
+          "_z.mood",
+          "_z.study(1)",
+          "_z.mood"
+        ]
+      },
       "hints": {
-        "lead": "實例方法直接存取自己的欄位⋯⋯",
-        "plain": "⋯⋯白話：`open()` 不用參數，卡片自己知道要給誰、寫了什麼、是誰寫的。三行各印一次。"
+        "lead": "先判斷學習前 mood 再更新 mood，失敗分支要防止 mood 變負數⋯⋯",
+        "plain": "⋯⋯白話：體力不夠時用 `Math.max(0, mood - 5)` 扣心情後回傳 `false`；體力夠時先看 `mood >= 80` 算升級數，再更新 `energy` 與 `mood`。"
       },
       "afterText": ""
     },
     {
-      "id": "flip",
-      "title": "背面的小字",
-      "goal": "卡片的三行後面，要再多印一行：`P.S. 木瓜牛奶換成冬天的話，熱可可也可以。`\n\n幫 `Gift` 加上欄位 `ps`（背面的小字）和方法 `void flip()`，印出這一行；在 `open()` 之後呼叫 `flip()`。",
-      "instructions": "`ps` 不放進建構子，`new` 好卡片以後再設定：`card.ps = \"…\";`。`flip()` 印的是這張卡片自己的 `ps`，前面接上 `P.S.` 和一個空格。\n\n那句小字裡的逗號是全形的，可以從目標複製。",
-      "expectedShape": "String ps;\nvoid flip() {\n    …\n}\n…\ncard.open();\ncard.flip();",
-      "check": { "type": "output", "uses": ["class Gift", "String ps", "void flip()", ".open()", ".flip()"] },
+      "id": "encourage",
+      "title": "跨物件打氣連動",
+      "goal": "幫 `Mascot` 加上 `boolean encourage(Mascot other)`，讓一個小老師能消耗自己的體力替另一個小老師恢復體力與心情。",
+      "instructions": "規則如下：\n- 若 `other == null`、`other == this`（不能對自己打氣）或自己的 `energy < 15`，兩邊數值都不變動，回傳 `false`。\n- 否則：自己的 `energy` 減 `15`、自己的 `mood` 加 `10`（上限 `100`）；對方的 `other.mood` 加 `20`（上限 `100`）、對方的 `other.energy` 加 `10`（上限 `100`），回傳 `true`。",
+      "expectedShape": "boolean encourage(Mascot other) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Mascot _m1 = null;",
+          "Mascot _m2 = null;",
+          "(_m1 = new Mascot(\"滷肉\", \"加油\", 25, 95)).energy",
+          "(_m2 = new Mascot(\"分號\", \"……\", 5, 85)).energy",
+          "_m1.encourage(null)",
+          "_m1.encourage(_m1)",
+          "_m2.encourage(_m1)",
+          "_m1.encourage(_m2)",
+          "_m1.energy",
+          "_m1.mood",
+          "_m2.energy",
+          "_m2.mood",
+          "_m1.encourage(_m2)",
+          "_m1.energy",
+          "_m2.energy"
+        ]
+      },
       "hints": {
-        "lead": "新增的欄位可以在建立物件之後再指定⋯⋯",
-        "plain": "⋯⋯白話：多一個欄位 `ps`，`new` 好卡片以後再寫 `card.ps = …;`。`flip()` 翻到背面，印出 `P.S. ` 加上那句小字。"
+        "lead": "同時操作 this 與參數物件 other，先檢查 null、自己與體力下限⋯⋯",
+        "plain": "⋯⋯白話：先擋掉 `other == null || other == this || energy < 15`；通過後才扣自己的 `energy`，並用 `Math.min(100, ...)` 更新自己和 `other` 的狀態。"
       },
       "afterText": ""
     }

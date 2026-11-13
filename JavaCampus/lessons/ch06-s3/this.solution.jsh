@@ -3,14 +3,27 @@ class Mascot {
     String line;
 
     Mascot(String name, String line) {
-        this.name = name;
-        this.line = line;
+        if (name == null || name.trim().isEmpty()) {
+            this.name = "未命名";
+        } else {
+            this.name = name.trim();
+        }
+        this.line = line == null ? "" : line;
     }
 
-    void speak() {
-        System.out.println(name + "：「" + line + "」");
+    void rename(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name.trim();
+        }
+    }
+
+    void updateLine(String line) {
+        if (line != null) {
+            this.line = line;
+        }
+    }
+
+    String speakText() {
+        return name + "：「" + line + "」";
     }
 }
-
-Mascot roufan = new Mascot("滷肉", "沒關係，再跑一次！");
-roufan.speak();

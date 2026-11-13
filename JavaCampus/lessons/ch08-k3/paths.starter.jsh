@@ -1,17 +1,33 @@
 class Path {
     String name;
+    int weeklyHours;
 
-    Path(String name) {
-        this.name = name;
+    Path(String name, int weeklyHours) {
+        this.name = (name == null || name.isBlank()) ? "未定" : name.trim();
+        this.weeklyHours = weeklyHours < 0 ? 0 : weeklyHours;
     }
 
-    String describe() {
-        return "還不知道";
+    boolean isSuitable(int enthusiasm) {
+        return false;
+    }
+
+    String describe(int enthusiasm) {
+        return name + "：還不知道";
+    }
+
+    static String recommend(Path[] paths, int enthusiasm) {
+        if (paths == null) {
+            return "先留在原地觀察";
+        }
+        for (Path p : paths) {
+            if (p != null && p.isSuitable(enthusiasm)) {
+                return p.describe(enthusiasm);
+            }
+        }
+        return "先留在原地觀察";
     }
 }
 
-// 寫 DesignPath 和 CodePath，都繼承 Path
-// 建構子分別用 super("廣設科")、super("資訊科") 交出名字
-// 再用 @Override 覆寫 describe()：
-// DesignPath 交回 廣設科：畫我喜歡的東西
-// CodePath 交回 資訊科：把我畫的東西變成會動的
+// 寫 DesignPath 與 CodePath 繼承 Path
+// 各自在建構子接收 int weeklyHours 並透過 super(...) 交給父類別
+// 用 @Override 覆寫 isSuitable(int enthusiasm) 與 describe(int enthusiasm)
