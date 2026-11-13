@@ -3,9 +3,11 @@ package campus.engine;
 import campus.engine.RunResult.Outcome;
 import campus.engine.RunResult.Problem;
 import campus.engine.RunResult.Severity;
+import campus.lesson.SourceFile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.time.Duration;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated
 class SandboxTest {
 
     private static Sandbox sandbox;
@@ -143,6 +146,14 @@ class SandboxTest {
         assertEquals(Outcome.RUNTIME_ERROR, r.outcome());
         assertMentions(r, "索引 5", "0 到 1");
         assertEquals(src.indexOf("return"), error(r).start());
+    }
+
+    @Test
+    void runtimeErrorInsideTopLevelLoopPointsAtLine() {
+        String src = "int[] a = {1, 2};\nfor (int i = 0; i < a.length; i++) {\n    System.out.println(a[i + 1]);\n}";
+        RunResult r = run(src);
+        assertEquals(Outcome.RUNTIME_ERROR, r.outcome());
+        assertEquals(src.indexOf("System.out.println(a[i + 1]);"), error(r).start());
     }
 
     @Test
@@ -300,5 +311,38 @@ class SandboxTest {
         assertEquals("嗨，小白", r.output().strip());
         assertEquals("void", r.probes().getFirst().type());
         assertEquals("嗨，阿成", r.probes().getFirst().output().strip());
+    }
+
+    @Test
+    void probeTypeStaysExactAfterMultiFileStructureError() {
+        try (Sandbox fresh = new Sandbox(Duration.ofSeconds(2))) {
+            RunResult dup = fresh.runProgram(List.of(
+                    new SourceFile("Helper.java", "class Helper {}\n"),
+                    new SourceFile("Main.java", "class Helper {}\npublic class Main { public static void main(String[] args) {} }\n")),
+                    true, List.of());
+            assertEquals(Outcome.COMPILE_ERROR, dup.outcome());
+
+            RunResult ok = fresh.run(List.of(),
+                    "class Plan { public String toString() { return \"plan\"; } }",
+                    List.of("new Plan().toString()"));
+            assertEquals(Outcome.OK, ok.outcome());
+            assertEquals("String", ok.probes().getFirst().type());
+        }
+    }
+
+    @Test
+    void probeTypeStaysExactAfterRejectedType() {
+        try (Sandbox fresh = new Sandbox(Duration.ofSeconds(2))) {
+            RunResult broken = fresh.runProgram(
+                    "import java.util.ArrayList;\npublic class Main { void f() { ArrayList<int> x; } }\n",
+                    true, List.of());
+            assertEquals(Outcome.COMPILE_ERROR, broken.outcome());
+
+            RunResult ok = fresh.run(List.of(),
+                    "class WeekReport { String summary() { return \"ok\"; } }",
+                    List.of("new WeekReport().summary()"));
+            assertEquals(Outcome.OK, ok.outcome());
+            assertEquals("String", ok.probes().getFirst().type());
+        }
     }
 }
