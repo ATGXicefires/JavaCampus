@@ -1,15 +1,24 @@
 import java.util.ArrayList;
 
 public class Main {
+    public static double passAverage(ArrayList<Integer> scores) {
+        int sum = 0;
+        int count = 0;
+        for (int s : scores) {
+            if (s >= 60) {
+                sum += s;
+                count++;
+            }
+        }
+        return sum / count;
+    }
+
     public static void main(String[] args) {
         ArrayList<int> scores = new ArrayList<>();
         scores.add(72);
         scores.add(58);
-        scores.add(65);
-        int sum = 0;
-        for (int i = 0; i < scores.size(); i++) {
-            sum += scores.get(i);
-        }
-        System.out.println("平均：" + (double) sum / scores.size());
+        scores.add(68);
+        scores.add(82);
+        System.out.println("及格平均：" + passAverage(scores));
     }
 }

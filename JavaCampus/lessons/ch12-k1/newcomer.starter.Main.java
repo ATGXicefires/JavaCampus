@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     static final String RETRY = "滷肉：「沒關係，再跑一次！」";
@@ -15,6 +16,10 @@ public class Main {
         }
         String[] typed = {"選晚餐", " 選午餐"};
         Checker checker = new ExactChecker("選午餐");
-        // 用 checker.check(…) 一個一個判斷 typed 的作答：答錯印 RETRY，答對印 PASS（不加引號）
+        // 用 checker.check(…) 判斷 typed：答錯印 RETRY，答對印 PASS
+
+        LessonFlow lessonFlow = new LessonFlow(List.of("變數入門", "語法基礎", "條件判斷", "迴圈練習"));
+        List<String> completed = List.of("變數入門");
+        System.out.println("推薦下一關：" + lessonFlow.nextRecommended(completed));
     }
 }

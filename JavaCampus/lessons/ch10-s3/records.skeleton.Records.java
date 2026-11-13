@@ -1,15 +1,28 @@
 import java.util.HashMap;
 
 public class Records {
-    HashMap<String, Integer> best = new HashMap<>();
+    private HashMap<String, Integer> best = new HashMap<>();
 
-    void record(String unit, int score) {
-        if (!best.containsKey(unit) || score > best.____(unit)) {
-            best.put(unit, score);
-        }
+    public Records() {
     }
 
-    int bestOf(String unit) {
-        return best.getOrDefault(unit, ____);
+    public Records(String[] entries) {
+        recordBatch(entries);
+    }
+
+    public void record(String unit, int score) {
+        ____
+    }
+
+    public void recordBatch(String[] entries) {
+        ____
+    }
+
+    public int bestOf(String unit) {
+        ____
+    }
+
+    public double averageBest() {
+        ____
     }
 }

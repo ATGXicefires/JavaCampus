@@ -1,11 +1,11 @@
 public class Screen {
     String title;
 
-    Screen(String title) {
+    public Screen(String title) {
         this.title = title;
     }
 
-    void show() {
+    public void show() {
         System.out.println("== " + title + " ==");
     }
 }

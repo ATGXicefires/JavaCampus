@@ -8,29 +8,49 @@
   "steps": [
     {
       "id": "wire",
-      "title": "全部接起來",
-      "goal": "`main` 裡的 `typed` 是 3 題的作答，現在答對 2 題，這次是 66 分，比 `records` 原本記的 33 分高。在 `== 第 1 課 ==` 下面要印出四行：\n`第 1 題：答對了`\n`第 2 題：再試一次`\n`第 3 題：答對了`\n`最高分：66`\n\n用 `ArrayList<Question>` 放進 `texts`、`answers` 的 3 題，用 `ExactChecker` 逐題判斷 `typed`。算出這次的分數（答對題數 × 100 ÷ 題數）記進 `records`，再印出 `records` 裡這一課的最高分。",
-      "instructions": "兩個 `int` 相除，小數直接丟掉：2 × 100 ÷ 3 是 66，不是 66.6⋯。\n\n`Records.java` 的 `record` 記一筆分數，比原本高才更新；`bestOf` 查出這一課的最高分。\n\n`Main.java` 自己要 import `ArrayList`；`Records.java` 用的 `HashMap`，它自己已經 import 了。`import` 只對寫它的那個檔案有效，每個檔案 import 自己要用的。",
-      "expectedShape": "import java.util.ArrayList;\n\npublic class Main {\n    public static void main(String[] args) {\n        …\n        ArrayList<Question> quiz = new ArrayList<>();\n        for (…) {\n            …\n        }\n        …\n    }\n}",
+      "title": "多檔接線與防重複計分",
+      "goal": "1. 完成 `QuizSession.java` 串接題庫與驗收規則：\n- `public QuizSession(ArrayList<Question> questions)`：保存題目清單（若為 `null` 視為空清單），並記錄哪些題號已答對。\n- `public String submit(int index, String typed)`：依序檢查：\n  1) 若 `index < 0` 或 `index >= 題數`（或該題為 `null`），安全回傳 `\"無效題號\"`。\n  2) 以 `ExactChecker` 比對作答（`typed` 為 `null` 時視同答錯），答錯回傳 `\"再試一次\"`。\n  3) 答對且該題尚未答對過，標記為已答對並回傳 `\"答對了\"`；若同一題重複答對，不重複計分並回傳 `\"已答對過\"`。\n- `public int correctCount()`：回傳已答對的不重複題數。\n- `public int score()`：回傳百分比成績（`correctCount() * 100 / 題數`，題數為 `0` 回傳 `0`）。\n2. 在 `Main.java` 匯入 `ArrayList`，將 `texts` 與 `answers` 裝進 `ArrayList<Question>`，交給 `QuizSession` 依序提交 `typed` 並印出每題結果，最後將 `session.score()` 記進 `records`，在 `== 第 1 課 ==` 下方印出：\n`第 1 題：答對了`\n`第 2 題：再試一次`\n`第 3 題：答對了`\n`最高分：66`",
+      "instructions": "每個 `.java` 檔案的 `import` 只對自己有效：`Main.java` 要自行 `import java.util.ArrayList;`，`QuizSession.java` 用到 `ArrayList`、`HashSet` 或 `Set` 時也要在自己檔案上方 `import`。\n\n用 `HashSet<Integer>` 或 `boolean[]` 記錄已答對的題號，就能確保重複提交同一題時不會重複增加 `correctCount()`。",
+      "expectedShape": "// QuizSession.java\nimport java.util.ArrayList;\n\npublic class QuizSession {\n    public QuizSession(ArrayList<Question> questions) { … }\n    public String submit(int index, String typed) { … }\n    public int correctCount() { … }\n    public int score() { … }\n}\n\n// Main.java\nimport java.util.ArrayList;\n\npublic class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["import java.util.ArrayList;", "ArrayList<Question>", "new ExactChecker(", ".check(", "records.bestOf("] },
+      "check": {
+        "type": "output",
+        "uses": ["import java.util.ArrayList;", "ArrayList<Question>", "new ExactChecker(", ".check(", "records.bestOf("],
+        "exprs": [
+          "new QuizSession(new java.util.ArrayList<>(java.util.List.of(new Question(\"Q1\", \"A\")))).submit(-1, \"A\")",
+          "new QuizSession(new java.util.ArrayList<>(java.util.List.of(new Question(\"Q1\", \"A\")))).submit(1, \"A\")",
+          "new QuizSession(new java.util.ArrayList<>(java.util.List.of(new Question(\"Q1\", \"A\")))).submit(0, null)",
+          "new QuizSession(null).score()",
+          "((java.util.function.Supplier<String>) () -> { var q = new java.util.ArrayList<>(java.util.List.of(new Question(\"Q1\", \"選午餐\"), new Question(\"Q2\", \"B\"))); var s = new QuizSession(q); return s.submit(0, \" 選午餐\") + \"|\" + s.submit(0, \"選午餐\") + \"|\" + s.correctCount() + \"|\" + s.score(); }).get()"
+        ]
+      },
       "hints": {
-        "lead": "各檔案各自 import 所需類別，由 `Main` 串接⋯⋯",
-        "plain": "⋯⋯白話：每個類別各做各的事：`Question` 裝題目，`Checker` 判斷對錯，`Records` 記最高分，`Screen` 畫標題。`main` 只負責照順序把它們接起來。"
+        "lead": "先把無效題號擋在存取清單之前，再用集合記錄已答對題號。",
+        "plain": "`submit` 先判斷 `index < 0 || index >= questions.size()` 回傳 `\"無效題號\"`，再交給 `ExactChecker` 判斷，最後用 `Set<Integer>` 的 `add(index)` 判斷是不是第一次答對。"
       },
       "afterText": ""
     },
     {
       "id": "hidden",
-      "title": "隱藏測資",
-      "goal": "`runQuiz(new String[]{\"選午餐\", \"B\"}, new String[]{\" 選午餐\", \"A\"})` 要交回 `1`：第 1 題去掉前後空白就對了，第 2 題答錯。\n\n寫一個方法 `static int runQuiz(String[] answers, String[] typed)`：`answers` 和 `typed` 的同一格是同一題的答案和作答。每一題用 `ExactChecker` 判斷，交回答對的題數。",
-      "instructions": "`ExactChecker` 是只認一個答案的檢查器：`new` 的時候把答案交給它，之後它的 `check(…)` 收到作答，會先 `trim` 再比，交回 `true` 或 `false`。\n\n這一步只看 `runQuiz` 交回的數，`main` 不用改。",
-      "expectedShape": "static int runQuiz(String[] answers, String[] typed) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
+      "title": "批次驗收與成績報告",
+      "goal": "在 `Main.java` 新增兩個公開靜態方法串接後端驗收與成績紀錄：\n1. `public static int runQuiz(String[] answers, int[] indices, String[] typed)`：用 `answers` 建立 `ArrayList<Question>` 與 `QuizSession`，依序將 `indices[i]` 與 `typed[i]` 交給 `session.submit(...)` 批改（長度取 `Math.min(indices.length, typed.length)`），最後回傳 `session.score()`。若 `answers`、`indices` 或 `typed` 為 `null` 或 `answers.length == 0`，直接回傳 `0`。\n2. `public static String formatReport(String unit, String[] answers, int[] indices, String[] typed, Records records)`：計算本次分數並記進 `records`（若 `unit` 為 `null` 或空白改用 `\"未命名單元\"`；若 `records` 不為 `null` 才記錄並查出該單元歷史最高分），回傳格式：`單元名稱：本次 X 分，最高 Y 分`（例如 `第 1 課：本次 50 分，最高 66 分`）。",
+      "instructions": "`runQuiz` 直接使用 `QuizSession` 即可自然具備「重複答對同一題不重複計分」與「無效題號不當機」的保護。\n\n這一步 `main` 不用改，驗證時會直接呼叫 `Main.runQuiz(...)` 與 `Main.formatReport(...)` 測試各種極端輸入。",
+      "expectedShape": "public class Main {\n    …\n    public static int runQuiz(String[] answers, int[] indices, String[] typed) { … }\n    public static String formatReport(String unit, String[] answers, int[] indices, String[] typed, Records records) { … }\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.runQuiz(new String[]{\"選午餐\", \"B\"}, new String[]{\" 選午餐\", \"A\"})", "Main.runQuiz(new String[]{}, new String[]{})"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Main.runQuiz(new String[]{\"選午餐\", \"B\"}, new int[]{0, 0, 1}, new String[]{\" 選午餐\", \"選午餐\", \"A\"})",
+          "Main.runQuiz(new String[]{\"A\", \"B\"}, new int[]{-1, 5, 1}, new String[]{\"A\", \"B\", \"B\"})",
+          "Main.runQuiz(new String[]{}, new int[]{0}, new String[]{\"A\"})",
+          "Main.runQuiz(null, new int[]{0}, new String[]{\"A\"})",
+          "Main.runQuiz(new String[]{\"A\"}, null, new String[]{\"A\"})",
+          "((java.util.function.Supplier<String>) () -> { Records r = new Records(); r.record(\"第 1 課\", 80); return Main.formatReport(\"第 1 課\", new String[]{\"A\", \"B\"}, new int[]{0, 1}, new String[]{\"A\", \"X\"}, r) + \" / \" + Main.formatReport(null, new String[]{\"A\"}, new int[]{0}, new String[]{\"A\"}, r); }).get()"
+        ]
+      },
       "hints": {
-        "lead": "以介面型別呼叫判斷邏輯⋯⋯",
-        "plain": "⋯⋯白話：判斷交給 `Checker`，`runQuiz` 只管數對了幾題。之後換一種判斷方式，這個方法不用改。"
+        "lead": "讓 `runQuiz` 委託 `QuizSession` 處理提交，再用 `Records` 維持最高分。",
+        "plain": "`runQuiz` 裡把 `answers` 轉成 `Question` 清單交給 `QuizSession`，對 `Math.min(indices.length, typed.length)` 跑迴圈呼叫 `submit` 後回傳 `session.score()`。"
       },
       "afterText": ""
     }

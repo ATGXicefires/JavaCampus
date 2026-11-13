@@ -1,7 +1,7 @@
 public class Screen implements Drawable {
     String title;
 
-    Screen(String title) {
+    public Screen(String title) {
         this.title = title;
     }
 

@@ -1,12 +1,16 @@
 public class Main {
     public static void main(String[] args) {
-        Records r = new Records();
-        r.record("第1課", 60);
-        r.record("第2課", 80);
-        r.record("第1課", 75);
-        r.record("第2課", 70);
-        System.out.println("第1課：" + r.bestOf("第1課"));
-        System.out.println("第2課：" + r.bestOf("第2課"));
-        System.out.println("第3課：" + r.bestOf("第3課"));
+        String[] logs = {
+            "ch01:70",
+            "ch02:80",
+            "ch01:95",
+            "ch02:65",
+            "ch01:60"
+        };
+        Records r = new Records(logs);
+        System.out.println("ch01：" + r.bestOf("ch01"));
+        System.out.println("ch02：" + r.bestOf("ch02"));
+        System.out.println("ch03：" + r.bestOf("ch03"));
+        System.out.println("平均：" + r.averageBest());
     }
 }

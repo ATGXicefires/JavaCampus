@@ -7,44 +7,51 @@
   "vars": [],
   "steps": [
     {
-      "id": "list",
-      "title": "題目清單",
-      "goal": "`main` 裡的 `texts`、`answers` 是 5 題的題目和答案。把它們做成題目清單，再從清單印出 5 行：\n`第 1 題：印出一行字要用哪個方法？`\n`第 2 題：整數的型別是什麼？`\n⋯⋯\n`第 5 題：二選一用什麼？`\n\n按「＋」新增 `Question.java`，寫 `class Question`：欄位 `text`、`answer`，建構子 `Question(String text, String answer)`。在 `main` 裡把每一題做成 `Question`，照順序放進 `ArrayList<Question>`（會變長的清單），再從清單印出來。",
-      "instructions": "`texts[0]` 和 `answers[0]` 是第 1 題的題目和答案，以此類推。建構子收題目和答案兩個參數，存進 `text` 和 `answer`。\n\n`ArrayList<Question>` 是只裝 `Question` 的清單：`add(…)` 放一個進去，`get(i)` 拿出第 `i` 個（從 0 開始數），`size()` 是有幾個。\n\n```\nArrayList<String> names = new ArrayList<>();\nnames.add(\"滷肉\");\nnames.add(\"分號\");\nnames.get(1)    // \"分號\"\nnames.size()    // 2\n```",
-      "expectedShape": "// Question.java\npublic class Question {\n    String text;\n    String answer;\n    Question(String text, String answer) { … }\n}\n\n// Main.java\nArrayList<Question> quiz = new ArrayList<>();\nfor (…) {\n    …\n}\nfor (…) {\n    …\n}",
+      "id": "parse",
+      "title": "容錯解析筆記條目",
+      "goal": "建立 `NoteEntry.java`（`public class NoteEntry`）並實作 `Main.parseNotes(String[] lines)`，從混合文字筆記中解析合格的成績紀錄：\n1. `NoteEntry` 需包含：\n   - `private final String subject;` 與 `private final int score;`\n   - `public NoteEntry(String subject, int score)`、`public String getSubject()`、`public int getScore()`\n   - `public String grade()`：回傳等第字串（`>= 90` 為 `\"A\"`、`80..89` 為 `\"B\"`、`70..79` 為 `\"C\"`、`60..69` 為 `\"D\"`、`< 60` 為 `\"F\"`）\n2. `public static ArrayList<NoteEntry> parseNotes(String[] lines)`：\n   - 支援半形冒號 `:` 與全形冒號 `：` 分隔的 `\"科目:成績\"`（兩側空白需 `trim()`）。\n   - 遇 `null`、空行、去空白後以 `#` 開頭的註解行、不含冒號或含多個冒號、科目去空白後為空字串、成績非合法整數（不可崩潰）、或成績不在 `0..100`（含 0 與 100）範圍者，一律跳過不加入清單。\n   - 若 `lines == null`，回傳空的 `ArrayList<NoteEntry>`。",
+      "instructions": "判斷單一冒號的小技巧：先將字串 `trim()`，再把全形冒號 `：` 換成半形 `:`，若 `indexOf(':')` 小於 `0` 或 `indexOf(':') != lastIndexOf(':')` 就代表缺少或有多個冒號，直接 `continue` 跳過。\n\n成績轉整數前可用 `Integer.parseInt(...)` 搭配 `try-catch (NumberFormatException e)`，避免遇到 `\"缺考\"` 時程式直接拋出例外中斷。\n\n這一步只檢查 `NoteEntry` 與 `parseNotes`，`main` 可先空著。",
+      "expectedShape": "// NoteEntry.java\npublic class NoteEntry {\n    …\n    public NoteEntry(String subject, int score) { … }\n    public String getSubject() { … }\n    public int getScore() { … }\n    public String grade() { … }\n}\n\n// Main.java\npublic static ArrayList<NoteEntry> parseNotes(String[] lines) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["class Question", "ArrayList<Question>", ".add(", "new Question("] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Main.parseNotes(new String[]{\"Java:95\", \" 數學 ： 80 \", \"# 備忘\", \"英文:缺考\", \"物理:105\", \"歷史:-1\", \" :90\", null, \"國文:0\", \"體育:100\"}).size()",
+          "Main.parseNotes(new String[]{\"Java:88\"}).get(0).grade()",
+          "Main.parseNotes(new String[]{\"Java:100\"}).get(0).grade()",
+          "Main.parseNotes(new String[]{\"Java:59\"}).get(0).grade()",
+          "Main.parseNotes(new String[]{\"a:b:80\", \"a：b:80\", \"無冒號\", \"\"}).size()",
+          "Main.parseNotes(null).size()"
+        ],
+        "uses": ["class NoteEntry", "ArrayList<NoteEntry>"]
+      },
       "hints": {
-        "lead": "一題一個 Question，放進清單。",
-        "plain": "每一題都是一個 `Question` 物件，裝著題目和答案。全部放進清單以後，要印、要算分，都從清單一題一題拿。"
+        "lead": "先正規化冒號與空白，再用 try-catch 解析數字與檢查 0..100 範圍。",
+        "plain": "把 `：` 換成 `:` 並確認只有一個冒號，切開左右兩段各自 `trim()`。科目不能是空的，成績用 `Integer.parseInt` 轉出來之後要檢查 `>= 0 && <= 100`。"
       },
       "afterText": ""
     },
     {
-      "id": "grade",
-      "title": "自動作答",
-      "goal": "`main` 裡的 `typed` 是 5 題的作答，現在答對 4 題，及格了，所以題目清單下面要接著印出兩行：\n`答對 4 題`\n`★ 完成`\n\n逐題把 `typed` 和那一題的答案比，印出答對幾題；答對 3 題以上算及格，再印一行 `★ 完成`。作答先用 `trim()`（去掉前後的空白）再用 `equals` 比。",
-      "instructions": "`typed[0]` 是第 1 題的作答，要和第 1 題的答案 `quiz.get(0).answer` 比，以此類推。\n\n`trim()` 會做出一個去掉前後空白的新字串，中間的空白不會去掉：`\" 小白 \".trim()` 是 `\"小白\"`。所以第 1 題的 `\" println\"` 去掉空白就對了；第 3 題的 `\"while\"` 不是 `for`，算錯。\n\n上一步印的題目清單照樣留著。`★` 可以從目標複製。",
-      "expectedShape": "for (…) {\n    if (…) {\n        …\n    }\n}\nSystem.out.println(…);",
+      "id": "stats",
+      "title": "依科目與等第統計彙整",
+      "goal": "在 `Main` 新增兩個統計方法：\n1. `public static int countByGrade(ArrayList<NoteEntry> entries, String grade)`：統計清單中等第等於 `grade`（忽略大小寫與前後空白）的筆數；若 `entries == null`、`grade == null` 或清單中有 `null` 元素要安全略過，不崩潰。\n2. `public static String subjectSummary(ArrayList<NoteEntry> entries, String subject)`：篩選出科目名稱等於 `subject.trim()` 的所有合法紀錄（跳過 `null` 元素），回傳格式：\n   `<subject>: <count> 筆, 平均 <avg>, 最高 <max>`\n   其中 `avg` 為總分除以筆數的四捨五入整數（`Math.round((double) sum / count)`）；若 `entries == null`、`subject == null` 或找不到該科任何紀錄，回傳 `<subject>: 0 筆`（若 `subject == null` 則顯示為 `\": 0 筆\"`）。\n\n最後在 `main` 用 `parseNotes` 解析題目給的 `raw` 筆記陣列，依序印出：\n- `有效筆記：<筆數> 筆`\n- `subjectSummary(list, \"Java\")`\n- `subjectSummary(list, \"數學\")`\n- `\"A 等第：\" + countByGrade(list, \"A\") + \" 筆\"`",
+      "instructions": "題目提供的 `raw` 陣列共 9 行，過濾掉註解行、缺考與超過 100 分後，會剩下 5 筆有效紀錄（Java 3 筆：95, 88, 92；數學 2 筆：82, 75）。\n\n計算平均分時請先轉成 `double` 再除，再用 `Math.round(...)` 取整數，否則整數除法會直接無條件捨去（例如 `157 / 2` 會變成 78 而不是 79）。",
+      "expectedShape": "public static int countByGrade(ArrayList<NoteEntry> entries, String grade) {\n    …\n}\n\npublic static String subjectSummary(ArrayList<NoteEntry> entries, String subject) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": [".trim(", ".equals("] },
-      "hints": {
-        "lead": "先 trim，再 equals。",
-        "plain": "作答前後多打的空白先去掉，再和答案比。對一題記一題，最後看夠不夠及格。"
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.subjectSummary(Main.parseNotes(new String[]{\"Java:90\", \"Java:85\", \"數學:70\", \"Java:95\"}), \"Java\")",
+          "Main.subjectSummary(Main.parseNotes(new String[]{\"Java:81\", \"Java:80\"}), \"Java\")",
+          "Main.subjectSummary(Main.parseNotes(new String[]{\"Java:90\"}), \"英文\")",
+          "Main.countByGrade(Main.parseNotes(new String[]{\"Java:95\", \"數學:90\", \"英文:89\", \"國文:60\", \"物理:59\"}), \"A\")",
+          "Main.countByGrade(Main.parseNotes(new String[]{\"Java:60\"}), \" d \")"
+        ],
+        "uses": ["ArrayList<NoteEntry>"]
       },
-      "afterText": ""
-    },
-    {
-      "id": "score",
-      "title": "計分方法",
-      "goal": "`score(new String[]{\"a\", \"b\"}, new String[]{\" a\", \"c\"})` 要交回 `1`：`\" a\"` 去掉前後空白就對了，`\"c\"` 不對。\n\n寫一個方法 `static int score(String[] answers, String[] typed)`：`answers` 和 `typed` 的同一格是同一題的答案和作答。作答先 `trim` 再和答案比，交回答對的題數。",
-      "instructions": "跟上一步算分一樣，只是答案和作答改從參數拿：`answers[i]` 和 `typed[i]` 是同一題，最後用 `return` 交回答對的題數。\n\n這一步只看 `score` 交回的數，`main` 不用改。",
-      "expectedShape": "static int score(String[] answers, String[] typed) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
-      "form": "program",
-      "check": { "type": "values", "exprs": ["Main.score(new String[]{\"a\", \"b\"}, new String[]{\" a\", \"c\"})", "Main.score(new String[]{}, new String[]{})"] },
       "hints": {
-        "lead": "同一格的答案和作答比。",
-        "plain": "和剛剛算分一樣，只是包成方法：交給它答案和作答，它交回答對幾題。"
+        "lead": "用 double 做除法後四捨五入，並防備清單為空或找不到科目。",
+        "plain": "走訪 `entries` 時先跳過 `null`。若該科最後 `count == 0`，直接回傳 `subject + \": 0 筆\"` 才不會除以零；有資料再用 `Math.round((double) sum / count)` 算平均。"
       },
       "afterText": ""
     }

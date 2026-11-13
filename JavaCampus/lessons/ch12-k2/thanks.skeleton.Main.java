@@ -1,23 +1,44 @@
 import java.util.ArrayList;
-import java.util.HashMap;
+____
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("== 製作團隊 ==");
+        String[] roles = {"介面設計", "程式", "程式", "測試"};
+        String[] names = {"梁亭瑄", "吳二弘", "林學長", "燕韋芸"};
         ArrayList<Credit> credits = new ArrayList<>();
-        credits.add(new Credit("介面設計", "梁亭瑄"));
-        credits.add(new Credit("程式", "吳二弘"));
+        for (int i = 0; i < roles.length; i++) {
+            credits.add(new Credit(roles[i], names[i]));
+        }
         for (Credit c : credits) {
             System.out.println(c);
         }
-        HashMap<String, String> thanks = new HashMap<>();
-        thanks.put("阿嬤", "每天的菜");
-        thanks.put("燕韋芸", "478 次的統計");
-        thanks.put("李有成", "偷拍的照片");
-        thanks.put("王葉聖老師", "那一次抽籤");
+        System.out.println("程式組：" + findByRole(credits, "程式"));
+
         String[] order = {"阿嬤", "燕韋芸", "李有成", "王葉聖老師"};
-        for (String who : order) {
-            System.out.println("特別感謝 " + who + "（" + thanks.____(who) + "）");
+        String[] reasons = {"每天的菜", "478 次的統計", "偷拍的照片", "那一次抽籤"};
+        ____
+    }
+
+    public static ArrayList<String> findByRole(ArrayList<Credit> credits, String role) {
+        ArrayList<String> out = new ArrayList<>();
+        if (credits == null || role == null || role.isBlank()) {
+            return out;
         }
+        String target = role.trim();
+        for (Credit c : credits) {
+            if (c != null && c.role().equals(target)) {
+                out.add(c.name());
+            }
+        }
+        return out;
+    }
+
+    public static String lookupThank(HashMap<String, String> map, String who) {
+        ____
+    }
+
+    public static ArrayList<String> formatThanksInOrder(HashMap<String, String> map, String[] order) {
+        ____
     }
 }

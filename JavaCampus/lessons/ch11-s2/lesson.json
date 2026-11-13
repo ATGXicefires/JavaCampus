@@ -7,30 +7,55 @@
   "vars": [],
   "steps": [
     {
-      "id": "exit",
-      "title": "技術上可行",
-      "goal": "修好後要印出 `第 30 天：畢業典禮`。\n\n起始碼的 `while (true)`（條件永遠成立的迴圈）沒有出口，`day` 會一直加下去，按執行停不下來，3 秒後被強制停止。在迴圈裡加上出口：`day` 到 30 就用 `break`（直接跳出迴圈）離開，再在迴圈後面印出這一行。",
-      "instructions": "迴圈的條件永遠成立，就會一直跑下去，這叫無限迴圈。`while (true)` 一定要在裡面留一個出口：用 `if` 判斷到了沒有，到了就 `break`。`break` 會直接跳出迴圈，接著做迴圈後面的程式：\n\n```\nint n = 0;\nwhile (true) {\n    n += 7;\n    if (n > 20) {\n        break;\n    }\n}\nSystem.out.println(n);\n```\n\n這段會印出 `21`。",
-      "expectedShape": "while (true) {\n    …\n    if (…) {\n        …\n    }\n}\n…",
+      "id": "deadlock",
+      "title": "修好狀態死鎖的模擬",
+      "goal": "起始碼裡的 `daysUntilBudgetReady(int saved, int dailySave, int target, int maxDays)` 存在多處狀態更新與終止條件缺陷，導致某些輸入會算錯天數或陷入無限迴圈。\n\n請修正該方法，讓它正確模擬畢業基金存款：\n- 若一開始 `saved >= target`，不需要等待任何天數，直接回傳 `0`。\n- 否則若 `dailySave <= 0` 或 `maxDays <= 0`，永遠不可能存夠目標，直接回傳 `-1`。\n- 否則使用 `while (true)` 搭配 `break` 逐日模擬（第 1 天、第 2 天……）：\n  - 每天先把 `day` 加 1；\n  - 週末（`day % 7 == 6 || day % 7 == 0`）不存錢只過這一天（若用 `continue` 略過存錢，務必先完成天數更新與上限檢查！）；\n  - 平日將 `saved` 加上 `dailySave`；\n  - 若 `saved >= target`，立即 `break` 並回傳 `day`；\n  - 若還沒達標但 `day >= maxDays`，立即 `break` 並回傳 `-1`。\n\n修正後 `main` 應印出：`需要 4 天`。",
+      "instructions": "檢視起始碼時留意三個陷阱：\n1. 進入 `while (true)` 前沒先檢查 `saved >= target`，會多跑至少一天。\n2. 在週末分支直接 `continue`，卻把 `day >= maxDays` 的上限檢查放在迴圈尾端，會導致剛好最後一天落在週末時衝過 `maxDays` 或永遠跳不出來。\n3. `dailySave <= 0` 時若沒有入口檢查，會白跑或卡死。",
+      "expectedShape": "public static int daysUntilBudgetReady(int saved, int dailySave, int target, int maxDays) {\n    …\n    while (true) {\n        …\n        if (…) {\n            break;\n        }\n    }\n    return …;\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["while (true)", "break"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.daysUntilBudgetReady(300, 50, 300, 10)",
+          "Main.daysUntilBudgetReady(100, 50, 300, 14)",
+          "Main.daysUntilBudgetReady(0, 100, 600, 10)",
+          "Main.daysUntilBudgetReady(0, 100, 600, 7)",
+          "Main.daysUntilBudgetReady(0, 100, 500, 7)",
+          "Main.daysUntilBudgetReady(0, 0, 100, 10)",
+          "Main.daysUntilBudgetReady(0, 50, 100, 0)"
+        ],
+        "uses": ["while (true)", "break"]
+      },
       "hints": {
-        "lead": "無限迴圈須以 `break` 提供終止條件⋯⋯",
-        "plain": "⋯⋯白話：日子一直加，永遠到不了畢業典禮。在裡面放一個 `break`：到第 30 天就跳出來。"
+        "lead": "先處理入口邊界，再用 while(true) 推進天數並在平日累加、檢查上限。",
+        "plain": "入口先檢查 `if (saved >= target) return 0;` 和 `if (dailySave <= 0 || maxDays <= 0) return -1;`。迴圈內每次先 `day++`，只有在非週末時才 `saved += dailySave` 並檢查是否 `>= target`，最後只要 `day >= maxDays` 就 `break` 並回傳 `-1`。"
       },
       "afterText": ""
     },
     {
-      "id": "after",
-      "title": "迴圈後面",
-      "goal": "修好後要印出兩行：\n`第 30 天：畢業典禮`\n`然後呢？`\n\n這一版在 `while (true)` 後面多了這兩行，可是迴圈沒有出口，紅字說迴圈後面那一行永遠跑不到。在迴圈裡加上 `break`，讓 `day` 到 30 就跳出來，後面兩行才跑得到。",
-      "instructions": "沒有 `break` 的 `while (true)` 永遠出不來，後面寫什麼都輪不到。編譯器看得出這件事，所以還沒執行就先給紅字（`unreachable statement`：永遠跑不到的程式）。迴圈裡有了 `break`，迴圈才會結束，後面的程式才跑得到。",
-      "expectedShape": "while (true) {\n    …\n}\n…",
+      "id": "nested",
+      "title": "巢狀迴圈提前跳出",
+      "goal": "在 `Main` 新增兩個搜尋座位表 `boolean[][] seats`（`true` 代表已佔用、`false` 代表空位）的方法，兩者皆須在找到第一組結果後立刻跳出所有巢狀迴圈：\n1. `public static String findFirstEmptySeat(boolean[][] seats)`：由第 0 排到最後一排、每排由左到右找出第一個空位（`false`），回傳 `\"第 <row + 1> 排第 <col + 1> 號\"`（1-based）；若 `seats == null`、所有列為 `null` 或全滿，回傳 `\"已客滿\"`。\n2. `public static String findConsecutivePair(boolean[][] seats)`：在同一排找出第一對相鄰的兩個空位（`seats[r][c] == false && seats[r][c + 1] == false`），回傳 `\"<r>,<c>\"`（0-based 的起始排與座位索引）；若 `seats == null` 或找不到，回傳 `\"-1,-1\"`。請留意不規則二維陣列或含 `null` 列，不可發生越界或空指標例外。\n\n在 `main` 保留原本 `需要 4 天` 的輸出，再補印出題目範例座位表的這兩個查詢結果。",
+      "instructions": "在巢狀 `for` 迴圈裡，單純寫一個 `break;` 只會跳出內層迴圈，外層還會繼續往下找。\n\n要一次離開兩層迴圈有兩種標準做法：\n- 在外層迴圈前加上標籤（例如 `outer: for (...)`），找到時用 `break outer;`。\n- 或在專用方法內找到時直接 `return`。\n\n別忘了檢查 `seats[r] == null` 以及第二題內層上限 `c < seats[r].length - 1`，避免 `c + 1` 越界。",
+      "expectedShape": "public static String findFirstEmptySeat(boolean[][] seats) {\n    …\n}\n\npublic static String findConsecutivePair(boolean[][] seats) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["while (true)", "break"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.findFirstEmptySeat(new boolean[][]{{true, true}, {true, false, false}})",
+          "Main.findFirstEmptySeat(new boolean[][]{null, {true}, {false}})",
+          "Main.findFirstEmptySeat(new boolean[][]{{true, true}, {true}})",
+          "Main.findFirstEmptySeat(null)",
+          "Main.findConsecutivePair(new boolean[][]{{true, false, true}, {false, false, true}})",
+          "Main.findConsecutivePair(new boolean[][]{{false}, null, {true, false, false}})",
+          "Main.findConsecutivePair(new boolean[][]{{false, true, false}})",
+          "Main.findConsecutivePair(null)"
+        ],
+        "uses": ["break"]
+      },
       "hints": {
-        "lead": "`unreachable statement`⋯⋯",
-        "plain": "⋯⋯白話：編譯器看得出這個迴圈出不來，所以後面那兩行永遠輪不到。給迴圈一個出口，後面才跑得到。"
+        "lead": "用標籤 break 或方法直接 return 終止雙重迴圈，並檢查 null 列與索引上限。",
+        "plain": "找第一個空位直接找到就 `return \"第 \" + (r + 1) + \" 排第 \" + (c + 1) + \" 號\";`；找相鄰兩個空位時內層條件寫 `c + 1 < seats[r].length`，找到就 `break outer;` 或直接 `return r + \",\" + c;`。"
       },
       "afterText": ""
     }

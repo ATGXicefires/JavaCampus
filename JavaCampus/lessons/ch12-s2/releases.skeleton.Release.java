@@ -1,16 +1,28 @@
-public class Release {
-    String version;
-    String month;
-    String note;
+import java.util.ArrayList;
+import java.util.List;
 
-    Release(String version, String month, String note) {
-        this.version = version;
-        this.month = month;
-        this.note = note;
+public class Release {
+    private final String version;
+    private final String date;
+    private final ArrayList<String> items = new ArrayList<>();
+
+    public Release(String version, String date, List<String> items) {
+        ____
     }
 
-    @Override
+    public String version() {
+        return version;
+    }
+
+    public String date() {
+        return date;
+    }
+
+    public ArrayList<String> items() {
+        return new ArrayList<>(items);
+    }
+
     public String toString() {
-        return version + "（" + month + "）" + note;
+        ____
     }
 }

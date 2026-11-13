@@ -8,29 +8,52 @@
   "steps": [
     {
       "id": "both",
-      "title": "兩邊都要",
-      "goal": "修好後印出三行：\n`== 小白學程式 ==`\n`分數：87`\n`滷肉：「歡迎回來！」`\n\n`StartScreen.java` 裡有合併衝突的標記，跑起來是紅字：`吳二弘` 那邊加了印分數的一行，`梁亭瑄` 那邊加了小老師打招呼的一行。兩行都留下，分數在前，再刪掉 `<<<<<<<`、`=======`、`>>>>>>>` 開頭的那三行。",
-      "instructions": "兩個人改到同一個地方，合併的時候 Git 不知道要留哪一邊，就把兩邊都寫進檔案：`<<<<<<<` 到 `=======` 是一邊的版本，`=======` 到 `>>>>>>>` 是另一邊的。這三行標記不是 Java，留著就是紅字。\n\n這個程式一個類別一個檔案，`Main`、`Score`、`StartScreen` 各在自己的分頁，這一步只要改 `StartScreen.java`。",
-      "expectedShape": "void show() {\n    …\n}",
+      "title": "邏輯與邊界防護都要合併",
+      "goal": "同時解決 `StartScreen.java` 與 `Score.java` 的合併衝突，只刪掉一邊都會少邏輯或少防護。修好後 `main` 印出：\n`== 小白學程式 ==`\n`分數：87`\n`滷肉：「歡迎回來！」`\n\n合併規則：\n1. `StartScreen.java`：保留分數輸出在前、小老師問候在後，移除 `<<<<<<<`、`=======`、`>>>>>>>` 衝突標記。\n2. `Score.java`（整合兩邊分支的正確修改）：\n   - `public static int total(int[] points)`：結合亭瑄分支的 `points == null || points.length == 0` 回傳 `0` 防護，以及二弘分支只累加正分（`p > 0`、忽略負分）的邏輯。\n   - `public static int total()`：保留二弘分支的預設總分方法（加總 `{30, 25, 32}` 回傳 `87`）。\n   - `public static double average(int[] points)`：保留亭瑄分支的新方法，計算陣列中所有大於等於 `0` 的有效分數浮點平均；若 `points` 為 `null` 或無有效分數，回傳 `0.0`。",
+      "instructions": "真正的合併衝突不能只挑一邊刪掉！`吳二弘` 的分支修好了 `total(int[])` 過濾負分的累加與無參數 `total()`，卻忘了防 `null` 也沒有 `average`；`梁亭瑄` 的分支加了空值防護與 `average(int[])`，裡面的 `total(int[])` 卻還是沒過濾負分的舊版。\n\n請讀懂兩邊程式碼各自修好與新增的部分，把正確的邊界防護、過濾邏輯與新方法全部合在一起，並清乾淨所有衝突標記。",
+      "expectedShape": "// Score.java\npublic class Score {\n    public static int total() { … }\n    public static int total(int[] points) { … }\n    public static double average(int[] points) { … }\n}\n\n// StartScreen.java\npublic class StartScreen {\n    void show() { … }\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["Score.total()"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Score.total()",
+          "Score.total(new int[]{30, -10, 25, 32})",
+          "Score.total(new int[]{})",
+          "Score.total(null)",
+          "Score.average(new int[]{80, -5, 95})",
+          "Score.average(new int[]{-1, -2})",
+          "Score.average(null)"
+        ],
+        "uses": ["Score.total()"]
+      },
       "hints": {
-        "lead": "衝突區塊需手動合併，並移除標記⋯⋯",
-        "plain": "⋯⋯白話：兩個人改到同一個地方，Git 不知道要留哪一邊，就把兩邊都寫出來讓你選。這次兩邊都該留，把標記刪掉就好。"
+        "lead": "衝突區塊需讀懂兩邊意圖再手動融合，不可盲目單留一側⋯⋯",
+        "plain": "⋯⋯白話：`StartScreen.java` 兩行都留（分數在前）；`Score.java` 要同時留住亭瑄的 `null`/空陣列檢查與 `average` 方法、二弘的 `if (p > 0)` 過濾負分與無參數 `total()`。"
       },
       "afterText": ""
     },
     {
       "id": "mascot",
-      "title": "小老師的名字",
-      "goal": "修好後印出來和上一步一樣：\n`== 小白學程式 ==`\n`分數：87`\n`滷肉：「歡迎回來！」`\n\n`Mascot.java` 也有合併衝突，跑起來是紅字：小老師的名字一邊寫 `滷肉飯`，一邊寫 `滷肉`。App 裡的小老師叫 `滷肉`，這次只能留一邊。",
-      "instructions": "起始碼的 `StartScreen` 改成用 `Mascot.greet()` 打招呼，修好之後印出來的樣子和上一步一樣。\n\n兩行都留的話，`name` 會宣告兩次，一樣是紅字。",
-      "expectedShape": "static String greet() {\n    …\n}",
+      "title": "小老師設定與防呆合併",
+      "goal": "解決 `Mascot.java` 的合併衝突，保留正確的小老師名稱並同時合併兩邊的方法與防呆，讓 `main` 印出與上一步相同：\n`== 小白學程式 ==`\n`分數：87`\n`滷肉：「歡迎回來！」`\n\n`Mascot.java` 合併規則：\n1. 小老師名稱設定必須留 `梁亭瑄` 分支的 `\"滷肉\"`（不能留成 `\"滷肉飯\"`）。\n2. `public static String greet()`：回傳 `\"滷肉：「歡迎回來！」\"`。\n3. `public static String greet(String user)`：合併 `吳二弘` 分支的空值防呆——若 `user` 為 `null` 或空白，稱呼改為 `\"同學\"`，否則 `trim()`，回傳 `\"滷肉：「歡迎回來，\" + 稱呼 + \"！」\"`。\n4. `public static String encourage(int score)`：保留 `吳二弘` 分支的新方法（但使用正確的小老師名稱 `\"滷肉\"`）：`score >= 60` 回傳 `\"滷肉：「表現不錯，繼續加油！」\"`，否則回傳 `\"滷肉：「沒關係，再檢查一次邊界！」\"`。",
+      "instructions": "這一步 `StartScreen.java` 已改用 `Mascot.greet()` 打招呼，`Score.java` 也已合併完成。\n\n在 `Mascot.java` 中，二弘分支雖然把小老師名字寫錯成「滷肉飯」，卻有完整的 `user` 空值防護和 `encourage(int score)` 方法；亭瑄分支名字寫對，卻少了防呆與 `encourage`。必須把正確的名字與兩邊的方法、防呆全部融合。",
+      "expectedShape": "public class Mascot {\n    public static String greet() { … }\n    public static String greet(String user) { … }\n    public static String encourage(int score) { … }\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["Mascot.greet()", "static String greet()"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Mascot.greet()",
+          "Mascot.greet(\" 亭瑄 \")",
+          "Mascot.greet(\"   \")",
+          "Mascot.greet(null)",
+          "Mascot.encourage(60)",
+          "Mascot.encourage(59)"
+        ],
+        "uses": ["Mascot.greet()", "static String greet()"]
+      },
       "hints": {
-        "lead": "擇一保留，移除另一側與標記⋯⋯",
-        "plain": "⋯⋯白話：小老師只有一個名字。留下 `滷肉` 那一行，另一行和三行標記都刪掉。"
+        "lead": "名稱取設定正確的一側，防呆與新增方法取另一側並移除衝突標記⋯⋯",
+        "plain": "⋯⋯白話：名字留亭瑄那邊的 `\"滷肉\"`；`greet(String user)` 的 `null`/空白預設成 `\"同學\"` 以及 `encourage(int score)` 方法要從二弘那邊留下來。"
       },
       "afterText": ""
     }

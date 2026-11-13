@@ -1,6 +1,13 @@
 public class Mascot {
-    static String greet() {
-        String name = "____";
-        return name + "：「歡迎回來！」";
+    public static String greet() {
+        ____
+    }
+
+    public static String greet(String user) {
+        ____
+    }
+
+    public static String encourage(int score) {
+        ____
     }
 }

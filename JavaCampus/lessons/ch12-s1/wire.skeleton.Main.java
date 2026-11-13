@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+____
 
 public class Main {
     public static void main(String[] args) {
@@ -9,20 +9,6 @@ public class Main {
         records.record("第 1 課", 33);
         new Screen("第 1 課").show();
         ArrayList<Question> quiz = new ArrayList<>();
-        for (int i = 0; i < texts.length; i++) {
-            quiz.add(new Question(texts[i], answers[i]));
-        }
-        int correct = 0;
-        for (int i = 0; i < quiz.size(); i++) {
-            Checker c = new ExactChecker(quiz.get(i).____);
-            if (c.check(typed[i])) {
-                correct++;
-                System.out.println("第 " + (i + 1) + " 題：答對了");
-            } else {
-                System.out.println("第 " + (i + 1) + " 題：再試一次");
-            }
-        }
-        records.record("第 1 課", correct * 100 / quiz.size());
-        System.out.println("最高分：" + records.bestOf("第 1 課"));
+        ____
     }
 }

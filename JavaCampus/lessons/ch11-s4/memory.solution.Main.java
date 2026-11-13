@@ -1,5 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println(Memory.FIRST_LINE);
+        Memory mem = new Memory();
+        System.out.println(mem.firstLine());
     }
 }

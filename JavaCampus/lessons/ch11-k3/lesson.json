@@ -7,30 +7,56 @@
   "vars": [],
   "steps": [
     {
-      "id": "short",
-      "title": "寫不下",
-      "goal": "`main` 裡的 `drafts` 是畢業紀念冊留言的草稿，第一句不超過 15 個字的是 `謝謝你把外星語翻成人話。`，所以只印出這一句。\n\n用迴圈從頭看 `drafts`，找到第一句字數不超過 15 的就印出來，再用 `break`（直接跳出迴圈）停下。",
-      "instructions": "`break` 會直接跳出它所在的迴圈，後面還沒看的都不看了：\n\n```\nfor (int i = 1; i <= 10; i++) {\n    if (i * i > 20) {\n        System.out.println(i);\n        break;\n    }\n}\n```\n\n這段只印 `5`：找到第一個平方超過 20 的數就停。\n\n字數用 `length()` 算，標點和空白也各算一個字；剛好 15 個字也算。後面就算還有更短的草稿，也不印。",
-      "expectedShape": "for (String d : drafts) {\n    if (…) {\n        …\n    }\n}",
+      "id": "sentinel",
+      "title": "遇到哨兵就停止搜尋",
+      "goal": "在 `Main` 實作兩個使用 `break` 中止搜尋的方法：\n1. `public static String firstFit(String[] drafts, int maxLen)`：從頭掃描 `drafts`，跳過 `null` 或純空白草稿，回傳第一句「去除前後空白後長度 `>= 1` 且 `<= maxLen`」的草稿（回傳去空白後的字串）。但如果遇到去空白後等於 `\"---END---\"` 的哨兵標記，必須立刻 `break` 停止搜尋（即使後面還有短草稿也不看）。若 `drafts == null`、`maxLen <= 0` 或找不到合格草稿，回傳 `\"（空白）\"`。\n2. `public static int countUntilKeyword(String[] paragraphs, String keyword)`：從頭走訪 `paragraphs` 累計有效（非 `null`）段落數，但一旦遇到某段落包含 `keyword`（`keyword` 非 `null` 且非空字串），立刻 `break` 停止且**該段落不計入**。若 `paragraphs == null` 回傳 `0`；遇到元素為 `null` 則略過不計也不停止。\n\n在 `main` 用題目提供的 `drafts` 呼叫 `firstFit(drafts, 15)` 並印出結果（`謝謝你把外星語翻成人話。`）。",
+      "instructions": "`break` 會直接終止它所在的那一層迴圈，讓後面剩餘的元素都不再處理。\n\n注意判斷順序：先檢查哨兵 `trimmed.equals(\"---END---\")` 再檢查長度是否合格，否則當 `maxLen >= 9` 時 `\"---END---\"` 本身會被當成合格草稿！\n\n`（空白）` 的括號為全形字元。",
+      "expectedShape": "public static String firstFit(String[] drafts, int maxLen) {\n    …\n}\n\npublic static int countUntilKeyword(String[] paragraphs, String keyword) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["break", ".length()"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.firstFit(new String[]{\"太長了太長了太長了太長了\", \"  謝謝你把外星語翻成人話。 \", \"---END---\", \"好\"}, 15)",
+          "Main.firstFit(new String[]{\"太長了\", \"---END---\", \"ok\"}, 5)",
+          "Main.firstFit(new String[]{\"   \", null, \"剛剛好五字\"}, 5)",
+          "Main.firstFit(new String[]{\"---END---\", \"ok\"}, 15)",
+          "Main.firstFit(null, 10)",
+          "Main.countUntilKeyword(new String[]{\"第一段\", null, \"第二段\", \"這裡有秘密彩蛋\", \"第四段\"}, \"彩蛋\")",
+          "Main.countUntilKeyword(new String[]{\"彩蛋在開頭\", \"後面\"}, \"彩蛋\")",
+          "Main.countUntilKeyword(new String[]{\"甲\", \"乙\"}, \"不存在\")"
+        ],
+        "uses": ["break"]
+      },
       "hints": {
-        "lead": "找到就 break。",
-        "plain": "草稿一句一句試，寫得下就用那一句，後面的不用再看。`break` 就是「找到了，停」。"
+        "lead": "遇到哨兵或關鍵字立即 break，別忘了先擋掉 null。",
+        "plain": "先預設結果為 `\"（空白）\"`，逐筆檢查前先擋掉 `null` 和純空白，接著馬上判斷是不是 `\"---END---\"` 哨兵；是就 `break`，不是才檢查長度是否 `<= maxLen`。"
       },
       "afterText": ""
     },
     {
-      "id": "method",
-      "title": "寫成方法",
-      "goal": "`firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)` 要交回 `\"好\"`：第一句超過 3 個字，第二句沒有。\n\n寫一個方法 `static String firstShort(String[] drafts, int max)`，交回 `drafts` 裡第一句字數不超過 `max` 的草稿；一句都找不到，就交回 `\"（空白）\"`。",
-      "instructions": "`（空白）` 的括號是全形的，可以從目標複製。\n\n這一步只看 `firstShort` 交回什麼，`main` 不用改。",
-      "expectedShape": "static String firstShort(String[] drafts, int max) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
+      "id": "truncate",
+      "title": "句點與字數上限雙重截斷",
+      "goal": "在 `Main` 新增 `public static String clipSentence(String text, int maxLen)`，將長文精準截斷為一句話且不超過 `maxLen` 個字：\n1. 若 `text == null` 或 `maxLen <= 0`，回傳 `\"\"`。先對 `text` 做 `trim()`，若結果為空字串則回傳 `\"\"`。\n2. 使用 `for` 迴圈逐字元掃描 `trimmed`：\n   - 若遇到第一個句點 `'。'` 或 `'.'`（且位置仍在前 `maxLen` 字之內），將該句點加入結果後立刻 `break`（第二句以後全捨棄，不加刪節號）。\n   - 若直到第 `maxLen` 個字都還沒遇到句點：\n     - 若原文此時已結束（總長度剛好等於 `maxLen`），保留這 `maxLen` 個字（不加刪節號）並 `break`。\n     - 若後面還有剩餘字元未讀完，代表字數被強迫截斷：當 `maxLen >= 2` 時保留前 `maxLen - 1` 個字並加上 `\"…\"`（全形刪節號 U+2026）；當 `maxLen == 1` 時只保留第 1 個字，然後 `break`。\n\n在 `main` 保留原本 `firstFit` 輸出，再補印 `clipSentence(\"謝謝你把外星語翻成人話。後面還有很多感想寫不下。\", 20)` 與 `clipSentence(\"謝謝你一直陪我們 debug 到深夜！\", 10)`。",
+      "instructions": "判斷「句點在 `maxLen` 內」與「達到 `maxLen` 還有剩餘字元」兩種 `break` 條件：\n- 例如 `clipSentence(\"剛剛好五字。\", 6)`：第 6 個字就是 `'。'`，所以完整保留 `\"剛剛好五字。\"` 不必加 `…`。\n- 例如 `clipSentence(\"謝謝你一直陪我們 debug 到深夜！\", 10)`：第 10 個字不是句點且後面還有字，於是取前 9 個字加上 `…`，回傳 `\"謝謝你一直陪我們 …\"`（總長剛好 10 字）。",
+      "expectedShape": "public static String clipSentence(String text, int maxLen) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.firstShort(new String[]{\"太長太長太長\", \"好\"}, 3)", "Main.firstShort(new String[]{\"太長了\"}, 2)", "Main.firstShort(new String[]{\"好\", \"嗯\"}, 3)"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.clipSentence(\"第一句。第二句。\", 20)",
+          "Main.clipSentence(\"第一句很長很長。第二句\", 5)",
+          "Main.clipSentence(\"剛剛好五字。\", 6)",
+          "Main.clipSentence(\"五個字剛好\", 5)",
+          "Main.clipSentence(\"兩個字以上\", 1)",
+          "Main.clipSentence(\"  你好。世界  \", 10)",
+          "Main.clipSentence(\"\", 5)",
+          "Main.clipSentence(null, 5)"
+        ],
+        "uses": ["break"]
+      },
       "hints": {
-        "lead": "先放好找不到時的答案。",
-        "plain": "先準備好「（空白）」當預設，迴圈裡找到了才換掉，然後馬上停。一句都不合，交回的就是預設的那一個。"
+        "lead": "用 for 迴圈逐字掃描，遇到句點或滿 maxLen 且後面還有字時 break。",
+        "plain": "若在第 `i` 個字（`i < maxLen`）看到 `'。'` 或 `'.'`，加上去就 `break`。如果走到 `i == maxLen - 1` 還不是句點且 `i + 1 < trimmed.length()`，就截斷成前 `maxLen - 1` 字加 `\"…\"` 再 `break`。"
       },
       "afterText": ""
     }

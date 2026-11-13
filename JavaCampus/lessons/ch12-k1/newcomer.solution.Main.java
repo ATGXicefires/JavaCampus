@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     static final String RETRY = "滷肉：「沒關係，再跑一次！」";
@@ -22,5 +23,8 @@ public class Main {
                 System.out.println(RETRY);
             }
         }
+        LessonFlow lessonFlow = new LessonFlow(List.of("變數入門", "語法基礎", "條件判斷", "迴圈練習"));
+        List<String> completed = List.of("變數入門");
+        System.out.println("推薦下一關：" + lessonFlow.nextRecommended(completed));
     }
 }

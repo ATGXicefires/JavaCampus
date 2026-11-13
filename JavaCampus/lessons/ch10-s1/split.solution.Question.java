@@ -1,13 +1,13 @@
 public class Question implements Checker {
-    String text;
-    String answer;
+    public String text;
+    public String answer;
 
-    Question(String text, String answer) {
+    public Question(String text, String answer) {
         this.text = text;
         this.answer = answer;
     }
 
     public boolean check(String typed) {
-        return typed.trim().equals(answer);
+        return typed != null && typed.trim().equals(answer);
     }
 }

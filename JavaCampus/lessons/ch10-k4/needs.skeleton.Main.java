@@ -8,18 +8,26 @@ public class Main {
         screens.add("課程列表");
         screens.add("答題");
         screens.add("成績");
-        ArrayList<String> features = Features.list();
+
         HashMap<String, String> needs = new HashMap<>();
         needs.put("首頁", "登入");
         needs.put("課程列表", "課程");
         needs.put("答題", "題目");
         needs.put("成績", "計分");
-        System.out.println("畫面 " + screens.size() + " 個，功能 " + features.size() + " 個");
+
+        ArrayList<String> neededList = new ArrayList<>();
         for (String screen : screens) {
-            String need = needs.get(screen);
-            if (!features.____(need)) {
-                System.out.println(screen + "：找不到「" + need + "」");
+            if (needs.containsKey(screen)) {
+                neededList.add(needs.get(screen));
             }
         }
+
+        ArrayList<String> rawFeatures = Features.list();
+        ArrayList<String> uniqueFeatures = Reconciler.cleanUnique(rawFeatures);
+
+        System.out.println("畫面 " + screens.size() + " 個，功能不重複 " + uniqueFeatures.size() + " 個");
+        System.out.println("缺漏：" + Reconciler.missingFeatures(neededList, rawFeatures));
+        System.out.println("重複：" + Reconciler.duplicateItems(rawFeatures));
+        System.out.println("未用到：" + Reconciler.unusedFeatures(neededList, rawFeatures));
     }
 }

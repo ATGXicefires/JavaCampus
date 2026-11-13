@@ -12,28 +12,37 @@ public class Main {
         for (int i = 0; i < texts.length; i++) {
             quiz.add(new Question(texts[i], answers[i]));
         }
-        int correct = 0;
+        QuizSession session = new QuizSession(quiz);
         for (int i = 0; i < quiz.size(); i++) {
-            Checker c = new ExactChecker(quiz.get(i).answer);
-            if (c.check(typed[i])) {
-                correct++;
-                System.out.println("第 " + (i + 1) + " 題：答對了");
-            } else {
-                System.out.println("第 " + (i + 1) + " 題：再試一次");
-            }
+            System.out.println("第 " + (i + 1) + " 題：" + session.submit(i, typed[i]));
         }
-        records.record("第 1 課", correct * 100 / quiz.size());
+        records.record("第 1 課", session.score());
         System.out.println("最高分：" + records.bestOf("第 1 課"));
     }
 
-    static int runQuiz(String[] answers, String[] typed) {
-        int correct = 0;
-        for (int i = 0; i < answers.length; i++) {
-            Checker c = new ExactChecker(answers[i]);
-            if (c.check(typed[i])) {
-                correct++;
-            }
+    public static int runQuiz(String[] answers, int[] indices, String[] typed) {
+        if (answers == null || answers.length == 0 || indices == null || typed == null) {
+            return 0;
         }
-        return correct;
+        ArrayList<Question> quiz = new ArrayList<>();
+        for (int i = 0; i < answers.length; i++) {
+            quiz.add(new Question("Q" + (i + 1), answers[i]));
+        }
+        QuizSession session = new QuizSession(quiz);
+        int count = Math.min(indices.length, typed.length);
+        for (int i = 0; i < count; i++) {
+            session.submit(indices[i], typed[i]);
+        }
+        return session.score();
+    }
+
+    public static String formatReport(String unit, String[] answers, int[] indices, String[] typed, Records records) {
+        String label = (unit == null || unit.isBlank()) ? "未命名單元" : unit;
+        int score = runQuiz(answers, indices, typed);
+        if (records != null) {
+            records.record(label, score);
+        }
+        int best = records == null ? score : records.bestOf(label);
+        return label + "：本次 " + score + " 分，最高 " + best + " 分";
     }
 }

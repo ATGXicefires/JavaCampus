@@ -7,30 +7,49 @@
   "vars": [],
   "steps": [
     {
-      "id": "skip",
-      "title": "跳過收回的",
-      "goal": "`countName(new String[]{\"二弘早\", \"（已收回）二弘\", \"學長\"}, \"二弘\")` 要交回 `1`：收回的那則不算。\n\n寫一個方法 `static int countName(String[] log, String name)`，數出 `log` 裡有幾則訊息包含 `name`，交回這個數。開頭是 `（已收回）` 的訊息，用 `continue`（跳過這一圈剩下的部分，直接下一圈）跳過，不算。",
-      "instructions": "`continue` 會跳過這一圈剩下的部分，直接進入下一圈，迴圈本身照樣繼續：\n\n```\nfor (int i = 1; i <= 4; i++) {\n    if (i == 2) {\n        continue;\n    }\n    System.out.println(i);\n}\n```\n\n這段會印 1、3、4：`i` 是 2 的那一圈，下面的 `println` 沒有做。\n\n字串的 `startsWith(…)` 問開頭是不是這幾個字，例如 `\"（已收回）二弘\".startsWith(\"（已收回）\")` 是 `true`。`（已收回）` 的括號是全形的，可以從目標複製。\n\n這一步只看 `countName` 交回的數，`main` 可以空著。",
-      "expectedShape": "static int countName(String[] log, String name) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
+      "id": "filter",
+      "title": "過濾雜訊與索引陷阱",
+      "goal": "在 `Main` 實作兩個訊息過濾統計方法：\n1. `public static int countValidMessages(String[] log, String name)`：從 `log` 中計算「有效且包含 `name`」的訊息有幾則。\n2. `public static int countValidChars(String[] log)`：加總 `log` 中所有有效訊息「去除前後空白後的字數（`trim().length()`）」。\n\n以下訊息一律視為無效，必須在迴圈中用 `continue` 跳過不計：\n- `null`\n- 純空白（`trim().isEmpty()`）\n- 開頭為 `（已收回）`（注意全形括號）\n- 開頭為 `[系統]`\n\n若 `log == null`，兩方法皆回傳 `0`；若 `name == null` 或 `name.isEmpty()`，`countValidMessages` 回傳 `0`。",
+      "instructions": "判斷訊息無效前請先檢查 `msg == null`，否則對 `null` 呼叫 `.trim()` 或 `.startsWith(...)` 會立刻丟出例外。\n\n若改用 `while` 迴圈搭配 `continue`，務必確認索引遞增 `i++` 不會被 `continue` 跳過，否則索引停在原地會形成無限迴圈。\n\n這一步只檢查兩個方法的回傳值，`main` 可先空著。",
+      "expectedShape": "public static int countValidMessages(String[] log, String name) {\n    …\n}\n\npublic static int countValidChars(String[] log) {\n    …\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.countName(new String[]{\"二弘早\", \"（已收回）二弘\", \"學長\"}, \"二弘\")", "Main.countName(new String[]{\"（已收回）二弘\"}, \"二弘\")"], "uses": ["continue", ".startsWith("] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Main.countValidMessages(new String[]{\"二弘早\", \"（已收回）二弘\", \"[系統] 二弘已加入\", \"   \", null, \"學長叫二弘\"}, \"二弘\")",
+          "Main.countValidMessages(new String[]{\"（已收回）二弘\", \"[系統] 通知\"}, \"二弘\")",
+          "Main.countValidMessages(null, \"二弘\")",
+          "Main.countValidChars(new String[]{\"  早安 \", \"（已收回）很長的一句話\", \"[系統] 公告\", null, \"   \", \"OK\"})",
+          "Main.countValidChars(new String[]{})"
+        ],
+        "uses": ["continue", ".startsWith("]
+      },
       "hints": {
-        "lead": "continue 跳過這一則。",
-        "plain": "收回的訊息直接跳過，後面的計數不做，換下一則。`continue` 就是「這一則不算，看下一則」。"
+        "lead": "先擋掉 null 與系統、收回、純空白訊息，再計算次數與字數。",
+        "plain": "條件判斷依序為 `msg == null`、`msg.trim().isEmpty()`、`msg.startsWith(\"（已收回）\")`、`msg.startsWith(\"[系統]\")`，符合任一項就 `continue` 跳過。"
       },
       "afterText": ""
     },
     {
-      "id": "claim",
-      "title": "她的主張",
-      "goal": "`main` 裡的 `log` 有五則訊息，沒收回又包含 `二弘` 的有 2 則，所以要印出 `叫了「二弘」2 次（收回的不算）`。\n\n用 `countName` 數出 `log` 裡有幾則叫了 `二弘`，把次數接進這一行印出來。",
-      "instructions": "`「」` 和 `（）` 都是全形的，可以從目標複製。",
-      "expectedShape": "System.out.println(… + countName(…) + …);",
+      "id": "summary",
+      "title": "清理後彙整報表",
+      "goal": "在 `Main` 新增 `public static String summarize(String[] log, String name)`：\n使用 `while` 迴圈搭配 `continue` 走訪 `log`（務必避免 `continue` 跳過索引遞增造成死迴圈），統計四項數據：\n- `valid`：有效訊息總則數\n- `skipped`：被過濾掉的無效訊息則數（同上一步 4 項無效規則）\n- `matched`：有效訊息中包含 `name` 的則數（若 `name == null || name.isEmpty()` 則 `matched` 為 `0`）\n- `chars`：有效訊息去除前後空白後的總字數\n\n回傳字串格式：`有效 <valid> 則（略過 <skipped> 則），提到「<name>」<matched> 次，共 <chars> 字`（若 `name == null` 顯示為空字串 `\"\"`；若 `log == null`，四個數字皆為 `0`）。\n\n最後在 `main` 宣告並傳入含 7 則訊息的 `log`（包含 2 則收回、1 則 `[系統]`、1 則純空白、以及 3 則有效訊息且其中 2 則包含 `\"二弘\"`、`\"二弘早\"`、`\"早安\"`、`\"二弘！\"`），印出 `summarize(log, \"二弘\")`。",
+      "instructions": "在 `while` 迴圈裡建議這樣寫才安全：\n```\nint i = 0;\nwhile (i < log.length) {\n    String msg = log[i];\n    i++;\n    if (...) {\n        skipped++;\n        continue;\n    }\n    ...\n}\n```\n先把 `i++` 放在讀取後、`continue` 之前，就絕不會在跳過無效訊息時卡死。\n\n`main` 的 7 則測試訊息請設定成：`{\"二弘早\", \"（已收回）二弘\", \"[系統] 二弘加入群組\", \"   \", \"早安\", \"（已收回）學長\", \"二弘！\"}`，讓統計結果為 `有效 3 則（略過 4 則），提到「二弘」2 次，共 8 字`。",
+      "expectedShape": "public static String summarize(String[] log, String name) {\n    …\n    while (…) {\n        …\n    }\n    return …;\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["countName(log,"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.summarize(new String[]{\"二弘早\", \"（已收回）二弘\", \"[系統] 二弘進房\", \"   \", \" 嗨二弘 \"}, \"二弘\")",
+          "Main.summarize(new String[]{\"（已收回）a\", null}, \"二弘\")",
+          "Main.summarize(null, \"二弘\")",
+          "Main.summarize(new String[]{\"嗨\"}, null)"
+        ],
+        "uses": ["continue", "while"]
+      },
       "hints": {
-        "lead": "次數交給 countName。",
-        "plain": "收回的那兩則不算，剩下的才是她真正叫出口的次數。"
+        "lead": "用 while 先遞增索引再判斷 continue，並累加四個統計量。",
+        "plain": "進迴圈先取出 `log[i]` 並 `i++`。無效就 `skipped++` 後 `continue`；有效才累加 `valid`、`chars`，並檢查是否包含 `name`。"
       },
       "afterText": ""
     }

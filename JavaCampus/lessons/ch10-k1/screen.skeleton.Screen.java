@@ -1,11 +1,35 @@
 public class Screen {
-    String title;
+    private String title;
+    private boolean unlocked;
+    private int visitCount;
 
-    Screen(String title) {
-        this.title = title;
+    public Screen(String title, boolean unlocked) {
+        this.title = ____;
+        this.unlocked = unlocked;
+        this.visitCount = 0;
     }
 
-    void show() {
-        System.out.println("== " + ____ + " ==");
+    public String getTitle() {
+        return title;
+    }
+
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public int getVisitCount() {
+        return visitCount;
+    }
+
+    public void unlock() {
+        ____
+    }
+
+    public boolean open() {
+        ____
+    }
+
+    public String render() {
+        ____
     }
 }

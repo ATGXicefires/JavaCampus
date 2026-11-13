@@ -8,43 +8,75 @@
   "steps": [
     {
       "id": "integer",
-      "title": "int 放不進去",
-      "goal": "修好後，清單 `scores` 裝得下 `72`、`58`、`65` 三個分數，印出 `平均：65.0`。\n\n起始碼想把分數放進清單 `scores`，跑起來卻是紅字。",
-      "instructions": "角括號寫清楚清單裝什麼，裡面只能放類別。`int`、`double` 不是類別，各有一個包裝類別：`int` 的是 `Integer`，`double` 的是 `Double`。\n\n放進去、拿出來的時候，Java 會自動在 `int` 和 `Integer` 之間轉換。",
-      "expectedShape": "ArrayList<…> scores = …;",
+      "title": "int 放不進去與平均除錯",
+      "goal": "修正泛型型別與平均計算的錯誤，讓 `scores` 裝入 `72`、`58`、`68`、`82`，並印出 `及格平均：74.0`。\n\n修正規則：\n1. 將 `ArrayList<int>` 改為 `ArrayList<Integer>`。\n2. 修好 `public static double passAverage(ArrayList<Integer> scores)`：\n   - 計算清單中所有非 `null` 且大於等於 `60` 分的及格分數平均。\n   - 必須回傳精確的 `double` 平均（不可用整數除法捨去小數）。\n   - 若 `scores` 為 `null`、空清單或沒有任何及格分數（`count == 0`），必須回傳 `0.0`，不可除以零崩潰。",
+      "instructions": "泛型的角括號裡只能放類別，`int` 不是類別，要改用包裝類別 `Integer`。\n\n另外，原本 `passAverage` 裡直接寫 `sum / count` 會發生整數除法截斷小數，而且在沒有及格分數時會拋出除以零的例外，請先檢查 `count == 0` 再用 `(double) sum / count` 計算。",
+      "expectedShape": "ArrayList<Integer> scores = new ArrayList<>();\n…\npublic static double passAverage(ArrayList<Integer> scores) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["ArrayList<Integer>"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.passAverage(new java.util.ArrayList<>(java.util.List.of(72, 58, 68, 82)))",
+          "Main.passAverage(new java.util.ArrayList<>(java.util.List.of(60, 61)))",
+          "Main.passAverage(new java.util.ArrayList<>(java.util.List.of(59, 40, 0)))",
+          "Main.passAverage(new java.util.ArrayList<>(java.util.Arrays.asList(70, null, 80, 50)))",
+          "Main.passAverage(new java.util.ArrayList<>())",
+          "Main.passAverage(null)"
+        ],
+        "uses": ["ArrayList<Integer>"]
+      },
       "hints": {
-        "lead": "泛型的型別參數必須是參考型別⋯⋯",
-        "plain": "⋯⋯白話：`int` 不是類別，放不進角括號。改成它的包裝類別 `Integer`，放進去、拿出來，Java 都會自動轉換。"
+        "lead": "泛型的型別參數必須是參考型別，且平均計算需先防護除數為 0⋯⋯",
+        "plain": "⋯⋯白話：`ArrayList<int>` 改成 `ArrayList<Integer>`；算平均前先看 `count == 0` 就回傳 `0.0`，並且用 `(double) sum / count` 保留小數。"
       },
       "afterText": ""
     },
     {
       "id": "raw",
-      "title": "沒寫型別的清單",
-      "goal": "修好後，`平均：65.0` 下面只印出三個名字：\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n起始碼的名字清單 `names` 沒寫型別，混進了一個數字也不會紅字，現在名字中間多印了一行 `72`。把它寫成 `ArrayList<String>`，讓編譯器擋下那個數字，再修到只剩三個名字。",
-      "instructions": "沒寫角括號的清單什麼都裝得進去，放錯了也不會有紅字，要等執行的時候才發現怪怪的。寫成 `ArrayList<String>`，這張清單就只裝字串，放數字進去，編譯器馬上擋下來。\n\n右邊寫成 `new ArrayList<>()` 就好：右邊的角括號空著，Java 會照左邊寫的型別。",
-      "expectedShape": "ArrayList<…> names = new ArrayList<>();\n…",
+      "title": "原始型別隱患與迴圈移除跳項除錯",
+      "goal": "同時修好「原始型別轉型錯誤」與「迴圈刪元素跳項 Bug」，讓 `main` 執行後印出：\n`及格平均：74.0`\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n修正規則：\n1. 將沒寫泛型的原始清單 `ArrayList names = new ArrayList();` 改為 `ArrayList<String> names = new ArrayList<>();`，並移除誤混入清單的整數 `72`。\n2. 修好 `public static ArrayList<String> removeBlank(ArrayList<String> list)`：\n   - 若 `list` 為 `null`，回傳空清單 `new ArrayList<>()`。\n   - 從 `list` 中移除所有為 `null` 或空白字串（`isBlank()`）的元素，最後回傳 `list`。\n   - 必須解決正向 `for` 迴圈一邊 `remove(i)` 一邊 `i++` 導致**相鄰空白會被跳過**的索引位移 Bug。",
+      "instructions": "沒寫角括號的原始型別 `ArrayList` 什麼都塞得進去，`72` 混進名字清單時編譯不會擋，執行做 `(String)` 轉型才會當場崩潰。改寫成 `ArrayList<String>` 就能讓編譯器把關。\n\n在 `removeBlank` 中，從索引 `0` 往後刪除時，一旦刪掉第 `i` 個，後面的元素會全部往前補一格，接著 `i++` 就會跳過原本的第 `i + 1` 個！改用**倒序迴圈**（從 `list.size() - 1` 往 `0` 刪）、`Iterator` 或 `removeIf`，並記得先檢查 `item == null || item.isBlank()`。",
+      "expectedShape": "ArrayList<String> names = new ArrayList<>();\n…\npublic static ArrayList<String> removeBlank(ArrayList<String> list) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["ArrayList<String>"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.removeBlank(new java.util.ArrayList<>(java.util.Arrays.asList(\"梁亭瑄\", \"\", \"  \", null, \"吳二弘\", \"   \", \"李有成\")))",
+          "Main.removeBlank(new java.util.ArrayList<>(java.util.Arrays.asList(\"\", \" \", null, \"\")))",
+          "Main.removeBlank(new java.util.ArrayList<>(java.util.List.of(\"亭瑄\", \"二弘\")))",
+          "Main.removeBlank(null)"
+        ],
+        "uses": ["ArrayList<String>"]
+      },
       "hints": {
-        "lead": "原始型別不做型別檢查，加上型別參數讓錯誤在編譯期出現⋯⋯",
-        "plain": "⋯⋯白話：沒寫型別，`72` 也混得進名字清單，執行的時候才發現怪怪的。寫清楚只裝 `String`，編譯器馬上擋下來。"
+        "lead": "加上型別參數擋下錯型別；從尾端倒序刪除或使用 Iterator 避免索引位移⋯⋯",
+        "plain": "⋯⋯白話：把 `names` 改成 `ArrayList<String>` 並拿掉 `72`；`removeBlank` 改從最後一個元素往前走（`i = list.size() - 1` 到 `0`），連續兩個空白就不會漏刪了。"
       },
       "afterText": ""
     },
     {
       "id": "total",
-      "title": "for-each 加總",
-      "goal": "`list` 裡是 `72`、`58`、`65` 時，`total(list)` 交回 `195`。\n\n在 `Main` 裡寫一個方法 `static int total(ArrayList<Integer> list)`，用 for-each（不用索引，把清單裡的每一個輪流拿出來）把 `list` 裡的數加起來交回。",
-      "instructions": "for-each 的冒號唸成「裡面的每一個」：`for (String s : names)` 就是 `names` 裡面的每一個，輪流放進 `s`，每放一次就做一次大括號裡的事。不用管第幾個，也不用寫 `i`。`ArrayList<Integer>` 拿出來的數，可以直接用 `int` 接。\n\n這一步只看 `total` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
-      "expectedShape": "static int total(ArrayList<Integer> list) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
+      "title": "泛型 for-each 過濾累加",
+      "goal": "在 `Main` 裡寫兩個使用 `for-each` 的泛型整數加總方法：\n1. `public static int total(ArrayList<Integer> list)`：\n   - 走訪 `list` 並加總所有非 `null` 的整數（若 `list` 為 `null` 回傳 `0`）。\n2. `public static int sumAbove(ArrayList<Integer> list, int minScore)`：\n   - 走訪 `list` 並加總所有非 `null` 且大於等於 `minScore` 的整數（若 `list` 為 `null` 回傳 `0`）。",
+      "instructions": "使用 `for (Integer n : list)` 走訪 `ArrayList<Integer>`，在累加前先檢查 `n != null`，避免清單內出現 `null` 時自動拆箱拋出 `NullPointerException`。\n\n這一步只檢查 `total` 與 `sumAbove` 的回傳值，`main` 原本的內容保留即可。",
+      "expectedShape": "public static int total(ArrayList<Integer> list) {\n    …\n}\n\npublic static int sumAbove(ArrayList<Integer> list, int minScore) {\n    …\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))", "Main.total(new java.util.ArrayList<>())", "Main.total(new java.util.ArrayList<>(java.util.List.of(80, 49)))"], "uses": ["ArrayList<Integer>", ": list"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Main.total(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))",
+          "Main.total(new java.util.ArrayList<>(java.util.Arrays.asList(10, null, -3, 20)))",
+          "Main.total(new java.util.ArrayList<>())",
+          "Main.total(null)",
+          "Main.sumAbove(new java.util.ArrayList<>(java.util.Arrays.asList(59, 60, 80, null, 45)), 60)",
+          "Main.sumAbove(new java.util.ArrayList<>(java.util.List.of(-10, -2, -5)), -5)",
+          "Main.sumAbove(null, 60)"
+        ],
+        "uses": ["ArrayList<Integer>", ": list"]
+      },
       "hints": {
-        "lead": "增強型 for 迴圈走訪集合⋯⋯",
-        "plain": "⋯⋯白話：不用索引，`for (int n : list)` 每一個都拿出來加一次。空的清單一次都不會進迴圈，交回 0。"
+        "lead": "以增強型 for 迴圈走訪集合，並防範 null 元素拆箱例外⋯⋯",
+        "plain": "⋯⋯白話：用 `for (Integer n : list)` 逐一檢查 `n != null`，`total` 全部加上去，`sumAbove` 只加 `n >= minScore` 的數。"
       },
       "afterText": ""
     }

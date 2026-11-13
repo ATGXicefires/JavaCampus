@@ -1,14 +1,24 @@
 public class Credit {
-    String role;
-    String name;
+    private final String role;
+    private final String name;
 
-    Credit(String role, String name) {
-        this.role = role;
-        this.name = name;
+    public Credit() {
+        ____
     }
 
-    @Override
+    public Credit(String role, String name) {
+        ____
+    }
+
+    public String role() {
+        return role;
+    }
+
+    public String name() {
+        return name;
+    }
+
     public String toString() {
-        return role + " " + ____;
+        ____
     }
 }

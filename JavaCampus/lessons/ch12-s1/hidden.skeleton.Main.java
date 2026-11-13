@@ -12,28 +12,19 @@ public class Main {
         for (int i = 0; i < texts.length; i++) {
             quiz.add(new Question(texts[i], answers[i]));
         }
-        int correct = 0;
+        QuizSession session = new QuizSession(quiz);
         for (int i = 0; i < quiz.size(); i++) {
-            Checker c = new ExactChecker(quiz.get(i).answer);
-            if (c.check(typed[i])) {
-                correct++;
-                System.out.println("第 " + (i + 1) + " 題：答對了");
-            } else {
-                System.out.println("第 " + (i + 1) + " 題：再試一次");
-            }
+            System.out.println("第 " + (i + 1) + " 題：" + session.submit(i, typed[i]));
         }
-        records.record("第 1 課", correct * 100 / quiz.size());
+        records.record("第 1 課", session.score());
         System.out.println("最高分：" + records.bestOf("第 1 課"));
     }
 
-    static int runQuiz(String[] answers, String[] typed) {
-        int correct = 0;
-        for (int i = 0; i < answers.length; i++) {
-            Checker c = new ExactChecker(____);
-            if (c.check(typed[i])) {
-                correct++;
-            }
-        }
-        return correct;
+    public static int runQuiz(String[] answers, int[] indices, String[] typed) {
+        ____
+    }
+
+    public static String formatReport(String unit, String[] answers, int[] indices, String[] typed, Records records) {
+        ____
     }
 }

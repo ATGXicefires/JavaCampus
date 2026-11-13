@@ -1,12 +1,14 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
+    public static ArrayList<String> cleanScreens(ArrayList<String> raw) {
+        ____
+    }
+
     public static void main(String[] args) {
-        ArrayList<String> screens = new ArrayList<>();
-        screens.add("首頁");
-        screens.add("課程列表");
-        screens.add("答題");
-        screens.____("成績");
-        System.out.println("共 " + screens.____() + " 個畫面");
+        ArrayList<String> raw = new ArrayList<>(Arrays.asList("首頁", " ", "課程列表", "首頁", "答題", "", "成績"));
+        ArrayList<String> screens = cleanScreens(raw);
+        System.out.println("共 " + screens.size() + " 個畫面");
     }
 }

@@ -1,10 +1,11 @@
 public class Main {
     public static void main(String[] args) {
-        // today 是今天星期幾：0 是星期日，6 是星期六，3 是星期三
-        // 在迴圈裡算出每一圈是星期幾，遇到星期六、日就用 continue 跳過不印
+        // today 是星期三 (3)，總共倒數 10 天，第 1 天與第 6 天是國定假日
         int today = 3;
         for (int i = 0; i < 10; i++) {
-            System.out.println("還有 " + (10 - i) + " 天");
+            System.out.println("距離畢業還有 " + (10 - i) + " 天");
         }
     }
+
+    // 實作 isOffDay 與 printCountdown，並改寫 main 呼叫 printCountdown
 }

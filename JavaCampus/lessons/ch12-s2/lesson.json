@@ -8,29 +8,52 @@
   "steps": [
     {
       "id": "releases",
-      "title": "每一個版本",
-      "goal": "`main` 裡的 `versions`、`months`、`notes` 是 8 個版本的版本號、月份和說明，要照順序印出 8 行：\n`v0.1（11月）校慶試玩版`\n`v0.2（12月）期中報告`\n⋯⋯\n`v1.0（6月）專題發表`\n\n寫 `class Release`：欄位 `version`、`month`、`note`，建構子 `Release(String version, String month, String note)`，覆寫 `toString()`（決定物件印出來的樣子）交回上面那樣的一行。用 `ArrayList<Release>` 照順序放進每一個版本，再一個一個印出來。",
-      "instructions": "`versions`、`months`、`notes` 三個陣列，同一格是同一個版本。\n\n`System.out.println(r)` 印一個物件時，印的是它的 `toString()`；沒覆寫的話，印出來是類別名稱加一串數字。`toString()` 原本就是 `public`，覆寫的時候前面也要寫 `public`。\n\n`Release` 可以按「＋」放在自己的檔案；`Main.java` 要 `import java.util.ArrayList;`。`（）` 是全形的，可以從目標複製。",
-      "expectedShape": "// Release.java\npublic class Release {\n    String version;\n    String month;\n    String note;\n    Release(String version, String month, String note) { … }\n    public String toString() { … }\n}\n\n// Main.java\nimport java.util.ArrayList;\n…\nArrayList<Release> releases = new ArrayList<>();\nfor (…) {\n    …\n}",
+      "title": "版本物件與有效筆記篩選",
+      "goal": "1. 完成 `Release.java`（請於檔案最上方匯入 `ArrayList` 與 `List`）：\n- 建構子 `public Release(String version, String date, List<String> items)`：將 `version`、`date` 去掉前後空白（若為 `null` 視為 `\"\"`）；將 `items` 中非 `null` 且非空白的更新項目去掉前後空白後存進 `ArrayList<String>`（若 `items` 為 `null` 視為空清單）。\n- 提供 `public String version()`、`public String date()`、`public ArrayList<String> items()`。\n- 覆寫 `public String toString()`：\n  - 有更新項目時回傳：`版號 (日期)：項目1、項目2`（例如 `v1.2.0 (2026-05-01)：修好進度條、新增提示`）。\n  - 若 `items` 為空則回傳：`版號 (日期)：無更新項目`。\n2. 完成 `Main.java`：\n- 實作 `public static ArrayList<Release> filterWithNotes(List<Release> releases)`：過濾出所有「非 `null` 且 `items()` 不為空」的 `Release`（若 `releases` 為 `null` 回傳空清單）。\n- 在 `main` 用起始資料建立 `ArrayList<Release>`，再印出 `filterWithNotes(releases)` 裡的每一筆版本。",
+      "instructions": "括號與冒號格式請嚴格依照範例：`版號 + \" (\" + 日期 + \")：\"`，其中小括號是半形 `(` `)`、前後有一個半形空白在版號與左括號之間，冒號是全形 `：`，多個項目之間用全形頓號 `、` 串接（可用 `String.join(\"、\", items)`）。\n\n將無意義的空白更新項目在建構子就先濾除，能避免後續印出多餘分隔符號。",
+      "expectedShape": "// Release.java\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class Release {\n    public Release(String version, String date, List<String> items) { … }\n    public String version() { … }\n    public String date() { … }\n    public ArrayList<String> items() { … }\n    public String toString() { … }\n}\n\n// Main.java\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) { … }\n    public static ArrayList<Release> filterWithNotes(List<Release> releases) { … }\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["public String toString()", "import java.util.ArrayList;", "ArrayList<Release>", ".add("] },
+      "check": {
+        "type": "output",
+        "uses": ["public String toString()", "import java.util.ArrayList;", "ArrayList<Release>"],
+        "exprs": [
+          "new Release(\" v1.2.0 \", \" 2026-05-01 \", java.util.List.of(\"修好進度條\", \"\", \" 新增提示 \")).toString()",
+          "new Release(\"v1.0.0\", \"2026-04-01\", java.util.List.of(\"  \")).toString()",
+          "new Release(\"v0.9.0\", \"2026-03-01\", null).toString()",
+          "Main.filterWithNotes(java.util.List.of(new Release(\"v1.0.0\", \"2026-04-01\", java.util.List.of()), new Release(\"v1.2.0\", \"2026-05-01\", java.util.List.of(\"修正\")))).size()",
+          "Main.filterWithNotes(null).size()"
+        ]
+      },
       "hints": {
-        "lead": "覆寫 `toString` 定義每筆紀錄的格式⋯⋯",
-        "plain": "⋯⋯白話：每一版的樣子寫在 `toString()` 裡，清單從 v0.1 排到 v1.0，迴圈一行一行印。"
+        "lead": "在建構子過濾空白更新項，再用 `items.isEmpty()` 決定 `toString()` 與篩選。",
+        "plain": "`Release` 建構子走訪 `items`，只留下 `item != null && !item.isBlank()` 的 `item.trim()`。`filterWithNotes` 只保留 `r != null && !r.items().isEmpty()` 的版本。"
       },
       "afterText": ""
     },
     {
       "id": "newest",
-      "title": "最新的在最上面",
-      "goal": "最新的放最上面，改成印出：\n`v1.0（6月）專題發表`\n`v0.99（6月）最後調整`\n⋯⋯\n`v0.1（11月）校慶試玩版`\n\n把印的那段改成用索引的 `for`，從 `releases` 的最後一個往前印到第一個。",
-      "instructions": "最後一個的索引是 `releases.size() - 1`。索引從那裡開始，每一圈減一（`i--`），減到 0 為止；用 `releases.get(i)` 拿出第 `i` 個。",
-      "expectedShape": "for (int i = …; …; …) {\n    System.out.println(…);\n}",
+      "title": "語意化版號比較與最新版本",
+      "goal": "在 `Main.java` 實作真正的版號比較與最新查詢（不可直接取清單最後一筆，因為版本順序可能錯亂，例如 `v1.10.0` 比 `v1.2.0` 新）：\n1. `public static int compareVersions(String v1, String v2)`：比較兩個語意化版號（去掉前後空白與開頭的 `v`/`V`，依 `.` 拆成整數段落逐段比較，較短版號缺少的尾段補 `0`，例如 `v1.2` 等於 `v1.2.0`；若傳入 `null` 或空白視為 `0`）。`v1` 較新回傳正數（例如 `1`）、較舊回傳負數（例如 `-1`）、相等回傳 `0`。\n2. `public static Release findLatest(List<Release> releases)`：找出清單中版號最大的 `Release`（略過 `null` 元素）；若清單為 `null` 或沒有有效版本則回傳 `null`。\n3. `public static String latestSummary(List<Release> releases)`：呼叫 `findLatest(releases)`；若為 `null` 回傳 `\"尚無版本紀錄\"`，否則回傳該版本的 `toString()`。\n4. 在 `main` 最後加上一行印出：`最新：` 加上 `latestSummary(releases)`。",
+      "instructions": "直接用字串比較 `\"v1.10.0\".compareTo(\"v1.2.0\")` 會誤判 `v1.2.0` 較大（因為字元 `'1'` 小於 `'2'`），所以必須拆開每一段轉成 `int` 後逐段比大小。\n\n拆段時可用 `split(\"\\\\.\")`（正規表示式中 `.` 要跳脫兩次），兩邊長度不同時，迴圈跑到 `Math.max(parts1.length, parts2.length)`，超出長度的那邊預設為 `0`。",
+      "expectedShape": "public class Main {\n    …\n    public static int compareVersions(String v1, String v2) { … }\n    public static Release findLatest(List<Release> releases) { … }\n    public static String latestSummary(List<Release> releases) { … }\n}",
       "form": "program",
-      "check": { "type": "output", "uses": [".size()", ".get("] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.compareVersions(\"v1.10.0\", \"v1.2.0\") > 0",
+          "Main.compareVersions(\"v1.2.0\", \"v1.10.0\") < 0",
+          "Main.compareVersions(\"v2.0\", \"v1.99.9\") > 0",
+          "Main.compareVersions(\"v1.2\", \"v1.2.0\") == 0",
+          "Main.latestSummary(java.util.List.of(new Release(\"v1.10.0\", \"2026-06-01\", java.util.List.of(\"大更新\")), new Release(\"v1.2.0\", \"2026-05-01\", java.util.List.of(\"舊版\"))))",
+          "Main.latestSummary(java.util.List.of(new Release(\"v0.9.9\", \"2026-01-01\", java.util.List.of(\"A\")), new Release(\"v1.0.0\", \"2026-02-01\", java.util.List.of(\"B\"))))",
+          "Main.latestSummary(java.util.List.of())",
+          "Main.latestSummary(null)",
+          "Main.findLatest(null) == null"
+        ]
+      },
       "hints": {
-        "lead": "由尾端往前走訪⋯⋯",
-        "plain": "⋯⋯白話：從 v1.0 印回 v0.1。索引從最後一個開始，每次減一，減到 0 為止。"
+        "lead": "拆出數字段落逐一比較，別讓字串字典序誤導判斷。",
+        "plain": "先把開頭 `v` 去掉再 `split(\"\\\\.\")`，逐段用 `Integer.parseInt` 轉成整數比大小，一旦不相等就立刻回傳 `Integer.compare(n1, n2)`，全部相等才回傳 `0`。"
       },
       "afterText": ""
     }

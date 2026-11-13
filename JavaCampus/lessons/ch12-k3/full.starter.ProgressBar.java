@@ -2,16 +2,16 @@ public class ProgressBar {
     int done;
     int total;
 
-    ProgressBar(int done, int total) {
+    public ProgressBar(int done, int total) {
         this.done = done;
         this.total = total;
     }
 
-    String bar() {
+    public String bar() {
         return "■".repeat(done) + "□".repeat(total - done);
     }
 
-    int percent() {
+    public int percent() {
         return done * 100 / total;
     }
 }
