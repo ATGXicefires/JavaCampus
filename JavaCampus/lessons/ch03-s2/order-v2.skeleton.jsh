@@ -37,4 +37,4 @@ for (int i = 0; i < ____; i++) {
         riseCount++;
     }
 }
-System.out.println("連續進步次數：" + riseCount);
+System.out.println("相鄰進步次數：" + riseCount);

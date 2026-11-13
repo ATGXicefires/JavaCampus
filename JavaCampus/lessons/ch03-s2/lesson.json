@@ -11,7 +11,7 @@
     {
       "id": "crash-v2",
       "title": "越界、無效值與合規平均",
-      "goal": "`scores` 是一排含異常值的小考分數，現在是 `{72, -5, 95, 105, 60, 49}`。\n\n起始碼這頁一執行就跌倒，還把無效分數算進平均。請修好上半部：\n1. 修復 `for` 迴圈的索引越界。\n2. 只把合規分數（`0`～`100`，含 0 與 100）加進 `int validSum` 並計數到 `int validCount`，排除 `< 0` 或 `> 100` 的無效分數。\n3. 算出合規分數的小數平均 `double avg`（若 `validCount == 0` 則 `avg = 0.0`，不可除以零或算出 `NaN`）。\n\n（下半部的等第錯亂與連續進步統計，留到下一步修。）",
+      "goal": "`scores` 是一排含異常值的小考分數，現在是 `{72, -5, 95, 105, 60, 49}`。\n\n起始碼這頁一執行就跌倒，還把無效分數算進平均。請修好上半部：\n1. 修復 `for` 迴圈的索引越界。\n2. 只把合規分數（`0`～`100`，含 0 與 100）加進 `int validSum` 並計數到 `int validCount`，排除 `< 0` 或 `> 100` 的無效分數。\n3. 算出合規分數的小數平均 `double avg`（若 `validCount == 0` 則 `avg = 0.0`，不可除以零或算出 `NaN`）。\n\n（下半部的等第錯亂與相鄰進步統計，留到下一步修。）",
       "instructions": "編輯器最上面那行 `int[] scores = {72, -5, 95, 105, 60, 49};` 是題目先寫好的，你的程式可以直接使用。\n\n這一步先只驗證 `validSum`、`validCount` 和 `avg` 三個數字。\n\n注意三個細節：\n- 陣列索引只到 `scores.length - 1`，條件必須是 `i < scores.length`。\n- 有效分數條件是 `s >= 0 && s <= 100`（`&&` 表示兩個都要成立）。\n- 算出 `avg` 時要用 `(double) validSum / validCount` 保留小數，並且先檢查 `validCount > 0`，否則全部無效或空陣列時會得到 `NaN`。",
       "expectedShape": "int validSum = 0;\nint validCount = 0;\nfor (…) {\n    int s = scores[i];\n    if (…) {\n        validSum += s;\n        validCount++;\n    }\n}\ndouble avg = 0.0;\nif (…) {\n    avg = …;\n}\nSystem.out.println(\"平均：\" + avg);",
       "check": {
@@ -34,9 +34,9 @@
     {
       "id": "order-v2",
       "title": "等第重排與安全相鄰進步",
-      "goal": "接著上一步，修好下半部的等第輸出，並補上「安全相鄰進步次數」統計：\n1. 先印出 `平均：avg`。\n2. 走訪 `scores` 印出每格結果：\n   - `< 0` 或 `> 100` 印出 `s 無效`\n   - `90`～`100` 印 `s A`、`80`～`89` 印 `s B`、`70`～`79` 印 `s C`、`60`～`69` 印 `s D`、`0`～`59` 印 `s F`\n3. 新增統計 `int riseCount`：走訪相鄰兩格 `(scores[i], scores[i + 1])`（安全區間，空陣列或長度為 1 不可越界），當相鄰兩格都是 `0`～`100` 的**有效分數**且 `scores[i + 1] > scores[i]` 時，讓 `riseCount++`。最後印出一行：`連續進步次數：riseCount`。",
-      "instructions": "這一步接著上一步的程式繼續改。\n\n原本的 `else if` 把 `>= 60` 放在最前面，導致 60 分以上全部停在 D，也沒有排除無效分數！必須先把無效分數（`< 0 || > 100`）排在第一關，再從 `>= 90` 往下依序判斷。\n\n最後的連續進步統計要同時讀取 `scores[i]` 和 `scores[i + 1]`：\n- 迴圈上限寫成 `i < scores.length - 1`，長度為 `0` 或 `1` 時迴圈會安全跳過，不會越界。\n- 兩格都要在 `0`～`100` 之間才比較大小（例如 `{-5, 60}` 裡的 `-5` 是無效資料，不算一次進步）。",
-      "expectedShape": "for (…) {\n    int s = scores[i];\n    if (…) {\n        System.out.println(s + \" 無效\");\n    } else if (…) {\n        …\n    } else {\n        System.out.println(s + \" F\");\n    }\n}\nint riseCount = 0;\nfor (…) {\n    if (…) {\n        riseCount++;\n    }\n}\nSystem.out.println(\"連續進步次數：\" + riseCount);",
+      "goal": "接著上一步，修好下半部的等第輸出，並補上「安全相鄰進步次數」統計：\n1. 先印出 `平均：avg`。\n2. 走訪 `scores` 印出每格結果：\n   - `< 0` 或 `> 100` 印出 `s 無效`\n   - `90`～`100` 印 `s A`、`80`～`89` 印 `s B`、`70`～`79` 印 `s C`、`60`～`69` 印 `s D`、`0`～`59` 印 `s F`\n3. 新增統計 `int riseCount`：走訪相鄰兩格 `(scores[i], scores[i + 1])`（安全區間，空陣列或長度為 1 不可越界），當相鄰兩格都是 `0`～`100` 的**有效分數**且 `scores[i + 1] > scores[i]` 時，讓 `riseCount++`。最後印出一行：`相鄰進步次數：riseCount`。",
+      "instructions": "這一步接著上一步的程式繼續改。\n\n原本的 `else if` 把 `>= 60` 放在最前面，導致 60 分以上全部停在 D，也沒有排除無效分數！必須先把無效分數（`< 0 || > 100`）排在第一關，再從 `>= 90` 往下依序判斷。\n\n最後的相鄰進步統計要同時讀取 `scores[i]` 和 `scores[i + 1]`：\n- 迴圈上限寫成 `i < scores.length - 1`，長度為 `0` 或 `1` 時迴圈會安全跳過，不會越界。\n- 兩格都要在 `0`～`100` 之間才比較大小（例如 `{-5, 60}` 裡的 `-5` 是無效資料，不算一次進步）。",
+      "expectedShape": "for (…) {\n    int s = scores[i];\n    if (…) {\n        System.out.println(s + \" 無效\");\n    } else if (…) {\n        …\n    } else {\n        System.out.println(s + \" F\");\n    }\n}\nint riseCount = 0;\nfor (…) {\n    if (…) {\n        riseCount++;\n    }\n}\nSystem.out.println(\"相鄰進步次數：\" + riseCount);",
       "check": {
         "type": "output",
         "exprs": ["riseCount"],
