@@ -13,12 +13,16 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 每個步驟都要能用自己的解答過關，而且不能不寫新東西就過關。 */
 class LessonContentTest {
+
+    private static final Set<String> GENTLE_PREFIXES = Set.of("ch01-", "ch11-kt", "ch11-sg", "ch12-kt", "ch12-sb");
+    private static final Set<String> GENTLE_STEPS = Set.of("ch02-k3/first");
 
     private static Sandbox sandbox;
     private static Verifier verifier;
@@ -59,13 +63,37 @@ class LessonContentTest {
         assertFalse(untouched.passed(), "不用改程式就能過關");
 
         assertTrue(step.skeleton().stream().anyMatch(f -> f.text().contains("____")), "骨架沒有挖空");
+
         assertFalse(step.hints().lead().isBlank(), "缺少提點");
         assertFalse(step.hints().plain().isBlank(), "缺少白話提示");
         assertFalse(step.goal().isBlank(), "缺少這一步要做的事");
+        assertFalse(step.instructions().isBlank(), "缺少題目說明");
         assertTrue(step.expectedShape().contains("…"), "預期的樣子直接寫出答案，玩家要寫的地方要換成 …");
+        assertAntiBypass(l.key(step), step.check());
         // 換資料再跑的事交給沒過時的訊息說明，題目先講只會讓人以為要對付檢查
         for (String text : List.of(step.goal(), step.instructions())) {
             assertFalse(text.contains("按「完成」"), "題目文字預告了隱藏測資：" + text);
+        }
+    }
+
+    private static void assertAntiBypass(String key, Check check) {
+        boolean gentle = GENTLE_STEPS.contains(key)
+                || GENTLE_PREFIXES.stream().anyMatch(key::startsWith);
+        if (gentle) {
+            return;
+        }
+        if (check.type() == Check.Mode.OUTPUT) {
+            boolean guarded = !check.variants().isEmpty()
+                    || !check.exprs().isEmpty()
+                    || !check.uses().isEmpty();
+            assertTrue(guarded, "不可僅靠靜態 output 過關，請補 variants / exprs / uses：" + key);
+        }
+        if (check.type() == Check.Mode.VALUES
+                && check.variants().isEmpty()
+                && check.uses().isEmpty()
+                && check.exprs().stream().anyMatch(e -> e.contains("("))) {
+            assertTrue(check.exprs().size() >= 2,
+                    "僅靠單一方法/建構式 expr 易被寫死繞過，請補第二組邊界 expr 或 uses：" + key);
         }
     }
 
