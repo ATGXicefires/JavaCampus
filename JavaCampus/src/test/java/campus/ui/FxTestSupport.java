@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /** 測試共用的 JavaFX 單例初始化工具，避免多個測試重複啟動 Toolkit 或反覆載入字型。 */
 public final class FxTestSupport {
 
+    /** JavaFX 的樣式和字型快取不能同時被好幾條執行緒碰，用到 JavaFX 的測試類別都掛這把鎖，輪流執行。 */
+    public static final String LOCK = "javafx";
+
     private static boolean started;
     private static boolean fontsLoaded;
 

@@ -9,7 +9,7 @@
   ],
   "steps": [
     {
-      "id": "boxes",
+      "id": "boxes-v2",
       "title": "新盒子與剩餘空間",
       "goal": "建立四個變數，並算出書包還剩幾個空位：\n- `double temp = 33.5;`\n- `boolean hot = true;`\n- `String city = \"臺南\";`\n- `int bagCapacity = 15;`\n\n再用 `bagCapacity` 和題目的 `gacha` 算出剩餘空位，存進 `int freeSlots`。",
       "instructions": "編輯器最上面那行 `int gacha = 8;` 是題目先寫好的變數。\n\n盒子有不同型別：`int` 裝整數、`double` 裝小數、`boolean` 只裝 `true` 或 `false`（不可加引號）、`String` 裝文字（要用半形雙引號 `\"` 包起來）。\n\n算剩餘空位時，寫成 `bagCapacity - gacha`，之後就算 `gacha` 換成別的數字，`freeSlots` 也會跟著重算。",

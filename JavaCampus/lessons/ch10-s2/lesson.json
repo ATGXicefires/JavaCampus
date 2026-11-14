@@ -33,9 +33,9 @@
     },
     {
       "id": "raw-v2",
-      "title": "原始型別隱患與迴圈移除跳項除錯",
-      "goal": "同時修好「原始型別轉型錯誤」與「迴圈刪元素跳項 Bug」，讓 `main` 執行後印出：\n`及格平均：74.0`\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n修正規則：\n1. 將沒寫泛型的原始清單 `ArrayList names = new ArrayList();` 改為 `ArrayList<String> names = new ArrayList<>();`，並移除誤混入清單的整數 `72`。\n2. 修好 `public static ArrayList<String> removeBlank(ArrayList<String> list)`：\n   - 若 `list` 為 `null`，回傳空清單 `new ArrayList<>()`。\n   - 從 `list` 中移除所有為 `null` 或空白字串（`isBlank()`）的元素，最後回傳 `list`。\n   - 必須解決正向 `for` 迴圈一邊 `remove(i)` 一邊 `i++` 導致**相鄰空白會被跳過**的索引位移 Bug。",
-      "instructions": "沒寫角括號的原始型別 `ArrayList` 什麼都塞得進去，`72` 混進名字清單時編譯不會擋，執行做 `(String)` 轉型才會當場崩潰。改寫成 `ArrayList<String>` 就能讓編譯器把關。\n\n在 `removeBlank` 中，從索引 `0` 往後刪除時，一旦刪掉第 `i` 個，後面的元素會全部往前補一格，接著 `i++` 就會跳過原本的第 `i + 1` 個！改用**倒序迴圈**（從 `list.size() - 1` 往 `0` 刪）、`Iterator` 或 `removeIf`，並記得先檢查 `item == null || item.isBlank()`。",
+      "title": "名單裡的空白",
+      "goal": "修好後，`main` 執行要印出：\n`及格平均：74.0`\n`梁亭瑄`\n`吳二弘`\n`李有成`\n\n現在印完及格平均之後，印名單印到一半就當掉了。名單 `names` 要改成只能裝文字的 `ArrayList<String>`。\n\n`removeBlank(ArrayList<String> list)` 也要修好，讓 `main` 用它整理名單：從 `list` 移除所有 `null` 和空白字串，回傳同一份 `list`；`list` 是 `null` 時回傳空的 `ArrayList`。好幾個空白連在一起時，也要全部移除。",
+      "instructions": "沒寫角括號的 `ArrayList` 叫原始型別，什麼都放得進去：`ArrayList bag = new ArrayList();` 之後寫 `bag.add(3.5);`，編譯不會擋，要等取出來轉成 `String` 時才在執行中當掉。寫成 `ArrayList<String>`，放錯型別的那一行在編譯時就會出現紅字。\n\n從 `ArrayList` 刪掉一個元素之後，後面的元素會全部往前補一格，索引都少 1。例如清單是 `[\"a\", \"b\", \"c\"]`，刪掉索引 `0` 的 `\"a\"` 之後，`\"b\"` 就變成索引 `0`。一邊走訪一邊刪除時，想想下一圈看到的是不是你以為的那個元素。",
       "expectedShape": "ArrayList<String> names = new ArrayList<>();\n…\npublic static ArrayList<String> removeBlank(ArrayList<String> list) {\n    …\n}",
       "form": "program",
       "check": {

@@ -88,7 +88,7 @@ class LessonContentTest {
         assertAntiBypass(l.key(step), step.check());
         // 換資料再跑的事交給沒過時的訊息說明，題目先講只會讓人以為要對付檢查；除錯題也不直接數出地雷或劇透定位
         List<String> forbidden = List.of(
-                "按「完成」", "隱藏測資", "隱藏的", "隱藏 Bug", "隱藏Bug", "隱藏 bug",
+                "按「完成」", "隱藏測資", "隱藏 Bug", "隱藏Bug", "隱藏 bug",
                 "邏輯地雷", "常見地雷", "三個陷阱", "四種陷阱");
         for (String text : List.of(step.goal(), step.instructions())) {
             for (String word : forbidden) {

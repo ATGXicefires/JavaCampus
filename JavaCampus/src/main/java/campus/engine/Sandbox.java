@@ -652,17 +652,13 @@ public final class Sandbox implements AutoCloseable {
     }
 
     /**
-     * JShell 堆疊的行號是相對於 snippet 去掉開頭空白之後的內容，註解行也算在內。
+     * JShell 堆疊的行號從 snippet 第一行算起，註解行也算在內；split 切段時已經去掉開頭空白。
      * 沒有行號時，標出開頭註解之後的程式碼。
      */
     private static int[] lineRange(Segment seg, int line) {
         String text = seg.text();
-        int lead = 0;
-        while (lead < text.length() && Character.isWhitespace(text.charAt(lead))) {
-            lead++;
-        }
         if (line >= 1) {
-            int from = lead;
+            int from = 0;
             for (int i = 1; i < line && from >= 0; i++) {
                 int nl = text.indexOf('\n', from);
                 from = nl < 0 ? -1 : nl + 1;
@@ -678,7 +674,7 @@ public final class Sandbox implements AutoCloseable {
             }
         }
         int codeStart = JavaTokens.tokenize(text).stream().filter(t -> t.kind() != Kind.COMMENT)
-                .mapToInt(Token::start).findFirst().orElse(lead);
+                .mapToInt(Token::start).findFirst().orElse(0);
         return new int[] {seg.start() + codeStart, seg.start() + text.stripTrailing().length()};
     }
 

@@ -6,6 +6,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ResourceLock(FxTestSupport.LOCK)
 class MiniMarkdownTest {
 
     @Test

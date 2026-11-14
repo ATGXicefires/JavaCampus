@@ -12,9 +12,9 @@
   "steps": [
     {
       "id": "total-v2",
-      "title": "型別錯誤與串接陷阱",
-      "goal": "這份練習同時犯了型別錯誤和字串串接陷阱，請一併修好：\n1. 將 `targetAvg` 改為 `double` 型別並保留 `3.5`\n2. 算出 `int sum = today + yesterday;` 與 `double remain = targetAvg * days - sum;`\n3. 印出：`共 7 個，距離目標還差 3.5 個`（依變數實際值變動）",
-      "instructions": "編輯器最上面的 `today`、`yesterday` 與 `days` 是題目先寫好的變數。\n\n把帶小數的數字放進 `int` 會直接編譯失敗（紅字），必須用 `double`。\n\n另外，寫成 `\"共 \" + today + yesterday` 時，`+` 從左往右碰到字串就變成文字拼接，會印出 `共 34 個`。請用 `(today + yesterday)` 或已經加好的 `sum`。",
+      "title": "離目標還差幾個",
+      "goal": "`today` 和 `yesterday` 是今天、昨天抽到的扭蛋數，`days` 是統計的天數；目標是平均每天 3.5 個，存在 `targetAvg`。\n\n修好後要印出 `共 7 個，距離目標還差 3.5 個`：`7` 是兩天的總數，存進 `int sum`；`3.5` 是 `targetAvg * days` 減掉總數，存進 `double remain`。\n\n現在按執行會出現紅字、跑不起來；就算修到能跑，「共」後面印的也不是兩天的總數。",
+      "instructions": "編輯器最上面的 `today`、`yesterday` 與 `days` 是題目先寫好的變數。\n\n`int` 只能裝整數，像 `int price = 12.5;` 這樣把帶小數的值放進 `int`，編譯就會失敗；要裝小數得用 `double`。\n\n`+` 碰到字串時會變成把文字接起來，而且是從左往右一個一個接：`\"票價 \" + 1 + 2` 會先接成 `\"票價 1\"`，再接上 `2`，印出 `票價 12`，不是 `票價 3`。想先把數字加起來，要加括號寫成 `\"票價 \" + (1 + 2)`，或先算好存進變數再接。",
       "expectedShape": "double targetAvg = …;\nint sum = …;\ndouble remain = …;\nSystem.out.println(…);",
       "check": {
         "type": "output",

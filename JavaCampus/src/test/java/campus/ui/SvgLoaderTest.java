@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Translate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ResourceLock(FxTestSupport.LOCK)
 class SvgLoaderTest {
 
     /** 遊戲啟動時才會載入附帶的字型，測試要自己載，字型名稱和粗細才查得到。 */

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.nio.file.Path;
 import java.time.Duration;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Execution(ExecutionMode.SAME_THREAD)
+@ResourceLock(FxTestSupport.LOCK)
 class LessonViewTest {
 
     private static Sandbox sandbox;
@@ -105,7 +107,7 @@ class LessonViewTest {
     void givenVariablesOpenTheEditor(@TempDir Path dir) throws Exception {
         ExecutorService runner = Executors.newSingleThreadExecutor();
         // 第 1 步過了，一進來就停在第 2 步「掛勾」，它的重點用到題目給的 gacha
-        LessonView hooks = open(dir, runner, "ch02-k1", "boxes");
+        LessonView hooks = open(dir, runner, "ch02-k1", "boxes-v2");
         Node given = onFx(() -> hooks.lookup(".given-lines"));
         assertTrue(onFx(given::isVisible));
         TextFlow line = (TextFlow) onFx(() -> given.lookup(".given-line TextFlow"));
