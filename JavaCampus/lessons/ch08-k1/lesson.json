@@ -7,28 +7,50 @@
   "vars": [],
   "steps": [
     {
-      "id": "extends",
-      "title": "繼承",
-      "goal": "`MyPlan` 裡什麼都不寫，`new MyPlan().hobby()` 也要交回 `ParentsPlan` 寫好的 `畫畫當興趣就好`。\n\n寫 `class MyPlan extends ParentsPlan`（`extends` 是繼承：父類別有的，子類別直接就有），裡面先什麼都不寫。",
-      "instructions": "`ParentsPlan` 是起始碼給的類別。`class MyPlan extends ParentsPlan` 的意思是 `MyPlan` 繼承 `ParentsPlan`：`ParentsPlan` 叫父類別，`MyPlan` 叫子類別。父類別寫好的欄位和方法，子類別一個字都不用寫，直接就有，所以 `MyPlan` 也拿得到 `future()` 和 `hobby()`。\n\n例如 `class Puppy extends Dog { }`：`Dog` 會 `bark()`，`new Puppy().bark()` 也叫得出來。",
-      "expectedShape": "class MyPlan extends … {\n}",
-      "check": { "type": "values", "exprs": ["new MyPlan().future()", "new MyPlan().hobby()"], "uses": ["class MyPlan extends ParentsPlan"] },
+      "id": "extends-v2",
+      "title": "繼承共用規則",
+      "goal": "寫出繼承 `Plan` 的子類別 `MyPlan`，擴充夢想欄位 `String dream` 與建構子 `MyPlan(String title, int weeklyHours, String dream)`。\n\n規則如下：\n1. `MyPlan` 建構子必須透過 `super(title, weeklyHours)` 讓父類別處理標題與每週時數的防呆。\n2. `this.dream` 若為 `null` 或空白字串，設為 `\"繼續畫畫\"`；否則去掉前後空白（`trim()`）。\n3. 不用重寫 `monthlyHours()` 與 `summary()`，讓 `MyPlan` 直接繼承使用，並能放進 `Plan[]` 參與 `Plan.totalMonthlyHours(Plan[])` 統計。",
+      "instructions": "起始碼中的 `Plan` 已經實作好共用欄位（`title`、`weeklyHours`）、時數防呆、計算每月時數的 `monthlyHours()`，以及統計整個計畫陣列的 `Plan.totalMonthlyHours(Plan[])`。\n\n子類別用 `class MyPlan extends Plan` 繼承後，不用複製父類別的欄位或方法，只需補上子類別獨有的 `String dream` 欄位與自己的建構子。\n\n在建構子裡呼叫 `super(title, weeklyHours);` 把共用資料交給父類別驗證，接著再對 `this.dream` 做 `null` 與 `isBlank()` 檢查即可。",
+      "expectedShape": "class MyPlan extends Plan {\n    String dream;\n\n    MyPlan(String title, int weeklyHours, String dream) {\n        …\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new MyPlan(\"資訊專題\", 6, \"介面插畫\").monthlyHours()",
+          "new MyPlan(\"資訊專題\", -3, \"  \").weeklyHours",
+          "new MyPlan(\"資訊專題\", 6, \"  \").dream",
+          "new MyPlan(\"資訊專題\", 6, null).dream",
+          "new MyPlan(\"資訊專題\", 6, \"介面插畫\").summary()",
+          "Plan.totalMonthlyHours(new Plan[]{new Plan(\"爸媽版\", 5), null, new MyPlan(\"我的版\", 7, \"角色設計\")})"
+        ],
+        "uses": ["class MyPlan extends Plan", "super("]
+      },
       "hints": {
-        "lead": "extends 後面接父類別。",
-        "plain": "`extends` 像是把爸媽的計畫整份抄過來：父類別寫好的方法，子類別一個字都沒寫，也直接就有。"
+        "lead": "`extends` 繼承父類別的欄位與方法，建構子再用 `super(...)` 對接。",
+        "plain": "不用把 `title`、`weeklyHours` 和 `monthlyHours()` 再抄一遍。`MyPlan` 寫好 `super(title, weeklyHours)`，再處理自己的 `dream` 防呆，就能直接放進 `Plan[]` 一起算總時數。"
       },
       "afterText": ""
     },
     {
-      "id": "hobby",
-      "title": "自己的版本",
-      "goal": "`new MyPlan().hobby()` 要交回 `畫畫不只是興趣`，`new MyPlan().future()` 還是爸媽的 `學一技之長，找一份穩定的工作`。\n\n在 `MyPlan` 裡覆寫 `String hobby()`（寫一個同名、同參數的方法，換成自己的版本），交回自己的這一句；`future()` 不動。",
-      "instructions": "同名、同參數，就是名字一模一樣，括號裡的參數也一樣：`hobby()` 沒有參數，覆寫的也不能有。\n\n例如 `Dog` 的 `String bark()` 交回 `汪`，`Puppy extends Dog` 也寫一個 `String bark()` 交回 `嗚汪`：`new Puppy().bark()` 是 `嗚汪`，`new Dog().bark()` 還是 `汪`。",
-      "expectedShape": "class MyPlan extends ParentsPlan {\n    String hobby() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new MyPlan().hobby()", "new MyPlan().future()"] },
+      "id": "hobby-v2",
+      "title": "行為差異化與多型",
+      "goal": "讓同一個 `Plan[]` 陣列中的父類別與子類別各自表達不同的想法：\n1. 在 `MyPlan` 裡用 `@Override` 覆寫 `String hobbyNote()`，改為依狀態回傳 `dream + \"不只是興趣\"`（例如 `\"介面插畫不只是興趣\"`）。\n2. 在父類別 `Plan` 中新增靜態方法 `static String collectNotes(Plan[] plans)`：若 `plans` 為 `null` 回傳 `\"\"`；否則走訪陣列（略過 `null` 元素），將每個元素的 `hobbyNote()` 用 `\" / \"` 串接起來（例如 `\"畫畫當興趣就好 / 介面插畫不只是興趣\"`；若沒有有效元素則回傳 `\"\"`）。",
+      "instructions": "因為 `MyPlan` 已經繼承 `Plan`，兩者可以一起放進 `Plan[]` 陣列。\n\n當 `collectNotes` 對每個 `Plan p` 呼叫 `p.hobbyNote()` 時，Java 會依照物件實際的型別動態執行對應版本：`Plan` 實例回傳 `\"畫畫當興趣就好\"`，`MyPlan` 實例則回傳自己覆寫後的 `dream + \"不只是興趣\"`。\n\n串接時記得只有從第二個有效項目開始才在前面加上 `\" / \"`，不要讓結尾多出分隔符號。",
+      "expectedShape": "class Plan {\n    …\n    static String collectNotes(Plan[] plans) {\n        …\n    }\n}\n\nclass MyPlan extends Plan {\n    …\n    @Override\n    String hobbyNote() {\n        …\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Plan(\"爸媽版\", 5).hobbyNote()",
+          "new MyPlan(\"我的版\", 7, \"介面插畫\").hobbyNote()",
+          "new MyPlan(\"我的版\", 4, \"角色草圖\").hobbyNote()",
+          "Plan.collectNotes(new Plan[]{new Plan(\"爸媽版\", 5), null, new MyPlan(\"我的版\", 7, \"介面插畫\"), new MyPlan(\"校慶版\", 3, \"貼紙系統\")})",
+          "Plan.collectNotes(new Plan[]{null})",
+          "Plan.collectNotes(null)"
+        ],
+        "uses": ["@Override", "extends Plan"]
+      },
       "hints": {
-        "lead": "同名的方法，換成自己的版本。",
-        "plain": "抄來的計畫，想改哪一行就重寫那一行。`MyPlan` 自己寫了 `hobby()`，就用自己的；沒寫的 `future()`，照樣用爸媽的。"
+        "lead": "覆寫 `hobbyNote()` 並由 `collectNotes` 透過父類別參考多型呼叫。",
+        "plain": "`MyPlan` 寫上 `@Override String hobbyNote()` 用 `dream` 組出自己的句子；`Plan.collectNotes` 逐一呼叫 `p.hobbyNote()`，父子物件各自就會交回不同答案。"
       },
       "afterText": ""
     }

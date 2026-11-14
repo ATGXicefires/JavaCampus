@@ -9,52 +9,49 @@
   ],
   "steps": [
     {
-      "id": "ends",
-      "title": "第一格和最後一格",
-      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`，要印出第一格 `72` 和最後一格 `49`，一個一行。\n\n`scores` 是陣列（一排置物櫃，一格放一個分數）。用格子的編號拿出這兩格；最後一格的編號，要用 `scores.length`（總共有幾格）算出來。",
-      "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n`int[]` 是「一排 `int`」：大括號裡用逗號隔開，一格放一個數。要拿出某一格，在陣列名字後面寫 `[編號]`，這個編號叫索引，從 0 開始。例如 `int[] cups = {3, 8, 6};`，`cups[0]` 是 3，`cups[1]` 是 8。\n\n`cups.length` 是總共有幾格，這裡是 3。編號從 0 開始，所以 3 格的編號是 0、1、2，最後一格是 `cups[2]`，編號比格數少一。",
-      "expectedShape": "System.out.println(scores[…]);\nSystem.out.println(scores[…]);",
+      "id": "ends-v2",
+      "title": "首尾總和與差值",
+      "goal": "`scores` 是一排小考分數，現在是 `{72, 58, 65, 80, 49}`。\n\n算出第一格與最後一格的總和 `int endSum` 和差值 `int endDiff`（最後一格減第一格），並依不同長度安全印出結果：\n- 若 `scores.length == 0`（空陣列）：`endSum = 0`、`endDiff = 0`，印出 `空陣列`。\n- 若 `scores.length == 1`（只有 1 格）：首尾是同一格，只算一次，`endSum = scores[0]`、`endDiff = 0`，印出 `首：X 尾：X 差：0`。\n- 若 `scores.length >= 2`：`endSum = scores[0] + scores[scores.length - 1]`、`endDiff = scores[scores.length - 1] - scores[0]`，印出 `首：X 尾：Y 差：Z`。",
+      "instructions": "編輯器最上面那行 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n陣列索引從 `0` 開始，最後一格的索引是 `scores.length - 1`。如果直接存取 `scores[0]`，遇到空陣列（`scores.length == 0`）就會發生索引越界例外！\n\n因此要先用 `if / else if / else` 依 `scores.length` 分三種情況處理，再用變數記下 `first` 和 `last` 算出 `endSum` 與 `endDiff`。",
+      "expectedShape": "int endSum = 0;\nint endDiff = 0;\nif (…) {\n    System.out.println(\"空陣列\");\n} else if (…) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{90, 85}" }, { "scores": "{60}" } ]
+        "exprs": ["endSum", "endDiff"],
+        "variants": [
+          { "scores": "{90, 85}" },
+          { "scores": "{60}" },
+          { "scores": "{}" },
+          { "scores": "{50, 70, 90}" }
+        ],
+        "uses": ["scores.length"]
       },
       "hints": {
-        "lead": "第一格是 0 號。",
-        "plain": "置物櫃從 0 號開始編：5 格的櫃子是 0 到 4 號。最後一格永遠是 `scores.length - 1` 號，不管有幾格都對。"
+        "lead": "先擋掉 length == 0 與 length == 1，再用 scores.length - 1 取最後一格。",
+        "plain": "空陣列沒有第 0 格，必須先檢查 `scores.length == 0`；長度為 `1` 時首尾同一格，只加一次進 `endSum`、`endDiff` 為 `0`；長度 `>= 2` 時最後一格是 `scores[scores.length - 1]`。"
       },
       "afterText": ""
     },
     {
-      "id": "sum",
-      "title": "全部加起來",
-      "goal": "現在 `scores` 是 `{72, 58, 65, 80, 49}`，五個分數加起來是 324。\n\n用 `for` 走過 `scores` 的每一格（從第 0 格到最後一格，每一格看一次），把分數加進 `sum`。",
-      "instructions": "`for` 的 `i` 剛好可以當格子的編號。例如這段會把 `cups` 的每一格印出來：\n\n```\nint[] cups = {3, 8, 6};\nfor (int i = 0; i < cups.length; i++) {\n    System.out.println(cups[i]);\n}\n```\n\n`i` 從 0 開始，每一圈加一，`cups[i]` 就依序是第 0 格、第 1 格、第 2 格。條件是 `i < cups.length`，不是 `<=`：3 格的編號只到 2，`i` 變成 3 就要停。\n\n加總也是這樣走過每一格，只是把印出來換成用 `+=` 把那一格的分數加進 `sum`。",
-      "expectedShape": "int sum = 0;\nfor (int i = 0; i < …; i++) {\n    sum += …;\n}",
+      "id": "aboveAvg",
+      "title": "平均與過濾計數",
+      "goal": "針對 `scores` 一次算出三個統計結果（以 `{72, 58, 65, 80, 49}` 為例，平均 `64.8`、高於平均有 `3` 個、最高分 `80`）：\n1. `double avg`：所有分數的平均值（必須保留小數；空陣列時 `avg = 0.0`，不可除以零）。\n2. `int aboveCount`：嚴格大於平均（`> avg`，剛好等於平均不算）的分數個數（空陣列為 `0`）。\n3. `int max`：最高分（空陣列為 `0`；若陣列有負數也必須正確找出最大值）。\n\n最後印出兩行：\n`平均：avg`\n`高於平均：aboveCount 個（最高 max 分）`",
+      "instructions": "這一步重新開始，統計整排分數的平均、最高分與高於平均的人數。\n\n- 第一趟迴圈：同時累加 `sum` 與更新最大值 `max`。注意：若陣列裡全都是負數，`max` 一開始設為 `0` 會錯！正確做法是在確定 `scores.length > 0` 後，先把 `max` 設為 `scores[0]`，再從 `i = 1` 開始比大小。\n- 算出 `avg = (double) sum / scores.length`（先確認 `scores.length > 0` 再除）。\n- 第二趟迴圈：走過 `scores`，計算有幾個分數嚴格大於 `avg`（`scores[i] > avg`），累計進 `aboveCount`。",
+      "expectedShape": "double avg = 0.0;\nint aboveCount = 0;\nint max = 0;\nif (…) {\n    int sum = 0;\n    max = …;\n    for (…) {\n        …\n    }\n    avg = …;\n    for (…) {\n        if (…) {\n            aboveCount++;\n        }\n    }\n}\nSystem.out.println(\"平均：\" + avg);\nSystem.out.println(\"高於平均：\" + aboveCount + \" 個（最高 \" + max + \" 分）\");",
       "check": {
-        "type": "values",
-        "exprs": ["sum"],
-        "variants": [ { "scores": "{90, 85}" } ]
+        "type": "output",
+        "exprs": ["avg", "aboveCount", "max"],
+        "variants": [
+          { "scores": "{90, 85}" },
+          { "scores": "{60, 60, 60}" },
+          { "scores": "{60}" },
+          { "scores": "{}" },
+          { "scores": "{-10, -20, -5}" }
+        ],
+        "uses": ["for"]
       },
       "hints": {
-        "lead": "i 就是格子的編號。",
-        "plain": "`for` 的 `i` 剛好可以當格子的編號：第一圈 `scores[0]`、第二圈 `scores[1]`⋯⋯走到 `scores.length - 1` 為止，所以條件是 `<`，不是 `<=`。"
-      },
-      "afterText": ""
-    },
-    {
-      "id": "avg",
-      "title": "平均",
-      "goal": "現在 `sum` 是 324、`scores` 有 5 格，平均是 64.8。\n\n用上一步的 `sum` 除以 `scores` 的格數，存進 `double avg`，小數要留下來。",
-      "instructions": "格數是 `scores.length`。\n\n`sum` 和 `scores.length` 都是 `int`，兩個 `int` 相除會把小數丟掉。要先把其中一邊換成小數：`(double)` 會把緊接在它後面的東西換成小數，例如 `(double) 7 / 2` 是 `3.5`。",
-      "expectedShape": "double avg = …;",
-      "check": {
-        "type": "values",
-        "exprs": ["avg"],
-        "variants": [ { "scores": "{90, 85}" } ]
-      },
-      "hints": {
-        "lead": "除以格數，記得要有小數。",
-        "plain": "平均是總和除以有幾格：`sum / scores.length`。兩個都是整數，記得先把其中一個變成 `double`。"
+        "lead": "非空陣列時 max 先設為 scores[0]，第一趟算總和與最大值，算出 avg 後第二趟數大於 avg 的個數。",
+        "plain": "記得先檢查 `scores.length > 0`，否則空陣列會讓 `scores[0]` 越界、也讓 `(double) sum / 0` 變成 `NaN`。全部分數相同時沒有分數嚴格大於平均，`aboveCount` 應為 `0`。"
       },
       "afterText": ""
     }

@@ -11,44 +11,83 @@
   ],
   "steps": [
     {
-      "id": "badge",
-      "title": "完成徽章",
-      "goal": "`showBadge(5, 5, 60)` 要交回 `true`：5 課都完成、又剛好及格；`showBadge(4, 5, 100)` 要交回 `false`：還差一課。\n\n寫一個方法 `static boolean showBadge(int done, int total, int score)`：完成的課數 `done` 等於總課數 `total`，而且分數 `score` 及格（60 分以上，剛好 60 也算），才交回 `true`；否則交回 `false`。「而且」用 `&&` 寫。",
-      "instructions": "編輯器最上面三行 `int rows = 2;`、`int cols = 5;`、`int done = 7;` 是題目先寫好的，最後一步畫格子時才會用到。這一步方法裡的 `done` 是參數，呼叫時給什麼就是什麼：`showBadge(4, 5, 100)` 裡的 `done` 是 4，不是 7。\n\n`a && b` 是「而且」：兩邊都是 `true`，答案才是 `true`。例如 `hungry && hasMoney` 是「肚子餓，而且有錢」。\n\n「等於」要寫兩個等號 `==`，只寫一個 `=` 是「放進盒子」。",
+      "id": "badge-v2",
+      "title": "徽章門檻與防呆",
+      "goal": "寫一個方法 `static boolean showBadge(int done, int total, int score)`，同時滿足以下全部條件才交回 `true`，否則交回 `false`：\n- 總課數 `total > 0`（0 課或負數課表不能亮徽章）。\n- 已完成課數 `done` 等於 `total`（`done == total`）。\n- 分數 `score` 在合法且及格的範圍 `60` 到 `100` 之間（含 60 與 100）。",
+      "instructions": "編輯器最上面三行 `rows`、`cols`、`done` 是最後一步畫進度格子時才會用到的；這一步方法裡的 `done` 是方法參數，與最上面的變數無關。\n\n除了檢查完成課數與及格線，正式 UI 邏輯還必須擋掉不合理資料：例如 `total` 為 0（沒有課程）、或 `score` 超過 100 分，都不該亮起完成徽章。",
       "expectedShape": "static boolean showBadge(int done, int total, int score) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["showBadge(5, 5, 60)", "showBadge(5, 5, 59)", "showBadge(4, 5, 100)"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "showBadge(5, 5, 60)",
+          "showBadge(5, 5, 100)",
+          "showBadge(5, 5, 59)",
+          "showBadge(5, 5, 101)",
+          "showBadge(4, 5, 100)",
+          "showBadge(0, 0, 100)",
+          "showBadge(-1, -1, 80)"
+        ],
+        "uses": ["&&"]
+      },
       "hints": {
-        "lead": "兩個條件都要成立。",
-        "plain": "「全部完成」是 `done == total`，「及格」是 `score >= 60`，兩個都要成立，用 `&&` 接起來交回去。"
+        "lead": "四個條件缺一不可：總課數大於 0、全部完成、分數 >= 60 且 <= 100。",
+        "plain": "`total > 0 && done == total && score >= 60 && score <= 100` 直接回傳即可。"
       },
       "afterText": ""
     },
     {
-      "id": "hint",
-      "title": "要不要給提示",
-      "goal": "`showHint(true, false)` 要交回 `true`：試過兩次還沒過，就給提示；`showHint(true, true)` 要交回 `false`：已經過了。\n\n寫一個方法 `static boolean showHint(boolean triedTwice, boolean passed)`（`triedTwice` 是試過兩次了沒，`passed` 是過了沒）：試過兩次、而且還沒過，才交回 `true`；否則交回 `false`。「還沒過」可以用 `!`（把答案反過來）寫。",
-      "instructions": "參數也可以是 `boolean`：呼叫 `showHint(true, false)` 時，`triedTwice` 是 `true`，`passed` 是 `false`。\n\n`!` 會把 `true` 和 `false` 反過來：`!true` 是 `false`，`!false` 是 `true`。例如 `raining` 是「在下雨」，`!raining` 就是「沒在下雨」。",
-      "expectedShape": "static boolean showHint(boolean triedTwice, boolean passed) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["showHint(true, false)", "showHint(true, true)", "showHint(false, false)"] },
+      "id": "hint-v2",
+      "title": "提示條件與運算優先序",
+      "goal": "寫一個方法 `static boolean showHint(int tries, boolean passed, boolean practice)`（`tries` 是嘗試次數、`passed` 是過關了沒、`practice` 是是否開啟練習模式）：\n- 只有**還沒過關**（`!passed`），而且（嘗試次數 `tries >= 2` **或者**處於練習模式 `practice` 為 `true`）時，才交回 `true`。\n- 已經過關時，就算開啟練習模式也不顯示提示，交回 `false`。",
+      "instructions": "特別留意 `&&`（而且）與 `||`（或者）的運算優先序：在 Java 裡 `&&` 會比 `||` 先算。\n\n如果直接寫 `!passed && tries >= 2 || practice` 而沒加括號，當 `passed` 是 `true` 且 `practice` 是 `true` 時，右半邊的 `practice` 會讓整個結果變成 `true`！一定要用括號把「或」的部分包起來。",
+      "expectedShape": "static boolean showHint(int tries, boolean passed, boolean practice) {\n    return …;\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "showHint(2, false, false)",
+          "showHint(1, false, true)",
+          "showHint(0, false, true)",
+          "showHint(1, false, false)",
+          "showHint(0, true, true)",
+          "showHint(3, true, false)"
+        ],
+        "uses": ["&&", "||", "!"]
+      },
       "hints": {
-        "lead": "還沒過，是 !passed。",
-        "plain": "`passed` 是「過了」，`!passed` 就是「還沒過」。試過兩次而且還沒過：`triedTwice && !passed`。"
+        "lead": "用括號先算 (tries >= 2 || practice)，再與 !passed 用 && 結合。",
+        "plain": "寫成 `!passed && (tries >= 2 || practice)`，這樣已經過關的人就不會在練習模式誤觸發提示。"
       },
       "afterText": ""
     },
     {
-      "id": "grid",
-      "title": "課程格子",
-      "goal": "`rows` 列、每列 `cols` 格的課程格子，完成了 `done` 課。現在 `rows` 是 2、`cols` 是 5、`done` 是 7，要印出：\n`■■■■■`\n`■■□□□`\n\n用巢狀迴圈（迴圈裡再放一個迴圈）一列一列畫：從第一格開始數，前 `done` 格畫 `■`，其他畫 `□`，格子之間不空格。",
-      "instructions": "編輯器最上面三行 `int rows = 2;`、`int cols = 5;`、`int done = 7;` 是題目先寫好的，你的程式可以直接用這三個盒子。\n\n外面的迴圈跑一列，裡面的迴圈畫那一列的每一格。例如這樣會畫出 2 列、每列 3 格的 `□`：\n\n```\nfor (int r = 1; r <= 2; r++) {\n    String row = \"\";\n    for (int c = 1; c <= 3; c++) {\n        row += \"□\";\n    }\n    System.out.println(row);\n}\n```\n\n這一題還要另外記住畫到第幾格了（整張一起數，換列不會重來），才知道這一格該畫 `■` 還是 `□`。`■` 和 `□` 可以從這裡複製。",
-      "expectedShape": "for (int r = 0; r < rows; r++) {\n    String line = \"\";\n    for (int c = 0; c < cols; c++) {\n        …\n    }\n    System.out.println(line);\n}",
+      "id": "grid-v2",
+      "title": "雙層迴圈進度矩陣",
+      "goal": "寫一個方法 `static void printGrid(int rows, int cols, int done)` 並呼叫 `printGrid(rows, cols, done);`：\n- 若 `rows <= 0` 或 `cols <= 0`，什麼都不印（直接結束方法）。\n- 否則用巢狀迴圈印出 `rows` 列、每列 `cols` 格：從第 1 格開始連續編號（換列不歸零），編號 `<= done` 的格子畫 `■`，其餘畫 `□`，格子間不留空白。當 `done <= 0` 時全部畫 `□`，當 `done >= rows * cols` 時全部畫 `■`。",
+      "instructions": "編輯器最上面三行 `rows`、`cols`、`done` 是題目變數，方法寫好後在最下面呼叫 `printGrid(rows, cols, done);`。\n\n外層迴圈控制列（`0` 到 `rows - 1`），內層迴圈控制每一列的欄（`0` 到 `cols - 1`）。準備一個在雙層迴圈外初始化的計數器 `count`，每畫一格就遞增 1，再依 `count <= done` 決定拼上 `\"■\"` 或 `\"□\"`。\n\n記得在方法開頭擋掉 `rows <= 0 || cols <= 0`，確保輸入為 0 或負數時不會印出空行或出錯。",
+      "expectedShape": "static void printGrid(int rows, int cols, int done) {\n    …\n    for (…) {\n        …\n        for (…) {\n            …\n        }\n        System.out.println(…);\n    }\n}\nprintGrid(rows, cols, done);",
       "check": {
         "type": "output",
-        "variants": [ { "done": "3" }, { "rows": "3" } ]
+        "exprs": [
+          "printGrid(2, 5, 7)",
+          "printGrid(3, 4, 0)",
+          "printGrid(2, 3, -2)",
+          "printGrid(2, 3, 99)",
+          "printGrid(0, 5, 3)",
+          "printGrid(3, -1, 2)"
+        ],
+        "variants": [
+          { "done": "0" },
+          { "done": "-1" },
+          { "done": "10" },
+          { "done": "99" },
+          { "rows": "3", "cols": "4", "done": "5" },
+          { "rows": "0" }
+        ],
+        "uses": ["printGrid("]
       },
       "hints": {
-        "lead": "外面一列，裡面一格。",
-        "plain": "用一個 `count` 記住畫到第幾格。每畫一格就 `count++`，還沒超過 `done` 就畫 `■`，超過了畫 `□`。每一列畫完，印出那一列。"
+        "lead": "外層管列、內層管格，在雙層迴圈外設一個總計數器，開頭先擋掉 rows <= 0 || cols <= 0。",
+        "plain": "開頭寫 `if (rows <= 0 || cols <= 0) return;`。接著 `int count = 0;`，兩層 `for` 裡每次 `count++;` 再用 `count <= done` 決定加 `\"■\"` 或 `\"□\"`，每列結束印出該列。"
       },
       "afterText": ""
     }

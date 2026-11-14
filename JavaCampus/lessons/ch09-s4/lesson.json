@@ -7,15 +7,52 @@
   "vars": [],
   "steps": [
     {
-      "id": "cheer",
-      "title": "還是有 bug",
-      "goal": "修好後，最後一行 `new Me().say();` 要印出 `學長面試加油！你一定可以！`。\n\n起始碼的 `Me` 答應了 `Cheer` 的約定（`implements Cheer`），跑起來卻是紅字。",
-      "instructions": "`implements Cheer` 是答應照 `Cheer` 這張約定做：約定裡的方法要照一樣的名字寫出來，前面還要加 `public`。名字打錯一個字，就等於沒寫。\n\n一次修一個紅字。",
-      "expectedShape": "class Me implements Cheer {\n    public void say() {\n        …\n    }\n}",
-      "check": { "type": "output", "uses": ["class Me implements Cheer"] },
+      "id": "cheer-v2",
+      "title": "修好她的介面契約",
+      "goal": "起始碼的 `Me` 實作了 `Cheer` 介面，但存在方法名稱拼錯、缺少 `public`、回傳型別錯誤與漏寫方法等編譯錯誤。請依照 `interface Cheer` 契約修復 `class Me implements Cheer`：\n1. `public String sender()`：回傳 `\"我\"`。\n2. `public String message(int round)`：依照面試輪次 `round` 回傳對應加油訊息：\n   - `round <= 1`：回傳 `\"學長第一關加油！深呼吸別緊張！\"`\n   - `round == 2`：回傳 `\"學長進入複試了！穩住節奏！\"`\n   - `round >= 3`：回傳 `\"學長最後一哩路！你一定可以！\"`",
+      "instructions": "實作介面時，方法名稱、參數型別、回傳型別都必須和介面完全一致，而且必須加上 `public`（介面方法預設皆為 `public`）。\n\n如果漏實作介面裡的任何一個方法，編譯器會回報 `Me is not abstract and does not override abstract method ...`。",
+      "expectedShape": "class Me implements Cheer {\n    public String sender() { … }\n    public String message(int round) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Me().sender()",
+          "new Me().message(0)",
+          "new Me().message(1)",
+          "new Me().message(2)",
+          "new Me().message(3)",
+          "new Me().message(5)"
+        ],
+        "uses": ["interface Cheer", "class Me implements Cheer"]
+      },
       "hints": {
-        "lead": "`Me is not abstract and does not override abstract method say() in Cheer`⋯⋯",
-        "plain": "⋯⋯白話：`sey` 打錯字，所以 `Me` 沒有寫出約定裡的 `say()`。改好名字以後，前面還要加上 `public`：介面裡的方法都是 public。"
+        "lead": "補齊 public、修正方法名與回傳型別 String，並依 round 分三段回傳。",
+        "plain": "檢查兩個地方：`sender()` 要回傳 `\"我\"`，`massage` 要改回 `message(int round)` 並把 `void` 改成 `String`，兩個方法前面都要加 `public`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "card",
+      "title": "多重加油卡組合輸出",
+      "goal": "保留 `Cheer` 與 `Me`，實作第二種應援來源與多型組合輸出板：\n1. `class MascotCheer implements Cheer`，建構子 `MascotCheer(String mascot, String tip)`：\n   - `mascot` 若為 `null` 或 `trim()` 為空，預設為 `\"滷肉\"`，否則取 `trim()`。\n   - `tip` 若為 `null` 或 `trim()` 為空，預設為 `\"保持微笑\"`，否則取 `trim()`。\n   - `sender()`：回傳清理後的 `mascot`。\n   - `message(int round)`：若 `round <= 0` 回傳 `\"準備上場！\"`，否則回傳 `\"第\" + round + \"輪提醒：\" + tip`。\n2. `class CheerBoard`，建構子 `CheerBoard(Cheer[] cheers)`（`null` 視為空陣列）：\n   - `int count()`：統計陣列中非 `null` 的 `Cheer` 個數。\n   - `String formatCard(int round)`：\n     - 先將 `round` 若小於 `1` 修正為 `1`（記為 `r`）。\n     - 標題行固定為 `\"=== 第 \" + r + \" 輪應援卡 ===\"`。\n     - 若沒有任何有效應援（`count() == 0`），下一行接 `\"(尚無應援訊息)\"`。\n     - 否則依序走訪每個非 `null` 的 `c`，接上一行 `\"[\" + safeSender + \"] \" + c.message(r)`（若 `c.sender()` 為 `null` 或 `trim()` 空則顯示 `\"匿名\"`）。",
+      "instructions": "`CheerBoard` 透過介面陣列 `Cheer[]` 同時組合 `Me`、`MascotCheer` 或任何未來新增的 `Cheer` 實作類別，把各自提供的署名與應援詞排成完整卡片。",
+      "expectedShape": "class MascotCheer implements Cheer {\n    …\n    MascotCheer(String mascot, String tip) { … }\n    public String sender() { … }\n    public String message(int round) { … }\n}\n\nclass CheerBoard {\n    …\n    CheerBoard(Cheer[] cheers) { … }\n    int count() { … }\n    String formatCard(int round) { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new MascotCheer(null, \"  \").sender()",
+          "new MascotCheer(\"分號\", \"記得看題目邊界\").message(0)",
+          "new MascotCheer(\"分號\", \"記得看題目邊界\").message(2)",
+          "new CheerBoard(new Cheer[]{new Me(), null, new MascotCheer(\"滷肉\", \"寫完檢查分號\")}).count()",
+          "new CheerBoard(new Cheer[]{new Me(), null, new MascotCheer(\"滷肉\", \"寫完檢查分號\")}).formatCard(3)",
+          "new CheerBoard(new Cheer[]{new Me(), new MascotCheer(\"分號\", \"別緊張\")}).formatCard(0)",
+          "new CheerBoard(new Cheer[]{null}).formatCard(2)",
+          "new CheerBoard(null).formatCard(1)"
+        ],
+        "uses": ["implements Cheer", "Cheer[]"]
+      },
+      "hints": {
+        "lead": "CheerBoard.formatCard 先夾限 round 至少為 1，再逐一格式化非 null 元素。",
+        "plain": "`CheerBoard` 不管陣列裡是 `Me` 還是 `MascotCheer`，只要非 `null` 就叫 `c.sender()` 和 `c.message(r)`；如果陣列裡全都是 `null` 或空的，別忘了補上 `(尚無應援訊息)`。"
       },
       "afterText": ""
     }

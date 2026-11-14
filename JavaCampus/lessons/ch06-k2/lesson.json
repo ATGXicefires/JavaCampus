@@ -5,35 +5,67 @@
   "partner": "二弘",
   "notes": ["constructor", "this"],
   "vars": [
-    { "name": "names", "type": "String[]", "value": "{\"麻糬\", \"黑糖\", \"珍奶\"}", "note": "扭蛋的名字" }
+    { "name": "names", "type": "String[]", "value": "{\"麻糬\", \"黑糖\", \"珍奶\", \"芋圓\"}", "note": "扭蛋的名字" },
+    { "name": "prices", "type": "int[]", "value": "{60, 80, 50, 70}", "note": "對應的單價" },
+    { "name": "stocks", "type": "int[]", "value": "{3, 0, 5, 1}", "note": "對應的庫存數量" }
   ],
   "steps": [
     {
-      "id": "constructor",
-      "title": "建構子",
-      "goal": "`new Item(\"小白\", \"筆電\")` 做出來的 `Item`，`name` 要是 `小白`，`kind` 要是 `筆電`。\n\n幫 `Item` 加上建構子 `Item(String name, String kind)`（`new` 的那一刻第一個執行的方法），把傳進來的名字和種類放進欄位。",
-      "instructions": "編輯器最上面那行 `String[] names = {\"麻糬\", \"黑糖\", \"珍奶\"};` 是題目先寫好的，下一步才會用到。\n\n建構子的名字和類別一樣，前面不寫回傳型別。`new Item(\"小白\", \"筆電\")` 的時候，建構子會先執行，`\"小白\"` 和 `\"筆電\"` 照順序交給參數 `name` 和 `kind`。名字和種類在出生的那一刻就決定好，不用 `new` 完再一個一個設定。\n\n參數和欄位同名的時候，`this.name` 是物件自己的欄位，`name` 是傳進來的參數：\n\n```\nthis.name = name;\n```",
-      "expectedShape": "Item(String name, String kind) {\n    this.name = …;\n    …\n}",
-      "check": { "type": "values", "exprs": ["new Item(\"小白\", \"筆電\").name", "new Item(\"阿隨\", \"USB\").kind", "new Item(\"阿隨\", \"USB\").name", "new Item(\"小白\", \"筆電\").kind"] },
+      "id": "constructor-v2",
+      "title": "建構子與背包總值",
+      "goal": "為 `class Item` 加上四參數建構子 `Item(String name, String kind, int price, int stock)` 與 `int totalValue()`，再用 `names`、`prices`、`stocks` 建出 `Item[] bag`，並寫 `static int totalBagValue(Item[] bag)` 計算總價值。",
+      "instructions": "編輯器最上面已宣告好 `names`、`prices`、`stocks` 三個陣列，你的程式可以直接使用。\n\n規則如下：\n- `Item(String name, String kind, int price, int stock)`：用 `this.` 把四個參數放進欄位；若 `name` 為 `null` 或去掉前後空白後為空，設為 `\"未命名\"`；`kind` 為 `null` 或空白設為 `\"扭蛋\"`；`price < 0` 或 `stock < 0` 各自歸 `0`。\n- `int totalValue()`：回傳 `price * stock`。\n- `Item[] bag = new Item[names.length];`：依序填入 `new Item(names[i], \"扭蛋\", prices[i], stocks[i])`。\n- `static int totalBagValue(Item[] bag)`：若 `bag == null` 回傳 `0`；加總陣列裡所有非 `null` 品項的 `totalValue()`（遇到 `null` 格要略過）。",
+      "expectedShape": "class Item {\n    …\n    Item(String name, String kind, int price, int stock) { … }\n    int totalValue() { … }\n}\n\nItem[] bag = new Item[names.length];\n…\n\nstatic int totalBagValue(Item[] bag) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "variants": [
+          { "names": "{\"仙草\"}", "prices": "{90}", "stocks": "{4}" },
+          { "names": "{}", "prices": "{}", "stocks": "{}" }
+        ],
+        "exprs": [
+          "new Item(\"小白\", \"筆電\", 32000, 2).name",
+          "new Item(\"阿隨\", \"USB\", -50, -3).price",
+          "new Item(\"阿隨\", \"USB\", -50, -3).stock",
+          "bag.length",
+          "totalBagValue(bag)",
+          "totalBagValue(new Item[]{new Item(\"A\", \"扭蛋\", 40, 2), null, new Item(\"B\", \"扭蛋\", 50, 0)})",
+          "totalBagValue(null)"
+        ],
+        "uses": ["Item[]", "this.name", "new Item("]
+      },
       "hints": {
-        "lead": "左邊 this.name，右邊 name。",
-        "plain": "建構子就像出生登記：`new Item(\"小白\", \"筆電\")` 一做出來，就把名字和種類填好。`this.name` 是「我自己的名字」，等號右邊的 `name` 是別人交給你的那一個。"
+        "lead": "建構子先做參數防呆，統計總價值時略過 null 元素。",
+        "plain": "在建構子裡先擋掉空白名稱與負數，接著用迴圈把每個品項放進 `bag[i]`。`totalBagValue` 先檢查 `bag == null`，再用 `if (bag[i] != null)` 累加。"
       },
       "afterText": ""
     },
     {
-      "id": "family",
-      "title": "扭蛋全家福",
-      "goal": "`names` 是扭蛋的名字，現在有麻糬、黑糖、珍奶三個，要印出三行：\n`麻糬（扭蛋）`\n`黑糖（扭蛋）`\n`珍奶（扭蛋）`\n\n用 `for` 把 `names` 裡的每個名字都 `new` 成種類是 `扭蛋` 的 `Item`，放進 `Item[] bag`，再一個一行印出來。",
-      "instructions": "編輯器最上面那行 `String[] names = {\"麻糬\", \"黑糖\", \"珍奶\"};` 是題目先寫好的，你的程式可以直接用 `names`。\n\n`new Item[names.length]` 會做出一排可以放 `Item` 的格子，格數和 `names` 一樣多，格子一開始是空的。用 `for` 把每個名字都 `new` 成扭蛋放進去，再走一次 `bag` 把它們印出來。",
-      "expectedShape": "Item[] bag = new Item[names.length];\nfor (…) {\n    bag[i] = new Item(…);\n}\n…",
+      "id": "family-v2",
+      "title": "扭蛋盤點統計",
+      "goal": "寫出三個靜態統計方法：`lowestStockName(Item[] bag)` 找庫存最低品項名稱、`highestValueName(Item[] bag)` 找總價值最高品項名稱，以及 `countOutOfStock(Item[] bag)` 統計缺貨品項數量。",
+      "instructions": "三個方法都要能安全處理 `bag == null`、空陣列或陣列內夾雜 `null` 元素：\n- `static String lowestStockName(Item[] bag)`：找出 `stock` 最低的非 `null` 品項名稱；若有多個並列最低，取先出現的那個；若沒有任何有效品項，回傳 `\"無\"`。\n- `static String highestValueName(Item[] bag)`：找出 `totalValue()` 最高的非 `null` 品項名稱；若並列最高，取先出現的那個；若沒有有效品項，回傳 `\"無\"`。\n- `static int countOutOfStock(Item[] bag)`：統計非 `null` 且 `stock == 0` 的品項個數；`bag == null` 回傳 `0`。",
+      "expectedShape": "static String lowestStockName(Item[] bag) {\n    …\n}\n\nstatic String highestValueName(Item[] bag) {\n    …\n}\n\nstatic int countOutOfStock(Item[] bag) {\n    …\n}",
       "check": {
-        "type": "output",
-        "variants": [ { "names": "{\"仙草\"}" } ]
+        "type": "values",
+        "variants": [
+          { "names": "{\"仙草\", \"愛玉\"}", "prices": "{90, 40}", "stocks": "{0, 2}" },
+          { "names": "{}", "prices": "{}", "stocks": "{}" }
+        ],
+        "exprs": [
+          "lowestStockName(bag)",
+          "highestValueName(bag)",
+          "countOutOfStock(bag)",
+          "lowestStockName(new Item[]{null, new Item(\"甲\", \"扭蛋\", 10, 2), new Item(\"乙\", \"扭蛋\", 20, 2)})",
+          "highestValueName(new Item[]{null, new Item(\"甲\", \"扭蛋\", 100, 0), new Item(\"乙\", \"扭蛋\", 50, 3)})",
+          "lowestStockName(new Item[]{null})",
+          "highestValueName(null)",
+          "countOutOfStock(new Item[]{null, new Item(\"甲\", \"扭蛋\", 10, 0), new Item(\"乙\", \"扭蛋\", 20, 0)})",
+          "countOutOfStock(null)"
+        ]
       },
       "hints": {
-        "lead": "先做格子，再一格一格 new。",
-        "plain": "`Item[] bag = new Item[names.length];` 是一排空的置物櫃。每一圈 `new Item(names[i], \"扭蛋\")` 做一個扭蛋放進 `bag[i]`，最後再走一次把它們印出來。"
+        "lead": "不能假設 bag[0] 一定不是 null，先找到第一個非 null 當基準。",
+        "plain": "準備一個變數 `Item best = null;`，走過陣列遇到 `bag[i] != null` 時，若 `best == null` 就先選它，否則比大小（嚴格 `<` 或 `>` 才會保留先出現的並列者）。"
       },
       "afterText": ""
     }

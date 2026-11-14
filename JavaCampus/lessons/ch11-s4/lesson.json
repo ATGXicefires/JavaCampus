@@ -7,30 +7,56 @@
   "vars": [],
   "steps": [
     {
-      "id": "memory",
-      "title": "第一句話",
-      "goal": "要印出 `學長，你在說外星語嗎？`：學妹第一章印出的第一句話。\n\n按「＋」新增 `Memory.java`，在 `public class Memory` 裡用常數存這句話：`static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`（`final` 是設定一次就不能再改）。再在 `main` 裡用 `Memory.FIRST_LINE` 印出它。",
-      "instructions": "`static final` 做出一個常數：`final` 是設定一次就不能再改，`static` 讓它屬於整個 `Memory` 類別，別的檔案用 `Memory.FIRST_LINE` 就拿得到。常數的名字習慣全部大寫，單字之間用 `_` 隔開。\n\n那句話的逗號和問號是全形的，可以從目標複製。",
-      "expectedShape": "// Memory.java\npublic class Memory {\n    static final String FIRST_LINE = \"…\";\n}",
+      "id": "memory-v2",
+      "title": "秘密常數與安全比對",
+      "goal": "在 `Memory.java` 宣告兩個不可更改的公開常數：\n- `public static final String FIRST_LINE = \"學長，你在說外星語嗎？\";`\n- `public static final String SECRET_CMD = \"HELP_SENIOR\";`\n\n並在 `Memory.java` 實作兩個公開方法：\n- `public String firstLine()`：回傳 `FIRST_LINE`。\n- `public boolean isFirstLine(String input)`：若 `input == null`，安全回傳 `false`（不可拋出空指標例外）；否則先用 `trim()` 去掉前後空白，再用 `equals`（不可用 `==`）比對 `FIRST_LINE`，相符回傳 `true`。\n\n在 `Main.java` 的 `main` 建立 `new Memory()` 並印出 `mem.firstLine()`。",
+      "instructions": "因為 `trim()` 會產生新的字串物件，用 `==` 比對內容即使字完全一樣也會是 `false`；比對字串內容必須用 `.equals(...)`。\n\n常數加上 `static final` 後就無法被任何程式修改，且依慣例以全大寫與底線命名；將常數與比對邏輯一起封裝在 `Memory` 類別裡，也能避免其他檔案直接耦合內部常數細節。",
+      "expectedShape": "// Memory.java\npublic class Memory {\n    public static final String FIRST_LINE = \"…\";\n    public static final String SECRET_CMD = \"…\";\n\n    public String firstLine() { … }\n    public boolean isFirstLine(String input) { … }\n}\n\n// Main.java\npublic class Main {\n    public static void main(String[] args) { … }\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["static final String FIRST_LINE"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Memory.FIRST_LINE",
+          "Memory.SECRET_CMD",
+          "new Memory().isFirstLine(\"學長，你在說外星語嗎？\")",
+          "new Memory().isFirstLine(\"  學長，你在說外星語嗎？ \\n\")",
+          "new Memory().isFirstLine(\"學長\")",
+          "new Memory().isFirstLine(null)"
+        ],
+        "uses": ["static final", "FIRST_LINE", ".equals("]
+      },
       "hints": {
-        "lead": "`static final` 宣告常數⋯⋯",
-        "plain": "⋯⋯白話：那句話寫死在 `Memory` 裡，誰都改不了。別的檔案用 `Memory.FIRST_LINE` 拿得到。"
+        "lead": "先擋掉 null，再 trim 後用 equals 比對常數。",
+        "plain": "在 `Memory.java` 宣告常數與方法，`isFirstLine` 寫成 `if (input == null) return false; return FIRST_LINE.equals(input.trim());`；`Main.main` 用 `new Memory().firstLine()` 印出第一句話。"
       },
       "afterText": ""
     },
     {
-      "id": "egg",
-      "title": "機關",
-      "goal": "`easterEgg(\"學長，你在說外星語嗎？\")` 要交回 `\"TODO\"`，收到別的話就交回空字串 `\"\"`。\n\n在 `Main` 寫一個方法 `static String easterEgg(String input)`：`input` 先用 `trim()`（去掉前後空白），再用 `equals` 和 `Memory.FIRST_LINE` 比，一樣就交回訊息，不一樣就交回空字串。訊息先寫成 `\"TODO\"`。",
-      "instructions": "比字串的內容要用 `equals`，不要用 `==`：`==` 比的是是不是同一個盒子。`trim()` 做出來的是新字串，字一樣，盒子卻是新的：\n\n```\nString typed = \" 小白\".trim();\nSystem.out.println(typed == \"小白\");       // false\nSystem.out.println(typed.equals(\"小白\"));  // true\n```\n\n這一步只看 `easterEgg` 交回什麼，`main` 不用改。",
-      "expectedShape": "static String easterEgg(String input) {\n    if (input.trim().equals(…)) {\n        return \"TODO\";\n    }\n    return \"\";\n}",
+      "id": "parser",
+      "title": "Easter egg 指令解析器",
+      "goal": "擴充 `Memory.java` 再加入兩個公開常數：\n- `public static final String EASTER_REPLY = \"彩蛋解鎖：第一年還請多多指教！\";`\n- `public static final String HELP_REPLY = \"可用指令：HELP_SENIOR / PING / 學長，你在說外星語嗎？\";`\n\n並在 `Memory.java` 實作 `public String parseCommand(String input)`：\n1. 若 `input == null`，回傳空字串 `\"\"`。\n2. 先對 `input` 做 `trim()`；若去空白後是以單一斜線 `'/'` 開頭（例如 `\"/help_senior\"` 或 `\"/ 學長，你在說外星語嗎？\"`），只移除最前面那個 `'/'` 並再次 `trim()`。\n3. 若正規化結果為空字串，回傳 `\"\"`。\n4. 依規則比對（嚴禁使用 `==`）：\n   - 與 `FIRST_LINE` 完全相同（`equals`）-> 回傳 `EASTER_REPLY`\n   - 忽略大小寫（`equalsIgnoreCase`）等於 `SECRET_CMD` -> 回傳 `HELP_REPLY`\n   - 忽略大小寫等於 `\"PING\"` -> 回傳 `\"PONG\"`\n   - 其餘未知指令 -> 回傳 `\"\"`\n\n在 `Main.java` 的 `main` 保留印出 `mem.firstLine()`，並補印 `mem.parseCommand(\"  /help_senior \")`。",
+      "instructions": "移除前綴斜線時請用 `if (cmd.startsWith(\"/\")) { cmd = cmd.substring(1).trim(); }`，這樣只會剝除最前面一個 `'/'`；若輸入本身只有 `\"/\"`，剝除後變成空字串 `\"\"`，就會自然走進未知指令回傳 `\"\"`。\n\n全形標點 `，`、`？`、`：` 請從題目複製。",
+      "expectedShape": "// Memory.java\npublic class Memory {\n    …\n    public static final String EASTER_REPLY = \"…\";\n    public static final String HELP_REPLY = \"…\";\n\n    public String parseCommand(String input) { … }\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.easterEgg(\"學長，你在說外星語嗎？\")", "Main.easterEgg(\" 學長，你在說外星語嗎？ \")", "Main.easterEgg(\"學長\")"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "new Memory().parseCommand(\" 學長，你在說外星語嗎？ \")",
+          "new Memory().parseCommand(\"/學長，你在說外星語嗎？\")",
+          "new Memory().parseCommand(\"  help_senior  \")",
+          "new Memory().parseCommand(\" /HeLp_SeNiOr \")",
+          "new Memory().parseCommand(\"ping\")",
+          "new Memory().parseCommand(\"/PING\")",
+          "new Memory().parseCommand(\"/\")",
+          "new Memory().parseCommand(\"   \")",
+          "new Memory().parseCommand(null)",
+          "new Memory().parseCommand(\"unknown\")"
+        ],
+        "uses": ["equalsIgnoreCase", "SECRET_CMD", "EASTER_REPLY"]
+      },
       "hints": {
-        "lead": "以 `trim` 正規化輸入後，用 `equals` 比對內容⋯⋯",
-        "plain": "⋯⋯白話：前後多打的空白先去掉，再和那句話比。一個字都不能差，才交回訊息。"
+        "lead": "依序正規化 null、前後空白與前導 /，再用 equals 和 equalsIgnoreCase 匹配常數。",
+        "plain": "先擋 `null`，接著 `trim()`，若 `startsWith(\"/\")` 就用 `substring(1).trim()` 去掉斜線和斜線後的空白，最後分別用 `equals` 和 `equalsIgnoreCase` 比對三個指令。"
       },
       "afterText": ""
     }

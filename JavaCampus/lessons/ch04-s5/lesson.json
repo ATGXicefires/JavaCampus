@@ -6,35 +6,56 @@
   "notes": ["return", "else-if"],
   "vars": [
     { "name": "flavors", "type": "String[]", "value": "{\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"}", "note": "口味的名字" },
-    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}", "note": "各口味的甜度" }
+    { "name": "sweet", "type": "int[]", "value": "{2, 4, 3, 3, 5}", "note": "各口味的甜度（1 到 5）" },
+    { "name": "stars", "type": "int[]", "value": "{4, 3, 5, 2, 5}", "note": "各口味的評分星等（1 到 5）" }
   ],
   "steps": [
     {
-      "id": "review",
-      "title": "一句話評語",
-      "goal": "`sweetness` 是甜度（1～5），`review(5)` 要交回 `太甜。`。\n\n寫一個方法 `static String review(int sweetness)`，依甜度用 `return` 交回評語：1～2 交回 `可以。`，3～4 交回 `甜。`，5 交回 `太甜。`。",
-      "instructions": "編輯器最上面兩行 `String[] flavors = {\"原味\", \"巧克力\", \"芋頭\", \"花生\", \"黑糖\"};` 和 `int[] sweet = {2, 4, 3, 3, 5};` 是題目先寫好的，你的程式可以直接用 `flavors` 和 `sweet`。這一步還用不到，下一步才會用。\n\n方法裡可以有好幾個 `return`：哪一個先執行到，就交回哪一個，方法也就結束了。配上 `if`／`else if`／`else`（從上往下問，第一個成立的就做），就能依甜度交回不同的評語。",
-      "expectedShape": "static String review(int sweetness) {\n    if (…) {\n        return \"可以。\";\n    } else if (…) {\n        …\n    }\n    …\n}",
-      "check": { "type": "values", "exprs": ["review(1)", "review(2)", "review(3)", "review(4)", "review(5)"] },
+      "id": "review-v2",
+      "title": "雙指標分級評語",
+      "goal": "寫一個方法 `static String review(int sweetness, int star)`，同時考量甜度與星等，依下列優先順序用 `return` 交回評語：\n1. 若 `sweetness` 或 `star` 任一個不在 1～5 之間，交回 `\"資料異常\"`。\n2. 若 `star >= 4` 且 `sweetness <= 3`，交回 `\"招牌必點\"`。\n3. 否則若 `sweetness >= 5`，交回 `\"太甜小心\"`。\n4. 否則若 `star <= 2`，交回 `\"尚待改進\"`。\n5. 其餘情況交回 `\"表現普通\"`。",
+      "instructions": "編輯器最上面三行 `flavors`、`sweet`、`stars` 是題目先寫好的變數，這一步還不會用到，下一步會用來做完整統計。\n\n使用 `if`／`else if`／`else` 由上往下排隊判斷，先把超出範圍的無效資料擋掉，再依優先順序檢查條件。",
+      "expectedShape": "static String review(int sweetness, int star) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "review(2, 4)",
+          "review(3, 5)",
+          "review(5, 5)",
+          "review(5, 2)",
+          "review(4, 2)",
+          "review(4, 3)",
+          "review(0, 3)",
+          "review(3, 6)"
+        ]
+      },
       "hints": {
-        "lead": "回傳 `String` 的方法，配合 `if`／`else if` 分段⋯⋯",
-        "plain": "⋯⋯白話：從低到高問：2 以下、4 以下、其他，各交回一句評語。"
+        "lead": "先檢查 1～5 的範圍，再依序判斷 `招牌必點`、`太甜小心`、`尚待改進` 與 `表現普通`。",
+        "plain": "第一關寫 `if (sweetness < 1 || sweetness > 5 || star < 1 || star > 5) return \"資料異常\";`，接著照題目順序寫 `else if` 即可。"
       },
       "afterText": ""
     },
     {
-      "id": "list",
-      "title": "附在排行榜上",
-      "goal": "`sweet` 是各口味的甜度，現在是 `{2, 4, 3, 3, 5}`，和 `flavors` 同一格是同一種口味。要印出 5 行：\n`原味：可以。`\n`巧克力：甜。`\n`芋頭：甜。`\n`花生：甜。`\n`黑糖：太甜。`\n\n用 `for` 照 `flavors` 的順序，每種口味印一行：名字、`：`，再接上 `review` 依那一格的甜度交回的評語。",
-      "instructions": "`：` 是全形，可以從重點複製。\n\n`review` 交回來的字串可以直接用 `+` 接在後面，例如 `\"評語：\" + review(3)` 是 `評語：甜。`。",
-      "expectedShape": "for (…) {\n    System.out.println(flavors[i] + \"：\" + …);\n}",
+      "id": "list-v2",
+      "title": "口味明細與平均星等總評",
+      "goal": "寫一個方法 `static void printReport(String[] names, int[] sweets, int[] starList)`，整合口味、甜度與星等並印出報表，最後在方法外呼叫 `printReport(flavors, sweet, stars);`。\n\n規則如下：\n1. 有效筆數 `n` 取三個陣列的最小長度；若 `n == 0`，只印出一行 `\"沒有任何口味資料\"` 並結束方法。\n2. 依序針對每筆資料印出一行明細：`\"<口味>：甜度<甜度>/星等<星等> -> <review(甜度, 星等)>\"`（須呼叫上一步的 `review`）。\n3. 統計「有效星等」（`1 <= starList[i] <= 5`）的總和與筆數，並找出有效星等裡的**最高星等口味**與**最低星等口味**（若星等並列，保留**最先出現**、索引較小者）。\n4. 若沒有任何有效星等（有效筆數為 0），最後一行印 `\"平均星等：無有效評分\"`。\n5. 否則先計算四捨五入到小數點後一位的平均星等：`double avg = Math.round(((double) sum / validCount) * 10) / 10.0;`，再依此 `avg` 分級總評（`avg >= 4.0` 為 `\"人氣攤位\"`、`avg >= 3.0` 為 `\"穩定好評\"`、其餘為 `\"需要調整\"`），最後一行印出：\n`\"平均星等：\" + avg + \"（\" + tier + \"），最高：\" + bestName + \"，最低：\" + worstName`。",
+      "instructions": "三個陣列長度可能不一致或有超過 1～5 的異常星等，所以要用 `Math.min` 找最小長度，並在統計平均、最高與最低時過濾掉無效星等。\n\n記錄最高與最低索引的初始值可以設為 `-1`，代表「還沒找到第一筆有效資料」；遇到第一筆有效資料或更優／更差的值時再更新。",
+      "expectedShape": "static void printReport(String[] names, int[] sweets, int[] starList) {\n    …\n}\n\nprintReport(…);",
       "check": {
         "type": "output",
-        "variants": [ { "sweet": "{5, 5, 5, 5, 5}" } ]
+        "exprs": [
+          "printReport(new String[]{\"試吃\"}, new int[]{3}, new int[]{9})",
+          "printReport(new String[]{}, new int[]{}, new int[]{})"
+        ],
+        "variants": [
+          { "sweet": "{5, 5, 5, 5, 5}", "stars": "{2, 2, 2, 2, 2}" },
+          { "sweet": "{1, 2, 3, 2, 1}", "stars": "{5, 4, 4, 5, 4}" }
+        ],
+        "uses": ["review("]
       },
       "hints": {
-        "lead": "在迴圈裡呼叫回傳 `String` 的方法並串接⋯⋯",
-        "plain": "⋯⋯白話：每種口味印一行：名字、`：`、再接上 `review` 交回來的那句話。"
+        "lead": "用 `-1` 當作尚未找到有效星等極值的哨兵值，迴圈中先印明細再更新有效統計。",
+        "plain": "迴圈裡印完 `review` 明細後，檢查 `starList[i] >= 1 && starList[i] <= 5`：累計 `sum` 與 `validCount`，如果 `maxIdx == -1 || starList[i] > starList[maxIdx]` 就更新 `maxIdx`（`minIdx` 同理）。最後依 `validCount` 與 `avg` 印出總結行。"
       },
       "afterText": ""
     }

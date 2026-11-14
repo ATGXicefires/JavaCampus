@@ -7,28 +7,61 @@
   "vars": [],
   "steps": [
     {
-      "id": "prime",
-      "title": "有沒有因數",
-      "goal": "`isPrime(97)` 要交回 `true`，`isPrime(91)` 要交回 `false`：91 = 7 × 13，不是質數。\n\n寫一個方法 `static boolean isPrime(int n)`：`n` 是質數就交回 `true`，不是就交回 `false`；1 不是質數。用 `while`（條件還成立，就再做一次）從 2 開始一個一個試除，找到能整除的就提早 `return false`（交回以後，方法就結束了）。",
-      "instructions": "質數是大於 1、只能被 1 和自己整除的整數。試除法就是拿 2、3、4⋯⋯一個一個去除 `n`，有一個能整除，`n` 就不是質數。\n\n`while` 不用先知道要做幾次，括號裡的條件還成立，就再做一次。例如 `x` 從 1 開始，`while (x < 100) { x = x * 2; }` 會一直把 `x` 乘 2，到 128 才停。\n\n`return` 一執行，方法就結束，迴圈也不會再跑。所以找到一個因數就能馬上交回 `false`；整個迴圈跑完都沒找到，才交回 `true`。",
-      "expectedShape": "static boolean isPrime(int n) {\n    …\n    while (…) {\n        …\n    }\n    return true;\n}",
-      "check": { "type": "values", "exprs": ["isPrime(2)", "isPrime(97)", "isPrime(91)", "isPrime(1)"], "uses": ["while"] },
+      "id": "prime-v2",
+      "title": "質數試除與平方根最佳化",
+      "goal": "寫一個方法 `static boolean isPrime(int n)` 判斷 `n` 是否為質數：\n- 若 `n <= 1`，不是質數，交回 `false`。\n- 若 `n == 2`，是質數，交回 `true`。\n- 若 `n` 是大於 2 的偶數（`n % 2 == 0`），不是質數，交回 `false`。\n- 其餘奇數請用 `while` 從 `d = 3` 開始，每次加 `2` 試除，而且只須檢查到 `d <= n / d` 為止（避免超時與乘法溢位）。找到因數即提早回傳 `false`，都沒找到就回傳 `true`。",
+      "instructions": "如果 `n` 是接近 `Integer.MAX_VALUE` 的大質數（例如 `1000000007` 或 `2147483647`），從 2 一個一個試到 `n - 1` 會跑數億次直接逾時！\n\n事實上，如果 `n` 有因數，必定有一個小於等於 $\\sqrt{n}$：只需檢查到 `d * d <= n`。不過當 `n` 接近 `int` 上限時，`d * d` 可能會發生整數溢位變成負數導致無窮迴圈，改寫成 `d <= n / d` 就能同時避開溢位與逾時。",
+      "expectedShape": "static boolean isPrime(int n) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isPrime(-5)",
+          "isPrime(0)",
+          "isPrime(1)",
+          "isPrime(2)",
+          "isPrime(3)",
+          "isPrime(4)",
+          "isPrime(9)",
+          "isPrime(91)",
+          "isPrime(97)",
+          "isPrime(1000000007)",
+          "isPrime(2147483647)"
+        ],
+        "uses": ["while"]
+      },
       "hints": {
-        "lead": "試除法：除數從 2 開始，找到因數就提前回傳 `false`⋯⋯",
-        "plain": "⋯⋯白話：從 2 開始一個一個試，能整除就不是質數，馬上交回 `false`。全部試完都除不盡，才是質數。1 不是質數，先擋掉。"
+        "lead": "先處理 n <= 1、n == 2、偶數，再用 while 試除奇數 d <= n / d。",
+        "plain": "依序擋掉 `n <= 1`（`false`）、`n == 2`（`true`）、`n % 2 == 0`（`false`）。接著 `int d = 3; while (d <= n / d) { if (n % d == 0) return false; d += 2; } return true;`"
       },
       "afterText": ""
     },
     {
-      "id": "count",
-      "title": "幾個質數",
-      "goal": "`countPrimes(10)` 要交回 4：2 到 10 之間有 2、3、5、7 四個質數。\n\n寫一個方法 `static int countPrimes(int limit)`，數出 2 到 `limit`（包含 `limit`）之間有幾個質數，交回這個數。",
-      "instructions": "用剛剛寫好的 `isPrime` 判斷每個數是不是質數：方法裡也可以呼叫別的方法。",
-      "expectedShape": "static int countPrimes(int limit) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["countPrimes(10)", "countPrimes(100)"] },
+      "id": "count-v2",
+      "title": "區間質數個數與第 k 個質數",
+      "goal": "保留上一步的 `isPrime`，再實作兩個方法：\n1. `static int countPrimes(int a, int b)`：計算閉區間 `[a, b]`（包含 `a` 與 `b`）之間總共有幾個質數；若 `a > b`，交回 `0`。\n2. `static int kthPrime(int k)`：使用 `while` 找出並交回第 `k` 個質數（第 1 個是 `2`，第 2 個是 `3`，第 3 個是 `5`⋯⋯）；若 `k <= 0`，交回 `-1`。",
+      "instructions": "兩個方法都直接重用你剛寫好的 `isPrime`。\n\n在 `countPrimes(a, b)` 中，如果 `a` 是負數或 `0`、`1`，只要交給 `isPrime` 檢查都會回傳 `false`，所以從 `a` 數到 `b`（或從較大的起始點 `Math.max(2, a)` 開始）都可以；若 `a > b` 迴圈一次都不會跑，直接回傳 `0`。\n\n在 `kthPrime(k)` 中，用 `while` 讓候選數字 `cand` 從 `2` 開始往上遞增，每遇到一個 `isPrime(cand)` 就讓計數器加 1，數到第 `k` 個時立刻交回 `cand`。",
+      "expectedShape": "static int countPrimes(int a, int b) {\n    …\n}\n\nstatic int kthPrime(int k) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "countPrimes(2, 10)",
+          "countPrimes(-5, 10)",
+          "countPrimes(10, 2)",
+          "countPrimes(11, 11)",
+          "countPrimes(14, 16)",
+          "countPrimes(1, 100)",
+          "kthPrime(0)",
+          "kthPrime(-3)",
+          "kthPrime(1)",
+          "kthPrime(5)",
+          "kthPrime(10)",
+          "kthPrime(25)"
+        ],
+        "uses": ["isPrime(", "while"]
+      },
       "hints": {
-        "lead": "重用 `isPrime`，在迴圈中計數⋯⋯",
-        "plain": "⋯⋯白話：從 2 數到 `limit`，每個數都問一次 `isPrime`，是質數就算一個。"
+        "lead": "countPrimes 走訪 a..b 呼叫 isPrime；kthPrime 先擋 k <= 0，再用 while 計數。",
+        "plain": "`kthPrime` 先判 `if (k <= 0) return -1;`，設 `int found = 0; int cand = 1;`，`while (found < k) { cand++; if (isPrime(cand)) found++; } return cand;`"
       },
       "afterText": ""
     }

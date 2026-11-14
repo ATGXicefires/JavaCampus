@@ -7,30 +7,55 @@
   "vars": [],
   "steps": [
     {
-      "id": "table",
-      "title": "縮寫對照表",
-      "goal": "用縮寫 `yc` 查對照表，印出 `yc 是 李有成`。\n\n在檔案最上面寫 `import java.util.HashMap;`。在 `main` 裡做一個 `HashMap<String, String> initials`（對照表：用縮寫查名字），用 `put` 放入 `yc` → `李有成`、`ys` → `王葉聖`、`wy` → `燕韋芸`、`eh` → `吳二弘`，再用 `get` 查出 `yc` 的名字，印出這一行。",
-      "instructions": "`HashMap` 是一張對照表：左邊的縮寫叫「鍵」，右邊的名字叫「值」。`put` 放進一組鍵和值，`get` 用鍵查出值。角括號裡先寫鍵的型別，再寫值的型別。它也是 Java 寫好的，要先在檔案最上面 `import` 才能用。例如：\n\n```\nHashMap<String, String> menu = new HashMap<>();\nmenu.put(\"A\", \"滷肉飯\");\nmenu.get(\"A\")   // \"滷肉飯\"\n```\n\n四組縮寫都已經給好了（名字後兩個字的拼音字首），照著放進去就好。",
-      "expectedShape": "HashMap<String, String> initials = new HashMap<>();\ninitials.put(\"yc\", \"李有成\");\n…\nSystem.out.println(\"yc 是 \" + initials.get(\"yc\"));",
+      "id": "table-v2",
+      "title": "縮寫對照表與安全查詢",
+      "goal": "撰寫縮寫對照表建立與查詢方法，讓 `main` 印出：\n`yc 是 李有成`\n`zz 查無此人`\n\n方法規則：\n1. `public static HashMap<String, String> buildTable()`：\n   - 建立 `HashMap<String, String>`，用 `put` 放入 `yc` → `李有成`、`ys` → `王葉聖`、`wy` → `燕韋芸`、`eh` → `吳二弘` 並回傳。\n2. `public static String lookupOrUnknown(HashMap<String, String> table, String code)`：\n   - 若 `table` 為 `null`，或 `code` 為 `null` 或空白（`isBlank()`），回傳 `無效縮寫`。\n   - 將 `code` 去掉前後空白並轉小寫（`trim().toLowerCase()`）後查表。\n   - 查得到回傳 `<小寫縮寫> 是 <姓名>`；查不到回傳 `<小寫縮寫> 查無此人`。",
+      "instructions": "`HashMap<String, String>` 是用字串鍵查字串值的對照表，使用前需在檔案最上方寫 `import java.util.HashMap;`。\n\n用 `get` 查不存在的鍵會回傳 `null`，直接串接字串就會印出 `null`，因此請先用 `containsKey` 判斷，或搭配 `getOrDefault`。別忘了把輸入的縮寫做 `trim().toLowerCase()` 正規化，才不會因為大小寫或空白查不到。",
+      "expectedShape": "import java.util.HashMap;\n\npublic class Main {\n    public static HashMap<String, String> buildTable() {\n        …\n    }\n\n    public static String lookupOrUnknown(HashMap<String, String> table, String code) {\n        …\n    }\n\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.lookupOrUnknown(Main.buildTable(), \"yc\")",
+          "Main.lookupOrUnknown(Main.buildTable(), \" EH \")",
+          "Main.lookupOrUnknown(Main.buildTable(), \"ZZ\")",
+          "Main.lookupOrUnknown(Main.buildTable(), \"  \")",
+          "Main.lookupOrUnknown(Main.buildTable(), null)",
+          "Main.lookupOrUnknown(null, \"yc\")"
+        ],
+        "uses": ["import java.util.HashMap;", "HashMap<String, String>", ".put("]
+      },
       "hints": {
-        "lead": "put 放進去，get 查出來。",
-        "plain": "`HashMap` 像一本通訊錄：左邊是縮寫，右邊是名字。`put` 是寫進一行，`get` 是用縮寫翻到那一行。"
+        "lead": "先擋掉 null 與空白，把縮寫轉小寫後再查對照表。",
+        "plain": "`HashMap` 用 `put` 建表，查詢前先檢查 `table == null || code == null || code.isBlank()`，接著把 `code` 轉小寫再查，找不到就回傳 `<小寫縮寫> 查無此人`。"
       },
       "afterText": ""
     },
     {
-      "id": "lookup",
-      "title": "查到自己",
-      "goal": "`yc 是 李有成` 下面再印兩行，一個查得到、一個查不到：\n`tx 是 梁亭瑄`\n`zz 查無此人`\n\n再放入 `tx` → `梁亭瑄`。依序查 `tx` 和 `zz`：先用 `containsKey`（對照表裡有沒有這個鍵）問有沒有，有就用 `get` 查出名字，照上面的樣子各印一行。",
-      "instructions": "`yc` 那一行留著。\n\n查不到的鍵，`get` 會交回 `null`（什麼都沒有），接進字串就會印出 `null`。所以先用 `containsKey` 問：有就交回 `true`，沒有就交回 `false`，正好放進 `if` 的括號裡。",
-      "expectedShape": "if (initials.containsKey(…)) {\n    …\n} else {\n    System.out.println(… + \" 查無此人\");\n}",
+      "id": "lookup-v2",
+      "title": "查到自己、批次轉換與反向回退",
+      "goal": "將 `tx` → `梁亭瑄` 加入 `buildTable()`，並新增「批次轉換句子標籤」與「反向查縮寫」兩個方法，讓 `main` 印出：\n`yc 是 李有成`\n`tx 是 梁亭瑄`\n`吳二弘 與 梁亭瑄 討論專題`\n`tx`\n\n方法規則：\n1. `public static String expandTags(HashMap<String, String> table, String sentence)`：\n   - 若 `sentence` 為 `null` 或空白（`isBlank()`），回傳空字串 `\"\"`。\n   - 用 `sentence.trim().split(\"\\\\s+\")` 依空白拆成詞彙。\n   - 每個詞彙轉小寫後去 `table` 查：若 `table != null` 且找得到對應姓名就換成該姓名；若找不到（或 `table` 為 `null`）就**保留原本的詞彙**（不可變成 `null`）。\n   - 轉換後的詞彙之間以單一空白 `\" \"` 串回句子。\n2. `public static String findCode(HashMap<String, String> table, String name)`：\n   - 若 `table` 為 `null`，或 `name` 為 `null` 或空白，回傳 `查無縮寫`。\n   - 走訪對照表找到值等於 `name.trim()` 的鍵並回傳；找不到回傳 `查無縮寫`。",
+      "instructions": "在 `expandTags` 中，`split(\"\\\\s+\")` 可以一次把多個連續空白切開；用 `table.getOrDefault(word.toLowerCase(), word)` 可以一行做到「查不到就保留原詞」的預設回退。\n\n反向查詢 `findCode` 則可以用 `for (String key : table.keySet())` 走訪所有鍵，用 `.equals(name.trim())` 比對對應值（請用常數或已檢查非空的 `target.equals(table.get(key))` 避免對可能為 `null` 的值呼叫方法）。",
+      "expectedShape": "public static String expandTags(HashMap<String, String> table, String sentence) {\n    …\n}\n\npublic static String findCode(HashMap<String, String> table, String name) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.expandTags(Main.buildTable(), \"EH 與 TX 討論專題\")",
+          "Main.expandTags(Main.buildTable(), \"  yc   找   zz  討論 \")",
+          "Main.expandTags(Main.buildTable(), \"   \")",
+          "Main.expandTags(Main.buildTable(), null)",
+          "Main.expandTags(null, \"tx\")",
+          "Main.findCode(Main.buildTable(), \" 梁亭瑄 \")",
+          "Main.findCode(Main.buildTable(), \"王小明\")",
+          "Main.findCode(Main.buildTable(), null)",
+          "Main.findCode(null, \"梁亭瑄\")"
+        ],
+        "uses": ["HashMap<String, String>"]
+      },
       "hints": {
-        "lead": "先問有沒有，再查。",
-        "plain": "翻通訊錄之前先看有沒有這個人。`containsKey` 回答有沒有，有的話再用 `get` 翻出名字，沒有就說查無此人。"
+        "lead": "找不到縮寫就保留原詞，反向查則走訪 keySet 比對姓名。",
+        "plain": "`expandTags` 切開單字後，拿小寫去問對照表，查不到直接保留原本那個字；`findCode` 跑一遍 `table.keySet()`，看誰的值等於 `name.trim()`。"
       },
       "afterText": ""
     }

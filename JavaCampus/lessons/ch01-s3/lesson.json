@@ -9,33 +9,38 @@
   ],
   "steps": [
     {
-      "id": "lunch",
+      "id": "lunch-v2",
       "title": "一直紅字",
-      "goal": "`hasLuRouFan` 現在是 `true`，修好以後要印出 `吃滷肉飯`；是 `false` 的時候要印出 `吃控肉飯`。\n\n可是亭瑄照抄的程式一執行就紅字。照著紅字一個一個修好。",
-      "instructions": "編輯器最上面那行 `boolean hasLuRouFan = true;` 是題目先寫好的，你的程式可以直接用 `hasLuRouFan`。\n\n亭瑄：「我照你的 PDF 打了，可是一直紅字。」\n\n紅字是電腦在說「這裡我看不懂」：它會標出是哪一行，再說少了什麼或多了什麼。從最上面那個開始修，修一個就執行一次，後面的紅字常常會跟著消失。\n\n中文輸入法打的符號是**全形**，例如 `；`、`「」`；英文輸入法打的是**半形**，例如 `;`、`\"`。程式碼只認半形，全形符號只能放在引號裡面，當成要印出來的字。",
-      "expectedShape": "if (hasLuRouFan) {\n    …\n} else {\n    …\n}",
+      "goal": "修好亭瑄照抄的午餐程式，不要刪掉 `price` 或 `if-else`：\n- 保留 `int price = 45;`\n- `hasLuRouFan` 為 `true` 時印出 `吃滷肉飯，加蛋共 55 元`\n- `hasLuRouFan` 為 `false` 時印出 `吃控肉飯`",
+      "instructions": "編輯器最上面那行 `boolean hasLuRouFan = true;` 是題目先寫好的變數。\n\n亭瑄：「我照你的 PDF 打了，可是一直紅字。」\n\n紅字是電腦在告訴你「這一行我看不明白」。修錯時請**從最上面的第一個紅字開始修**，修完一個就執行一次。\n\n檢查程式時可以留意常見的語法問題：變數型別與放進去的資料是否一致、符號（分號、引號、括號）是否皆為英文半形、`System` 與關鍵字的大小寫，以及括號與分號是否成對補齊。",
+      "expectedShape": "// …\nint price = …;\nif (hasLuRouFan) {\n    …\n} else {\n    …\n}",
       "check": {
         "type": "output",
-        "variants": [ { "hasLuRouFan": "false" } ]
+        "exprs": ["price"],
+        "variants": [ { "hasLuRouFan": "false" } ],
+        "uses": ["if", "else"]
       },
       "hints": {
-        "lead": "`illegal character: '\\uff1b'`、`'\\u300c'`，修完還有 `';' expected` 和 `package system does not exist`⋯⋯",
-        "plain": "⋯⋯白話：中文輸入法打的 `；` 和 `「」` 電腦看不懂，要換成半形的 `;` 和 `\"`。`system` 的 s 要大寫。每一句最後都要有分號。"
+        "lead": "從第一行往下看：字串放進 `int`、全形分號、`system` 小寫、少了 `}`、全形引號⋯⋯",
+        "plain": "依序檢查五個地方：1) `\"45\"` 去掉引號變成數字 `45`，全形 `；` 換半形 `;`；2) `system` 改成 `System`，句尾補 `;`；3) `else` 前面補上屬於 `if` 的右大括號 `}`；4) `「吃控肉飯」` 換成半形雙引號 `\"吃控肉飯\"`，句尾 `；` 換 `;`。"
       },
-      "afterText": "亭瑄：「所以它一直紅，是因為我用中文打引號？」"
+      "afterText": "亭瑄：「所以它一直紅，是因為我把數字加引號，還混了中文標點？」"
     },
     {
-      "id": "laptop",
+      "id": "laptop-v2",
       "title": "小白不見了",
-      "goal": "要印出 `小白`，可是亭瑄照抄的盒子程式一執行就紅字。\n\n一樣照著紅字一個一個修，從最上面那個開始。",
-      "instructions": "亭瑄：「這個也是照抄的，可是小白一直印不出來。」\n\n每一句最後都要有分號 `;`，少了它，電腦會以為這句話還沒講完。Java 也會區分大小寫：`name` 和 `Name` 對電腦來說是兩個不同的名字，盒子叫什麼，用的時候就要寫得一模一樣。",
-      "expectedShape": "String laptop = …\nSystem.out.println(…);",
-      "check": { "type": "output" },
-      "hints": {
-        "lead": "先是 `';' expected`，再來是 `cannot find symbol: variable Laptop`。識別字區分大小寫⋯⋯",
-        "plain": "⋯⋯白話：第一行最後少了分號。第二行的 `Laptop` 和盒子的名字 `laptop` 差一個大寫，對電腦來說是兩個不同的盒子。"
+      "goal": "修好盒子程式的所有錯誤（保留 `laptop` 與 `gacha` 的宣告與更新）：\n讓 `laptop` 是 `\"小白\"`，`gacha` 更新成 `8`，最後印出 `小白上有 8 個扭蛋`。",
+      "instructions": "亭瑄：「這個也是照抄的，可是一直出現找不到符號或重複定義。」\n\n除錯重點：\n1. 每句結尾的分號 `;` 與括號 `()` 必須是英文半形\n2. 已經用 `int gacha = 7;` 建好盒子了，下面要把值改成 `8` 時**不可重複寫** `int`\n3. 變數名稱區分大小寫（`Laptop` 和 `laptop` 不同），而且不能使用還沒宣告過的變數名稱。",
+      "expectedShape": "// …\nString laptop = …\nint gacha = …\ngacha = …\nSystem.out.println(…);",
+      "check": {
+        "type": "output",
+        "exprs": ["laptop", "gacha"]
       },
-      "afterText": "亭瑄：「小白出來了！⋯⋯原來大小寫也算錯喔。」"
+      "hints": {
+        "lead": "缺少分號、重複宣告 `int gacha`、全形括號 `（）`、大小寫 `Laptop` 以及未宣告的 `count`⋯⋯",
+        "plain": "依序修正：1) `\"小白\"` 後面補 `;`；2) `int gacha = 8;` 拿掉 `int`，只寫 `gacha = 8;`；3) `println` 的全形括號 `（）` 改成半形 `()`；4) `Laptop` 改成 `laptop`，未宣告的 `count` 改成 `gacha`。"
+      },
+      "afterText": "亭瑄：「小白出來了！⋯⋯原來重複寫 int 跟大小寫不對都會爆紅喔。」"
     }
   ]
 }

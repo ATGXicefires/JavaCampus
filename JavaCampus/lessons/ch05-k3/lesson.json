@@ -7,41 +7,81 @@
   "vars": [],
   "steps": [
     {
-      "id": "average",
-      "title": "平均",
-      "goal": "`a` 是 `{90, 85}` 時，`average(a)` 要交回 `87.5`；是 `{72, 58, 65, 80, 49}` 時，要交回 `64.8`。\n\n寫一個方法 `static double average(int[] a)`，交回 `a` 裡所有分數的平均，要留小數。",
-      "instructions": "`a.length` 是陣列 `a` 有幾格。用 `for` 走過每一格，把分數加起來，再除以格數，就是平均。\n\n兩個 `int` 相除，小數會直接丟掉：`7 / 2` 是 `3`。除之前先用 `(double)` 把其中一邊換成小數，才留得住小數：`(double) 7 / 2` 是 `3.5`。",
-      "expectedShape": "static double average(int[] a) {\n    …\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["average(new int[]{72, 58, 65, 80, 49})", "average(new int[]{90, 85})"] },
+      "id": "to-score-v2",
+      "title": "字串安全轉分數",
+      "goal": "考卷登記資料常混著空白、錯字或離譜數字。寫一個方法 `static int toScore(String s)`：\n- 若 `s` 是 `null`，回傳 `-1`。\n- 去掉前後空白（`.trim()`）後，用 `Integer.parseInt` 轉成整數；若不是整數會丟出 `NumberFormatException`，用 `try` / `catch` 接住並回傳 `-1`。\n- 轉出來的整數必須在 `0` 到 `100` 之間（含 0 與 100），超出範圍一樣視為無效資料，回傳 `-1`。",
+      "instructions": "先處理 `s == null` 再呼叫 `.trim()`，才不會對 `null` 呼叫方法而當場跌倒。\n\n把 `Integer.parseInt(s.trim())` 放進 `try` 的大括號裡，成功轉成整數後，還要再檢查是不是在 `0..100` 範圍內；若遇到 `NumberFormatException`，就在 `catch` 裡回傳 `-1`。",
+      "expectedShape": "static int toScore(String s) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "toScore(\"80\")",
+          "toScore(\" 85 \")",
+          "toScore(\"0\")",
+          "toScore(\"100\")",
+          "toScore(\"-1\")",
+          "toScore(\"101\")",
+          "toScore(\"八十\")",
+          "toScore(\"\")",
+          "toScore(\"   \")",
+          "toScore(null)"
+        ],
+        "uses": ["try", "catch", "NumberFormatException"]
+      },
       "hints": {
-        "lead": "總和除以格數，要有小數。",
-        "plain": "方法裡先用 `for` 加總，再除以 `a.length`。回傳型別是 `double`，除之前記得讓其中一邊變成小數。"
+        "lead": "先擋 null，再用 try-catch 接 NumberFormatException，最後檢查 0..100 範圍。",
+        "plain": "若 `s == null` 直接 `return -1;`；在 `try` 裡算出 `int n = Integer.parseInt(s.trim());`，若 `n < 0 || n > 100` 回傳 `-1`，否則回傳 `n`；`catch (NumberFormatException e)` 回傳 `-1`。"
       },
       "afterText": ""
     },
     {
-      "id": "pass-count",
-      "title": "幾個及格",
-      "goal": "`a` 是 `{72, 58, 65}` 時，`passCount(a)` 要交回 2：72 和 65 及格。\n\n寫一個方法 `static int passCount(int[] a)`，數出 `a` 裡有幾個分數及格（60 分以上，剛好 60 也算），交回這個數。",
-      "instructions": "數數的方法：準備一個從 0 開始的盒子，走過每一格，遇到及格的就加一。走完以後，盒子裡的數就是答案。",
-      "expectedShape": "static int passCount(int[] a) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["passCount(new int[]{72, 58, 65})", "passCount(new int[]{59})", "passCount(new int[]{60})"] },
+      "id": "average-v2",
+      "title": "過濾壞資料的有效平均",
+      "goal": "保留上一步的 `toScore`，寫一個方法 `static double validAverage(String[] raw)`：\n- 走訪 `raw` 陣列，對每個字串呼叫 `toScore`，只把合法分數（`>= 0`）加進總和並計算有效筆數。\n- 若 `raw == null`、陣列為空、或**全部資料都無效**（有效筆數為 0），安全回傳 `0.0`。\n- 否則回傳 `(double) sum / validCount`。",
+      "instructions": "資料清理的第一步是只統計有效資料：無效字串會被 `toScore` 轉成 `-1`，千萬不能把 `-1` 加進總分，也不能把無效筆數算進分母。\n\n當全部資料都無效時，有效筆數是 `0`：如果不先判斷直接做除法，會發生除以 0 得到 `NaN`，所以要先擋掉 `raw == null` 和 `validCount == 0` 的情況。",
+      "expectedShape": "static double validAverage(String[] raw) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "validAverage(new String[]{\"72\", \"缺考\", \"68\", \"105\", \"80\", \"-5\", \"60\"})",
+          "validAverage(new String[]{\"90\", \" 85 \"})",
+          "validAverage(new String[]{\"70\", \"71\", \"abc\", \"72\", \"72\"})",
+          "validAverage(new String[]{\"八十\", \"abc\", \"-1\", \"101\"})",
+          "validAverage(new String[]{})",
+          "validAverage(null)"
+        ],
+        "uses": ["toScore("]
+      },
       "hints": {
-        "lead": "及格就數一個。",
-        "plain": "準備一個從 0 開始的盒子，走過每一格，60 分以上就 `count++`，最後交回去。"
+        "lead": "用 toScore 過濾無效資料，累積有效總和與有效筆數，分母為 0 時回傳 0.0。",
+        "plain": "若 `raw == null` 回傳 `0.0`。走訪 `raw` 呼叫 `int score = toScore(raw[i]);`，只要 `score >= 0` 就累加 `sum += score;` 與 `count++;`。迴圈結束後若 `count == 0` 回傳 `0.0`，否則回傳 `(double) sum / count`。"
       },
       "afterText": ""
     },
     {
-      "id": "to-score",
-      "title": "打錯字也不會倒",
-      "goal": "`toScore(\"80\")` 要交回 80，`toScore(\"八十\")` 要交回 -1。\n\n寫一個方法 `static int toScore(String s)`，用 `Integer.parseInt` 把文字 `s` 轉成數字交回；`s` 不是數字時會跌倒，用 `try`／`catch` 接住，改交回 -1。",
-      "instructions": "`Integer.parseInt(s)` 會把 `\"80\"` 這種文字變成數字 80；遇到 `\"八十\"` 這種不是數字的文字，會丟出 `NumberFormatException`，程式就跌倒了。\n\n把會跌倒的那一句放進 `try` 的大括號。`try` 裡跌倒了，程式不會停，會跳到 `catch` 的大括號繼續做。`catch` 的括號裡寫要接的是哪一種跌倒，這裡就是 `NumberFormatException`。",
-      "expectedShape": "static int toScore(String s) {\n    try {\n        …\n    } catch (…) {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["toScore(\"80\")", "toScore(\"八十\")"] },
+      "id": "report",
+      "title": "及格人數與有效最高分",
+      "goal": "完成複習統計引擎的最後兩個方法：\n1. `static int passCount(String[] raw)`：統計 `raw` 中有效且及格（`>= 60`）的人數；若 `raw == null` 或無有效分數，回傳 `0`。\n2. `static int maxValid(String[] raw)`：找出 `raw` 中所有有效分數（`toScore >= 0`）的最高分；若 `raw == null`、空陣列或全部資料無效，安全回傳 `-1`。",
+      "instructions": "兩個方法都要先處理 `raw == null`，再用迴圈對每個元素呼叫 `toScore`。\n\n特別留意 `maxValid` 的邊界：如果班上只有一位有效成績剛好是 `0` 分，`0` 仍然是有效最高分，不能回傳 `-1`；只有當完全沒有任何有效分數時才回傳 `-1`。",
+      "expectedShape": "static int passCount(String[] raw) {\n    …\n}\n\nstatic int maxValid(String[] raw) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "passCount(new String[]{\"59\", \"60\", \"缺考\", \"101\", \"85\"})",
+          "passCount(new String[]{\"abc\", \"\"})",
+          "passCount(new String[]{})",
+          "passCount(null)",
+          "maxValid(new String[]{\"0\", \"缺考\", \"-10\"})",
+          "maxValid(new String[]{\"72\", \"120\", \"88\", \"abc\"})",
+          "maxValid(new String[]{\"缺考\", \"101\", \"-1\"})",
+          "maxValid(new String[]{})",
+          "maxValid(null)"
+        ],
+        "uses": ["toScore("]
+      },
       "hints": {
-        "lead": "看不懂就交回 -1。",
-        "plain": "把 `Integer.parseInt(s)` 放進 `try`，成功就直接交回；跌倒的話跳到 `catch`，交回 -1 代表「這不是分數」。"
+        "lead": "maxValid 可以把初始最佳值設為 -1，因為所有有效分數都保證 >= 0。",
+        "plain": "`passCount` 遇到 `score >= 60` 就 `count++`。`maxValid` 先設 `int best = -1;`，走訪時只要 `score >= 0 && score > best` 就更新 `best = score;`，最後回傳 `best`。"
       },
       "afterText": ""
     }

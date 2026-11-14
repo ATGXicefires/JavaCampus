@@ -7,30 +7,53 @@
   "vars": [],
   "steps": [
     {
-      "id": "flow",
-      "title": "畫面的順序",
-      "goal": "依序畫出四個畫面，印出四行：\n`== 首頁 ==`\n`== 課程 ==`\n`== 答題 ==`\n`== 成績 ==`\n\n在 `Main.java` 最上面寫 `import java.util.ArrayList;`（要用 `java.util` 裡的 `ArrayList`，得先寫這一行），用 `ArrayList<Drawable>` 依序放進這四個畫面（`new Screen(\"首頁\")` 這樣），再用 for-each 一個一個呼叫 `draw()` 畫出來。",
-      "instructions": "`Screen` 照 `Drawable` 的約定寫好了，在另一個分頁。畫一個畫面就是呼叫它的 `draw()`，會印出 `== 首頁 ==` 這樣的一行。\n\n`ArrayList`、`HashMap` 放在 Java 的 `java.util` 裡，要用就得先在檔案最上面 `import`，寫在 `public class Main` 的外面。`String`、`System` 在 `java.lang` 裡，不用 import。`import` 只對寫它的那個檔案有效。",
-      "expectedShape": "import java.util.ArrayList;\n…\nArrayList<Drawable> flow = new ArrayList<>();\nflow.add(new Screen(\"首頁\"));\n…\nfor (Drawable d : flow) {\n    d.draw();\n}",
+      "id": "flow-v2",
+      "title": "畫面與關卡進度模組",
+      "goal": "1. 在 `Main.java` 最上方匯入 `ArrayList`（`import java.util.ArrayList;`），用 `ArrayList<Drawable>` 依序加入四個畫面（`首頁`、`課程`、`答題`、`成績`），以 for-each 呼叫 `draw()` 印出四行標題。\n2. 完成 `LessonFlow.java`：\n- `public LessonFlow(List<String> stages)`：依序保存有效關卡名稱（若 `stages` 為 `null` 則視為空清單；忽略 `null`、空白與重複的關卡名稱）。\n- `public ArrayList<String> pending(List<String> completed)`：依原順序回傳尚未出現在 `completed` 中的關卡清單；若 `completed` 為 `null` 則回傳全部關卡。\n- `public int completionRate(List<String> completed)`：計算已完成關卡佔總關卡數的百分比（`已完成數 * 100 / 總數`，整數除法無條件捨去）。忽略 `completed` 中不在 `stages` 內的無效名稱與重複項；若總關卡數為 `0` 則回傳 `0`。\n3. 在 `Main.main` 最後建立 `LessonFlow`（關卡：`變數入門`、`語法基礎`、`條件判斷`、`迴圈練習`，已完成：`變數入門`），印出：\n`剩餘關卡：[語法基礎, 條件判斷, 迴圈練習]`\n`完成率：25%`",
+      "instructions": "`Screen` 已實作 `Drawable` 介面，呼叫 `draw()` 會印出 `== 標題 ==`。\n\n`ArrayList` 與 `List` 位於 `java.util` 套件，`import` 只對寫它的那個檔案有效，因此 `Main.java` 與 `LessonFlow.java` 各自用到什麼都要在檔案最上方宣告。\n\n計算 `completionRate` 時，只要走訪自己的 `stages` 清單並檢查每一關是否在 `completed` 中出現，就能同時避免重複計分與無效名稱干擾。",
+      "expectedShape": "// LessonFlow.java\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class LessonFlow {\n    public LessonFlow(List<String> stages) { … }\n    public ArrayList<String> pending(List<String> completed) { … }\n    public int completionRate(List<String> completed) { … }\n}\n\n// Main.java\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        …\n    }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "uses": ["import java.util.ArrayList;", "ArrayList<Drawable>", ".draw()"],
+        "exprs": [
+          "new LessonFlow(java.util.List.of(\"A\", \"B\", \"C\", \"D\")).pending(java.util.List.of(\"A\", \"C\"))",
+          "new LessonFlow(java.util.List.of(\"A\", \"B\", \"C\", \"D\")).pending(null)",
+          "new LessonFlow(java.util.List.of(\"A\", \"B\", \"C\", \"D\")).completionRate(java.util.List.of(\"A\", \"X\", \"A\"))",
+          "new LessonFlow(java.util.List.of(\"A\", \"B\")).completionRate(java.util.List.of(\"A\", \"B\"))",
+          "new LessonFlow(java.util.List.of()).completionRate(java.util.List.of(\"A\"))"
+        ]
+      },
       "hints": {
-        "lead": "清單裝畫面，for-each 一個一個畫。",
-        "plain": "明天上台就照這個順序示範。清單排好四個畫面，迴圈從頭畫到尾，順序就是使用的流程。"
+        "lead": "以 `stages` 作為唯一基準來過濾未完成清單與計數。",
+        "plain": "不要直接用 `completed.size()` 除以總數，否則傳入重複或不存在的關卡名稱會算錯；改為逐一檢查 `stages` 裡的每一關有沒有出現在 `completed` 中。"
       },
       "afterText": ""
     },
     {
-      "id": "newcomer",
-      "title": "模擬一位新生",
-      "goal": "`main` 裡的 `typed` 是新生的兩次作答：`\"選晚餐\"` 答錯，`\" 選午餐\"` 答對。畫面下面要接著印出兩行：\n`滷肉：「沒關係，再跑一次！」`\n`分號：「⋯⋯恭喜。」`\n\n用 `checker.check(…)` 一個一個判斷 `typed` 的作答：答錯印常數 `RETRY`，答對印常數 `PASS`，不加引號。",
-      "instructions": "`RETRY` 和 `PASS` 是 `Main` 最上面寫好的兩句台詞，是 App 裡的兩個小老師滷肉和分號說的話。不加引號，印出來的是盒子裡裝的那句台詞；加了引號，就只會印出 `RETRY` 這幾個字母。\n\n`checker.check(作答)` 會交回 `true`（答對）或 `false`（答錯）。`ExactChecker` 會先把作答 `trim` 再比，所以 `\" 選午餐\"` 也算對。",
-      "expectedShape": "for (String t : typed) {\n    if (checker.check(t)) {\n        System.out.println(PASS);\n    } else {\n        …\n    }\n}",
+      "id": "newcomer-v2",
+      "title": "新手路徑推薦與解鎖狀態",
+      "goal": "1. 在 `LessonFlow.java` 新增兩個方法：\n- `public String nextRecommended(List<String> completed)`：回傳第一個尚未完成的關卡名稱；若全部關卡皆已完成（或關卡清單為空），回傳 `\"全部完成\"`。\n- `public boolean isUnlocked(String target, List<String> completed)`：判斷 `target` 是否解鎖。規則如下：若 `target` 為 `null` 或不在 `stages` 中回傳 `false`；第 0 關永遠解鎖（回傳 `true`）；其餘第 `i` 關（`i > 0`）只有在「前一關 `stages.get(i - 1)` 存在於 `completed`（且 `completed` 不為 `null`）」時才回傳 `true`，否則回傳 `false`。\n2. 在 `Main.main` 保留畫面繪製，接著用 `checker.check(…)` 依序檢查 `typed`（`\"選晚餐\"`、`\" 選午餐\"`），答錯印常數 `RETRY`、答對印常數 `PASS`，最後再印出：\n`推薦下一關：語法基礎`",
+      "instructions": "`RETRY` 與 `PASS` 是 `Main` 裡定義好的字串常數，輸出時直接傳入變數名稱即可，不要加上雙引號。\n\n`nextRecommended` 可以直接重用上一步寫好的 `pending(completed)`；`isUnlocked` 則可用 `stages.indexOf(target)` 先找出位置，再依索引值判斷是否為第 0 關或檢查前一關是否已完成。",
+      "expectedShape": "// LessonFlow.java\npublic class LessonFlow {\n    …\n    public String nextRecommended(List<String> completed) { … }\n    public boolean isUnlocked(String target, List<String> completed) { … }\n}\n\n// Main.java\nfor (…) {\n    if (…) {\n        …\n    } else {\n        …\n    }\n}\n…",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "uses": [".check(", "println(PASS)", "println(RETRY)"],
+        "exprs": [
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\", \"迴圈\")).nextRecommended(java.util.List.of(\"變數\"))",
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\", \"迴圈\")).nextRecommended(java.util.List.of(\"變數\", \"條件\", \"迴圈\"))",
+          "new LessonFlow(java.util.List.of()).nextRecommended(java.util.List.of())",
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\", \"迴圈\")).isUnlocked(\"變數\", java.util.List.of())",
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\", \"迴圈\")).isUnlocked(\"條件\", java.util.List.of())",
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\", \"迴圈\")).isUnlocked(\"迴圈\", java.util.List.of(\"變數\", \"條件\"))",
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\")).isUnlocked(\"不存在\", java.util.List.of(\"變數\"))",
+          "new LessonFlow(java.util.List.of(\"變數\", \"條件\")).isUnlocked(null, null)"
+        ]
+      },
       "hints": {
-        "lead": "交給 checker 判斷。",
-        "plain": "判斷對錯是學長那一半寫好的 `Checker`，你只要把每一次作答交給它，再照結果換小老師說的話。"
+        "lead": "用 `indexOf` 取得關卡順位，再決定檢查規則。",
+        "plain": "找不到 `target`（回傳 -1）直接回傳 `false`；位置是 0 回傳 `true`；其他位置檢查 `completed != null && completed.contains(stages.get(idx - 1))`。"
       },
       "afterText": ""
     }

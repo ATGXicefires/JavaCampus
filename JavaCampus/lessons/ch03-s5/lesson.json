@@ -5,39 +5,49 @@
   "partner": "亭瑄",
   "notes": ["else-if", "array-loop"],
   "vars": [
-    { "name": "scores", "type": "int[]", "value": "{95, 72, 58}", "note": "一排分數" }
+    { "name": "scores", "type": "int[]", "value": "{95, 72, -1, 58, 105, 60}", "note": "一排含異常值的分數" }
   ],
   "steps": [
     {
-      "id": "mascot",
-      "title": "小老師的話",
-      "goal": "`scores` 是一排分數，現在是 `{95, 72, 58}`，要印出 3 行（滷肉是 App 裡的小老師）：\n`95 分 滷肉：「太強了！」`\n`72 分 滷肉：「不錯喔！」`\n`58 分 滷肉：「沒關係，再跑一次！」`\n\n用 `for` 走過 `scores` 的每一格，每個分數印一行滷肉說的話：90 以上 `太強了！`、60 以上 `不錯喔！`、其他 `沒關係，再跑一次！`。",
-      "instructions": "編輯器最上面那行 `int[] scores = {95, 72, 58};` 是題目先寫好的，你的程式可以直接用 `scores`。\n\n迴圈裡用 `if`／`else if`／`else` 從高分往低分問，第一個成立的就印。「以上」包含剛好那個分數：剛好 60 分是 `不錯喔！`。\n\n空格是半形的；冒號、引號和話裡的標點都是全形，可以從重點複製。",
-      "expectedShape": "for (…) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" 分 滷肉：「…」\");\n    } else if (…) {\n        …\n    }\n}",
+      "id": "mascot-v2",
+      "title": "小老師的話與異常排除",
+      "goal": "`scores` 是一排含異常值的分數，現在是 `{95, 72, -1, 58, 105, 60}`。\n\n用 `for` 走過 `scores` 的每一格，先排除 `< 0` 或 `> 100` 的無效分數，再依區間印出滷肉說的話（空格是半形，冒號、引號和標點是全形）：\n- 小於 `0` 或大於 `100`：`s 分 滷肉：「這個分數有問題！」`\n- `90`～`100`（含 90 與 100）：`s 分 滷肉：「太強了！」`\n- `70`～`89`：`s 分 滷肉：「很穩喔！」`\n- `60`～`69`：`s 分 滷肉：「低空飛過！」`\n- `0`～`59`：`s 分 滷肉：「沒關係，再跑一次！」`",
+      "instructions": "編輯器最上面那行 `int[] scores = {95, 72, -1, 58, 105, 60};` 是題目先寫好的，你的程式可以直接使用。\n\n迴圈裡用 `if / else if / else` 先擋掉無效分數（`< 0 || > 100`），否則 `105` 會被誤認成 90 以上、`-1` 會被誤認成不到 60！\n\n擋掉無效分數之後，再從高分往低分依序問 `90`、`70`、`60` 以上，最後 `else` 處理 `0`～`59` 分。",
+      "expectedShape": "for (…) {\n    int s = scores[i];\n    if (…) {\n        System.out.println(s + \" 分 滷肉：「…」\");\n    } else if (…) {\n        …\n    } else {\n        …\n    }\n}",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{60, 59}" }, { "scores": "{90}" }, { "scores": "{89}" } ]
+        "variants": [
+          { "scores": "{101, 100, 90, 89, 70, 69, 60, 59, 0, -1}" },
+          { "scores": "{90}" },
+          { "scores": "{}" }
+        ],
+        "uses": ["for", "else if"]
       },
       "hints": {
-        "lead": "用 for 走訪陣列，迴圈裡做三段式分支⋯⋯",
-        "plain": "⋯⋯白話：每一個分數都問一遍：90 以上、60 以上、其他，各印一句滷肉的話。"
+        "lead": "迴圈內先排除無效分數，再依 90、70、60 由高到低做多分支判斷⋯⋯",
+        "plain": "⋯⋯白話：最前面先擋掉 `< 0 || > 100`，再依序問 `90` 以上、`70` 以上、`60` 以上，剩下的才是 `0`～`59`。"
       },
       "afterText": ""
     },
     {
-      "id": "retry",
-      "title": "再試一次",
-      "goal": "現在 `scores` 是 `{95, 72, 58}`，不到 60 分、要顯示「再試一次」按鈕的只有 58 分這 1 個，所以 `retry` 是 1。\n\n用 `for` 走過 `scores`，數出有幾個分數不到 60，存進 `retry`；剛好 60 分不算。",
-      "instructions": "數數的寫法：先準備一個從 0 開始的盒子，走過每一格，符合條件就用 `retry++` 加一。走完以後，盒子裡就是符合條件的個數。\n\n「不到 60」寫成 `< 60`（小於）。",
-      "expectedShape": "int retry = 0;\nfor (…) {\n    if (…) {\n        retry++;\n    }\n}",
+      "id": "retry-v2",
+      "title": "分區計數與合規平均",
+      "goal": "這一步重新開始，單次走訪 `scores` 統計五個結果（以 `{95, 72, -1, 58, 105, 60}` 為例，高標 1、及格 2、重試 1、無效 2、平均 71.25）：\n1. `int strong`：`90`～`100` 的人數\n2. `int pass`：`60`～`89` 的人數\n3. `int retry`：`0`～`59`（需重試）的人數\n4. `int invalid`：`< 0` 或 `> 100` 的無效筆數\n5. `double validAvg`：只針對合規分數（`0`～`100`）計算的平均值（保留小數；若無任何合規分數或陣列為空，`validAvg = 0.0`，不可除以零或算出 `NaN`）\n\n最後印出一行摘要：\n`高標：strong 及格：pass 重試：retry 無效：invalid 平均：validAvg`",
+      "instructions": "這一步重新開始，只需要走訪 `scores` 一遍就同時算出人數分布與合規平均。\n\n在 `for` 迴圈裡先擋掉 `< 0 || > 100` 累計 `invalid++`；進入合規分數後，先把 `s` 加進 `validSum` 並讓 `validCount++`，再用 `if / else if / else` 分進 `strong`（`90`～`100`）、`pass`（`60`～`89`）或 `retry`（`0`～`59`）。\n\n迴圈結束後，先檢查 `validCount > 0` 再用 `(double) validSum / validCount` 算出 `validAvg`。",
+      "expectedShape": "int strong = 0;\nint pass = 0;\nint retry = 0;\nint invalid = 0;\nint validSum = 0;\nint validCount = 0;\ndouble validAvg = 0.0;\nfor (…) {\n    int s = scores[i];\n    if (…) {\n        invalid++;\n    } else {\n        validSum += s;\n        validCount++;\n        if (…) {\n            strong++;\n        } else if (…) {\n            pass++;\n        } else {\n            retry++;\n        }\n    }\n}\nif (…) {\n    validAvg = …;\n}\nSystem.out.println(\"高標：\" + strong + \" 及格：\" + pass + \" 重試：\" + retry + \" 無效：\" + invalid + \" 平均：\" + validAvg);",
       "check": {
-        "type": "values",
-        "exprs": ["retry"],
-        "variants": [ { "scores": "{60, 59, 0}" }, { "scores": "{100, 90}" } ]
+        "type": "output",
+        "exprs": ["strong", "pass", "retry", "invalid", "validAvg"],
+        "variants": [
+          { "scores": "{100, 90, 89, 60, 59, 0}" },
+          { "scores": "{-5, 101}" },
+          { "scores": "{}" }
+        ],
+        "uses": ["for", "else if"]
       },
       "hints": {
-        "lead": "計數器：條件成立時遞增⋯⋯",
-        "plain": "⋯⋯白話：準備一個從 0 開始的盒子，走過每一格，不及格就 `retry++`。"
+        "lead": "無效值計入 invalid，合規值累加 validSum、validCount 後再細分 strong／pass／retry⋯⋯",
+        "plain": "⋯⋯白話：先排除 `< 0 || > 100`，剩下的合規分數都要加進 `validSum` 與 `validCount`，再分進 `>= 90`、`>= 60`、`else` 三組；算平均前記得先檢查 `validCount > 0`。"
       },
       "afterText": ""
     }

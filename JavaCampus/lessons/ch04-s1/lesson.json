@@ -7,41 +7,67 @@
   "vars": [],
   "steps": [
     {
-      "id": "total",
-      "title": "加總",
-      "goal": "`total(new int[]{3, 4, 5})` 要交回 `12`：`counts` 裡的 3、4、5 加起來。\n\n寫一個方法 `static int total(int[] counts)`，用 `return`（把結果交回去）交回 `counts` 全部加起來的和；一格都沒有的空陣列交回 0。",
-      "instructions": "`new int[]{3, 4, 5}` 是當場做出一個裝著 3、4、5 的陣列，直接交給方法；`new int[]{}` 是一格都沒有的空陣列。\n\n方法簽章 `static int total(int[] counts)` 的意思是：呼叫的人交一排整數進來，放在參數 `counts` 裡；方法做完，用 `return` 交回一個 `int`。`static` 先照寫。",
+      "id": "total-v2",
+      "title": "過濾異常值的加總",
+      "goal": "寫一個方法 `static int total(int[] counts)`，加總 `counts` 裡所有大於 0 的有效計數並交回總和（負數與 0 視為異常或無效資料，不計入總和；若為空陣列或全是無效值，交回 `0`）。\n\n例如 `total(new int[]{3, -2, 5, 0})` 要交回 `8`。",
+      "instructions": "`new int[]{3, 4, 5}` 會在呼叫時當場建立一個整數陣列交給方法；`new int[]{}` 是長度為 0 的空陣列。\n\n用迴圈走訪 `counts` 時，先判斷每一格是否大於 0，只把合法的正數累加起來，最後用 `return` 交回結果。",
       "expectedShape": "static int total(int[] counts) {\n    …\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["total(new int[]{3, 4, 5})", "total(new int[]{})", "total(new int[]{7})"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "total(new int[]{3, 4, 5})",
+          "total(new int[]{3, -2, 5, 0})",
+          "total(new int[]{-1, -5})",
+          "total(new int[]{})"
+        ]
+      },
       "hints": {
-        "lead": "方法宣告：回傳型別 `int`、參數 `int[] counts`，以 `return` 交回結果⋯⋯",
-        "plain": "⋯⋯白話：方法裡跟以前一樣用 `for` 加總，最後用 `return sum;` 把結果交回去。"
+        "lead": "在迴圈裡加上 `counts[i] > 0` 的條件過濾負數異常值。",
+        "plain": "準備 `int sum = 0;`，用 `for` 走過每一格，只有 `counts[i] > 0` 才加進 `sum`，迴圈結束後 `return sum;`。"
       },
       "afterText": ""
     },
     {
-      "id": "percent",
-      "title": "百分比",
-      "goal": "`percent(1, 4)` 要交回 `25`：`part` 是 1、`whole` 是 4，1 占 4 的 25%。\n\n寫一個方法 `static int percent(int part, int whole)`，交回 `part` 占 `whole` 的百分之幾，用整數算，小數直接捨去；`whole` 是 0 時不能除，交回 0。",
-      "instructions": "先乘 100 再除，答案才不會被整數除法吃掉：`3 / 8 * 100` 是 0，`3 * 100 / 8` 才是 37。\n\n`whole` 是 0 時，整數除以 0 會跌倒。除之前先檢查，是 0 就直接 `return 0;`：`return` 一執行，方法就結束了，後面的程式不會再跑。",
+      "id": "percent-v2",
+      "title": "上限鉗制與防零百分比",
+      "goal": "寫一個方法 `static int percent(int part, int whole)`，計算 `part` 占 `whole` 的整數百分比（小數直接捨去），並做好邊界防護：\n1. 若 `whole <= 0` 或 `part <= 0`，直接交回 `0`（避免除以 0 與負數比例）。\n2. 若 `part >= whole`（且 `whole > 0`），上限鉗制為 `100`。\n3. 其餘情況交回 `part * 100 / whole`。",
+      "instructions": "先乘 100 再除以 `whole`，才不會因為整數除法先變成 0。\n\n在方法開頭先把 `whole <= 0`、`part <= 0` 和超過 100% 的邊界條件用 `return` 擋下來，主計算邏輯就不會出錯。",
       "expectedShape": "static int percent(int part, int whole) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["percent(1, 4)", "percent(2, 3)", "percent(0, 0)"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "percent(1, 4)",
+          "percent(2, 3)",
+          "percent(7, 5)",
+          "percent(-3, 5)",
+          "percent(3, 0)",
+          "percent(3, -2)"
+        ]
+      },
       "hints": {
-        "lead": "除數為 0 時先 `return`，避免 `ArithmeticException`⋯⋯",
-        "plain": "⋯⋯白話：先檢查 `whole` 是不是 0，是的話直接交回 0。不是的話，先乘 100 再除。"
+        "lead": "除數為 0 或分子非正數時先 `return 0`，超過總數時回傳 100。",
+        "plain": "先問 `if (whole <= 0 || part <= 0) return 0;`；再問 `if (part >= whole) return 100;`；最後算 `return part * 100 / whole;`。"
       },
       "afterText": ""
     },
     {
-      "id": "report",
-      "title": "她問為什麼",
-      "goal": "`report(1, 4)` 要印出 `完成 25%`，`report(3, 4)` 要印出 `完成 75%`。\n\n寫一個方法 `static void report(int part, int whole)`（`void`：做完事，什麼都不交回），用 `percent` 算出百分比再印出來。寫好後呼叫 `report(1, 4)` 和 `report(3, 4)`，共印兩行。",
-      "instructions": "`report` 不用自己算百分比：在方法裡呼叫 `percent(part, whole)`，拿它交回的數字排成一句話印出來。",
-      "expectedShape": "static void report(int part, int whole) {\n    System.out.println(…);\n}\n\nreport(1, 4);\nreport(3, 4);",
-      "check": { "type": "output", "exprs": ["report(1, 2)"] },
+      "id": "report-v2",
+      "title": "組裝進度分級報告",
+      "goal": "寫一個方法 `static void report(String label, int[] doneList, int whole)`，結合前面兩個方法印出單行進度報告，並在方法外呼叫 `report(\"方法篇\", new int[]{1, 2}, 4);` 與 `report(\"迴圈篇\", new int[]{5, 5}, 8);`。\n\n規則如下：\n1. 將 `label` 去掉前後空白；若結果為空字串，標籤改顯示為 `\"未分類\"`。\n2. 呼叫 `total(doneList)` 算出總完成數 `part`，再呼叫 `percent(part, whole)` 算出百分比 `p`。\n3. 依 `p` 決定狀態標籤：`p == 100` 為 `\"[已完成]\"`，`p >= 50` 為 `\"[進行中]\"`，其餘為 `\"[剛起步]\"`。\n4. 印出格式：`\"<標籤> <狀態> <part>/<whole> (<p>%)\"`（例如 `report(\"方法篇\", new int[]{1, 2}, 4)` 印出 `方法篇 [進行中] 3/4 (75%)`）。",
+      "instructions": "這一步展現為什麼前兩個方法要用 `return` 交回數字而不是直接印出來：因為 `report` 需要拿 `total` 和 `percent` 的回傳值繼續計算與判斷分級。\n\n用 `if / else if / else` 依序從 100、50 往下判斷就能分出三個狀態。",
+      "expectedShape": "static void report(String label, int[] doneList, int whole) {\n    …\n}\n\nreport(…);\nreport(…);",
+      "check": {
+        "type": "output",
+        "exprs": [
+          "report(\"  \", new int[]{-1, 2}, 5)",
+          "report(\"空白\", new int[]{}, 0)",
+          "report(\"衝刺\", new int[]{3, 4}, 6)"
+        ],
+        "uses": ["total(", "percent("]
+      },
       "hints": {
-        "lead": "`void` 方法沒有回傳值，只負責輸出⋯⋯",
-        "plain": "⋯⋯白話：交回來的值可以再拿去用，印出來的就只能看。`report` 用 `percent` 交回的數字，排成一句話印出來。"
+        "lead": "清理 `label`、呼叫 `total` 與 `percent`、用 `if / else if` 決定狀態標籤後印出。",
+        "plain": "先算 `int part = total(doneList);` 與 `int p = percent(part, whole);`，再依 `p` 決定 `status` 字串，最後照格式印出一行。"
       },
       "afterText": ""
     }

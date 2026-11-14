@@ -7,44 +7,75 @@
   "vars": [],
   "steps": [
     {
-      "id": "list",
-      "title": "會變長的清單",
-      "goal": "`screens` 裡放了 4 個畫面，所以要印出 `共 4 個畫面`。\n\n在檔案最上面寫 `import java.util.ArrayList;`（把 Java 寫好的清單借來用），在 `main` 裡做一個 `ArrayList<String> screens`（裝字串、可以一直加的清單），依序加入 `首頁`、`課程列表`、`答題`、`成績`，再用 `screens.size()`（有幾個）印出這一行。",
-      "instructions": "`ArrayList` 是會變長的清單：陣列一開始就決定好有幾格，清單不用先決定，`add` 一次就多一個。它是 Java 寫好、放在 `java.util` 裡的，要先在檔案最上面 `import`，才能用。\n\n角括號寫清楚清單裝什麼，例如：\n\n```\nArrayList<String> foods = new ArrayList<>();\nfoods.add(\"滷肉飯\");\nfoods.add(\"控肉飯\");\nfoods.size()   // 2，有幾個\n```\n\n畫面數用 `screens.size()` 算，清單多加一個畫面，數字就會跟著變。",
-      "expectedShape": "import java.util.ArrayList;\n\n…\nArrayList<String> screens = new ArrayList<>();\nscreens.add(\"首頁\");\n…\nSystem.out.println(\"共 \" + screens.size() + \" 個畫面\");",
+      "id": "list-v2",
+      "title": "會變長的清單與清理去重",
+      "goal": "在 `Main` 中實作 `public static ArrayList<String> cleanScreens(ArrayList<String> raw)`，清理畫面清單中的無效與重複項目，並在 `main` 印出 `共 4 個畫面`。\n\n`cleanScreens` 規則：\n- 若 `raw` 為 `null`，回傳空清單 `new ArrayList<>()`。\n- 走過 `raw` 中的每個元素：忽略 `null` 與空白字串（`isBlank()`）。\n- 有效名稱先去掉前後空白（`trim()`）；若尚未加入結果清單，才 `add` 進去（維持原本出現順序、不重複）。",
+      "instructions": "`ArrayList` 是會變長的清單，必須在檔案最上面寫 `import java.util.ArrayList;` 才能使用。\n\n利用 `result.contains(name)` 可以判斷清單裡是否已經有這個名稱。記得先檢查元素是不是 `null`，再去呼叫 `isBlank()` 與 `trim()`。`main` 中的原始資料會含空白與重複名稱，清理後再用 `.size()` 印出數量。",
+      "expectedShape": "import java.util.ArrayList;\n\npublic class Main {\n    public static ArrayList<String> cleanScreens(ArrayList<String> raw) {\n        …\n    }\n\n    public static void main(String[] args) {\n        …\n        System.out.println(\"共 \" + screens.size() + \" 個畫面\");\n    }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.cleanScreens(new java.util.ArrayList<>(java.util.List.of(\"首頁\", \" \", \"課程列表\", \"首頁\", \" 答題 \", \"成績\")))",
+          "Main.cleanScreens(new java.util.ArrayList<>(java.util.Arrays.asList(\"首頁\", null, \"\", \" 首頁 \")))",
+          "Main.cleanScreens(new java.util.ArrayList<>())",
+          "Main.cleanScreens(null)"
+        ],
+        "uses": ["import java.util.ArrayList;", "ArrayList<String>", ".add(", ".size()"]
+      },
       "hints": {
-        "lead": "add 加進去，size() 數有幾個。",
-        "plain": "陣列像訂好座位的便當盒，格子一開始就固定；清單像購物袋，要裝多少就 `add` 多少。"
+        "lead": "先過濾 null 與空白，再靠 contains 擋掉重複的名稱。",
+        "plain": "準備一個新的 `ArrayList<String>` 當乾淨名單：走過 `raw`，遇到 `null` 或空白就跳過，剩下的去掉前後空白，再用 `contains` 確認沒放過才 `add` 進去。"
       },
       "afterText": ""
     },
     {
-      "id": "each",
-      "title": "for-each",
-      "goal": "`共 4 個畫面` 下面，`screens` 裡的畫面一個印一行：\n`- 首頁`\n`- 課程列表`\n`- 答題`\n`- 成績`\n\n用 for-each（不用索引，把清單裡的每一個輪流拿出來）走過 `screens`，把每個畫面印成這樣。",
-      "instructions": "for-each 寫成 `for (String s : screens)`，冒號唸成「裡面的每一個」：`screens` 裡面的每一個，輪流放進 `s`，每放一次就做一次大括號裡的事。不用管第幾個，也不用寫 `i`。\n\n例如 `foods` 裡有 `滷肉飯`、`控肉飯`，`for (String f : foods)` 會先讓 `f` 是 `滷肉飯`，做一次大括號裡的事；再讓 `f` 是 `控肉飯`，再做一次。",
-      "expectedShape": "for (String s : screens) {\n    System.out.println(\"- \" + …);\n}",
+      "id": "each-v2",
+      "title": "for-each 走訪與關鍵字篩選",
+      "goal": "在 `共 4 個畫面` 下面依序印出每個畫面，並實作 `public static ArrayList<String> filterByKeyword(ArrayList<String> screens, String keyword)`：\n`- 首頁`\n`- 課程列表`\n`- 答題`\n`- 成績`\n`符合「答」：1 個`\n\n`filterByKeyword` 規則：\n- 若 `screens` 為 `null`，回傳空清單。\n- 走過 `screens`，忽略 `null` 與空白字串（將有效名稱 `trim()`）。\n- 若 `keyword` 為 `null` 或空白，回傳所有有效名稱；否則只留下包含 `keyword.trim()`（`contains(...)`）的名稱，維持原順序。",
+      "instructions": "使用增強型 `for-each`：`for (String s : screens)` 走過 `screens` 的每一個項目，依序印出 `- <畫面名稱>`。\n\n在 `filterByKeyword` 中一樣可以用 `for-each` 逐一檢查。注意 `keyword` 可能是 `null` 或前後帶空白，要先安全檢查再比對。",
+      "expectedShape": "public static ArrayList<String> filterByKeyword(ArrayList<String> screens, String keyword) {\n    …\n}\n\npublic static void main(String[] args) {\n    …\n    for (String s : screens) {\n        …\n    }\n    …\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.filterByKeyword(new java.util.ArrayList<>(java.util.List.of(\"首頁\", \"課程列表\", \"答題\", \"成績\")), \"題\")",
+          "Main.filterByKeyword(new java.util.ArrayList<>(java.util.List.of(\"首頁\", \"課程列表\", \"答題\")), \" 課 \")",
+          "Main.filterByKeyword(new java.util.ArrayList<>(java.util.List.of(\"首頁\", \"成績\")), \"不存在\")",
+          "Main.filterByKeyword(new java.util.ArrayList<>(java.util.Arrays.asList(\" 首頁 \", null, \"  \", \"成績\")), \"   \")",
+          "Main.filterByKeyword(null, \"首頁\")"
+        ],
+        "uses": [": screens"]
+      },
       "hints": {
-        "lead": "冒號唸成「裡面的每一個」。",
-        "plain": "`for (String s : screens)` 就是「`screens` 裡面的每一個，輪流叫它 `s`」。不用管第幾個，每一個都會輪到。"
+        "lead": "用 for-each 走過清單，把無效關鍵字當成「全部留下」。",
+        "plain": "`for (String s : screens)` 會輪流拿到清單裡的每一個畫面；`filterByKeyword` 遇到 `keyword` 是 `null` 或空白時，只要畫面本身不是 `null` 或空白就全部留著。"
       },
       "afterText": ""
     },
     {
-      "id": "taps",
-      "title": "每個畫面被點幾次",
-      "goal": "`taps` 是每個畫面被點了幾次，裡面是 `12`、`30`、`7` 時，`totalTaps(taps)` 交回 `49`。\n\n在 `Main` 裡寫一個方法 `static int totalTaps(ArrayList<Integer> taps)`（`Integer` 是 `int` 的包裝類別），用 for-each 把 `taps` 裡的點擊次數加起來交回。",
-      "instructions": "角括號裡只能放類別。`int` 不是類別，要寫成它的包裝類別 `Integer`；`double` 也一樣，要寫 `Double`。放進去、拿出來的時候，Java 會自動轉換，所以 for-each 可以直接用 `int` 接：`for (int t : taps)`。\n\n這一步只看 `totalTaps` 交回什麼，`main` 不用改。清單是空的話，迴圈一次都不會跑，交回的就是一開始的 0。",
-      "expectedShape": "static int totalTaps(ArrayList<Integer> taps) {\n    int sum = 0;\n    for (…) {\n        …\n    }\n    return sum;\n}",
+      "id": "taps-v2",
+      "title": "泛型 Integer 門檻統計",
+      "goal": "在 `Main` 裡實作兩個統計方法，計算達到門檻的熱門畫面數與總有效點擊數：\n1. `public static int countHotScreens(ArrayList<Integer> taps, int threshold)`：\n   - 統計 `taps` 中大於等於 `threshold` 且非負的有效點擊筆數（若 `taps` 為 `null` 回傳 `0`；忽略 `null` 元素與小於 `0` 的異常負值）。\n2. `public static int totalValidTaps(ArrayList<Integer> taps)`：\n   - 使用 `for-each` 加總 `taps` 中所有大於等於 `0` 的有效點擊次數（若 `taps` 為 `null` 回傳 `0`；忽略 `null` 元素與負值）。",
+      "instructions": "角括號裡只能放類別，所以裝整數的清單要寫成 `ArrayList<Integer>`，不能寫 `ArrayList<int>`。\n\n用 `for (Integer t : taps)` 走訪時，建議先用 `Integer` 接住元素並檢查 `t != null && t >= 0`，避免在清單內含 `null` 時自動拆箱成 `int` 而發生 `NullPointerException`！",
+      "expectedShape": "public static int countHotScreens(ArrayList<Integer> taps, int threshold) {\n    …\n}\n\npublic static int totalValidTaps(ArrayList<Integer> taps) {\n    …\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(12, 30, 7)))", "Main.totalTaps(new java.util.ArrayList<>())", "Main.totalTaps(new java.util.ArrayList<>(java.util.List.of(5, 20)))"] },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Main.countHotScreens(new java.util.ArrayList<>(java.util.List.of(12, 30, 7, 15)), 15)",
+          "Main.countHotScreens(new java.util.ArrayList<>(java.util.Arrays.asList(10, null, -5, 25)), 10)",
+          "Main.countHotScreens(new java.util.ArrayList<>(), 5)",
+          "Main.countHotScreens(null, 0)",
+          "Main.totalValidTaps(new java.util.ArrayList<>(java.util.Arrays.asList(12, -3, null, 30, 7)))",
+          "Main.totalValidTaps(new java.util.ArrayList<>(java.util.List.of(-1, -10)))",
+          "Main.totalValidTaps(null)"
+        ],
+        "uses": ["ArrayList<Integer>", ": taps"]
+      },
       "hints": {
-        "lead": "ArrayList<Integer>，不是 <int>。",
-        "plain": "清單只裝得下物件，`int` 要換成它的包裝 `Integer` 才放得進去。拿出來加的時候，Java 會自動拆開來算。"
+        "lead": "用 Integer 接住元素，先判 null 與 >= 0 再加總或比門檻。",
+        "plain": "寫成 `for (Integer t : taps)`，先檢查 `t != null && t >= 0`，才不會拆箱 `null` 跌倒或把錯誤的負數算進去；若 `threshold` 是負數，無效的負數紀錄也一樣不能算進熱門畫面。"
       },
       "afterText": ""
     }

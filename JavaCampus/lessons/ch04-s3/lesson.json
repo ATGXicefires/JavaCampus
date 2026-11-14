@@ -7,28 +7,50 @@
   "vars": [],
   "steps": [
     {
-      "id": "space",
-      "title": "多打了空白",
-      "goal": "`isCorrect(typed, answer)` 判斷玩家打的 `typed` 是不是答案 `answer`。修好後，`isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")` 要交回 `true`；字不一樣的，例如 `isCorrect(\"小黑\", \"小白\")`，還是交回 `false`。\n\n現在 `typed` 前後多打一個空白，就被判成答錯。",
-      "instructions": "`\" 小白 \".trim()` 會交回去掉前後空白的新字串 `\"小白\"`，中間的空白不會動。\n\n比兩個字串的字一不一樣，要用 `a.equals(b)`，不要用 `==`：`==` 比的是「是不是同一個盒子」，`trim()` 做出來的是新盒子，字再像，用 `==` 比也是 `false`。",
-      "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")", "isCorrect(\" 小白\", \"小白\")", "isCorrect(\"小黑\", \"小白\")"] },
+      "id": "space-v2",
+      "title": "正規化與 == 陷阱",
+      "goal": "原本的 `isCorrect(typed, answer)` 用 `==` 比對，導致玩家多打空白或大小寫不同就判錯。請完成下面兩個方法：\n1. `static String normalize(String text)`：若 `text` 是 `null` 交回 `\"\"`；否則去掉前後全形與半形空白，並將英文字母轉成小寫（可使用 `Locale.ROOT` 或 `.toLowerCase()`）。\n2. 修好 `static boolean isCorrect(String typed, String answer)`：若 `answer` 為 `null` 交回 `false`；將 `typed` 交給 `normalize` 清理後，用 `equals` 與 `answer` 比較（這一步假設題庫的 `answer` 已是小寫且無多餘空白）。",
+      "instructions": "`==` 比對的是兩個字串是不是同一個記憶體物件，不是內容一不一樣。只要透過 `trim()`、`strip()` 或 `toLowerCase()` 處理過，就會產生新字串物件，用 `==` 比必定是 `false`。\n\n字串比對一律用 `.equals(...)`。去除前後全半形空白可以用 `.strip()`，全轉小寫可用 `.toLowerCase()`。",
+      "expectedShape": "static String normalize(String text) {\n    …\n}\n\nstatic boolean isCorrect(String typed, String answer) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isCorrect(\"　Java　\", \"java\")",
+          "isCorrect(\" 吃滷肉飯 \", \"吃滷肉飯\")",
+          "isCorrect(null, \"java\")",
+          "isCorrect(\"小黑\", \"小白\")",
+          "normalize(null)",
+          "normalize(\"　AbC \")"
+        ],
+        "uses": [".equals("]
+      },
       "hints": {
-        "lead": "`==` 比較的是參考；`trim()` 回傳新的 `String` 物件⋯⋯",
-        "plain": "⋯⋯白話：`==` 問的是「是不是同一個盒子」。`trim()` 做出來的是新盒子，字再像也不是同一個。去掉空白之後，要用 `equals` 比。"
+        "lead": "在 `normalize` 防護 `null`、去全半形空白並轉小寫，再於 `isCorrect` 用 `equals` 比對。",
+        "plain": "`normalize` 先問 `if (text == null) return \"\";`，接著回傳 `text.strip().toLowerCase()`；`isCorrect` 先檢查 `answer != null`，再回傳 `normalize(typed).equals(answer)`。"
       },
       "afterText": ""
     },
     {
-      "id": "both",
-      "title": "答案也有空白",
-      "goal": "題庫裡的答案 `answer` 也可能前後多了空白。修好後，`isCorrect(\"小白\", \"小白 \")` 也要交回 `true`，現在卻交回 `false`。",
-      "instructions": "`trim()` 交回的是新的字串，可以直接接著用，也可以放進 `equals` 的括號裡。",
-      "expectedShape": "return typed.trim().equals(…);",
-      "check": { "type": "values", "exprs": ["isCorrect(\"小白\", \"小白 \")", "isCorrect(\" 小白 \", \" 小白\")"] },
+      "id": "both-v2",
+      "title": "雙邊正規化與連續空白折疊",
+      "goal": "阿成實測又發現兩個問題：題庫裡的 `answer` 有時也帶空白或大寫，且詞彙中間如果多打了好幾個空白會比對失敗；另外如果兩邊都是空的或只有空白，不應該算答對。\n\n請升級這兩個方法：\n1. `normalize(String text)`：除了原本的 `null` 防護、前後去空白與轉小寫，還必須把中間連續的多個全半形空白（例如 `\"hello   world\"` 或 `\"hello　　world\"`）折疊成**單一個半形空白** `\" \"`。\n2. `isCorrect(String typed, String answer)`：對 `typed` 和 `answer` 兩邊都呼叫 `normalize`；若任一方清理後是空字串 `\"\"`，直接交回 `false`；否則用 `equals` 比對。",
+      "instructions": "要一次把全形空白、半形空白與連續空白換成單一半形空白，可以先將全形空白 `'　'` 換成 `' '`，再用 `.trim()` 與 `.replaceAll(\" +\", \" \")`（或用迴圈把連續空白收成一個）；直接用 `.replaceAll(\"\\\\s+\", \" \").trim()`（記得在 Java 字串中寫成 `\"\\\\s+\"`）也能把連續空白折疊成一個。\n\n記得檢查 `isEmpty()`，不能讓空答案交卷過關。",
+      "expectedShape": "static String normalize(String text) {\n    …\n}\n\nstatic boolean isCorrect(String typed, String answer) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isCorrect(\"　JAVA  script \", \"java   Script\")",
+          "isCorrect(\"小白\", \" 小白　\")",
+          "isCorrect(\"\", \"\")",
+          "isCorrect(\"   \", \"　\")",
+          "isCorrect(null, null)",
+          "normalize(\"  hello　　WORLD  \")"
+        ],
+        "uses": [".equals("]
+      },
       "hints": {
-        "lead": "兩邊都正規化之後再比較⋯⋯",
-        "plain": "⋯⋯白話：題庫的答案也先 `trim()`，兩邊都去掉前後空白再比。"
+        "lead": "`normalize` 把連續全半形空白折成單一半形空白後再去前後空白；`isCorrect` 兩邊都呼叫 `normalize` 並擋掉空字串。",
+        "plain": "`text.replace('　', ' ').trim().replaceAll(\" +\", \" \").toLowerCase()` 會處理所有空白；`isCorrect` 把兩邊清理結果存進 `t` 和 `a`，若有一個 `isEmpty()` 就回傳 `false`，最後回傳 `t.equals(a)`。"
       },
       "afterText": ""
     }

@@ -7,28 +7,51 @@
   "vars": [],
   "steps": [
     {
-      "id": "super",
-      "title": "super",
-      "goal": "`new MyPlan().future()` 要交回 `學一技之長，找一份穩定的工作，而且是我喜歡的那一種`：前半句是爸媽原本的版本。\n\n在 `MyPlan` 裡覆寫 `String future()`：用 `super.future()`（`super` 指的是父類別）拿到 `ParentsPlan` 原本那一句，後面接上 `，而且是我喜歡的那一種`。",
-      "instructions": "子類別裡寫 `super.`，指的是父類別的那一份。`MyPlan` 自己覆寫了 `future()`，在裡面直接寫 `future()` 會叫到自己，一直叫下去停不下來；寫 `super.future()`，才是 `ParentsPlan` 原本的 `future()`。\n\n拿到原本那一句，再用 `+` 接上自己的話：留下一部分，改寫一部分。例如 `return super.bark() + \"！\";`，交回父類別的叫聲再多一個驚嘆號。",
-      "expectedShape": "String future() {\n    return super.future() + \"…\";\n}",
-      "check": { "type": "values", "exprs": ["new MyPlan().future()"], "uses": ["super.future()"] },
+      "id": "super-v2",
+      "title": "用 super 延伸計畫",
+      "goal": "在 `MyPlan` 裡覆寫 `future()` 與 `totalHours()`，延伸父類別 `Plan` 原本的內容而非全部重寫：\n1. `@Override String future()`：必須用 `super.future()` 拿到父類別那句話，並在後面加上 `\"，而且加上\" + artNote`（例如 `\"學一技之長，找一份穩定的工作，而且加上介面插畫\"`）。\n2. `@Override int totalHours()`：必須用 `super.totalHours()` 拿到父類別計算好的讀書時數，再加上子類別自己的 `extraHours`。\n\n父類別的 `describe()` 會自動呼叫這兩個方法，完成後父子類別呼叫 `describe()` 就會呈現各自的版本。",
+      "instructions": "子類別裡寫 `super.方法()`，指的是呼叫父類別那一份原本的實作。例如在 `MyPlan` 的 `future()` 裡若直接呼叫 `future()`，會不斷呼叫自己直到當掉；寫 `super.future()` 才能拿到 `Plan` 的版本，再用 `+` 接上自己的想法。\n\n父類別的 `describe()` 寫在 `Plan` 裡，但裡面呼叫的 `future()` 和 `totalHours()` 會在執行時動態派遣到子類別覆寫過的版本，因此 `MyPlan` 不用重寫 `describe()` 就能印出自己的版本。",
+      "expectedShape": "class MyPlan extends Plan {\n    …\n    @Override\n    String future() {\n        …\n    }\n\n    @Override\n    int totalHours() {\n        …\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Plan(\"爸媽\", 12).future()",
+          "new MyPlan(\"亭瑄\", 12, \"介面插畫\", 5).future()",
+          "new MyPlan(\"亭瑄\", -5, \"貼紙設計\", 4).totalHours()",
+          "new MyPlan(\"亭瑄\", 12, \"介面插畫\", -2).totalHours()",
+          "new MyPlan(\"亭瑄\", 12, \"介面插畫\", 5).describe()",
+          "new Plan(\"爸媽\", 70).describe()"
+        ],
+        "uses": ["super.future()", "super.totalHours()", "@Override"]
+      },
       "hints": {
-        "lead": "super.future() 是爸媽的版本。",
-        "plain": "不用整句重寫。`super.future()` 先拿到爸媽原本那一句，後面再接上自己想加的話：留下一部分，改寫一部分。"
+        "lead": "用 `super.future()` 與 `super.totalHours()` 保留父類別邏輯並加上擴充。",
+        "plain": "不用把父類別的文字或時數上限規則重新寫一遍。`super.future()` 先拿到原本那句，再接上 `artNote`；`super.totalHours()` 先拿到驗證過的讀書時數，再加上 `extraHours`。"
       },
       "afterText": ""
     },
     {
-      "id": "name",
-      "title": "建構子的 super",
-      "goal": "父類別多了建構子 `ParentsPlan(String name)`，要先拿到名字才能建立，所以 `MyPlan` 現在是紅字。修好後，`new MyPlan(\"梁亭瑄\").name` 要是 `梁亭瑄`。\n\n幫 `MyPlan` 寫建構子 `MyPlan(String name)`，用 `super(name)` 把名字交給父類別的建構子。",
-      "instructions": "`new MyPlan(…)` 的時候，父類別 `ParentsPlan` 那一部分也要跟著建立。`ParentsPlan` 的建構子要一個名字，`MyPlan` 就得在自己的建構子裡把名字交給它。\n\n`super(…)` 就是呼叫父類別的建構子，括號裡放要交給它的東西。名字交上去以後存在父類別的欄位 `name` 裡，`MyPlan` 繼承了這個欄位，也讀得到。",
-      "expectedShape": "MyPlan(String name) {\n    super(…);\n}",
-      "check": { "type": "values", "exprs": ["new MyPlan(\"梁亭瑄\").name", "new MyPlan(\"梁亭瑄\").future()"], "uses": ["super("] },
+      "id": "name-v2",
+      "title": "建構子 super 對接與格式修正",
+      "goal": "父類別 `Plan` 現在提供 `static int sumHours(Plan[] plans)` 介面，且 `MyPlan` 需要完整實作建構子驗證與多型加總：\n1. 在 `MyPlan(String owner, int studyHours, String artNote, int extraHours)` 建構子中：\n   - 先對 `owner` 去前後空白（若為 `null` 視為 `\"\"`）；若整理後不是空字串且開頭不是 `\"學妹-\"`，補上 `\"學妹-\"` 前綴後，用 `super(fixedOwner, studyHours)` 交給父類別（若整理後是空字串則直接交給 `super(\"\", studyHours)`，讓父類別設為 `\"同學\"`）。\n   - `this.artNote` 若為 `null` 或空白字串設為 `\"畫畫\"`，否則 `trim()`。\n   - `this.extraHours` 若小於 `0` 設為 `0`，若大於 `20` 設為 `20`。\n2. 保留 `future()` 與 `totalHours()` 的 `super` 延伸覆寫。\n3. 在 `Plan` 中完成 `static int sumHours(Plan[] plans)`：若 `plans` 為 `null` 回傳 `0`，走訪陣列略過 `null` 元素，累加每個元素的 `totalHours()`。",
+      "instructions": "呼叫 `super(...)` 之前可以先計算整理好的參數（Java 25 允許在呼叫 `super(...)` 前準備區域變數，或使用靜態輔助方法／條件運算式傳入）。\n\n`sumHours(Plan[] plans)` 接收的是父類別陣列，裡面可能同時有 `Plan` 和 `MyPlan`；呼叫 `p.totalHours()` 時，Java 會自動針對每個元素實際的型別執行對應版本。",
+      "expectedShape": "class Plan {\n    …\n    static int sumHours(Plan[] plans) {\n        …\n    }\n}\n\nclass MyPlan extends Plan {\n    …\n    MyPlan(String owner, int studyHours, String artNote, int extraHours) {\n        …\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new MyPlan(\"  亭瑄 \", 10, \"插畫\", 5).owner",
+          "new MyPlan(\"學妹-小芸\", 10, \"  \", -3).owner",
+          "new MyPlan(\"   \", 10, \"  \", 25).owner",
+          "new MyPlan(\"   \", 10, \"  \", 25).totalHours()",
+          "new MyPlan(\"亭瑄\", 10, \"插畫\", 5).describe()",
+          "Plan.sumHours(new Plan[]{new Plan(\"爸媽\", 12), null, new MyPlan(\"亭瑄\", 10, \"插畫\", 5)})",
+          "Plan.sumHours(null)"
+        ],
+        "uses": ["super(", "super.future()", "super.totalHours()"]
+      },
       "hints": {
-        "lead": "父類別要一個名字，用 super(name) 交給它。",
-        "plain": "父類別現在要先知道名字才能建立。`MyPlan` 收到名字，用 `super(name)` 原封不動地交給爸媽那一層，`name` 就存好了。"
+        "lead": "先格式化 `owner` 再傳給 `super(...)`，並保護 `extraHours` 介於 0 到 20。",
+        "plain": "`owner` 先 `trim()`，有字且不是 `學妹-` 開頭就加上前綴再 `super(...)`；空字串交給父類別自動變 `同學`。`sumHours` 只要走訪陣列累加 `p.totalHours()` 即可。"
       },
       "afterText": ""
     }

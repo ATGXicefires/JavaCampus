@@ -7,44 +7,77 @@
   "vars": [],
   "steps": [
     {
-      "id": "for",
-      "title": "用 for 數",
-      "goal": "`main` 裡的 `log` 是小芸一整年的聊天紀錄（1000 則訊息），裡面有 478 則提到 `學長`，所以要印出 `478 次`。\n\n在 `Main` 裡寫一個方法 `static int count(String[] log, String word)`，用 `for` 數出 `log` 裡有幾則訊息包含 `word`，交回這個數。再在 `main` 裡用它數 `log` 裡的 `學長`，印出這一行。",
-      "instructions": "聊天紀錄寫在 `ChatLog.java` 分頁，`main` 第一行已經用 `ChatLog.load()` 把它放進 `log` 了，一格是一則訊息。\n\n字串的 `contains(…)` 問裡面有沒有這幾個字，例如 `\"學長早\".contains(\"學長\")` 是 `true`。",
-      "expectedShape": "static int count(String[] log, String word) {\n    int n = 0;\n    for (…) {\n        if (log[i].contains(word)) {\n            …\n        }\n    }\n    return n;\n}",
+      "id": "count",
+      "title": "先數對與防呆",
+      "goal": "`main` 裡的 `log` 是小芸一整年的聊天紀錄（1000 則訊息），裡面有 478 則提到 `學長`，所以 `main` 要印出 `478 次`。\n\n在 `Main` 寫兩個方法：`public static int count(String[] log, String word)`（用 `for`）與 `public static int countWhile(String[] log, String word)`（用 `while`），數出 `log` 裡有幾則包含 `word` 的訊息並回傳。若 `log` 為 `null`、`word` 為 `null` 或空字串，回傳 `0`；陣列中若有元素為 `null` 要跳過不計，不可讓程式拋出例外。再在 `main` 用 `count(log, \"學長\")` 印出 `478 次`。",
+      "instructions": "聊天紀錄放在 `ChatLog.java`，`main` 已經呼叫 `ChatLog.load()` 取得 `log`。\n\n寫 `while` 迴圈時需自行宣告索引 `i = 0`，並在每圈確實執行 `i++`；只要在檢查 `log[i]` 前先判斷 `log[i] != null`，就能避免對 `null` 呼叫 `.contains(word)` 而中斷。",
+      "expectedShape": "public static int count(String[] log, String word) {\n    …\n}\n\npublic static int countWhile(String[] log, String word) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.count(new String[]{\"學長早\", null, \"便當\", \"學長！\"}, \"學長\")",
+          "Main.countWhile(new String[]{\"學長早\", null, \"便當\", \"學長！\"}, \"學長\")",
+          "Main.countWhile(new String[]{}, \"學長\")",
+          "Main.count(null, \"學長\")",
+          "Main.countWhile(new String[]{\"學長\"}, \"\")"
+        ],
+        "uses": ["for", "while", ".contains("]
+      },
       "hints": {
-        "lead": "contains 問有沒有包含。",
-        "plain": "一則一則看過去，裡面有「學長」兩個字就記一筆。看完一千則，記了幾筆就是幾次。"
+        "lead": "先擋掉 null 與空字串，再逐則比對。",
+        "plain": "檢查 `log == null || word == null || word.isEmpty()` 就先回傳 `0`。迴圈裡先確認那一格不是 `null`，再用 `.contains(word)` 判斷。"
       },
       "afterText": ""
     },
     {
-      "id": "while",
-      "title": "改成 while",
-      "goal": "`countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")` 要交回 `2`：三則訊息裡有兩則包含 `學長`。\n\n再寫一個方法 `static int countWhile(String[] log, String word)`，跟 `count` 一樣數出 `log` 裡有幾則訊息包含 `word`、交回這個數，但這次用 `while` 來數。",
-      "instructions": "`while` 只要條件還成立，就再做一次。它不像 `for` 會自己把 `i` 往下一格：`i` 要在 `while` 前面先做好，每一圈的最後自己寫 `i++`。\n\n```\nint i = 0;\nwhile (i < 3) {\n    System.out.println(i);\n    i++;\n}\n```\n\n這段會印 0、1、2。忘了 `i++` 的話，`i` 永遠是 0，條件永遠成立，迴圈就停不下來，這叫無限迴圈；程式跑超過 3 秒會被強制停止。\n\n這一步只看 `countWhile` 交回的數，`main` 不用改。",
-      "expectedShape": "static int countWhile(String[] log, String word) {\n    int n = 0;\n    int i = 0;\n    while (i < log.length) {\n        …\n        i++;\n    }\n    return n;\n}",
+      "id": "retry",
+      "title": "帶上限的再試一次",
+      "goal": "在 `Main` 新增兩個使用 `do-while` 的方法：\n1. `public static int askRetry(String[] answers, int maxRounds)`：模擬「先統計 1 次，做完才依 `answers` 決定要不要再統計」。若 `maxRounds <= 0` 直接回傳 `0`；否則使用 `do-while` 至少執行 1 輪。第 `k` 輪（從 1 開始）完成後，看 `answers[k - 1]`（若 `answers` 為 `null`、長度不足或該格為 `null`，視同停下）：去除前後空白後等於 `\"好\"` 且目前輪數尚未達到 `maxRounds`，才繼續下一輪；否則停止，最後回傳實際執行的總輪數。\n2. `public static void runSummary(String[] log, String word, String[] answers, int maxRounds)`：若 `maxRounds <= 0` 不印任何內容；否則用 `do-while` 每輪以 `count(log, word)` 印出 `第 <k> 次：<次數> 次`。若達 `maxRounds` 次且該輪回答仍為 `\"好\"` 而被強制中止，最後多印一行 `已達上限，停止重試`。\n\n修改 `main`，呼叫 `runSummary(log, \"學長\", new String[]{\"好\", \"好\", \"不要\"}, 5)`。",
+      "instructions": "`do-while` 必定先跑完一次 `{ ... }` 才檢查 `while (...)`。判斷「達到上限且回答仍為 `\"好\"`」時，代表不是使用者說不要，而是觸發安全護欄強制結束。\n\n別忘了 `round`、`again` 等要在 `do` 前面宣告，迴圈條件和迴圈外才看得到。",
+      "expectedShape": "public static int askRetry(String[] answers, int maxRounds) {\n    …\n    do {\n        …\n    } while (…);\n    return …;\n}\n\npublic static void runSummary(String[] log, String word, String[] answers, int maxRounds) {\n    …\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.countWhile(new String[]{\"學長早\", \"便當\", \"學長！\"}, \"學長\")", "Main.countWhile(new String[]{}, \"學長\")"], "uses": ["while"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.askRetry(new String[]{\"好\", \"好\", \"不要\"}, 5)",
+          "Main.askRetry(new String[]{\"不要\", \"好\"}, 5)",
+          "Main.askRetry(new String[]{\"好\", \"好\", \"好\", \"好\"}, 2)",
+          "Main.askRetry(new String[]{\"好\"}, 5)",
+          "Main.askRetry(null, 3)",
+          "Main.askRetry(new String[]{\"好\"}, 0)",
+          "Main.runSummary(new String[]{\"學長\"}, \"學長\", new String[]{\"好\", \"好\"}, 2)"
+        ],
+        "uses": ["do", ".equals("]
+      },
       "hints": {
-        "lead": "while 要自己 i++。",
-        "plain": "`for` 會自己往下一格，`while` 不會。忘了 `i++`，`i` 永遠是 0，迴圈就停不下來，跑超過 3 秒會被強制停止。"
+        "lead": "用 do-while 先執行本輪，再決定是否重試與檢查上限。",
+        "plain": "每一輪先把輪數加 1，再看 `answers` 對應的那一格是不是 `\"好\"`。如果還沒到 `maxRounds` 就設旗標繼續；如果已經到 `maxRounds` 還說 `\"好\"`，就停下並補印上限提示。"
       },
       "afterText": ""
     },
     {
-      "id": "again",
-      "title": "再統計一次？",
-      "goal": "`main` 裡的 `answers` 是每次統計完被問「再統計一次？」的回答，現在是 `好`、`好`、`不要`，所以要統計 3 次，印出三行：\n`第 1 次：478 次`\n`第 2 次：478 次`\n`第 3 次：478 次`\n\n用 `do-while`（先做一次，做完才問要不要再來）：每次用 `count` 統計、印一行，再看這次的回答，是 `好` 就再來一次。",
-      "instructions": "`do-while` 先做大括號裡的事，做完才看 `while` 括號裡的條件：成立就回去再做一次，不成立就停。所以不管條件怎樣，至少會做一次。\n\n```\nint n = 0;\ndo {\n    n++;\n    System.out.println(\"第 \" + n + \" 圈\");\n} while (n < 2);\n```\n\n這段會印 `第 1 圈` 和 `第 2 圈`。最後的 `while (…);` 要加分號。\n\n第 1 次統計完的回答是 `answers[0]`，第 2 次是 `answers[1]`：第幾次減 1，就是要看的那一格。比字串的內容用 `equals`。\n\n在 `{ }` 裡面做的盒子，出了 `}` 就用不到了。所以 `round` 和 `answer` 要在 `do` 前面先做好，`while (…)` 才看得到 `answer`。",
-      "expectedShape": "do {\n    round++;\n    System.out.println(\"第 \" + round + \" 次：\" + … + \" 次\");\n    answer = answers[round - 1];\n} while (…);",
+      "id": "target",
+      "title": "抽樣命中或上限終止",
+      "goal": "在 `Main` 新增 `public static int retryUntilTarget(int[] counts, int target, int maxTries)`：\n用 `do-while` 依序檢查模擬抽樣序列 `counts`（第 1 次看 `counts[0]`，第 `k` 次看 `counts[k - 1]`），尋找第一個大於等於 `target` 的結果。\n- 若 `counts == null`、`counts.length == 0` 或 `maxTries <= 0`，直接回傳 `-1`。\n- 否則進入 `do-while`：若本輪的值 `>= target`，立即回傳本次是第幾次嘗試（從 1 開始）；若已嘗試滿 `maxTries` 次或 `counts` 已看完仍未達標，回傳 `-1`。\n\n在 `main` 保留原本 `runSummary` 輸出，最後再印出 `命中目標需要 3 次`（呼叫 `retryUntilTarget(new int[]{120, 310, 480, 500}, 478, 5)` 並組進這一行）。",
+      "instructions": "`do-while` 適合「至少試一次，沒成功且還沒撞到上限或用完樣本就再試一次」的控制流。\n\n注意第 1 輪看索引 `0`，千萬別寫成從 `counts[1]` 開始或超過 `counts.length`。",
+      "expectedShape": "public static int retryUntilTarget(int[] counts, int target, int maxTries) {\n    …\n    do {\n        …\n    } while (…);\n    return …;\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["do"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.retryUntilTarget(new int[]{478, 500}, 478, 5)",
+          "Main.retryUntilTarget(new int[]{100, 200, 480}, 478, 5)",
+          "Main.retryUntilTarget(new int[]{100, 200, 300, 500}, 478, 2)",
+          "Main.retryUntilTarget(new int[]{100, 200}, 478, 5)",
+          "Main.retryUntilTarget(new int[]{}, 478, 3)",
+          "Main.retryUntilTarget(new int[]{500}, 478, 0)"
+        ],
+        "uses": ["do"]
+      },
       "hints": {
-        "lead": "先做再問。",
-        "plain": "`do-while` 是先統計一次，做完才問「再來嗎？」。不管回答什麼，第一次一定會做。"
+        "lead": "入口先防空陣列與無效上限，do-while 內逐一比對。",
+        "plain": "先擋掉 `counts == null || counts.length == 0 || maxTries <= 0`，然後用 `round` 從 0 加到 1 開始檢查 `counts[round - 1] >= target`，迴圈條件同時限制 `round < maxTries` 和 `round < counts.length`。"
       },
       "afterText": ""
     }

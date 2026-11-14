@@ -7,30 +7,52 @@
   "vars": [],
   "steps": [
     {
-      "id": "countdown",
-      "title": "倒數",
-      "goal": "`today` 是今天星期幾，現在是 3（星期三）。倒數的 10 天裡週末不印，所以要印出 8 行：\n`還有 10 天`\n`還有 9 天`\n`還有 8 天`\n`還有 5 天`\n⋯⋯\n`還有 1 天`\n\n起始碼現在每天都印，印了 10 行。在迴圈裡算出每一圈是星期幾，遇到星期六、日就用 `continue`（跳過這一圈剩下的部分，直接下一圈）跳過不印。",
-      "instructions": "星期用數字表示：0 是星期日，1 是星期一⋯⋯6 是星期六。第 `i` 圈是星期 `(today + i) % 7`：`%` 是除完剩下的餘數，加到 7 就繞回 0。例如 `i` 是 3 時是 `6 % 7`，也就是 6，星期六，那一圈的 `還有 7 天` 不印；`i` 是 4 時是 `7 % 7`，也就是 0，星期日。\n\n`continue` 會跳過這一圈剩下的部分，直接進入下一圈，迴圈照樣繼續：\n\n```\nfor (int i = 1; i <= 5; i++) {\n    if (i % 2 == 0) {\n        continue;\n    }\n    System.out.println(i);\n}\n```\n\n這段會印 1、3、5：`i` 是雙數的那幾圈，下面的 `println` 沒有做。",
-      "expectedShape": "int weekday = (today + i) % 7;\nif (…) {\n    continue;\n}\nSystem.out.println(\"還有 \" + (10 - i) + \" 天\");",
+      "id": "countdown-v2",
+      "title": "跳過週末與假日的倒數",
+      "goal": "在 `Main` 實作兩個方法，讓畢業倒數能正確跳過週末（星期六、日）與國定假日：\n1. `public static boolean isOffDay(int weekday, int dayIndex, int[] holidays)`：星期用 `0..6` 表示（`0` 是星期日、`6` 是星期六；若傳入超出 `0..6` 的數可取 `((weekday % 7) + 7) % 7` 正規化）。若當天是星期六或日，或 `dayIndex` 出現在 `holidays` 陣列中（`holidays` 可能為 `null` 或空陣列），回傳 `true`；否則回傳 `false`。\n2. `public static void printCountdown(int totalDays, int startWeekday, int[] holidays)`：從 `i = 0` 到 `i < totalDays`（共 `totalDays` 天，若 `<= 0` 不印），第 `i` 天為星期 `(startWeekday + i) % 7`；遇到 `isOffDay(weekday, i, holidays)` 為 `true` 時以 `continue` 跳過不印，其餘印出 `距離畢業還有 <totalDays - i> 天`。\n\n修正 `main`，呼叫 `printCountdown(10, 3, new int[]{1, 6})`（星期三起算 10 天，第 1 天與第 6 天為假日）。",
+      "instructions": "起始碼目前每天都印、也沒有處理 `holidays`。計算第 `i` 天的星期幾時，用 `((startWeekday + i) % 7 + 7) % 7` 可以確保任何整數都能正確落回 `0..6`。\n\n別忘了先檢查 `holidays != null` 再去走訪裡面的日期，以免傳入 `null` 時拋出例外。",
+      "expectedShape": "public static boolean isOffDay(int weekday, int dayIndex, int[] holidays) {\n    …\n}\n\npublic static void printCountdown(int totalDays, int startWeekday, int[] holidays) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.isOffDay(0, 0, null)",
+          "Main.isOffDay(6, 5, new int[]{})",
+          "Main.isOffDay(3, 4, new int[]{2, 4})",
+          "Main.isOffDay(3, 5, new int[]{2, 4})",
+          "Main.printCountdown(4, 5, new int[]{0})"
+        ],
+        "uses": ["continue", "% 7"]
+      },
       "hints": {
-        "lead": "以 `continue` 略過本次迭代的剩餘敘述⋯⋯",
-        "plain": "⋯⋯白話：週末那一天，下面的 `println` 不做，直接換下一天。倒數照樣繼續。"
+        "lead": "用 % 7 判斷週末，並檢查 dayIndex 是否在 holidays 裡，放假日就 continue。",
+        "plain": "`isOffDay` 先看星期是不是 0 或 6，再看 `holidays` 裡面有沒有 `dayIndex`。在 `printCountdown` 的迴圈裡只要 `isOffDay` 是 `true` 就 `continue` 跳過 `println`。"
       },
       "afterText": ""
     },
     {
-      "id": "school",
-      "title": "上學的日子",
-      "goal": "`schoolDays(7, 1)` 要交回 `5`：從星期一開始的 7 天裡，星期一到五要上學。\n\n寫一個方法 `static int schoolDays(int days, int startWeekday)`：`days` 是天數，`startWeekday` 是第一天星期幾（0 是星期日，6 是星期六）。數出這幾天裡有幾天不是星期六、日，第一天也算在內，交回這個數。",
-      "instructions": "第 `i` 天（第一天是 0）是星期 `(startWeekday + i) % 7`，跟上一步算星期幾的方法一樣。\n\n這一步只看 `schoolDays` 交回的數，`main` 不用改。",
-      "expectedShape": "static int schoolDays(int days, int startWeekday) {\n    int n = 0;\n    for (…) {\n        …\n    }\n    return n;\n}",
+      "id": "schooldays",
+      "title": "區間實際上課日累計",
+      "goal": "在 `Main` 新增 `public static int countSchoolDays(int startDay, int endDay, int dayZeroWeekday, int[] holidays)`：\n計算從第 `startDay` 天到第 `endDay` 天（**含頭含尾**）之間，總共有幾天實際需要上課。\n- `dayZeroWeekday` 代表第 `0` 天的星期幾（`0..6`），第 `d` 天對應星期 `((dayZeroWeekday + d) % 7 + 7) % 7`。\n- 若 `startDay > endDay`，代表無效區間，直接回傳 `0`。\n- 若 `startDay == endDay`，則依該單日是否為放假日決定回傳 `0` 或 `1`。\n- 迴圈中遇到放假日（週末或國定假日）必須使用 `continue` 跳過；注意若國定假日剛好落在週末，只能跳過一次，不可重複扣天數。\n\n在 `main` 保留原本倒數輸出，並另外印出一行：`實際上課日：6 天`（呼叫 `countSchoolDays(0, 9, 3, new int[]{1, 6})` 組進這一行）。",
+      "instructions": "從 `d = startDay` 走到 `d <= endDay`，一天一天用 `isOffDay` 判斷並搭配 `continue`：\n- 如果是放假日就 `continue` 不計數，這樣即使同一天既是星期日又在 `holidays` 裡，也不會被重複扣除。\n- 起始日大於結束日時，這個 `for` 迴圈條件 `d <= endDay` 一開始就不成立，會自然回傳 `0`。",
+      "expectedShape": "public static int countSchoolDays(int startDay, int endDay, int dayZeroWeekday, int[] holidays) {\n    …\n    for (…) {\n        …\n    }\n    return …;\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.schoolDays(7, 1)", "Main.schoolDays(10, 3)", "Main.schoolDays(0, 1)"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.countSchoolDays(0, 6, 1, null)",
+          "Main.countSchoolDays(5, 3, 1, null)",
+          "Main.countSchoolDays(2, 2, 1, null)",
+          "Main.countSchoolDays(5, 5, 1, null)",
+          "Main.countSchoolDays(0, 4, 1, new int[]{0, 1, 2, 3, 4})",
+          "Main.countSchoolDays(0, 9, 3, new int[]{1, 6})",
+          "Main.countSchoolDays(0, 6, 1, new int[]{5, 6, 2})"
+        ],
+        "uses": ["continue"]
+      },
       "hints": {
-        "lead": "同樣以 `continue` 排除週末⋯⋯",
-        "plain": "⋯⋯白話：和倒數一樣一天一天看，週末跳過，其他的記一筆。"
+        "lead": "用 for 從 startDay 走到 endDay，呼叫 isOffDay 跳過週末與假日。",
+        "plain": "如果 `startDay > endDay` 直接回傳 `0`。迴圈裡逐天檢查 `isOffDay`，是放假日就 `continue`，不是就 `days++`。"
       },
       "afterText": ""
     }

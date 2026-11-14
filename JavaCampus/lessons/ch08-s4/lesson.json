@@ -10,31 +10,51 @@
   ],
   "steps": [
     {
-      "id": "sketch",
-      "title": "每一張都有名字",
-      "goal": "`new Sketch(\"9月\", \"提案簡報的插圖\").toString()` 要交回 `9月：提案簡報的插圖`。\n\n寫 `class Sketch`：欄位 `month`、`title`，建構子 `Sketch(String month, String title)`，再覆寫 `public String toString()`（`println` 印物件時，印的就是它交回的字），交回「月份：標題」。",
-      "instructions": "編輯器最上面兩行是題目先寫好的 `months` 和 `titles`，這一步還用不到，下一步才用。\n\n建構子收到的兩個值，存進同名的欄位：`this.month` 是欄位，`month` 是參數。\n\n每個類別本來就有一個 `toString()`，交回類別名稱加一串數字。覆寫它，就決定這個物件印出來的樣子。它原本就是 `public`（誰都能用），覆寫時前面也要寫 `public`。",
-      "expectedShape": "class Sketch {\n    String month;\n    String title;\n\n    Sketch(String month, String title) {\n        …\n    }\n\n    @Override\n    public String toString() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Sketch(\"9月\", \"提案簡報的插圖\").toString()"], "uses": ["public String toString()"] },
+      "id": "sketch-v2",
+      "title": "草圖物件與學年順序",
+      "goal": "寫 `class Sketch` 代表一張設計草圖：\n1. 欄位 `String month`、`String title`。\n2. 建構子 `Sketch(String month, String title)`：若 `month` 為 `null` 或空白設為 `\"未知\"`（否則 `trim()`）；若 `title` 為 `null` 或空白設為 `\"未命名\"`（否則 `trim()`）。\n3. 方法 `int academicOrder()`：計算學年排序鍵（方便下一步依上學期到寒假整理順序）：\n   - 去掉 `month` 中的 `\"月\"` 並 `trim()` 後以 `Integer.parseInt` 解析整數 `m`（解析失敗或不在 `1`～`12` 範圍內一律回傳 `99`）。\n   - 若 `m >= 9` 回傳 `m - 8`（9月=1、10月=2、11月=3、12月=4）。\n   - 若 `m <= 8` 回傳 `m + 4`（1月=5、2月=6、⋯⋯、8月=12）。\n4. 覆寫 `@Override public String toString()`，回傳 `month + \"：\" + title`。",
+      "instructions": "編輯器最上面兩行是題目先寫好的 `months` 和 `titles`，這一步還用不到，下一步才用。\n\n覆寫 `Object.toString()` 必須加上 `public` 與 `@Override`。把學年順序邏輯寫在 `Sketch` 自己的 `academicOrder()` 中，下一步 `Folder` 就能直接照著排序而不必重複解析月份文字。",
+      "expectedShape": "class Sketch {\n    String month;\n    String title;\n\n    Sketch(String month, String title) { … }\n\n    int academicOrder() { … }\n\n    @Override\n    public String toString() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Sketch(\"9月\", \"提案簡報的插圖\").toString()",
+          "new Sketch(\"  2月 \", \" 貼紙系統的草稿 \").toString()",
+          "new Sketch(null, \" \").toString()",
+          "new Sketch(\"9月\", \"A\").academicOrder()",
+          "new Sketch(\"1月\", \"B\").academicOrder()",
+          "new Sketch(\"未知\", \"C\").academicOrder()"
+        ],
+        "uses": ["@Override", "public String toString()"]
+      },
       "hints": {
-        "lead": "覆寫 `Object.toString()`，定義物件的字串表示⋯⋯",
-        "plain": "⋯⋯白話：每一張草圖要怎麼被叫出名字，寫在 `toString()` 裡。月份、冒號、標題接起來交回去。"
+        "lead": "在建構子做好 `null`/空白防呆，再用 `try-catch` 解析月份計算學年順序。",
+        "plain": "`month.replace(\"月\", \"\").trim()` 拿去 `Integer.parseInt`；9～12 月減 8，1～8 月加 4，無效的用 `catch` 回傳 99。"
       },
       "afterText": ""
     },
     {
-      "id": "folder",
-      "title": "資料夾的目錄",
-      "goal": "`months` 和 `titles` 是每張草圖的月份和標題，現在有 6 張，要印出 6 行目錄：\n`9月：提案簡報的插圖`\n`10月：再試一次的按鈕`\n⋯⋯\n`2月：貼紙系統的草稿`\n\n用 `for` 照 `months` 和 `titles` 把每一張 `new` 出來，用 `System.out.println(sketch)` 印出。",
-      "instructions": "編輯器最上面兩行 `String[] months = {\"9月\", \"10月\", \"11月\", \"12月\", \"1月\", \"2月\"};` 和 `String[] titles = {\"提案簡報的插圖\", \"再試一次的按鈕\", \"校慶版的介面\", \"期中報告的 mockup\", \"小老師的類別圖\", \"貼紙系統的草稿\"};` 是題目先寫好的，你的程式可以直接用 `months` 和 `titles`。`months[i]` 和 `titles[i]` 是同一張。",
-      "expectedShape": "for (…) {\n    Sketch sketch = new Sketch(…);\n    System.out.println(sketch);\n}",
+      "id": "folder-v2",
+      "title": "資料夾嵌套 toString() 與排序摘要",
+      "goal": "撰寫 `class Folder` 整理草圖並印出排序後的完整目錄：\n1. 欄位 `String name`、`Sketch[] items`。\n2. 建構子 `Folder(String name, Sketch[] items)`：\n   - `name` 若為 `null` 或空白設為 `\"未命名資料夾\"`，否則 `trim()`。\n   - 過濾 `items` 中的 `null` 元素，只將非 `null` 的草圖複製進新陣列存成 `this.items`（若 `items == null` 則存 `new Sketch[0]`）。\n3. `int size()`：回傳 `items.length`。\n4. `Folder sortedByAcademicOrder()`：回傳一個**新的** `Folder`（不改動原物件的 `items`），內部草圖依 `academicOrder()` 由小到大穩定排序（相同順序鍵時保持原本先後順序）。\n5. `@Override public String toString()`：\n   - 若 `items.length == 0`，回傳 `name + \"（0 張）：資料夾是空的\"`。\n   - 否則第一行為 `name + \"（共 \" + items.length + \" 張，首張：\" + items[0].month + \"，末張：\" + items[items.length - 1].month + \"）\"`，接著每張草圖佔一行 `\"  \" + (i + 1) + \". \" + items[i]`，行間以 `\"\\n\"` 連接。\n6. 主程式依 `Math.min(months.length, titles.length)` 建立 `Sketch[]`，放進 `new Folder(\"亭瑄的介面\", sketches)`，再用 `System.out.println` 印出 `sortedByAcademicOrder()` 的結果。",
+      "instructions": "編輯器最上面的 `months` 和 `titles` 是題目提供的資料陣列，程式必須能同時正確處理亂序月份與空陣列 `{}`。\n\n在 `Folder.toString()` 裡寫 `\"  \" + (i + 1) + \". \" + items[i]` 時，Java 會自動呼叫 `items[i].toString()`；排序時只要使用穩定排序（例如僅在 `copy[j].academicOrder() > copy[j + 1].academicOrder()` 時交換的氣泡排序），就不會改變同月份草圖原本的相對順序。",
+      "expectedShape": "class Folder {\n    …\n    Folder(String name, Sketch[] items) { … }\n    int size() { … }\n    Folder sortedByAcademicOrder() { … }\n\n    @Override\n    public String toString() { … }\n}",
       "check": {
         "type": "output",
-        "variants": [ { "months": "{\"9月\", \"2月\"}", "titles": "{\"提案簡報的插圖\", \"貼紙系統的草稿\"}" } ]
+        "variants": [
+          { "months": "{\"2月\", \"9月\", \"11月\"}", "titles": "{\"貼紙系統的草稿\", \"提案簡報的插圖\", \"校慶版的介面\"}" },
+          { "months": "{}", "titles": "{}" }
+        ],
+        "exprs": [
+          "new Folder(\"空夾\", null).toString()",
+          "new Folder(\" \", new Sketch[]{null}).size()",
+          "new Folder(\"測試\", new Sketch[]{new Sketch(\"1月\", \"A\"), null, new Sketch(\"10月\", \"B\"), new Sketch(\"1月\", \"C\")}).sortedByAcademicOrder().toString()"
+        ],
+        "uses": ["@Override", "public String toString()", "new Sketch("]
       },
       "hints": {
-        "lead": "`println(Object)` 會呼叫物件的 `toString()`⋯⋯",
-        "plain": "⋯⋯白話：格式已經寫在 `toString()` 裡，迴圈只要一張一張 `new` 出來交給 `println`。"
+        "lead": "建構子先過濾 `null` 複製陣列，排序回傳新 `Folder`，`toString()` 分空夾與非空夾組字串。",
+        "plain": "`sortedByAcademicOrder()` 先複製一份 `items`，兩層迴圈比 `academicOrder()` 決定是否交換，再用排序後的陣列 `new Folder(name, copy)` 回傳。"
       },
       "afterText": ""
     }

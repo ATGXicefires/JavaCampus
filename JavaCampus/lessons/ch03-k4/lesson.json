@@ -6,38 +6,59 @@
   "notes": ["else-if"],
   "vars": [
     { "name": "score", "type": "int", "value": "85", "note": "要換成等第的分數" },
-    { "name": "scores", "type": "int[]", "value": "{72, 58, 65, 80, 49}", "note": "一排小考分數" }
+    { "name": "scores", "type": "int[]", "value": "{72, -5, 95, 105, 60, 49}", "note": "一排含異常值的小考分數" }
   ],
   "steps": [
     {
-      "id": "grade",
-      "title": "五個等第",
-      "goal": "`score` 是要換成等第的分數，現在是 85，所以要印出 `B`。\n\n用 `if`／`else if`／`else`（從上往下一個一個問，第一個成立的就做）把 `score` 換成等第，只印字母：90 以上 A、80 以上 B、70 以上 C、60 以上 D、其他 F。",
-      "instructions": "編輯器最上面兩行 `int score = 85;` 和 `int[] scores = {72, 58, 65, 80, 49};` 是題目先寫好的，你的程式可以直接用 `score` 和 `scores`。\n\n`else if` 是接在 `if` 後面的下一個問題：上一個不成立，才問這一個；全都不成立，就做最後的 `else`。\n\n```\nif (temp >= 30) {\n    System.out.println(\"熱\");\n} else if (temp >= 20) {\n    System.out.println(\"舒服\");\n} else {\n    System.out.println(\"冷\");\n}\n```\n\n`temp` 是 33 時，第一個問題就成立，印出 `熱`，後面都不問了。所以要從高的往低的問。「以上」包含剛好那個數：剛好 60 分是 D。",
-      "expectedShape": "if (score >= 90) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
+      "id": "grade-v2",
+      "title": "五個等第與無效排除",
+      "goal": "`score` 是要換成等第的分數，現在是 85，所以要印出 `B`。\n\n用 `if`／`else if`／`else` 依下列規則印出結果：\n- 小於 `0` 或大於 `100`：印出 `無效分數`（最優先擋掉！）\n- `90`～`100`（含 90 與 100）：印出 `A`\n- `80`～`89`：印出 `B`\n- `70`～`79`：印出 `C`\n- `60`～`69`：印出 `D`\n- `0`～`59`：印出 `F`",
+      "instructions": "編輯器最上面兩行 `int score = 85;` 和 `int[] scores = {72, -5, 95, 105, 60, 49};` 是題目先寫好的，你的程式可以直接使用。\n\n`else if` 會從上往下一個一個問，第一個成立的就執行，後面的都不問了。\n\n如果忘了先檢查無效分數，例如輸入 `105` 會直接滿足 `>= 90` 而被誤判為 `A`，`-5` 會落到最後的 `else` 被誤判為 `F`！所以必須先把 `< 0 || > 100` 寫在最前面的 `if`，再從高分往低分依序判斷。",
+      "expectedShape": "if (…) {\n    System.out.println(\"無效分數\");\n} else if (…) {\n    System.out.println(\"A\");\n} else if (…) {\n    …\n} else {\n    System.out.println(\"F\");\n}",
       "check": {
         "type": "output",
-        "variants": [ { "score": "95" }, { "score": "90" }, { "score": "80" }, { "score": "72" }, { "score": "70" }, { "score": "60" }, { "score": "59" }, { "score": "89" }, { "score": "79" }, { "score": "69" } ]
+        "variants": [
+          { "score": "101" },
+          { "score": "-1" },
+          { "score": "100" },
+          { "score": "90" },
+          { "score": "89" },
+          { "score": "80" },
+          { "score": "79" },
+          { "score": "70" },
+          { "score": "69" },
+          { "score": "60" },
+          { "score": "59" },
+          { "score": "0" }
+        ],
+        "uses": ["else if"]
       },
       "hints": {
-        "lead": "從高分往低分問。",
-        "plain": "從上往下一個一個問，第一個成立的就印出來，後面的都不問了。所以要先問 90 分，再問 80 分；先問 60 分的話，95 分也會停在 D。"
+        "lead": "最前面先用 || 排除不在 0 到 100 之間的分數，再從 90 往下用 >= 分級。",
+        "plain": "條件順序：`score < 0 || score > 100` 排第一，接著依序問 `90`、`80`、`70`、`60` 以上（含邊界用 `>=`），最後 `else` 才是 `F`。"
       },
       "afterText": ""
     },
     {
-      "id": "all",
-      "title": "整排都換",
-      "goal": "現在 `scores` 是 `{72, 58, 65, 80, 49}`，要印出 5 行：\n`72 C`\n`58 F`\n`65 D`\n`80 B`\n`49 F`\n\n用 `for` 走過 `scores` 的每一格，把每個分數換成等第，印出分數、空格、等第。",
-      "instructions": "起始碼的 `for` 每一圈會把一格的分數放進 `s`：第一圈 `s` 是 `scores[0]`，第二圈是 `scores[1]`⋯⋯在大括號裡用上一步那一串 `if`／`else if` 判斷 `s`，不是判斷 `score`。\n\n印的時候用 `+` 把分數和等第接起來，中間的空格寫在引號裡，例如 `s + \" C\"`。",
-      "expectedShape": "for (int i = 0; i < scores.length; i++) {\n    int s = scores[i];\n    if (s >= 90) {\n        System.out.println(s + \" A\");\n    } else if (…) {\n        …\n    }\n}",
+      "id": "all-v2",
+      "title": "過濾統計與合規平均",
+      "goal": "現在 `scores` 是 `{72, -5, 95, 105, 60, 49}`。\n\n單次走訪 `scores`，排除 `< 0` 或 `> 100` 的無效分數後，同時完成三件事：\n1. 依序印出每一格：`s 無效`（無效分數）或 `s 等第`（如 `72 C`）。\n2. 統計各等第人數 `countA`、`countB`、`countC`、`countD`、`countF` 及無效筆數 `invalidCount`。\n3. 只針對合規分數（`0`～`100`）算出平均 `double validAvg`（保留小數；若無任何合規分數或陣列為空，`validAvg = 0.0`，不可除以零）。\n\n迴圈結束後印出兩行摘要：\n`統計：A=countA B=countB C=countC D=countD F=countF 無效=invalidCount`\n`有效平均：validAvg`",
+      "instructions": "這一步重新開始，把單筆判斷放進陣列走訪，並加上計數與有效平均。\n\n除了起始碼已經宣告的 6 個計數器，你還需要準備 `int validSum = 0;` 和 `int validCount = 0;`。\n\n在 `for` 迴圈裡拿到 `int s = scores[i];` 之後，先擋掉無效分數並讓 `invalidCount++`；進入合法分支（`A`～`F`）時，除了印出等第與累加對應計數器，也要把 `s` 加進 `validSum` 並讓 `validCount++`。\n\n最後算 `validAvg` 之前，務必檢查 `validCount > 0`，避免全部無效或空陣列時算出 `NaN`。",
+      "expectedShape": "int countA = 0;\n…\nint validSum = 0;\nint validCount = 0;\nfor (…) {\n    int s = scores[i];\n    if (…) {\n        System.out.println(s + \" 無效\");\n        …\n    } else {\n        validSum += s;\n        validCount++;\n        if (…) {\n            …\n        } else if (…) {\n            …\n        }\n    }\n}\ndouble validAvg = 0.0;\nif (…) {\n    validAvg = …;\n}\nSystem.out.println(\"統計：A=\" + countA + \" B=\" + countB + \" C=\" + countC + \" D=\" + countD + \" F=\" + countF + \" 無效=\" + invalidCount);\nSystem.out.println(\"有效平均：\" + validAvg);",
       "check": {
         "type": "output",
-        "variants": [ { "scores": "{100, 59}" }, { "scores": "{90, 89, 80, 79, 70, 69, 60, 59}" } ]
+        "exprs": ["countA", "countB", "countC", "countD", "countF", "invalidCount", "validAvg"],
+        "variants": [
+          { "scores": "{100, 90, 89, 80, 79, 70, 69, 60, 59, 0}" },
+          { "scores": "{-1, 101, -100}" },
+          { "scores": "{}" },
+          { "scores": "{85, 86}" }
+        ],
+        "uses": ["for", "else if"]
       },
       "hints": {
-        "lead": "迴圈裡放上一步的 if。",
-        "plain": "每一圈拿出一格的分數 `s`，再用上一步那一串 `if`／`else if` 判斷。印的時候把分數和等第接起來：`s + \" C\"`。"
+        "lead": "先分流「無效」與「合法（0～100）」，合法才累加 validSum 與 validCount，並在裡面做五等第分支。",
+        "plain": "把無效分數擋在最外層的 `if`，`else` 裡面先做 `validSum += s; validCount++;` 再接 `A～F` 五個分支。算 `validAvg` 時用 `if (validCount > 0)` 搭配 `(double)` 才不會除以零或丟掉小數。"
       },
       "afterText": ""
     }

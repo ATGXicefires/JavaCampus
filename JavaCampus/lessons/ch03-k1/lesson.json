@@ -5,56 +5,56 @@
   "partner": "亭瑄OS",
   "notes": ["int-div", "cast", "compare", "for"],
   "vars": [
-    { "name": "total", "type": "int", "value": "312", "note": "段考 5 科的總分" },
+    { "name": "total", "type": "int", "value": "312", "note": "段考幾科加起來的總分" },
+    { "name": "subjects", "type": "int", "value": "5", "note": "這次段考的科目數" },
     { "name": "days", "type": "int", "value": "7", "note": "離段考還有幾天" }
   ],
   "steps": [
     {
-      "id": "avg",
-      "title": "五科平均",
-      "goal": "`total` 是段考 5 科的總分，現在是 312，5 科平均是 62.4 分。\n\n用 `total` 算出 5 科的平均，存進 `double avg`（`double` 是裝小數的盒子），小數要留下來。",
-      "instructions": "編輯器最上面兩行 `int total = 312;` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接用 `total` 和 `days`。\n\n平均是總分除以 5，除法寫成 `/`。兩個 `int`（整數）相除，答案也是整數，小數點後面直接丟掉：`7 / 2` 是 `3`。就算放進 `double` 盒子，也只會是 `3.0`，因為放進去之前就已經除完了。\n\n只要有一邊是小數，除出來就會留下小數：`7 / 2.0` 是 `3.5`。",
-      "expectedShape": "double avg = …;",
+      "id": "eval",
+      "title": "平均與落點",
+      "goal": "`total` 是總分、`subjects` 是科目數，現在是 312 和 5，平均 `avg` 是 62.4 分。\n\n算出 `double avg`（必須保留小數；若 `subjects <= 0` 則 `avg` 設為 `0.0`，不可發生除以零），並依 `avg` 印出一行評語：\n- `80.0` 以上（含 80.0）：`穩定通過`\n- `60.0` 到未滿 `80.0`（含 60.0）：`低空及格`\n- 未滿 `60.0`：`再加油`",
+      "instructions": "編輯器最上面三行 `int total = 312;`、`int subjects = 5;` 和 `int days = 7;` 是題目先寫好的，你的程式可以直接使用。\n\n兩個 `int` 相除會直接丟掉小數（例如 `312 / 5` 只剩 `62`）。要在除法前先把其中一邊轉成小數：`(double) total / subjects`。\n\n另外要防呆：當 `subjects` 是 `0` 或負數時，不能直接去除（`0.0 / 0` 會變成 `NaN`，整數除以 `0` 會發生例外），要先把 `avg` 保持在 `0.0`。",
+      "expectedShape": "double avg = 0.0;\nif (…) {\n    avg = …;\n}\nif (…) {\n    System.out.println(\"穩定通過\");\n} else if (…) {\n    …\n} else {\n    …\n}",
       "check": {
-        "type": "values",
+        "type": "output",
         "exprs": ["avg"],
-        "variants": [ { "total": "300" } ]
+        "variants": [
+          { "total": "400", "subjects": "5" },
+          { "total": "300", "subjects": "5" },
+          { "total": "299", "subjects": "5" },
+          { "total": "399", "subjects": "5" },
+          { "total": "312", "subjects": "0" },
+          { "total": "0", "subjects": "5" }
+        ],
+        "uses": ["if", "else"]
       },
       "hints": {
-        "lead": "整數除以整數會丟掉小數。",
-        "plain": "5 科的平均就是總分除以 5。`total` 和 `5` 都是整數，答案會只剩整數；寫成 `5.0`，答案才會留下小數。"
+        "lead": "先檢查科目數是否大於 0，再用 (double) 保留小數，最後從高分往下分三段。",
+        "plain": "`(double) total / subjects` 才會保留小數（像 `299 / 5.0` 是 `59.8`，才不會誤判成 `59`）。`subjects <= 0` 時跳過除法讓 `avg` 維持 `0.0`；評語先問 `>= 80.0`，再問 `>= 60.0`，剩下走 `else`。"
       },
       "afterText": ""
     },
     {
-      "id": "pass",
-      "title": "及格嗎",
-      "goal": "現在 `avg` 是 62.4，要印出 `及格`；`avg` 不到 60 的時候，要印 `再加油`。剛好 60 分也算及格。\n\n用 `if`／`else` 判斷上一步算好的 `avg`，比大小用 `>=`（大於等於）。",
-      "instructions": "這一步接著上一步的程式寫，`avg` 已經算好了。\n\n`>=` 是「大於等於」：`temp >= 30` 在 `temp` 是 30 或比 30 大的時候是 `true`，剛好 30 也算。只寫 `>` 是「大於」，剛好 30 就不算了。",
-      "expectedShape": "if (avg … 60) {\n    System.out.println(\"及格\");\n} else {\n    …\n}",
+      "id": "countdown-v2",
+      "title": "衝刺倒數",
+      "goal": "`days` 是離段考還有幾天，現在是 7。\n\n用 `for` 從 `days` 倒數到 `1`，一天印一行，並同時累計安排的天數到 `int studyDays`：\n- 第 4 天以上（`i > 3`）：印 `段考倒數 X 天`\n- 最後 3 天（`1 <= i <= 3`）：印 `最後衝刺倒數 X 天`\n- 迴圈結束後（包含 `days <= 0` 的情況）都要印出最後一行：`共 studyDays 天`（當 `days <= 0` 時印 `共 0 天`）。",
+      "instructions": "這一步獨立計算倒數天數。\n\n`for` 倒數寫法是 `for (int i = days; i >= 1; i--)`：如果 `days` 一開始就 `<= 0`，條件 `i >= 1` 第一圈就不成立，迴圈會安全跳過一次也不跑，`studyDays` 就會維持 `0`。\n\n迴圈裡面再用 `if / else` 區分一般日（`i > 3`）和最後衝刺日（`i <= 3`），並用 `studyDays++` 累計實際倒數了幾天。",
+      "expectedShape": "int studyDays = 0;\nfor (…) {\n    studyDays++;\n    if (…) {\n        System.out.println(\"段考倒數 \" + i + \" 天\");\n    } else {\n        …\n    }\n}\nSystem.out.println(\"共 \" + studyDays + \" 天\");",
       "check": {
         "type": "output",
-        "variants": [ { "total": "250" }, { "total": "300" }, { "total": "0" }, { "total": "298" } ]
+        "exprs": ["studyDays"],
+        "variants": [
+          { "days": "3" },
+          { "days": "1" },
+          { "days": "0" },
+          { "days": "-2" }
+        ],
+        "uses": ["for"]
       },
       "hints": {
-        "lead": "60 以上，包含 60。",
-        "plain": "「60 以上」包含剛好 60 分，所以用 `>=`。寫成 `>` 的話，剛好 60 分的人會被說再加油。"
-      },
-      "afterText": ""
-    },
-    {
-      "id": "countdown",
-      "title": "倒數",
-      "goal": "`days` 是離段考還有幾天，現在是 7，所以要印出 7 行：\n`段考倒數 7 天`\n`段考倒數 6 天`\n⋯⋯\n`段考倒數 1 天`\n\n用 `for` 從 `days` 倒數到 1，一天印一行；每一圈用 `i--`（減一）。",
-      "instructions": "`for` 也可以倒著數：從大的數開始，每做完一次就減一。`i--` 是 `i++` 的反方向，和 `i = i - 1` 一樣。\n\n```\nfor (int i = 10; i >= 8; i--) {\n    System.out.println(i);\n}\n```\n\n這段會依序印出 10、9、8：`i` 從 10 開始，`i >= 8` 還成立就繼續，每一圈減一。",
-      "expectedShape": "for (int i = days; …; i--) {\n    System.out.println(\"段考倒數 \" + i + \" 天\");\n}",
-      "check": {
-        "type": "output",
-        "variants": [ { "days": "3" } ]
-      },
-      "hints": {
-        "lead": "倒數用 i--。",
-        "plain": "`for` 也可以倒著數：從 `days` 開始，`i >= 1` 還成立就繼續，每一圈 `i--` 減一。"
+        "lead": "從 days 倒數到 1，進迴圈就讓 studyDays++，再判斷是不是最後 3 天。",
+        "plain": "`for (int i = days; i >= 1; i--)` 會自動在 `days <= 0` 時不進迴圈；迴圈內判斷 `i > 3` 印一般倒數，否則印最後衝刺倒數；結束後再印 `共 X 天`。"
       },
       "afterText": ""
     }

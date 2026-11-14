@@ -4,49 +4,85 @@
   "route": "學妹",
   "partner": "二弘",
   "notes": ["array-loop", "nested", "constructor"],
-  "vars": [
-    { "name": "n", "type": "int", "value": "4", "note": "三角形的層數" }
-  ],
+  "vars": [],
   "steps": [
     {
-      "id": "count-above",
-      "title": "第一題：陣列與方法",
-      "goal": "`a` 是 `{72, 58, 65}`、`line` 是 60 時，`countAbove(a, line)` 要交回 2：72 和 65 都大於等於 60。\n\n寫一個方法 `static int countAbove(int[] a, int line)`，數出 `a` 裡有幾個數字大於等於 `line`，交回這個數；空的陣列交回 0。",
-      "instructions": "編輯器最上面那行 `int n = 4;` 是題目先寫好的，第二題才會用到。\n\n模擬題用到第 1～6 章，這一題考陣列和方法。",
-      "expectedShape": "static int countAbove(int[] a, int line) {\n    …\n}",
-      "check": { "type": "values", "exprs": ["countAbove(new int[]{72, 58, 65}, 60)", "countAbove(new int[]{}, 60)", "countAbove(new int[]{60}, 60)"] },
-      "hints": {
-        "lead": "大於等於，包含剛好的。",
-        "plain": "準備一個從 0 開始的盒子，走過每一格，`a[i] >= line` 就數一個，最後交回去。空的陣列一次都不會數，剛好是 0。"
-      },
-      "afterText": ""
-    },
-    {
-      "id": "triangle",
-      "title": "第二題：迴圈",
-      "goal": "`n` 是三角形的層數，現在是 4，要印出 4 行：\n`*`\n`**`\n`***`\n`****`\n\n用巢狀迴圈（迴圈裡再放一個迴圈）畫出 `n` 層的三角形：第幾層就印幾顆 `*`，星星之間不空格。",
-      "instructions": "編輯器最上面那行 `int n = 4;` 是題目先寫好的，你的程式可以直接用 `n`。\n\n外面的迴圈每跑一圈，裡面的迴圈就從頭跑完一輪。例如這樣會畫出 2 行、每行 3 個 `□`：\n\n```\nfor (int r = 1; r <= 2; r++) {\n    String row = \"\";\n    for (int c = 1; c <= 3; c++) {\n        row += \"□\";\n    }\n    System.out.println(row);\n}\n```",
-      "expectedShape": "for (int i = 1; i <= n; i++) {\n    String row = \"\";\n    for (…) {\n        row += \"*\";\n    }\n    System.out.println(row);\n}",
+      "id": "record-parse",
+      "title": "第一題：解析練習紀錄",
+      "goal": "寫出 `class PracticeRecord`（欄位 `String topic`、`int score`、`int minutes`），含邊界保護的建構子、`boolean isPassed()`，以及靜態解析方法 `static PracticeRecord parse(String line)`。",
+      "instructions": "模擬題改為實作一套「練習紀錄統計系統」，請依規格實作第一部分：\n- `PracticeRecord(String topic, int score, int minutes)`：\n  - `topic` 若為 `null` 或去掉前後空白後為空，設為 `\"未分類\"`；否則設為 `topic.trim()`。\n  - `score` 限制在 `0..100`（小於 `0` 歸 `0`，大於 `100` 固定為 `100`）。\n  - `minutes` 若小於 `0` 歸 `0`。\n- `boolean isPassed()`：`score >= 60` 回傳 `true`，否則 `false`。\n- `static PracticeRecord parse(String line)`：解析 `\"主題,分數,分鐘\"` 格式字串：\n  - 若 `line == null` 或去掉前後空白後為空，回傳 `null`。\n  - 以 `line.split(\",\", -1)` 切開；若切出來的長度不等於 `3`，回傳 `null`。\n  - 用 `try-catch (NumberFormatException e)` 解析第 2 欄（分數）與第 3 欄（分鐘，各自先 `.trim()`）；若任一欄不是合法整數，回傳 `null`。\n  - 解析成功則回傳 `new PracticeRecord(parts[0], s, m)`。",
+      "expectedShape": "class PracticeRecord {\n    …\n    PracticeRecord(String topic, int score, int minutes) {\n        …\n    }\n    boolean isPassed() {\n        …\n    }\n    static PracticeRecord parse(String line) {\n        …\n    }\n}",
       "check": {
-        "type": "output",
-        "variants": [ { "n": "2" } ]
+        "type": "values",
+        "exprs": [
+          "PracticeRecord.parse(\"陣列,75,30\").topic",
+          "PracticeRecord.parse(\" 迴圈 , 120 , -10 \").topic",
+          "PracticeRecord.parse(\" 迴圈 , 120 , -10 \").score",
+          "PracticeRecord.parse(\" 迴圈 , 120 , -10 \").minutes",
+          "PracticeRecord.parse(\" , -5 , 15 \").topic",
+          "PracticeRecord.parse(\" , -5 , 15 \").score",
+          "PracticeRecord.parse(\"物件,60,20\").isPassed()",
+          "PracticeRecord.parse(\"物件,59,20\").isPassed()",
+          "PracticeRecord.parse(null) == null",
+          "PracticeRecord.parse(\"   \") == null",
+          "PracticeRecord.parse(\"陣列,80\") == null",
+          "PracticeRecord.parse(\"陣列,80,10,extra\") == null",
+          "PracticeRecord.parse(\"陣列,abc,10\") == null"
+        ],
+        "uses": ["class PracticeRecord", "try", "catch"]
       },
       "hints": {
-        "lead": "第 i 層有 i 顆。",
-        "plain": "外面的迴圈數第幾層，裡面的迴圈畫那一層的星星：第 `i` 層畫 `i` 顆，所以裡面的條件是 `j <= i`。"
+        "lead": "用 split(\",\", -1) 檢查欄位數是否剛好為 3，再用 try-catch 擋掉非數字。",
+        "plain": "記得 `split(\",\", -1)` 才會保留尾端空欄位；轉數字前要 `.trim()`，`NumberFormatException` 接住就回傳 `null`。數值範圍交給建構子統一把關即可。"
       },
       "afterText": ""
     },
     {
-      "id": "student",
-      "title": "第三題：類別",
-      "goal": "`new Student(\"亭瑄\", 62).pass()` 要交回 `true`，`new Student(\"阿成\", 59).pass()` 要交回 `false`。\n\n寫 `class Student`：欄位 `String name`、`int score`，建構子 `Student(String name, int score)`，方法 `boolean pass()` 在 `score` 60 分以上（剛好 60 也算）交回 `true`，不到 60 交回 `false`。",
-      "instructions": "`new Student(\"亭瑄\", 62)` 照設計圖做出一個學生，建構子把 `\"亭瑄\"` 和 62 放進這個學生自己的 `name` 和 `score`；接著 `.pass()` 問的就是這個學生及格了沒。\n\n`pass()` 不加 `static`，用的是物件自己的 `score`，所以不用再傳參數。",
-      "expectedShape": "class Student {\n    String name;\n    int score;\n\n    Student(String name, int score) {\n        …\n    }\n\n    boolean pass() {\n        …\n    }\n}",
-      "check": { "type": "values", "exprs": ["new Student(\"亭瑄\", 62).pass()", "new Student(\"阿成\", 59).pass()", "new Student(\"小明\", 60).pass()"] },
+      "id": "study-log",
+      "title": "第二題：紀錄本物件協作",
+      "goal": "寫出 `class StudyLog` 管理多筆 `PracticeRecord`：提供 `add(PracticeRecord r)`、`addAll(String[] lines)`、`passCount()`、`totalMinutes()` 與 `topTopic()`。",
+      "instructions": "物件協作規格如下：\n- 欄位：`PracticeRecord[] records`、`int count`。\n- `StudyLog(int capacity)`：若 `capacity < 0` 視為 `0`，建立 `new PracticeRecord[capacity]`，初始 `count = 0`。\n- `boolean add(PracticeRecord r)`：若 `r == null` 或 `count >= records.length`（已滿），回傳 `false`；否則放入 `records[count++]` 並回傳 `true`。\n- `int addAll(String[] lines)`：若 `lines == null` 回傳 `0`；依序用 `PracticeRecord.parse(lines[i])` 解析，成功解析（非 `null`）才呼叫 `add(...)`，回傳實際加入的筆數。\n- `int passCount()`：統計已加入紀錄中 `isPassed()` 為 `true` 的筆數。\n- `int totalMinutes()`：加總已加入紀錄的 `minutes`。\n- `String topTopic()`：找出已加入紀錄中 `score` 最高者的 `topic`（並列取先加入者）；若 `count == 0` 回傳 `\"無\"`。",
+      "expectedShape": "class StudyLog {\n    …\n    StudyLog(int capacity) { … }\n    boolean add(PracticeRecord r) { … }\n    int addAll(String[] lines) { … }\n    int passCount() { … }\n    int totalMinutes() { … }\n    String topTopic() { … }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new StudyLog(-2).add(PracticeRecord.parse(\"A,80,10\"))",
+          "new StudyLog(2).topTopic()",
+          "StudyLog _log = null;",
+          "(_log = new StudyLog(3)).add(null)",
+          "_log.addAll(null)",
+          "_log.addAll(new String[]{\"陣列,59,20\", null, \"壞資料,abc,10\", \"迴圈,85,35\", \"物件,85,15\", \"方法,100,40\"})",
+          "_log.count",
+          "_log.passCount()",
+          "_log.totalMinutes()",
+          "_log.topTopic()"
+        ],
+        "uses": ["class StudyLog", "PracticeRecord[]"]
+      },
       "hints": {
-        "lead": "設計圖、建構子、方法。",
-        "plain": "照第六章的寫法：兩個欄位、一個用 `this` 的建構子，`pass()` 交回 `score >= 60`。"
+        "lead": "StudyLog 透過 PracticeRecord.parse 把字串轉成物件，再統一由 add 控制容量上限。",
+        "plain": "在 `addAll` 裡遇到 `PracticeRecord.parse(...)` 回傳 `null` 就跳過；只有 `add(r)` 回傳 `true` 才算成功加入 1 筆。迴圈統計只走 `0` 到 `count - 1`。"
+      },
+      "afterText": ""
+    },
+    {
+      "id": "report",
+      "title": "第三題：進度星號條報表",
+      "goal": "幫 `StudyLog` 加上 `String report()`，使用迴圈組出每題 5 格進度星號條與總結報表。",
+      "instructions": "規則如下：\n- 若 `count == 0`，回傳 `\"尚無練習紀錄\"`。\n- 否則為每筆紀錄（依加入順序 `0` 到 `count - 1`）產生一行：\n  - 先算星號數 `stars = records[i].score / 20`（結果為 `0..5`）。\n  - 用內層迴圈組出長度為 `5` 的條狀圖：前 `stars` 格為 `\"*\"`，其餘為 `\".\"`（例如 75 分為 `\"***..\"`，100 分為 `\"*****\"`）。\n  - 每行格式：`records[i].topic + \"：\" + bar + \"（\" + records[i].score + \"分，\" + records[i].minutes + \"分鐘）\"`。\n- 最後一行總結：`\"及格 \" + passCount() + \"/\" + count + \" 題，總時數 \" + totalMinutes() + \" 分鐘，最佳：\" + topTopic()`。\n- 各行之間用 `\"\\n\"` 連接，最後一行結尾不加換行。",
+      "expectedShape": "String report() {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new StudyLog(3).report()",
+          "StudyLog _r1 = null;",
+          "(_r1 = new StudyLog(4)).addAll(new String[]{\"陣列,59,20\", \"迴圈,100,35\", \"物件,0,10\"}) >= 0",
+          "_r1.report()"
+        ]
+      },
+      "hints": {
+        "lead": "外層迴圈走過每一筆紀錄，內層迴圈負責畫出 5 格進度條。",
+        "plain": "每跑一筆紀錄先用迴圈從 `0` 到 `4` 拼出 `bar`（`j < stars` 接 `*`，否則接 `.`），用 `\"\\n\"` 把每一行接起來，最後再補上總結行。"
       },
       "afterText": ""
     }

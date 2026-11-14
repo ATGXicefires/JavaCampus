@@ -7,44 +7,84 @@
   "vars": [],
   "steps": [
     {
-      "id": "first",
-      "title": "上學期的",
-      "goal": "修好後要依序印出五行：\n`小白學程式 v0.99`\n`總共 7 個貼紙`\n`總分：195`\n`答對了`\n`及格`\n\n起始碼是學妹最後一版的程式，藏著第一章到第五章踩過的五個錯：有的會出紅字，有的會印錯。一個一個修好。",
-      "instructions": "一次修一個：紅字先修，修到能跑，再對照目標的五行找剩下的。",
-      "expectedShape": "System.out.println(\"總共 \" + (…) + \" 個貼紙\");\nfor (int i = 0; i < …; i++) {\n…\nif (typed.equals(…)) {\n…\nif (score >= 60) {",
+      "id": "compile",
+      "title": "讓系統通過編譯並跑通核心統計",
+      "goal": "這份專題包含 6 個檔案，目前存在多處語法、存取權限、介面實作與泛型型別問題，導致整個專案無法編譯或核心計算錯亂。\n\n本階段請先修復讓系統能成功編譯，並確保以下公開契約正確運作：\n1. `Badge.renderSummary(int bonus, int level)` 應回傳 `\"等級：<bonus + level 總和>\"`（數值相加後再組進字串）。\n2. `Badge.render(int score, int chapters)` 需正確實作 `Drawable` 介面，依分數等級回傳 `\"[<稱號>] 完成 <chapters> 章\"`（`>= 90` 為 `金徽章`，`>= 60` 為 `銀徽章`，否則為 `繼續加油`）。\n3. `Progress` 需正確維護完成章數（`finishChapter()` / `getDone()`）與成績清單（`recordScore(int)` / `getAverage()` / `getPassedCount()`），且外部不可直接竄改內部欄位。\n4. `Main.sumScores(ArrayList<Integer> list)` 應正確加總清單中的所有分數，不可因索引範圍錯誤而崩潰。",
+      "instructions": "請先依照編譯器提示逐一修復語法、型別與存取權限問題；通過編譯後，再核對各方法回傳與迴圈範圍是否符合需求。",
+      "expectedShape": "// Drawable.java\npublic interface Drawable {\n    String render(int score, int chapters);\n}\n\n// Badge.java / Progress.java / Main.java\n…",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Badge().renderSummary(3, 4)",
+          "new Badge().render(85, 2)",
+          "Main.sumScores(new java.util.ArrayList<>(java.util.List.of(72, 58, 65)))",
+          "Main.probeProgress(80, 90)"
+        ],
+        "uses": ["private", "ArrayList<Integer>"]
+      },
       "hints": {
-        "lead": "編譯錯誤、執行期例外、邏輯錯誤依序排除⋯⋯",
-        "plain": "⋯⋯白話：五個錯分別是第一章到第五章踩過的坑：分號、字串接數字、陣列的最後一格、字串比內容、剛好 60 分。"
+        "lead": "從編譯錯誤下手，檢查標點、介面實作公開程度、封裝存取、泛型型別與迴圈索引。",
+        "plain": "依序確認：每個敘述結尾是否為半形分號；實作介面的方法是否為 `public`；`Progress` 的私有狀態是否透過方法更新；`ArrayList` 角括號是否使用參考型別 `Integer`；計算總分與字串數字相加時括號與索引上限是否正確。"
       },
       "afterText": ""
     },
     {
-      "id": "second",
-      "title": "下學期的",
-      "goal": "修好後，上學期那五行下面要接著印出四行：\n`true`\n`true`\n`完成 1 章`\n`★ 完成`\n\n這一版多了下學期寫的類別，又藏了第六章到第九章的四個錯，現在跑起來是紅字。一個一個修好。",
-      "instructions": "四個錯分散在幾個分頁裡，上學期那五行照樣印在最前面。",
-      "expectedShape": "this.answer = answer;\n…\n@Override\nboolean check(String typed) {\n…\npublic void draw() {\n…\np.finish();",
+      "id": "oop",
+      "title": "修復題庫比對與繼承覆寫異常",
+      "goal": "專案已經能編譯了，但題庫判定與繼承行為出現明顯異常：\n1. 一般題目 `Question`：即使作答與標準答案完全相同（或僅前後多出空白），`check(String typed)` 卻總是回傳 `false`；當傳入 `null` 時甚至直接拋出例外。\n2. 填空題 `FillQuestion`（繼承自 `Question`）：規格要求忽略作答與標準答案中**所有空格**（包含文字中間與前後的空白）後再比對是否相同，但目前透過 `Question` 變數多型呼叫 `check(String typed)` 時，忽略中間空白的規則完全沒有生效。\n\n請修復 `Question` 與 `FillQuestion` 的物件狀態初始化、字串比對與覆寫行為（兩者的 `check` 遇 `null` 皆須安全回傳 `false`）。",
+      "instructions": "檢查建構子欄位是否真正寫入物件狀態、字串內容比對是否受物件參考位址影響，以及子類別覆寫父類別方法時是否有加上 `@Override` 讓編譯器協助檢查簽章一致性。",
+      "expectedShape": "// Question.java\npublic class Question {\n    …\n    public Question(String prompt, String answer) { … }\n    public boolean check(String typed) { … }\n}\n\n// FillQuestion.java\npublic class FillQuestion extends Question {\n    …\n    @Override\n    public boolean check(String typed) { … }\n}",
       "form": "program",
-      "check": { "type": "output" },
+      "check": {
+        "type": "values",
+        "exprs": [
+          "new Question(\"Q\", \"選午餐\").check(new String(\"選午餐\"))",
+          "new Question(\"Q\", \"選午餐\").check(\"  選午餐 \")",
+          "new Question(\"Q\", \"選午餐\").check(\"選 午 餐\")",
+          "new Question(\"Q\", \"選午餐\").check(null)",
+          "Main.checkPolymorphic(new FillQuestion(\"Q\", \"選午餐\"), \" 選 午 餐 \")",
+          "Main.checkPolymorphic(new FillQuestion(\"Q\", \"選 午 餐\"), \"選午餐\")",
+          "Main.checkPolymorphic(new FillQuestion(\"Q\", \"選午餐\"), null)",
+          "Main.checkPolymorphic(new FillQuestion(\"Q\", \"選午餐\"), \"吃晚餐\")"
+        ],
+        "uses": ["@Override"]
+      },
       "hints": {
-        "lead": "`this`、封裝、覆寫、介面實作的常見錯誤⋯⋯",
-        "plain": "⋯⋯白話：第六章到第九章的坑：參數蓋住欄位、`private` 從外面碰不到、名字打錯就沒覆寫到、介面的方法要寫 `public`。"
+        "lead": "檢查欄位賦值是否被參數遮蔽、字串比對方式，以及子類別的方法簽章與 @Override。",
+        "plain": "建構子中同名參數會遮蔽欄位，需明確指派給物件欄位；比對字串內容應避免使用 `==`；`FillQuestion` 覆寫的方法名稱與參數列表必須和 `Question` 完全一致並加上 `@Override`。"
       },
       "afterText": ""
     },
     {
-      "id": "last",
-      "title": "最後一個",
-      "goal": "`total` 收到裝著 `1`、`2`、`3` 的清單時，要交回 `6`：清單裡所有數字的和。\n\n最後一個是第十章的錯：`Main` 裡的 `total` 現在是紅字，修好它。",
-      "instructions": "這一步只看 `total` 交回的數，`main` 不用改。",
-      "expectedShape": "static int total(ArrayList<…> list) {\n    …\n}",
+      "id": "edges",
+      "title": "通過極端邊界與防呆壓力測試",
+      "goal": "最後一輪整合壓力測試對所有元件與邊界輸入提出完整規格要求，請確保全部 6 個檔案皆符合以下契約：\n1. `Badge`：`render(int score, int chapters)` 須以 `score >= 90` 顯示 `\"金徽章\"`、`score >= 60` 顯示 `\"銀徽章\"`、其餘為 `\"繼續加油\"`；`chapters` 若小於 `0` 視為 `0`。\n2. `Progress`：`recordScore(int score)` 僅採計 `0` 到 `100`（含）的有效分數；`getPassedCount()` 計算有效分數中 `>= 60` 的筆數；`getAverage()` 在無有效紀錄時回傳 `0`，否則回傳四捨五入至整數的平均（`Math.round((double) sum / count)`）。\n3. `Main` **統計與報告**：`sumScores(ArrayList<Integer> list)` 遇 `null` 清單、空清單或 `null` 元素應安全略過並回傳總和；`maxScore(ArrayList<Integer> list)` 遇 `null`、空清單或全為 `null` 元素時回傳 `0`，其餘情況回傳有效分數中的真正最大值（包含全為負數的情境）；`evaluateSession(Question[] questions, String[] typed, int[] scores)` 應依 `questions` 與 `typed` 的較短長度逐題批改（略過 `null` 題目，遇 `null` 陣列視為 0 題），每答對一題呼叫 `finishChapter()`，將 `scores` 交由 `Progress` 記錄，並回傳 `\"答對 <correct> 題 | 平均 <avg> | <badge.render(avg, done)>\"`。\n\n修好全部 6 檔，讓 `Main.main` 印出完整 4 行並滿足所有異常與邊界輸入。",
+      "instructions": "檢視每一個類別對 `0`、負數、剛好達標（`60`、`90`、`100`）、空陣列/空清單、`null`、以及兩組陣列長度不一致時的處理，確保沒有除以零、空指標或越界風險。",
+      "expectedShape": "// Main.java\npublic static int sumScores(ArrayList<Integer> list) { … }\npublic static int maxScore(ArrayList<Integer> list) { … }\npublic static String evaluateSession(Question[] questions, String[] typed, int[] scores) { … }",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.total(new java.util.ArrayList<>(java.util.List.of(1, 2, 3)))"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.sumScores(new java.util.ArrayList<>())",
+          "Main.sumScores(null)",
+          "Main.maxScore(new java.util.ArrayList<>())",
+          "Main.maxScore(null)",
+          "Main.maxScore(new java.util.ArrayList<>(java.util.List.of(-12, -3, -8)))",
+          "Main.maxScore(new java.util.ArrayList<>(java.util.List.of(100, 100, 60)))",
+          "Main.maxScore(new java.util.ArrayList<>(java.util.List.of(0, 0)))",
+          "new Badge().render(59, 0)",
+          "new Badge().render(60, -2)",
+          "new Badge().render(90, 3)",
+          "Main.probeProgress(-5, 105)",
+          "Main.probePassedCount(new int[]{59, 60, 61, 100, 101, -1})",
+          "Main.evaluateSession(new Question[]{new Question(\"a\", \"1\"), null, new FillQuestion(\"b\", \"x y\")}, new String[]{\"1\", \"2\"}, new int[]{-5, 60, 61, 101})",
+          "Main.evaluateSession(new Question[]{}, new String[]{}, new int[]{})"
+        ]
+      },
       "hints": {
-        "lead": "型別參數不可為基本型別⋯⋯",
-        "plain": "⋯⋯白話：角括號裡只能放類別，`int` 要寫成 `Integer`。"
+        "lead": "逐一確認及格邊界 >= 60、無效分數過濾、空集合防護與負數最大值初始值。",
+        "plain": "`maxScore` 不要一開始把最大值預設為 `0`（改用標記是否看到第一個非 `null` 元素，或從第一個有效值開始比）；計算平均要先確認筆數大於 0 且轉成 `double` 后 `Math.round`；所有陣列與物件參數都要做 `null` 檢查。"
       },
       "afterText": ""
     }

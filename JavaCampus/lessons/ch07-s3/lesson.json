@@ -9,32 +9,73 @@
   ],
   "steps": [
     {
-      "id": "tables",
-      "title": "每一桌各自的帳",
-      "goal": "`t1` 點 80 和 35、`t2` 點 120 之後，`t1.getAmount()` 要交回 `115`，`t2.getAmount()` 要交回 `120`，`Table.todayTotal` 要是 `235`。\n\n寫 `class Table`：`private int amount` 是這一桌的帳，`static int todayTotal` 是整家店今天的帳（`static` 的欄位整個類別只有一份）；`void order(int price)` 把價錢同時記進兩個帳，`int getAmount()` 交回這一桌的帳。再 `new` 兩桌 `t1`、`t2`，照上面點菜。",
-      "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 是題目先寫好的，這一步還用不到，下一步才用。\n\n一般的欄位每個物件各一份：`t1` 和 `t2` 各有自己的 `amount`，各算各的。`static` 的欄位屬於整個類別，不管 `new` 幾桌都只有一份，大家共用；從外面用類別的名字讀，寫成 `Table.todayTotal`。例如：\n\n```\nclass Student {\n    static int classSize;\n    String name;\n}\n```\n\n每個 `Student` 有自己的 `name`，`Student.classSize` 全班只有一個。",
-      "expectedShape": "class Table {\n    static int todayTotal;\n    private int amount;\n    …\n}\n\nTable t1 = new Table();\n…",
-      "check": { "type": "values", "exprs": ["t1.getAmount()", "t2.getAmount()", "Table.todayTotal"], "uses": ["private int amount", "static int todayTotal"] },
+      "id": "tables-v2",
+      "title": "多桌各自點餐與全店 static 統計",
+      "goal": "寫 `class Table` 區分每一桌自己的帳與全店 `static` 共用的今日統計，並建立兩桌 `t1`、`t2`：`t1` 點 `80` 和 `35`，`t2` 點 `120`（使 `t1.getAmount()` 為 `115`、`t2.getAmount()` 為 `120`、`Table.getTodayTotal()` 為 `235`、`Table.getTodayOrders()` 為 `3`）：\n- 所有欄位皆設為 `private`：實例欄位記這桌的金額與有效點餐數；`static` 欄位記全店今日總營業額與今日有效點餐筆數。\n- `boolean order(int price)`：若 `price <= 0` 拒絕點餐並交回 `false`；大於 0 才加進該桌金額與 `todayTotal`，並讓該桌點餐數與 `todayOrders` 各加 1，交回 `true`。\n- 實例方法 `int getAmount()` 與 `int getItemCount()`。\n- 靜態方法 `static int getTodayTotal()`、`static int getTodayOrders()` 與 `static void resetDay()`（歸零全店總營業額與總筆數）。",
+      "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 下一步才會用到。\n\n把 `todayTotal` 和 `todayOrders` 也設成 `private static`，外面就無法亂寫 `Table.todayTotal = 0;`，只能透過 `order` 累加或透過 `resetDay()` 合法歸零。開多桌時，各桌的 `amount` 互不干擾，全店的 `static` 合計則正確同步增加。",
+      "expectedShape": "class Table {\n    private static int …\n    private int …\n    boolean order(int price) { … }\n    int getAmount() { … }\n    int getItemCount() { … }\n    static int getTodayTotal() { … }\n    static int getTodayOrders() { … }\n    static void resetDay() { … }\n}\n\nTable t1 = new Table();\n…",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "t1.getAmount()",
+          "t1.getItemCount()",
+          "t2.getAmount()",
+          "t2.getItemCount()",
+          "Table.getTodayTotal()",
+          "Table.getTodayOrders()",
+          "{ Table.resetDay(); }",
+          "Table.getTodayTotal()",
+          "Table.getTodayOrders()",
+          "Table _a = null;",
+          "Table _b = null;",
+          "{ _a = new Table(); _b = new Table(); }",
+          "_a.order(-50)",
+          "_a.order(0)",
+          "_a.order(90)",
+          "_b.order(45)",
+          "_a.getAmount()",
+          "_b.getAmount()",
+          "Table.getTodayTotal()",
+          "Table.getTodayOrders()"
+        ],
+        "uses": ["private static", "private int"]
+      },
       "hints": {
-        "lead": "實例欄位每個物件一份；`static` 欄位屬於類別⋯⋯",
-        "plain": "⋯⋯白話：`amount` 每一桌各算各的，`todayTotal` 整家店只有一個。`order` 同時加進兩個地方。"
+        "lead": "實例欄位分桌記帳，private static 欄位同步累計全店總額與筆數。",
+        "plain": "`order(int price)` 先擋 `price <= 0` 回傳 `false`。合法時同時加進實例的 `amount`/`itemCount` 與靜態的 `todayTotal`/`todayOrders`。"
       },
       "afterText": ""
     },
     {
-      "id": "day",
-      "title": "一整天",
-      "goal": "`orders` 是今天每一筆訂單的金額，現在是 `{80, 35, 120, 60}`。每一筆都點在一桌新的客人上之後，`Table.todayTotal` 要是全部加起來的 `295`。\n\n用 `for` 照 `orders` 一筆一筆來：每一筆都 `new` 一桌，再用 `order` 點那一筆。",
-      "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 是題目先寫好的，你的程式可以直接用 `orders`。\n\n每一桌的 `amount` 各算各的，可是 `todayTotal` 是 `static`，整家店只有一份：不管 `new` 了幾桌，每一桌點的錢都加進同一個 `Table.todayTotal`。",
-      "expectedShape": "for (…) {\n    Table t = new Table();\n    t.order(…);\n}",
+      "id": "day-v2",
+      "title": "結帳防呆與整天訂單統計",
+      "goal": "為 `Table` 加上結帳保護，並用 `for` 走過 `orders` 把每一筆訂單點在新的一桌上再結帳：\n1. 新增 `private boolean settled;`、`int settle()`（將該桌標記為已結帳並交回該桌金額）與 `boolean isSettled()`。\n2. 修改 `order(int price)`：若該桌已經結帳（`settled` 為 `true`）或 `price <= 0`，都拒絕加點並交回 `false`（不可動到該桌或全店統計）。\n3. 用 `for` 走過 `orders`：每一筆都 `new` 一桌 `Table`，呼叫 `order(orders[i])` 與 `settle()`。",
+      "instructions": "編輯器最上面那行 `int[] orders = {80, 35, 120, 60};` 是題目先寫好的，你的程式可以直接用 `orders`。\n\n客人結帳之後，這桌的帳單就定案了：再往同一桌呼叫 `order` 必須被擋下來，全店的 `todayTotal` 和 `todayOrders` 才不會被灌進已結帳的重複單。",
+      "expectedShape": "int settle() { … }\nboolean isSettled() { … }\n…\nfor (…) {\n    Table t = new Table();\n    t.order(…);\n    t.settle();\n}",
       "check": {
         "type": "values",
-        "exprs": ["Table.todayTotal"],
-        "variants": [ { "orders": "{35}" } ]
+        "exprs": [
+          "Table.getTodayTotal()",
+          "Table.getTodayOrders()",
+          "{ Table.resetDay(); }",
+          "Table _s = null;",
+          "(_s = new Table()).order(70)",
+          "_s.settle()",
+          "_s.isSettled()",
+          "_s.order(30)",
+          "_s.getAmount()",
+          "Table.getTodayTotal()",
+          "Table.getTodayOrders()"
+        ],
+        "variants": [
+          { "orders": "{35}" },
+          { "orders": "{100, -20, 0, 50}" }
+        ],
+        "uses": ["private static", "orders"]
       },
       "hints": {
-        "lead": "所有實例共用同一個 `static` 欄位⋯⋯",
-        "plain": "⋯⋯白話：每一筆訂單 `new` 一桌新的客人來點，不管有幾桌，錢都加進同一個 `todayTotal`。"
+        "lead": "結帳後鎖住該桌加點，迴圈中負數與 0 會自動被 order 擋下。",
+        "plain": "在 `order` 開頭檢查 `if (settled || price <= 0) { return false; }`。`settle()` 把 `settled` 設為 `true` 後回傳 `amount`。`for` 裡每圈建一桌呼叫 `t.order(orders[i]);` 和 `t.settle();`。"
       },
       "afterText": ""
     }

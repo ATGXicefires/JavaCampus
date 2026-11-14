@@ -7,30 +7,53 @@
   "vars": [],
   "steps": [
     {
-      "id": "again",
-      "title": "至少問一次",
-      "goal": "`main` 裡的 `tries` 是依序的作答，現在是 `吃控肉飯`、`吃 滷肉飯`、`吃滷肉飯`；`answer` 是正確答案 `吃滷肉飯`。要印出三行：\n`第 1 次：再試一次`\n`第 2 次：再試一次`\n`第 3 次答對了！`\n\n用 `do-while`（先做一次，做完才問要不要再來）照順序拿 `tries` 的作答，先 `trim` 再和 `answer` 比：答錯就印一行再試一次、換下一個；答對就停下，印出第幾次答對了。",
-      "instructions": "`do-while` 先做大括號裡的事，做完才看 `while` 括號裡的條件：成立就回去再做一次，不成立就停。所以不管條件怎樣，至少會做一次。\n\n```\nint n = 0;\ndo {\n    n++;\n    System.out.println(\"第 \" + n + \" 圈\");\n} while (n < 2);\n```\n\n這段會印 `第 1 圈` 和 `第 2 圈`。最後的 `while (…);` 要加分號。\n\n記第幾次的 `round` 和這次對不對的 `right`，要宣告在 `do` 前面，`while (…)` 才看得到。",
-      "expectedShape": "do {\n    right = tries[round].trim().equals(answer);\n    round++;\n    …\n} while (!right);\nSystem.out.println(\"第 \" + round + \" 次答對了！\");",
+      "id": "practice",
+      "title": "帶上限的 do-while 練習流程",
+      "goal": "在 `Main` 實作兩個使用 `do-while` 的練習方法：\n1. `public static int countAttempts(String[] tries, String answer, int maxTries)`：\n   - 若 `tries == null`、`tries.length == 0`、`answer == null` 或 `maxTries <= 0`，直接回傳 `-1`。\n   - 否則使用 `do-while` 依序檢查 `tries` 的作答（第 `round` 次看 `tries[round - 1]`）：作答與 `answer` 皆先做 `trim()`（保留中間空白）再比對 `equals`，該格為 `null` 視同答錯。\n   - 在 `maxTries` 次內答對立即回傳答對的次數（1-based）；若達 `maxTries` 次或 `tries` 用完仍未答對，回傳 `-1`。\n2. `public static void printPracticeLog(String[] tries, String answer, int maxTries)`：\n   - 若上述任一參數無效，印出 `無法開始練習`。\n   - 否則用 `do-while` 逐次嘗試：答對時印出 `第 <round> 次答對了！` 並結束；答錯時印出 `第 <round> 次：再試一次`。\n   - 若全部嘗試結束仍沒答對：若已達到 `maxTries` 次，多印一行 `超過上限，先休息一下`；否則（尚未達 `maxTries` 但 `tries` 已用完）多印一行 `題庫已用完`。\n\n修正 `main`，呼叫 `printPracticeLog(new String[]{\"吃控肉飯\", \"吃 滷肉飯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 5)`。",
+      "instructions": "`trim()` 只會去掉字串前後空白，像 `\"吃 滷肉飯\"` 中間的空格還在，所以比對 `\"吃滷肉飯\"` 仍會算錯。\n\n注意「已達 `maxTries` 次且剛好也把 `tries` 用完」時，優先印出 `超過上限，先休息一下`。",
+      "expectedShape": "public static int countAttempts(String[] tries, String answer, int maxTries) {\n    …\n    do {\n        …\n    } while (…);\n    return …;\n}\n\npublic static void printPracticeLog(String[] tries, String answer, int maxTries) {\n    …\n}",
       "form": "program",
-      "check": { "type": "output", "uses": ["do"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.countAttempts(new String[]{\"吃滷肉飯\", \"錯\"}, \"吃滷肉飯\", 3)",
+          "Main.countAttempts(new String[]{\"吃控肉飯\", \"吃 滷肉飯\", \"  吃滷肉飯  \"}, \"吃滷肉飯\", 5)",
+          "Main.countAttempts(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)",
+          "Main.countAttempts(new String[]{null, \"吃滷肉飯\"}, \"吃滷肉飯\", 3)",
+          "Main.countAttempts(new String[]{}, \"吃滷肉飯\", 3)",
+          "Main.countAttempts(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 0)",
+          "Main.printPracticeLog(new String[]{\"錯\", \"錯\"}, \"吃滷肉飯\", 2)",
+          "Main.printPracticeLog(new String[]{\"錯\"}, \"吃滷肉飯\", 3)"
+        ],
+        "uses": ["do", ".trim(", ".equals("]
+      },
       "hints": {
-        "lead": "`do-while` 先執行迴圈本體，再判斷條件⋯⋯",
-        "plain": "⋯⋯白話：至少要先答一次，才知道對不對。`trim` 只去掉前後的空白，「吃 滷肉飯」中間那一格還在，所以第二次還是錯的。"
+        "lead": "先擋掉無效參數，再用 do-while 走訪每次嘗試與檢查上限。",
+        "plain": "`round` 從 0 開始，進 `do` 就先 `round++` 拿 `tries[round - 1]` 比對。只要答對就提早 `return`，跳出迴圈後依 `round >= maxTries` 決定印出達上限或題庫用完。"
       },
       "afterText": ""
     },
     {
-      "id": "limit",
-      "title": "最多三次",
-      "goal": "`triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)` 要交回 `-1`：最多只能答 3 次，第 4 個作答才對，來不及了。\n\n寫一個方法 `static int triesNeeded(String[] tries, String answer, int limit)`，交回第幾次答對（第一個作答算第 1 次）。`limit` 是最多能答幾次：答滿這個次數還沒對，或作答用完了還沒對，都交回 `-1`。",
-      "instructions": "作答一樣先 `trim` 再和 `answer` 比。答對了可以直接 `return` 是第幾次，後面的不用再看。\n\n這一步只看 `triesNeeded` 交回的數，`main` 不用改。",
-      "expectedShape": "static int triesNeeded(String[] tries, String answer, int limit) {\n    for (…) {\n        …\n    }\n    return -1;\n}",
+      "id": "streak",
+      "title": "扣分計算與多場統計",
+      "goal": "在 `Main` 新增兩個方法：\n1. `public static int practiceScore(String[] tries, String answer, int maxTries, int baseScore, int penalty)`：使用 `do-while`（或透過模擬嘗試流程）計算這場練習的得分：\n   - 若無效輸入（`tries == null || tries.length == 0 || answer == null || maxTries <= 0`）或在 `maxTries` 次內沒有答對，回傳 `0`。\n   - 若在第 `k` 次（1-based）答對，得分為 `baseScore - (k - 1) * penalty`，最低為 `0`（不可為負數）。\n2. `public static int totalPassedSessions(String[][] sessions, String answer, int maxTries)`：使用迴圈走訪多場練習 `sessions`，呼叫 `countAttempts(session, answer, maxTries)` 計算共有幾場在 `maxTries` 次內成功答對。若 `sessions == null` 回傳 `0`；若某一場 `session` 為 `null` 略過不計。\n\n在 `main` 保留原本 `printPracticeLog` 輸出，再補印一行：`本次得分：80 分`（呼叫 `practiceScore(tries, \"吃滷肉飯\", 5, 100, 10)` 組進這一行）。",
+      "instructions": "第 1 次就答對時 `k - 1` 是 0，不扣分直接拿 `baseScore`；第 3 次答對會扣兩次 `penalty`，所以 `100 - 2 * 10 = 80`。\n\n別忘了用 `Math.max(0, ...)`（或 `if (score < 0) score = 0;`）把扣過頭的分數守在 `0`。",
+      "expectedShape": "public static int practiceScore(String[] tries, String answer, int maxTries, int baseScore, int penalty) {\n    …\n}\n\npublic static int totalPassedSessions(String[][] sessions, String answer, int maxTries) {\n    …\n}",
       "form": "program",
-      "check": { "type": "values", "exprs": ["Main.triesNeeded(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 3)", "Main.triesNeeded(new String[]{\"錯\"}, \"吃滷肉飯\", 3)"] },
+      "check": {
+        "type": "output",
+        "exprs": [
+          "Main.practiceScore(new String[]{\"吃滷肉飯\"}, \"吃滷肉飯\", 3, 100, 15)",
+          "Main.practiceScore(new String[]{\"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3, 100, 15)",
+          "Main.practiceScore(new String[]{\"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3, 20, 15)",
+          "Main.practiceScore(new String[]{\"錯\", \"錯\", \"錯\", \"吃滷肉飯\"}, \"吃滷肉飯\", 3, 100, 10)",
+          "Main.totalPassedSessions(new String[][]{{\"吃滷肉飯\"}, {\"錯\", \"錯\", \"吃滷肉飯\"}, null, {\"錯\"}}, \"吃滷肉飯\", 2)"
+        ],
+        "uses": ["do"]
+      },
       "hints": {
-        "lead": "迴圈條件同時限制陣列長度與次數上限⋯⋯",
-        "plain": "⋯⋯白話：最多只看前 `limit` 次，作答不夠也要停。答對了馬上交回是第幾次，全部看完都沒對，就交回 -1。"
+        "lead": "用嘗試次數算扣分並設下限 0，多場統計可重用 countAttempts。",
+        "plain": "算出答對的次數 `k` 後，只要 `k > 0` 就計算 `baseScore - (k - 1) * penalty` 並確保不小於 `0`；`totalPassedSessions` 只要跑 `for` 迴圈跳過 `null`，計算 `countAttempts(...) > 0` 的場數即可。"
       },
       "afterText": ""
     }

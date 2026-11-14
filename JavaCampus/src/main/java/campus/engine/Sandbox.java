@@ -73,6 +73,7 @@ public final class Sandbox implements AutoCloseable {
         return t;
     });
     private volatile JShell shell;
+    private JShell analyzer;
     private volatile boolean exited;
     private volatile Outcome interruption;
 
@@ -86,6 +87,13 @@ public final class Sandbox implements AutoCloseable {
      * @throws IllegalStateException preamble 本身無法執行，代表案件內容有誤
      */
     public synchronized RunResult run(List<String> preamble, String source, List<String> probes) {
+        JShell parser = ensureAnalyzer();
+        List<Segment> segments = split(parser, source, null);
+        Optional<Problem> early = conflictMarker(source, null).or(() -> missingSemicolon(segments));
+        if (early.isPresent()) {
+            return compileError(List.of(early.get()));
+        }
+
         JShell js = cleanShell();
         Set<String> given = new HashSet<>();
         for (String line : preamble) {
@@ -97,12 +105,6 @@ public final class Sandbox implements AutoCloseable {
                     given.add(v.name());
                 }
             }
-        }
-
-        List<Segment> segments = split(js, source, null);
-        Optional<Problem> early = conflictMarker(source, null).or(() -> missingSemicolon(segments));
-        if (early.isPresent()) {
-            return compileError(List.of(early.get()));
         }
 
         output.reset();
@@ -176,18 +178,20 @@ public final class Sandbox implements AutoCloseable {
      * 當隱藏測資）。每個問題都會標出在哪個檔案，位置相對於那個檔案。
      */
     public synchronized RunResult runProgram(List<SourceFile> files, boolean launch, List<String> probes) {
-        JShell js = cleanShell();
+        JShell parser = ensureAnalyzer();
         List<Unit> units = new ArrayList<>();
         for (SourceFile f : files) {
             String code = blankPackage(f.text());
-            units.add(new Unit(f, code, split(js, code, f.name())));
+            units.add(new Unit(f, code, split(parser, code, f.name())));
         }
         Optional<Problem> early = units.stream()
                 .map(u -> conflictMarker(u.code(), u.file().name()).or(() -> missingSemicolon(u.segments())))
-                .flatMap(Optional::stream).findFirst().or(() -> structure(js, units)).or(() -> foreignImport(js, units));
+                .flatMap(Optional::stream).findFirst().or(() -> structure(parser, units)).or(() -> foreignImport(parser, units));
         if (early.isPresent()) {
             return compileError(List.of(early.get()));
         }
+
+        JShell js = cleanShell();
 
         output.reset();
         interruption = null;
@@ -239,7 +243,7 @@ public final class Sandbox implements AutoCloseable {
                 return compileError(unresolved(js, broken.getKey(), seg, code));
             }
             if (launch) {
-                Optional<RunResult> failed = launch(js, units, bySnippetId);
+                Optional<RunResult> failed = launch(js, parser, units, bySnippetId);
                 if (failed.isPresent()) {
                     return failed.get();
                 }
@@ -260,9 +264,9 @@ public final class Sandbox implements AutoCloseable {
     }
 
     /** 呼叫 {@code Main.main}；正常結束時回傳空的 Optional。 */
-    private Optional<RunResult> launch(JShell js, List<Unit> units, Map<String, Segment> bySnippetId) {
+    private Optional<RunResult> launch(JShell js, JShell parser, List<Unit> units, Map<String, Segment> bySnippetId) {
         Segment main = units.stream().flatMap(u -> u.segments().stream())
-                .filter(s -> MAIN_CLASS.equals(typeName(js, s))).findFirst().orElse(null);
+                .filter(s -> MAIN_CLASS.equals(typeName(parser, s))).findFirst().orElse(null);
         if (main == null) {
             Unit unit = units.getFirst();
             Segment first = unit.segments().isEmpty()
@@ -457,6 +461,25 @@ public final class Sandbox implements AutoCloseable {
         if (js != null) {
             js.close();
         }
+        JShell parser = analyzer;
+        analyzer = null;
+        if (parser != null) {
+            parser.close();
+        }
+    }
+
+    // sourceToSnippets 在同一顆 JShell 內會污染後續的型別推斷（回傳值型別會退化成 java.lang.Object），
+    // 因此語法分析交由永不執行 eval 的獨立 local JShell 處理
+    private JShell ensureAnalyzer() {
+        if (analyzer == null) {
+            analyzer = JShell.builder()
+                    .in(InputStream.nullInputStream())
+                    .out(new PrintStream(OutputStream.nullOutputStream()))
+                    .err(new PrintStream(OutputStream.nullOutputStream()))
+                    .executionEngine("local")
+                    .build();
+        }
+        return analyzer;
     }
 
     private JShell ensureShell() {
@@ -485,13 +508,13 @@ public final class Sandbox implements AutoCloseable {
     }
 
     /**
-     * 拿到一個乾淨的 JShell。平常 drop 掉上次的 snippet 就好，但上次若定義過型別就整個重開：
-     * JShell 有個 bug，型別宣告被 drop 之後，參考型別運算式的型別名稱會變成 {@code java.lang.Object}，
-     * 比對變數型別時就會誤判。重開一個只要零點一秒多。
+     * 拿到一個乾淨的 JShell。平常 drop 掉上次的 snippet 就好，但上次若出現過任何型別宣告（包含編譯失敗而被拒絕者）就整個重開：
+     * JShell 有個 bug，型別宣告被 drop 或遭 reject 之後，參考型別運算式的型別名稱會變成 {@code java.lang.Object}，
+     * 比對變數型別時就會誤判。
      */
     private JShell cleanShell() {
         JShell js = ensureShell();
-        if (js.types().findAny().isEmpty()) {
+        if (js.snippets().noneMatch(s -> s instanceof TypeDeclSnippet)) {
             reset(js);
             return js;
         }
@@ -526,7 +549,14 @@ public final class Sandbox implements AutoCloseable {
             if (text.isEmpty()) {
                 break;
             }
-            out.add(new Segment(file, offset, text, ci.completeness()));
+            // JShell 收到開頭含換行或空白的頂層片段時，執行期堆疊行號會退化成第 1 行；切段時先略過前導空白並把起點往後移
+            int lead = 0;
+            while (lead < text.length() && Character.isWhitespace(text.charAt(lead))) {
+                lead++;
+            }
+            if (lead < text.length()) {
+                out.add(new Segment(file, offset + lead, text.substring(lead), ci.completeness()));
+            }
             if (ci.source() == null) {
                 break;
             }
@@ -622,17 +652,13 @@ public final class Sandbox implements AutoCloseable {
     }
 
     /**
-     * JShell 堆疊的行號是相對於 snippet 去掉開頭空白之後的內容，註解行也算在內。
+     * JShell 堆疊的行號從 snippet 第一行算起，註解行也算在內；split 切段時已經去掉開頭空白。
      * 沒有行號時，標出開頭註解之後的程式碼。
      */
     private static int[] lineRange(Segment seg, int line) {
         String text = seg.text();
-        int lead = 0;
-        while (lead < text.length() && Character.isWhitespace(text.charAt(lead))) {
-            lead++;
-        }
         if (line >= 1) {
-            int from = lead;
+            int from = 0;
             for (int i = 1; i < line && from >= 0; i++) {
                 int nl = text.indexOf('\n', from);
                 from = nl < 0 ? -1 : nl + 1;
@@ -648,7 +674,7 @@ public final class Sandbox implements AutoCloseable {
             }
         }
         int codeStart = JavaTokens.tokenize(text).stream().filter(t -> t.kind() != Kind.COMMENT)
-                .mapToInt(Token::start).findFirst().orElse(lead);
+                .mapToInt(Token::start).findFirst().orElse(0);
         return new int[] {seg.start() + codeStart, seg.start() + text.stripTrailing().length()};
     }
 

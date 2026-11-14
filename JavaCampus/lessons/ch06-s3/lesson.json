@@ -7,28 +7,67 @@
   "vars": [],
   "steps": [
     {
-      "id": "this",
-      "title": "null 說了 null",
-      "goal": "修好後要印出 `滷肉：「沒關係，再跑一次！」`。\n\n現在印出來的是 `null：「null」`：名字和台詞明明傳進建構子了，欄位卻還是 `null`（空的，什麼都沒放）。",
-      "instructions": "欄位還沒放東西的時候是 `null`，意思是「什麼都沒有」，印出來就是 `null`。\n\n參數和欄位同名的時候，在建構子裡寫那個名字，指的是傳進來的參數，不是欄位。例如欄位和參數都叫 `price`，`price = price;` 只是把參數放回參數自己，欄位一直沒放到東西。要指物件自己的欄位，得寫 `this.price`（`this` 是「我自己的」）。",
-      "expectedShape": "Mascot(String name, String line) {\n    … = name;\n    … = line;\n}",
-      "check": { "type": "output" },
+      "id": "this-v2",
+      "title": "參數遮蔽與改名失靈",
+      "goal": "修好 `class Mascot` 建構子、`rename(String name)` 與 `updateLine(String line)` 的欄位遮蔽與空值保護問題，讓 `speakText()` 與後續改名、改台詞都正確生效。",
+      "instructions": "起始碼裡的建構子與更新方法都被同名參數遮蔽了，導致修改都只留在參數自己身上。\n\n修復後的規格：\n- `Mascot(String name, String line)`：若 `name` 為 `null` 或去掉前後空白後為空，欄位設為 `\"未命名\"`，否則設為 `name.trim()`；若 `line` 為 `null` 設為 `\"\"`，否則放 `line`。\n- `void rename(String name)`：只有當 `name != null && !name.trim().isEmpty()` 時，才將物件自己的 `name` 更新為 `name.trim()`；否則忽略。\n- `void updateLine(String line)`：只有當 `line != null` 時，才將物件自己的 `line` 更新為 `line`；否則忽略。\n- `String speakText()`：回傳 `name + \"：「\" + line + \"」\"`。",
+      "expectedShape": "class Mascot {\n    …\n    Mascot(String name, String line) {\n        …\n    }\n    void rename(String name) {\n        …\n    }\n    void updateLine(String line) {\n        …\n    }\n    String speakText() {\n        …\n    }\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Mascot _m = null;",
+          "(_m = new Mascot(\"滷肉\", \"沒關係，再跑一次！\")).speakText()",
+          "_m.rename(\"  滷肉二號  \")",
+          "_m.name",
+          "_m.rename(null)",
+          "_m.rename(\"   \")",
+          "_m.name",
+          "_m.updateLine(\"加油！\")",
+          "_m.line",
+          "_m.updateLine(null)",
+          "_m.line",
+          "_m.speakText()",
+          "new Mascot(null, null).name",
+          "new Mascot(null, null).line",
+          "new Mascot(\"  \", \"嗨\").name"
+        ],
+        "uses": ["class Mascot", "this.name", "this.line"]
+      },
       "hints": {
-        "lead": "參數遮蔽了同名欄位，`name = name` 是把參數指定給自己⋯⋯",
-        "plain": "⋯⋯白話：參數和欄位同名時，`name = name` 是把參數放回參數自己，欄位一直沒被放東西，所以是 `null`。左邊要寫 `this.name`。"
+        "lead": "參數與欄位同名時，欄位必須加上 this. 才不會被參數遮蔽⋯⋯",
+        "plain": "⋯⋯白話：建構子、`rename`、`updateLine` 裡的欄位都寫成 `this.name` 與 `this.line`，同時在建構子先補上 `null` 與空白的預設值。"
       },
       "afterText": ""
     },
     {
-      "id": "length",
-      "title": "還沒取名的",
-      "goal": "修好後，`new Mascot(null, \"嗨\").nameLength()` 要交回 0，`new Mascot(\"滷肉\", \"嗨\").nameLength()` 要交回 2。\n\n起始碼新加的 `int nameLength()` 會交回名字有幾個字，可是名字是 `null`（空的）的小老師一呼叫就跌倒。",
-      "instructions": "`nameLength()` 是畫名牌底線要用的。\n\n對 `null` 呼叫方法，例如 `length()`，程式會跌倒，紅字是 `NullPointerException`。可以先用 `== null` 問它是不是空的。方法裡一 `return`，就在那裡結束，後面的程式不會再跑。",
-      "expectedShape": "int nameLength() {\n    if (…) {\n        return 0;\n    }\n    return name.length();\n}",
-      "check": { "type": "values", "exprs": ["new Mascot(null, \"嗨\").nameLength()", "new Mascot(\"滷肉\", \"嗨\").nameLength()"] },
+      "id": "length-v2",
+      "title": "空指標與跨方法狀態重置",
+      "goal": "修復 `Mascot` 中的 `nameLength()`、`greet(String user)` 與 `resetStats()`，使其在各種邊界輸入下都維持正確的回傳值與物件狀態。",
+      "instructions": "三個方法須符合以下行為規格：\n- `int nameLength()`：回傳 `this.name` 的字元長度；若 `this.name == null`，回傳 `0`。\n- `String greet(String user)`：若 `user` 為 `null` 或去掉前後空白後為空，稱呼改用 `\"新同學\"`，否則用 `user.trim()`；更新物件本身的 `lastListener` 為這個稱呼、將 `speakCount` 加 `1`，並回傳 `(this.name == null ? \"未命名\" : this.name) + \"：「\" + 稱呼 + \"，嗨！」\"`。\n- `void resetStats()`：將物件的統計狀態重設回初始值（`speakCount` 歸 `0`、`lastListener` 重設為 `null`）。",
+      "expectedShape": "int nameLength() {\n    …\n}\n\nString greet(String user) {\n    …\n}\n\nvoid resetStats() {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "Mascot _m = null;",
+          "(_m = new Mascot(\"滷肉\", \"再跑一次！\")).nameLength()",
+          "_m.greet(\"  亭瑄  \")",
+          "_m.speakCount",
+          "_m.lastListener",
+          "_m.greet(null)",
+          "_m.greet(\"   \")",
+          "_m.speakCount",
+          "_m.lastListener",
+          "_m.resetStats()",
+          "_m.speakCount",
+          "_m.lastListener == null",
+          "(_m.name = null) == null",
+          "_m.nameLength()",
+          "_m.greet(\"小芸\")"
+        ]
+      },
       "hints": {
-        "lead": "對 `null` 參考呼叫方法會丟出 `NullPointerException`⋯⋯",
-        "plain": "⋯⋯白話：還沒取名的小老師，`name` 是 `null`。先問 `name == null`，是的話交回 0，不是才去量長度。"
+        "lead": "留意 greet 裡是否誤宣告了同名區域變數，以及 resetStats 有沒有把所有統計欄位清空⋯⋯",
+        "plain": "⋯⋯白話：`greet` 裡多寫了 `String` 就變成區域變數，改不到物件的 `this.lastListener`；`speakCount` 也要記得加 1；`resetStats` 要把 `speakCount` 和 `lastListener` 一起重設。"
       },
       "afterText": ""
     }

@@ -7,28 +7,51 @@
   "vars": [],
   "steps": [
     {
-      "id": "hint",
-      "title": "提示的第一個字",
-      "goal": "`hint(\"吃滷肉飯\")` 要交回 `吃＿＿＿`：只露出 `answer` 的第一個字，其他每個字換成一個 `＿`。\n\n寫一個方法 `static String hint(String answer)` 做出這樣的提示。第一個字用 `substring`（從字串切出一段）切出來，剩下幾個字，就用 `repeat` 重複幾次 `＿`。",
-      "instructions": "`substring(開始, 結束)` 會切出一段字：從編號「開始」那個字，切到編號「結束」那個字之前，編號從 0 開始。例如 `\"小白貓\".substring(1, 3)` 是 `白貓`。\n\n剩下的字數是全部的字數減一，全部的字數用 `length()` 量。`＿` 可以從這裡複製。",
-      "expectedShape": "static String hint(String answer) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["hint(\"吃滷肉飯\")", "hint(\"小白\")"] },
+      "id": "hint-v2",
+      "title": "安全首字提示",
+      "goal": "寫一個方法 `static String hint(String answer)`，做出不會因空字串或空白而當機的首字提示。\n\n規則如下：\n1. 若 `answer` 是 `null`，直接交回 `\"\"`。\n2. 先去掉 `answer` 前後的全形與半形空白。\n3. 若清理後是空字串 `\"\"`，直接交回 `\"\"`。\n4. 若清理後只有 1 個字，直接交回該字（不加底線）。\n5. 若超過 1 個字，保留第 1 個字，後面每個字換成半形底線 `\"_\"`（例如 `\"Java\"` 交回 `\"J___\"`，`\"吃滷肉飯\"` 交回 `\"吃___\"`）。",
+      "instructions": "直接對空字串呼叫 `substring(0, 1)` 或 `charAt(0)` 會在執行時發生 `StringIndexOutOfBoundsException` 跌倒，所以必須先清理空白並檢查長度。\n\n全形空白 `'　'`（`\\u3000`）不會被 `trim()` 清掉，可以用 `.strip()` 一次去除全半形前後空白，或是先用 `.replace('　', ' ')` 再 `.trim()`。",
+      "expectedShape": "static String hint(String answer) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "hint(\"Java\")",
+          "hint(\"吃滷肉飯\")",
+          "hint(\"A\")",
+          "hint(\"\")",
+          "hint(\"   \")",
+          "hint(\"　小白　\")",
+          "hint(null)"
+        ]
+      },
       "hints": {
-        "lead": "第一個字是 substring(0, 1)。",
-        "plain": "`substring(0, 1)` 從第 0 個字切到第 1 個字之前，剛好是第一個字。剩下的字數是 `answer.length() - 1`，用 `repeat` 補上同樣多的 `＿`。"
+        "lead": "先擋 `null`，再去前後全半形空白後檢查長度是否為 0 或 1。",
+        "plain": "用 `answer.strip()` 去掉前後空白後，如果是空的回傳 `\"\"`；如果長度 `== 1` 直接回傳自己；否則切第 1 個字接上 `\"_\".repeat(clean.length() - 1)`。"
       },
       "afterText": ""
     },
     {
-      "id": "correct",
-      "title": "多打的空白",
-      "goal": "`isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")` 要交回 `true`：玩家打的 `typed` 前後多了空白不算錯，字不一樣才交回 `false`。\n\n寫一個方法 `static boolean isCorrect(String typed, String answer)`：先用 `trim()`（去掉前後的空白）處理 `typed`，再用 `equals`（比兩個字串的字一不一樣）和 `answer` 比。",
-      "instructions": "新生打字常常前後多一個空白。`trim()` 會交回去掉前後空白的字串，例如 `\" 小白 \".trim()` 是 `\"小白\"`。\n\n比字串要用 `a.equals(b)`：`a` 和 `b` 的字一樣就是 `true`。不要用 `==`：`trim()` 做出來的是新的字串，用 `==` 比會是 `false`。\n\n名字前面的 `boolean` 是說這個方法交回 `true` 或 `false`。`equals` 比出來的答案本身就是 `true` 或 `false`，可以直接交回去。",
-      "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["isCorrect(\" 吃滷肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃控肉飯\", \"吃滷肉飯\")", "isCorrect(\"吃滷肉飯 \", \"吃滷肉飯\")", "isCorrect(\"不吃滷肉飯\", \"吃滷肉飯\")"] },
+      "id": "correct-v2",
+      "title": "空白與大小寫正規化比對",
+      "goal": "寫一個方法 `static boolean isCorrect(String typed, String answer)`，判斷玩家輸入 `typed` 是否符合標準答案 `answer`。\n\n規則如下：\n1. 若 `typed` 或 `answer` 為 `null`，交回 `false`。\n2. 兩邊各自去掉前後的全形與半形空白。\n3. 若任一方清理後是空字串 `\"\"`，交回 `false`（空白交卷不算答對）。\n4. 比對兩邊字串內容是否一致，且忽略英文字母大小寫（例如 `\" java \"` 與 `\"JAVA\"` 交回 `true`）。",
+      "instructions": "不要用 `==` 比對字串，因為 `==` 比的是是不是同一個物件；清理空白後會產生新字串，用 `==` 一定會判錯。\n\n要比較內容且忽略大小寫，請用字串的 `.equalsIgnoreCase(...)` 方法。",
+      "expectedShape": "static boolean isCorrect(String typed, String answer) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "isCorrect(\" java \", \"Java\")",
+          "isCorrect(\"　JAVA　\", \"java \")",
+          "isCorrect(\"吃滷肉飯\", \"吃控肉飯\")",
+          "isCorrect(\"\", \"\")",
+          "isCorrect(\"   \", \"　\")",
+          "isCorrect(null, \"小白\")",
+          "isCorrect(\"小白\", \"小白\")"
+        ],
+        "uses": [".equalsIgnoreCase("]
+      },
       "hints": {
-        "lead": "先 trim，再 equals。",
-        "plain": "`==` 比的是是不是同一個盒子，`equals` 比的是裡面的字一不一樣。`trim()` 交回的是一個新盒子，字一樣也沒用，所以一定要用 `equals`。"
+        "lead": "兩邊各自去前後全半形空白、攔截空字串後，用 `equalsIgnoreCase` 比對。",
+        "plain": "先擋掉 `null`，兩邊都做 `.strip()`；接著檢查兩邊是不是任一個 `.isEmpty()`，是就回傳 `false`，最後回傳 `t.equalsIgnoreCase(a)`。"
       },
       "afterText": ""
     }

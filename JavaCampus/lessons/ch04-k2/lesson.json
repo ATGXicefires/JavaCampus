@@ -7,41 +7,71 @@
   "vars": [],
   "steps": [
     {
-      "id": "bar",
-      "title": "一格一格",
-      "goal": "`bar(3, 5)` 要交回 `■■■□□`：`done` 是完成的課數 3，`total` 是總課數 5。\n\n寫一個方法 `static String bar(int done, int total)`：完成的每課一個 `■`，剩下的每課一個 `□`，接成一條進度條交回來。重複的部分用 `repeat`（把字串重複幾次）。",
-      "instructions": "字串會做一些自己的事，在字串後面接 `.` 叫出來。`.repeat(次數)` 會交回重複那麼多次的新字串：`\"哈\".repeat(3)` 是 `哈哈哈`，`\"哈\".repeat(0)` 是什麼都沒有的空字串。\n\n剩下的課數是總課數減掉完成的課數。兩段用 `+` 接起來，再用 `return` 交回。`■` 和 `□` 可以從這裡複製。",
-      "expectedShape": "static String bar(int done, int total) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["bar(3, 5)", "bar(0, 4)", "bar(4, 4)"] },
+      "id": "bar-v2",
+      "title": "動態比例進度條",
+      "goal": "寫一個方法 `static String bar(int done, int total, int width)`，依完成比例畫出固定寬度的進度條，例如 `bar(3, 5, 10)` 要交回 `██████░░░░`。\n\n規則如下：\n1. 若 `width <= 0`，直接交回空字串 `\"\"`。\n2. 滿格字元用 `\"█\"`，空格字元用 `\"░\"`，回傳字串總長度必須等於 `width`。\n3. 滿格數 `filled` 的計算方式：\n   - 若 `total <= 0` 或 `done <= 0`，`filled` 為 `0`。\n   - 若 `done >= total`（且 `total > 0`），`filled` 為 `width`。\n   - 其餘情況，用整數比例換算 `done * width / total`（先乘後除，捨去小數）。\n4. 用 `\"█\"` 重複 `filled` 次，接上 `\"░\"` 重複 `width - filled` 次並交回。",
+      "instructions": "字串的 `.repeat(次數)` 會交回重複指定次數的新字串，例如 `\"█\".repeat(3)` 是 `\"███\"`，`\"█\".repeat(0)` 是 `\"\"`（注意次數不可為負數，否則執行時會出錯）。\n\n換算比例時要寫 `done * width / total`，如果先寫 `done / total`，整數除法會先變成 0。`█` 和 `░` 可以從這裡複製。",
+      "expectedShape": "static String bar(int done, int total, int width) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "bar(3, 5, 10)",
+          "bar(1, 3, 10)",
+          "bar(0, 4, 8)",
+          "bar(8, 5, 6)",
+          "bar(-2, 5, 6)",
+          "bar(3, 0, 5)",
+          "bar(3, 5, 0)"
+        ]
+      },
       "hints": {
-        "lead": "repeat 幾次，就有幾格。",
-        "plain": "`\"■\".repeat(done)` 是完成的部分，`\"□\".repeat(total - done)` 是還沒完成的部分，兩段用 `+` 接起來就是整條進度條。"
+        "lead": "先把 `width <= 0`、`total <= 0`、`done <= 0`、`done >= total` 這些邊界攔截好，再算比例。",
+        "plain": "用一個整數 `filled` 記錄滿格數：非正常狀況給 0 或 `width`，正常狀況算 `done * width / total`，最後回傳 `\"█\".repeat(filled) + \"░\".repeat(width - filled)`。"
       },
       "afterText": ""
     },
     {
-      "id": "progress",
-      "title": "加上數字",
-      "goal": "`progress(3, 5)` 要交回 `■■■□□ 3/5`：進度條、一個空格，再接上 `done`、`/`、`total`。\n\n寫一個方法 `static String progress(int done, int total)` 交回這一串；進度條呼叫上一步寫的 `bar` 來做。",
-      "instructions": "方法裡也可以呼叫別的方法。不用再寫一次進度條：呼叫 `bar`，把 `done` 和 `total` 照順序交給它，它交回的進度條就能直接用 `+` 接上後面的字。",
-      "expectedShape": "static String progress(int done, int total) {\n    return bar(…) + …;\n}",
-      "check": { "type": "values", "exprs": ["progress(3, 5)", "progress(1, 2)"] },
+      "id": "progress-v2",
+      "title": "標題與百分比組合",
+      "goal": "寫一個方法 `static String progress(String title, int done, int total, int width)`，將標題、進度條與百分比排成一行交回，例如 `progress(\" 第 4 章 \", 3, 5, 10)` 要交回 `第 4 章 ██████░░░░ 60%`。\n\n規則如下：\n1. 將 `title` 去掉前後空白；若處理後是空字串，標題改顯示為 `\"未命名\"`。\n2. 進度條部分請呼叫上一步寫好的 `bar(done, total, width)`。\n3. 百分比 `pct` 用整數計算（小數捨去）：若 `total <= 0` 或 `done <= 0` 為 `0`；若 `done >= total`（且 `total > 0`）上限為 `100`；其餘為 `done * 100 / total`。\n4. 依格式 `\"<標題> <進度條> <百分比>%\"` 串接交回。",
+      "instructions": "方法裡面可以呼叫前面寫好的方法。直接呼叫 `bar(done, total, width)` 取得進度條字串，再跟清理後的標題、空格和百分比拼在一起。\n\n別忘了標題可能是純空白字串，要先去空白再檢查是不是空的。",
+      "expectedShape": "static String progress(String title, int done, int total, int width) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "progress(\" 第 4 章 \", 3, 5, 10)",
+          "progress(\"\", 1, 2, 4)",
+          "progress(\"複習\", 9, 5, 5)",
+          "progress(\"空課\", 0, 0, 6)",
+          "progress(\"錯誤\", -1, 4, 4)"
+        ],
+        "uses": ["bar("]
+      },
       "hints": {
-        "lead": "方法裡也能叫方法。",
-        "plain": "叫 `bar(done, total)` 拿到進度條那一段，再接上空格、`done`、`\"/\"`、`total`。`3/5` 要跟著參數變，不能直接寫成字。"
+        "lead": "清理標題、呼叫 `bar(...)` 取得進度條、再用邊界鉗制計算 0 到 100 的百分比。",
+        "plain": "標題用 `title.trim()`，空的就換成 `\"未命名\"`；百分比一樣先擋掉 0 以下與超過總數的情況，最後用 `+ \" \" +` 串成一行回傳。"
       },
       "afterText": ""
     },
     {
-      "id": "underline",
-      "title": "標題底線",
-      "goal": "`underline(\"第 1 課\")` 要交回 `=====`：`title` 是 `第 1 課`，有 5 個字，空格也算一個字。\n\n寫一個方法 `static String underline(String title)`，交回和 `title` 一樣長的一串 `=`。字串有幾個字，用 `length()`（量長度）算。",
-      "instructions": "在字串後面接 `.length()`，會交回它有幾個字，空格和標點也算：`\"小白！\".length()` 是 3。\n\n知道有幾個字以後，用前面用過的 `repeat` 讓 `=` 重複那麼多次。",
-      "expectedShape": "static String underline(String title) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["underline(\"第 1 課\")", "underline(\"變數\")"] },
+      "id": "underline-v2",
+      "title": "自適應標題底線",
+      "goal": "寫一個方法 `static String underline(String title, int minWidth)`，回傳含兩行的標題區段（中間用 `\"\\n\"` 換行）：第一行是清理後的標題，第二行是與標題或最小寬度對齊的 `\"=\"` 底線。\n\n規則如下：\n1. 將 `title` 去掉前後空白；若處理後是空字串，標題改為 `\"未命名\"`。\n2. 底線長度取「清理後標題的字數」與 `minWidth` 兩者較大值（若 `minWidth < 0` 視為 `0`）。\n3. 回傳 `\"<標題>\\n<底線>\"`，例如 `underline(\" 變數 \", 5)` 交回 `\"變數\\n=====\"`，`underline(\"方法與參數\", 3)` 交回 `\"方法與參數\\n=====\"`。",
+      "instructions": "字串的 `.length()` 會交回字串的字數，搭配 `Math.max(a, b)` 或 `if` 比較就可以決定底線要重複幾次。\n\n`\"\\n\"` 代表換行字元，放在兩段字串中間就能組成包含換行的多行字串。",
+      "expectedShape": "static String underline(String title, int minWidth) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "underline(\" 變數 \", 5)",
+          "underline(\"方法與參數\", 3)",
+          "underline(\"\", 4)",
+          "underline(\"   \", -3)",
+          "underline(\"Hi\", -2)"
+        ]
+      },
       "hints": {
-        "lead": "字串的長度是 length()。",
-        "plain": "`title.length()` 是標題有幾個字，讓 `=` 重複那麼多次就好：`\"=\".repeat(title.length())`。"
+        "lead": "清理標題後取 `length()` 與 `minWidth` 的最大值（且不小於 0）。",
+        "plain": "先把 `title.trim()` 的空字串換成 `\"未命名\"`，接著用 `int len = clean.length(); if (minWidth > len) len = minWidth;` 算出底線長度，最後回傳 `clean + \"\\n\" + \"=\".repeat(len)`。"
       },
       "afterText": ""
     }

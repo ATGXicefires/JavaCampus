@@ -7,41 +7,71 @@
   "vars": [],
   "steps": [
     {
-      "id": "hello",
-      "title": "打招呼",
-      "goal": "呼叫一次 `hello();`，就要印出一行 `滷肉：「歡迎來到小白！」`（滷肉是 App 裡的小老師）。\n\n寫一個方法 `static void hello()`（方法：把一件事包起來、取個名字），印出這一行，再呼叫它兩次，共印兩行。",
-      "instructions": "把要做的事包進大括號，取名叫 `hello`，就是一個方法。寫好以後，要用的時候寫 `hello();` 叫它。\n\n```\nstatic void 名字() {\n    要做的事\n}\n```\n\n`static` 先照寫。`void` 的意思是這個方法做完事，不交回任何東西。\n\n冒號和引號是全形，可以從重點複製。",
-      "expectedShape": "static void hello() {\n    …\n}\n\nhello();\n…",
-      "check": { "type": "output", "exprs": ["hello()"] },
+      "id": "say-v2",
+      "title": "預設名字與防空說話",
+      "goal": "寫一個方法 `static void say(String who, String line)`，印出 `<說話者>：「<台詞>」`（冒號和引號為全形）。\n\n規則如下：\n1. 先將 `who` 與 `line` 各自去掉前後多餘空白。\n2. 若 `who` 處理後為空字串，說話者預設成 `\"滷肉\"`。\n3. 若 `line` 處理後為空字串，台詞預設成 `\"……\"`。\n\n寫好後在方法外呼叫兩次：`say(\"滷肉\", \"歡迎來到小白！\");` 與 `say(\"  \", \"分號別忘記。\");`。",
+      "instructions": "方法把重複的流程收進大括號並取個名字。`static void say(String who, String line)` 有兩個字串參數，呼叫時會照順序放進來，`void` 代表只執行動作、不回傳值。\n\n可以先用字串的 `.trim()` 去掉前後空白，再用 `.isEmpty()` 或 `.length() == 0` 檢查是不是空的。冒號與引號是全形 `：「」`，省略符號為兩個全形 `……`。",
+      "expectedShape": "static void say(String who, String line) {\n    …\n}\n\nsay(…);\nsay(…);",
+      "check": {
+        "type": "output",
+        "exprs": [
+          "say(\"分號\", \"分號。\")",
+          "say(\"\", \"測試\")",
+          "say(\"阿成\", \"   \")",
+          "say(\" 滷肉 \", \"  早安  \")"
+        ]
+      },
       "hints": {
-        "lead": "先寫好，再叫兩次。",
-        "plain": "方法就像一張寫好的便條：大括號裡是要做的事，`hello` 是便條的名字。寫 `hello();` 就是照便條做一次，叫兩次就做兩次。"
+        "lead": "先對兩個參數做去空白處理，再分別檢查是否為空字串。",
+        "plain": "把 `who.trim()` 和 `line.trim()` 先存進新變數；如果是空的，就換成預設的 `\"滷肉\"` 或 `\"……\"`，最後再用 `System.out.println` 照格式印出。"
       },
       "afterText": ""
     },
     {
-      "id": "say",
-      "title": "誰說什麼",
-      "goal": "`say(\"滷肉\", \"沒關係，再跑一次！\")` 要印出 `滷肉：「沒關係，再跑一次！」`，`say(\"分號\", \"分號。\")` 要印出 `分號：「分號。」`。\n\n寫一個方法 `static void say(String who, String line)`，照這個格式印出誰說了什麼；括號裡的 `who` 和 `line` 是參數（呼叫時交給方法的東西）。寫好後用上面兩個呼叫印出這兩行。",
-      "instructions": "參數像兩個空盒子：呼叫的時候給什麼，方法裡就用什麼。值會照順序放進去，第一個放進 `who`，第二個放進 `line`。\n\n```\nstatic void twice(String word) {\n    System.out.println(word + word);\n}\n\ntwice(\"喵\");\n```\n\n這段會印出 `喵喵`：呼叫時給的 `\"喵\"` 放進了 `word`。",
-      "expectedShape": "static void say(String who, String line) {\n    System.out.println(…);\n}\n\nsay(\"滷肉\", \"…\");\nsay(\"分號\", \"…\");",
-      "check": { "type": "output", "exprs": ["say(\"阿成\", \"OH！\")"] },
+      "id": "clip",
+      "title": "過長台詞截斷",
+      "goal": "對話氣泡框寬度有限，寫一個方法 `static String clip(String text, int maxLen)` 負責截斷過長的文字並交回結果。\n\n規則如下：\n1. 若 `maxLen <= 0`，直接交回空字串 `\"\"`。\n2. 先去掉 `text` 前後多餘空白；若長度不超過 `maxLen`，原樣交回清理後的文字。\n3. 若長度超過 `maxLen`：\n   - 當 `maxLen <= 3` 時，只取前 `maxLen` 個字交回（不加省略號）。\n   - 當 `maxLen > 3` 時，取前 `maxLen - 3` 個字再接上三個半形句點 `\"...\"`，使回傳總長度剛好為 `maxLen`。",
+      "instructions": "方法名字前面寫 `String`，表示它做完事會用 `return` 交回一段文字，而不是印出來。\n\n切出字串前幾字可以用 `s.substring(0, k)`，長度可以用 `s.length()` 取得。先處理 `maxLen <= 0` 與長度沒超過的狀況直接 `return`，後面的邏輯會更乾淨。",
+      "expectedShape": "static String clip(String text, int maxLen) {\n    …\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "clip(\"歡迎來到小白！\", 20)",
+          "clip(\"歡迎來到小白！\", 6)",
+          "clip(\"  歡迎來到小白！  \", 5)",
+          "clip(\"ABCDEF\", 3)",
+          "clip(\"\", 5)",
+          "clip(\"ABC\", 0)",
+          "clip(\"ABC\", -2)"
+        ]
+      },
       "hints": {
-        "lead": "括號裡放要交給它的東西。",
-        "plain": "`who` 和 `line` 是兩個空盒子，呼叫 `say` 的時候才把名字和台詞放進去。方法裡用這兩個名字排出那一句話。"
+        "lead": "依序攔截 `maxLen <= 0`、長度夠短、`maxLen <= 3` 與一般截斷四種情況。",
+        "plain": "先擋掉 `maxLen <= 0` 回傳 `\"\"`；接著對 `text.trim()` 判斷：如果長度 `<= maxLen` 直接回傳；如果 `maxLen <= 3` 就回傳 `substring(0, maxLen)`；否則回傳 `substring(0, maxLen - 3) + \"...\"`。"
       },
       "afterText": ""
     },
     {
-      "id": "line",
-      "title": "交回一句話",
-      "goal": "`line(\"分號\", \"分號。\")` 要交回 `分號：「分號。」`。\n\n寫一個方法 `static String line(String who, String text)`，這次不印，用 `return`（把結果交回給呼叫的人）把排好的那句話交回來。",
-      "instructions": "和上一步不一樣：這次不印。`return` 會把後面的值交回給呼叫的人，交回來的值可以再拿去用，例如存進盒子、接上別的字，或印出來。\n\n方法名字前面要寫交回來的東西是什麼型別：這裡交回一段文字，所以是 `String`；上一步寫 `void`，是什麼都不交回。\n\n```\nstatic int twice(int n) {\n    return n * 2;\n}\n\nint x = twice(4);\n```\n\n`twice(4)` 交回 8，放進 `x`。這一步只看 `line` 交回來的字，要不要呼叫來印印看都可以。",
-      "expectedShape": "static String line(String who, String text) {\n    return …;\n}",
-      "check": { "type": "values", "exprs": ["line(\"分號\", \"分號。\")", "line(\"滷肉\", \"好耶\")"] },
+      "id": "line-v2",
+      "title": "組合安全對話字串",
+      "goal": "寫一個方法 `static String line(String who, String text, int maxLen)`，把處理過的名字與截斷後的台詞組合成 `<說話者>：「<台詞>」` 並交回（不要印出）。\n\n規則如下：\n1. 若 `who` 去掉前後空白後為空字串，說話者預設為 `\"滷肉\"`。\n2. 台詞呼叫上一步寫好的 `clip(text, maxLen)` 處理。\n3. 若 `clip` 交回的結果是空字串 `\"\"`，台詞改顯示為 `\"……\"`。",
+      "instructions": "這一步不呼叫 `System.out.println`，而是用 `return` 把排好的字串交給呼叫的人。\n\n在 `line` 裡面可以直接呼叫上一步寫好的 `clip(text, maxLen)`，拿到處理完的文字後，再檢查是不是空的，最後串成完整對話交回。",
+      "expectedShape": "static String line(String who, String text, int maxLen) {\n    return …;\n}",
+      "check": {
+        "type": "values",
+        "exprs": [
+          "line(\"分號\", \"分號。\", 10)",
+          "line(\"滷肉\", \"今天要學方法與參數\", 6)",
+          "line(\"  \", \"早安\", 10)",
+          "line(\"阿成\", \"   \", 10)",
+          "line(\" 亭瑄 \", \"  寫程式很有趣  \", 7)",
+          "line(\"滷肉\", \"測試\", 0)"
+        ],
+        "uses": ["clip("]
+      },
       "hints": {
-        "lead": "用 return 交回去。",
-        "plain": "名字前面的 `String` 是在說：這個方法做完會交回一段文字。用 `return` 把排好的那句話交回去，呼叫的人可以拿去印，也可以拿去做別的事。"
+        "lead": "呼叫 `clip(text, maxLen)` 取得台詞，檢查是否為空後組裝回傳。",
+        "plain": "先處理 `who.trim()`，空的話改為 `\"滷肉\"`；接著把 `clip(text, maxLen)` 的結果存起來，若是空的就換成 `\"……\"`，最後 `return` 串接好的字串。"
       },
       "afterText": ""
     }
